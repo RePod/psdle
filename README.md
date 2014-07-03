@@ -14,7 +14,7 @@ Usage
 Potentially Asked Questions
 ===
 ###Why does it take so long to parse?
-Currently a timeout of 3 seconds seems to hit the sweet spot of changing the page and detecting the content (on a reasonable connection and assuming the server isn't already dying).
+PSDLE works by parsing each page of the download list one at a time with a delay in between. Currently a timeout of 3 seconds seems to hit the sweet spot of changing the page and detecting the content (on a reasonable connection and assuming the server isn't already dying).
 This may change in the future.
 
 ###Why are thumbnails/icons missing?
