@@ -3,6 +3,9 @@ psdle
 
 Improving everyone's favorite online download list, one loop at a time.
 
+Doubtful? Here is how it currently looks (demo!), notice the long scrollbar.
+![View the current version in action.](http://i.imgur.com/f1UZ40c.png)
+
 Usage
 =====
 1. Navigate to the desired account's download page from the online store
@@ -14,7 +17,7 @@ Usage
 Potentially Asked Questions
 ===
 ###Why does it take so long to parse?
-PSDLE works by parsing each page of the download list one at a time with a delay in between. Currently a timeout of 3 seconds seems to hit the sweet spot of changing the page and detecting the content (on a reasonable connection and assuming the server isn't already dying).
+PSDLE works by parsing each page of the download list one at a time with a delay inbetween. Currently a timeout of 3 seconds seems to hit the sweet spot of changing the page and detecting the content (on a reasonable connection and assuming the server isn't already dying).
 This may change in the future.
 
 ###Why are thumbnails/icons missing?
