@@ -1,3 +1,5 @@
+//See LICENSE file for licensing details, available in the "psdle" repository on GitHub. TL;DR: MIT, do what you want.
+
 try { repod; } catch(e) { repod = {}; }
 repod.muh_games = {
 	gamelist: [],
