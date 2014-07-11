@@ -14,6 +14,11 @@ Usage
 4. Input **$.getScript("https://raw.githubusercontent.com/RePod/psdle/master/psdle.js");**
 5. Execute (Ctrl+R in Scratchpad, Enter in Console) and let the magic happen
 
+What Needs To Be Done
+=====
+* System filtering (PS3, PSP, etc.)
+* In-depth information gathering (i.e. if system filtering is vague)
+
 Potentially Asked Questions
 ===
 ###Why does it take so long to parse?
