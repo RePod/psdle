@@ -70,12 +70,12 @@ repod.muh_games = {
 			if ($.inArray(sys,safesys) > -1) { 
 				//Valid system.
 				var a = true;
-				var t = val['title'];
-				if ($("#filter_avatar").hasClass("toggled_off") && t.indexOf("Avatar") > -1) a = false; 
-				if ($("#filter_demo").hasClass("toggled_off") && t.indexOf("Demo") > -1) a = false;
-				if ($("#filter_unlock").hasClass("toggled_off") && t.indexOf("Unlock") > -1) a = false;
-				if ($("#filter_pass").hasClass("toggled_off") && t.indexOf("Pass") > -1) a = false;
-				if ($("#filter_pack").hasClass("toggled_off") && t.indexOf("Pack") > -1) a = false;
+				var t = val['title']; var t2 = t.toLowerCase();
+				if ($("#filter_avatar").hasClass("toggled_off") && t2.indexOf("avatar") > -1) a = false; 
+				if ($("#filter_demo").hasClass("toggled_off") && t2.indexOf("demo") > -1) a = false;
+				if ($("#filter_unlock").hasClass("toggled_off") && t2.indexOf("unlock") > -1) a = false;
+				if ($("#filter_pass").hasClass("toggled_off") && t2.indexOf("pass") > -1) a = false;
+				if ($("#filter_pack").hasClass("toggled_off") && t2.indexOf("pack") > -1) a = false;
 				if (a) {
 					var u = val['url'];
 					temp += "<tr><td style='max-width:31px;max-height:31px;'><a target='_blank' href='"+u+"'><img src='"+val['icon']+"' class='psdle_game_icon' /></a></td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+t+"</a></td><td>"+sys+"</td><td>"+val['size']+"</td><td>"+val['date']+"</td></tr>";
