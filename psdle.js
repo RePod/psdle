@@ -72,7 +72,7 @@ repod.muh_games = {
 				if ($("#filter_avatar").hasClass("toggled_off") && t.indexOf("Avatar") > -1) a = false; 
 				if ($("#filter_demo").hasClass("toggled_off") && t.indexOf("Demo") > -1) a = false;
 				if ($("#filter_unlock").hasClass("toggled_off") && t.indexOf("Unlock") > -1) a = false;
-				if ($("#filter_pass").hasClass("toggled_off") && t.indexOf("Unlock") > -1) a = false;
+				if ($("#filter_pass").hasClass("toggled_off") && t.indexOf("Pass") > -1) a = false;
 				if ($("#filter_pack").hasClass("toggled_off") && t.indexOf("Pack") > -1) a = false;
 				if (a) {
 					var u = val['url'];
