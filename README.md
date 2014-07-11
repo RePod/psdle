@@ -3,8 +3,10 @@ psdle
 
 Improving everyone's favorite online download list, one loop at a time.
 
-Doubtful? Here is how it currently looks (demo!), notice the long scrollbar.
-![View the current version in action.](http://i.imgur.com/f1UZ40c.png)
+Doubtful? Have some in-action screenshots:    
+[PS4 games](http://i.imgur.com/hFIw450.png) Example: All Plus offerings.    
+[PS3 games, no unlocks or passes](http://i.imgur.com/1Iz43kd.png) Example: DS3 has an online pass, DDU has an unlock.    
+[PS3+V games](http://i.imgur.com/WekNUVc.png) Example: Plus offerings for PS3+V.
 
 Usage
 =====
@@ -16,11 +18,10 @@ Usage
 
 What Needs To Be Done
 =====
-* System filtering (PS3, PSP, etc.)
-* In-depth information gathering (i.e. if system filtering is vague)
+* In-depth information gathering (i.e. if system filtering is vague such as PS1 games marked for PSP)
 
 Potentially Asked Questions
-===
+=====
 ###Why does it take so long to parse?
 PSDLE works by parsing each page of the download list one at a time with a delay inbetween. Currently a timeout of 3 seconds seems to hit the sweet spot of changing the page and detecting the content (on a reasonable connection and assuming the server isn't already dying).
 This may change in the future.
