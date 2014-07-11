@@ -8,6 +8,7 @@ repod.muh_games = {
             timerID: 0,
             delay: 3000
 		}
+		this.injectCSS();
 		this.genDisplay();
         this.startTimer();
         return 1;
@@ -50,15 +51,49 @@ repod.muh_games = {
 		return 1;
 	},
 	genTable: function() {
-		$("<style type='text/css'>table,th,td{border:1px solid #999;border-collapse:collapse;} th {padding:5px;}td a {display:block;width:100%;height:100%;color:#000 !important;padding:2px;} td a:hover{background-color:#ccc;}</style>").appendTo("head");
-		$("#sub_container").slideUp('slow').html("<table id='muh_table' style='display:inline-block;text-align:left'><tr><th>Icon</th><th style='min-width:600px'>Name</th><th>Platform(s)</th><th>Size</th><th>Date</th></tr></table>");
+		$("#sub_container").html(this.genSearchOptions());
+		$("#sub_container").slideUp('slow').append("<table id='muh_table' style='display:inline-block;text-align:left'><tr><th>Icon</th><th style='min-width:600px'>Name</th><th>Platform(s)</th><th>Size</th><th>Date</th></tr></table>");
+		$("#muh_table > tbody").append(this.genTableContents());
+		$("#sub_container").slideDown('slow');
+		return 1;
+	},
+	genTableContents: function() {
 		var temp = "";
 		$.each(repod.muh_games.gamelist,function(index,val) {
-			var plats = []; $.each(val['platform'],function(i,v) { plats.push("<span class='sys'>"+v+"</span>"); });
-			temp += "<tr><td style='max-width:31px;max-height:31px;'><img src='"+val['icon']+"' style='height:100%;width:100%;vertical-align:text-top'/></td><td><a target='_blank' href='"+val['url']+"'>"+val['title']+"</a></td><td>"+plats.join(" ")+"</td><td>"+val['size']+"</td><td>"+val['date']+"</td></tr>";
+			//var plats = []; $.each(val['platform'],function(i,v) { plats.push("<span class='sys'>"+v+"</span>"); });
+			temp += "<tr><td style='max-width:31px;max-height:31px;'><img src='"+val['icon']+"' style='max-height:31px;max-width:31px;vertical-align:text-top'/></td><td><a target='_blank' href='"+val['url']+"'>"+val['title']+"</a></td><td>"+repod.muh_games.safeGuessSystem(val['platform'])+"</td><td>"+val['size']+"</td><td>"+val['date']+"</td></tr>";
 		});
-		$("#muh_table > tbody").append(temp);
-		$("#sub_container").slideDown('slow');
+		return temp;
+	},
+	genSearchOptions: function() {
+		//TO-DO: Make scalable.
+		var temp = '<div style="text-align:center;width:100%">' +
+					'<span class="system_ps3">PS3</span>' +
+					'<span class="system_ps4">PS4</span>' +
+					'<span class="system_psp">PSP</span>' +
+					'<span class="system_psv">PSV</span>' +
+					'<hr style="display:inline-block" width="50">' +
+					'<span class="filter_avatar">Avatars</span>' +
+					'<span class="filter_demo">Demos</span>' +
+					'<span class="filter_unlock">Unlocks</span>' +
+					'<span class="filter_pass">Passes</span>' +
+					'</div>';
+		return temp;
+	},
+	safeGuessSystem: function(e) {
+		//Quick, dirty, and easy.
+		var sys = e.join(" ");
+		if (sys == "PS3 PSP PS Vita") sys = "PSP";
+		if (sys == "PS3 PS Vita") sys = "PS Vita";
+		if (sys == "PS3") sys = sys;
+		if (sys == "PS4") sys = sys;
+		return sys;
+	},
+	injectCSS: function() {
+		var temp = "";
+		temp += "table,th,td{border:1px solid #999;border-collapse:collapse;} th {padding:5px;}td a {display:block;width:100%;height:100%;color:#000 !important;padding:2px;} td a:hover{background-color:#ccc;}"; //Table
+		temp += "span[class^=system_], span[class^=filter_] { border-radius:5px;border:1px solid #fff;font-weight:bold;text-transform:uppercase;font-size:small;color:#fff;padding:1px 3px;bottom:3px;display:inline-block;vertical-align:20%;background-color:#000;cursor:pointer; }"; //Search buttons
+		$("<style type='text/css'>"+temp+"</style>").appendTo("head");
 		return 1;
 	}
 }
