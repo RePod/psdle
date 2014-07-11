@@ -41,6 +41,7 @@ I ask myself that every time I wake up.
 Probably, as long as it allows local Javascript execution.
 
 ###Is this safe or a ploy to phish account details?
+**Yes it is safe, no it is not for phishing account details.**    
 I put it on GitHub for a reason, feel free to view the ~~horribly effective~~ code yourself and decide.    
 If and when I get pull requests I'll let them sizzle and look through them while allowing the "community" to as well.
 

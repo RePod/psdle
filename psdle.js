@@ -126,8 +126,8 @@ repod.muh_games = {
 	},
 	injectCSS: function() {
 		var temp = "";
-		temp += "table,th,td{border:1px solid #999;border-collapse:collapse;} th {padding:5px;} td a.psdle_game_link {display:block;width:100%;height:100%;color:#000 !important;padding-left:2px;} td a:hover{background-color:#ccc;}"; //Table
-		temp += "span[id^=system_], span[id^=filter_], span#psdle_regen { border-radius:5px;border:1px solid #fff;font-weight:bold;text-transform:uppercase;font-size:small;color:#fff;padding:1px 3px;bottom:3px;display:inline-block;vertical-align:20%;background-color:#000;cursor:pointer; } .toggled_off { opacity:0.7; }"; //Search buttons
+		temp += "table,th,td{border:1px solid #999;border-collapse:collapse;} th {padding:5px;} td a.psdle_game_link {display:block;width:100%;height:100%;color:#000 !important;padding-left:2px;} th, tr:hover{background-color:#ccc;}"; //Table
+		temp += "span[id^=system_], span[id^=filter_], span#psdle_regen { border-radius:5px;border:1px solid #fff;font-weight:bold;text-transform:uppercase;font-size:small;color:#fff;padding:1px 3px;bottom:3px;display:inline-block;vertical-align:20%;background-color:#000;cursor:pointer; } .toggled_off { opacity:0.4; }"; //Search buttons
 		temp += ".psdle_game_icon { max-width:100%;vertical-align:middle }"; //Content icons
 		$("<style type='text/css'>"+temp+"</style>").appendTo("head");
 		return 1;
