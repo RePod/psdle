@@ -24,6 +24,7 @@ What Needs To Be Done
 * Possibly make the parsing process more detailed?
 * In-depth information gathering (i.e. if system filtering is vague such as PS1 games marked for PSP)
 * Possibly userscript format?
+* Exporting options: database delimiters?
 
 Potentially Asked Questions
 =====
@@ -35,7 +36,7 @@ This may change in the future.
 Seems to be a cache issue, a noticable solution would be going to problematic pages then running PSDLE again.    
 Trust me, I noticed.
 
-###Why are PS1 classics/etc showing up as PSP and PS2 classics as PS3?
+###Why are PS1 classics/etc showing as PSP and PS2 classics as PS3?
 PSDLE currently operates with data it obtains solely from the download list. It is safer and cleaner to resolve like this instead of guessing. There are few methods being looked into to overcome these scenarios.
 
 ###Why is this so horrible?
