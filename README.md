@@ -12,13 +12,14 @@ Usage
 =====
 1. Navigate to the desired account's download page from the online store
 2. Ensure the displayed page is the first (top has latest purchase)
-3. Open either the browser's Scratchpad (Shift+F4) or Web Console (Ctrl+Shift+K) (Firefox)
-4. Input **$.getScript("https://raw.githubusercontent.com/RePod/psdle/master/psdle.js");**
-5. Execute (Ctrl+R in Scratchpad, Enter in Console) and let the magic happen
+3. Open the Web Console (Firefox: Ctrl+Shift+K) (Chrome: Ctrl+Shift+J)
+4. Input **$.getScript("https://cdn.rawgit.com/RePod/psdle/8178a4df7c09d68d20f670832941327ab6e20f06/psdle.js");**
+5. Execute (Enter) and let the magic happen
 
 What Needs To Be Done
 =====
 * In-depth information gathering (i.e. if system filtering is vague such as PS1 games marked for PSP)
+* Possibly userscript format?
 
 Potentially Asked Questions
 =====
