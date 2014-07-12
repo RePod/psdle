@@ -3,23 +3,22 @@
 try { repod; } catch(e) { repod = {}; }
 repod.muh_games = {
 	gamelist: [],
-    init: function() {
+	init: function() {
 		this.config = {
 			totalgames: parseInt($(".statsText").text().match(/(\d+)/g).pop()),
 			past: "",
-            timerID: 0,
-            delay: 3000,
+			timerID: 0,
+			delay: 3000,
 			lastsort: "sort_date"
 		}
 		this.injectCSS();
 		this.genDisplay();
-        this.startTimer();
-        return 1;
+		this.startTimer();
+		return 1;
 	},
 	parsePage: function() {
 		if ($(".gridViewportPaneWrapper").html() !== this.config.past) {
-            this.config.past = $(".gridViewportPaneWrapper").html();
-			$("#sub_container").html("Parsing page "+(this.gamelist.length/24+1)+" out of "+Math.ceil(this.config.totalgames/24)+". ("+Math.round((repod.muh_games.gamelist.length / repod.muh_games.config.totalgames) * 100)+"%)");
+			this.config.past = $(".gridViewportPaneWrapper").html();
 			$("li.cellDlItemGame").each(function() {
 				var info = $(this).find(".mediaInfo");
 				var gametitle = info.find(".gameTitle").text();
@@ -31,6 +30,8 @@ repod.muh_games = {
 				info.find(".playableOn").children("a").each(function() { platform.push($(this).text()) });
 				repod.muh_games.gamelist.push({id:(repod.muh_games.gamelist.length +1),title:gametitle,size:size,platform:platform,date:date,url:url,icon:icon});
 			});
+			$("#psdle_progressbar > #psdle_bar").animate({"width":Math.round((repod.muh_games.gamelist.length / repod.muh_games.config.totalgames) * 100)+"%"});
+			$("#psdle_status").text((this.gamelist.length/24+1)+" / "+Math.ceil(this.config.totalgames/24));
 			if (this.gamelist.length >= this.config.totalgames) {
 				clearInterval(this.config.timerID);
 				this.genTable();
@@ -38,25 +39,27 @@ repod.muh_games = {
 				 this.nextPage();
 			}
 		}
-        return 1;
+		return 1;
 	},
 	startTimer: function(delay) {
-        var delay = (delay) ? delay : this.config.delay;
-        this.config.timerID = setInterval(function(){repod.muh_games.parsePage();},delay);
+		var delay = (delay) ? delay : this.config.delay;
+		this.config.timerID = setInterval(function(){repod.muh_games.parsePage();},delay);
 		return 1;
 	},
 	nextPage: function() {
 		$(".navLinkNext").trigger("click"); //Anonymous functions, please.
-        return 1;
+		return 1;
 	},
 	genDisplay:function() {
-		$("body").append("<div id='muh_games_container' style='position:absolute;top:0px;bottom:0px;right:0px;left:0px;color:#000;z-index:9001;text-align:center' />");
-		$("#muh_games_container").append("<div id='sub_container' style='background-color:#fff'/>");
+		$("body").append("<div id='muh_games_container' />");
+		$("#muh_games_container").append("<div id='sub_container'><span style='display:inline-block;font-size:300%;font-weight:bold'>psdle</span><br /><div id='psdle_progressbar'><div id='psdle_bar'>&nbsp;</div></div><br /><span id='psdle_status'>1 / "+Math.ceil(this.config.totalgames/24)+"</span></div>");
+		$("#muh_games_container").slideDown('slow');
 		return 1;
 	},
 	genTable: function() {
-		$("#sub_container").html(this.genSearchOptions()); this.toggleSort("span#sort_date");
-		$("#sub_container").hide().append("<table id='muh_table' style='display:inline-block;text-align:left'>"+this.genTableContents()+"</table>").show();
+		$("#psdle_bar").animate({"width":"0%"});
+		$("#sub_container").html(repod.muh_games.genSearchOptions()); repod.muh_games.toggleSort("span#sort_date");
+		$("#sub_container").append("<table id='muh_table' style='display:inline-block;text-align:left'>"+repod.muh_games.genTableContents()+"</table>");
 		return 1;
 	},
 	regenTable: function() {
@@ -76,7 +79,7 @@ repod.muh_games = {
 				if ($("#filter_unlock").hasClass("toggled_off") && / Unlock$/i.test(t)) a = false;
 				if ($("#filter_pass").hasClass("toggled_off") && / Pass$/i.test(t)) a = false;
 				if ($("#filter_pack").hasClass("toggled_off") && / Pack$/i.test(t)) a = false;
-				if ($("#filter_pack").hasClass("toggled_off") && / Theme$/i.test(t)) a = false;
+				if ($("#filter_theme").hasClass("toggled_off") && / Theme$/i.test(t)) a = false;
 				if (a) {
 					var u = val['url'];
 					temp += "<tr><td style='max-width:31px;max-height:31px;'><a target='_blank' href='"+u+"'><img src='"+val['icon']+"' class='psdle_game_icon' /></a></td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+t+"</a></td><td>"+sys+"</td><td>"+val['size']+"</td><td>"+val['date']+"</td></tr>";
@@ -156,10 +159,10 @@ repod.muh_games = {
 		return sys;
 	},
 	injectCSS: function() {
-		var temp = "";
-		temp += "table,th,td{border:1px solid #999;border-collapse:collapse;} th {padding:5px;} td a.psdle_game_link {display:block;width:100%;height:100%;color:#000 !important;padding-left:2px;} th, tr:hover{background-color:#ccc;}"; //Table
-		temp += "span[id^=system_], span[id^=filter_], span#psdle_regen, span[id^=sort_] { border-radius:5px;border:1px solid #fff;font-weight:bold;text-transform:uppercase;font-size:small;color:#fff;padding:1px 3px;bottom:3px;display:inline-block;vertical-align:20%;background-color:#000;cursor:pointer; } .toggled_off { opacity:0.4; }"; //Search buttons
-		temp += ".psdle_game_icon { max-width:100%;vertical-align:middle }"; //Content icons
+		var temp = "#muh_games_container { display:none;position:absolute;top:0px;bottom:0px;right:0px;left:0px;color:#000;z-index:9001;text-align:center } #sub_container { background-color:#fff; padding:20px; } #psdle_progressbar { overflow:hidden;display:inline-block;width:400px;height:16px;border:1px solid #999;margin:10px;border-radius:10px; } #psdle_bar { background-color:#ccc;width:0%;height:100%;border-radius:10px; }" + //Startup
+					"table,th,td{border:1px solid #999;border-collapse:collapse;} th {padding:5px;} td a.psdle_game_link {display:block;width:100%;height:100%;color:#000 !important;padding-left:2px;} th, tr:hover{background-color:#ccc;}" + //Table
+					"span[id^=system_], span[id^=filter_], span#psdle_regen, span[id^=sort_] { border-radius:5px;border:1px solid #fff;font-weight:bold;text-transform:uppercase;font-size:small;color:#fff;padding:1px 3px;bottom:3px;display:inline-block;vertical-align:20%;background-color:#000;cursor:pointer; } .toggled_off { opacity:0.4; }" + //Search buttons
+					".psdle_game_icon { max-width:100%;vertical-align:middle }"; //Content icons
 		$("<style type='text/css'>"+temp+"</style>").appendTo("head");
 		return 1;
 	}
