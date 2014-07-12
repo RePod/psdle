@@ -5,7 +5,7 @@ repod.muh_games = {
 	gamelist: [],
     init: function() {
 		this.config = {
-			totalgames: parseInt(/(\d+) Matches$/.exec($(".statsText").text())[1]),
+			totalgames: parseInt($(".statsText").text().match(/(\d+)/g).pop()),
 			past: "",
             timerID: 0,
             delay: 3000
