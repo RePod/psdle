@@ -69,13 +69,13 @@ repod.muh_games = {
 			var sys = repod.muh_games.safeGuessSystem(val['platform']); 
 			if ($.inArray(sys,safesys) > -1) { 
 				//Valid system.
-				var a = true;
-				var t = val['title']; var t2 = t.toLowerCase();
-				if ($("#filter_avatar").hasClass("toggled_off") && t2.indexOf("avatar") > -1) a = false; 
-				if ($("#filter_demo").hasClass("toggled_off") && t2.indexOf("demo") > -1) a = false;
-				if ($("#filter_unlock").hasClass("toggled_off") && t2.indexOf("unlock") > -1) a = false;
-				if ($("#filter_pass").hasClass("toggled_off") && t2.indexOf("pass") > -1) a = false;
-				if ($("#filter_pack").hasClass("toggled_off") && t2.indexOf("pack") > -1) a = false;
+				var a = true; var t = val['title'];
+				if ($("#filter_avatar").hasClass("toggled_off") && / Avatar$/i.test(t)) a = false; 
+				if ($("#filter_demo").hasClass("toggled_off") && / Demo$/i.test(t)) a = false;
+				if ($("#filter_unlock").hasClass("toggled_off") && / Unlock$/i.test(t)) a = false;
+				if ($("#filter_pass").hasClass("toggled_off") && / Pass$/i.test(t)) a = false;
+				if ($("#filter_pack").hasClass("toggled_off") && / Pack$/i.test(t)) a = false;
+				if ($("#filter_pack").hasClass("toggled_off") && / Theme$/i.test(t)) a = false;
 				if (a) {
 					var u = val['url'];
 					temp += "<tr><td style='max-width:31px;max-height:31px;'><a target='_blank' href='"+u+"'><img src='"+val['icon']+"' class='psdle_game_icon' /></a></td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+t+"</a></td><td>"+sys+"</td><td>"+val['size']+"</td><td>"+val['date']+"</td></tr>";
@@ -99,6 +99,7 @@ repod.muh_games = {
 					'<span id="filter_unlock">Unlocks</span>' +
 					'<span id="filter_pass">Passes</span>' +
 					'<span id="filter_pack">Packs</span>' +
+					'<span id="filter_theme">Themes</span>' +
 					'<hr style="display:inline-block" width="50">' +
 					'<span id="psdle_regen">Regenerate</span>' +
 					'</div>';
