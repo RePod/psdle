@@ -28,7 +28,7 @@ What Needs To Be Done
 * Exporting options: database delimiters?
 * Make it translatable
 
-What Cannot Be Done (at least not at the moment)
+What Cannot Be Done
 =====
 * Adding the "Download to X" button, can't keep events.
 
