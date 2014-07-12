@@ -6,7 +6,8 @@ Improving everyone's favorite online download list, one loop at a time.
 Doubtful? Have some in-action screenshots:    
 [PS4 games](http://i.imgur.com/hFIw450.png) Example: All Plus offerings.    
 [PS3 games, no unlocks or passes](http://i.imgur.com/1Iz43kd.png) Example: DS3 has an online pass, DDU has an unlock.    
-[PS3+V games](http://i.imgur.com/WekNUVc.png) Example: Plus offerings for PS3+V.
+[PS3+V games](http://i.imgur.com/WekNUVc.png) Example: Plus offerings for PS3+V.    
+[Sorting](http://i.imgur.com/ta3YOO5.png) Example: Ordering alphabetically instead of date.
 
 Usage
 =====
@@ -25,6 +26,11 @@ What Needs To Be Done
 * In-depth information gathering (i.e. if system filtering is vague such as PS1 games marked for PSP)
 * Possibly userscript format?
 * Exporting options: database delimiters?
+* Make it translatable
+
+What Cannot Be Done (at least not at the moment)
+=====
+* Adding the "Download to X" button, can't keep events.
 
 Potentially Asked Questions
 =====

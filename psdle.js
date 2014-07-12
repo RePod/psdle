@@ -8,7 +8,8 @@ repod.muh_games = {
 			totalgames: parseInt($(".statsText").text().match(/(\d+)/g).pop()),
 			past: "",
             timerID: 0,
-            delay: 3000
+            delay: 3000,
+			lastsort: "sort_date"
 		}
 		this.injectCSS();
 		this.genDisplay();
@@ -28,7 +29,7 @@ repod.muh_games = {
 				var icon = $(this).find(".thumbPane").find("img").attr("src");
 				var url = $(this).find(".thumbPane").parent().attr("href");
 				info.find(".playableOn").children("a").each(function() { platform.push($(this).text()) });
-				repod.muh_games.gamelist.push({title:gametitle,size:size,platform:platform,date:date,url:url,icon:icon});
+				repod.muh_games.gamelist.push({id:(repod.muh_games.gamelist.length +1),title:gametitle,size:size,platform:platform,date:date,url:url,icon:icon});
 			});
 			if (this.gamelist.length >= this.config.totalgames) {
 				clearInterval(this.config.timerID);
@@ -54,19 +55,19 @@ repod.muh_games = {
 		return 1;
 	},
 	genTable: function() {
-		$("#sub_container").html(this.genSearchOptions());
+		$("#sub_container").html(this.genSearchOptions()); this.toggleSort("span#sort_date");
 		$("#sub_container").hide().append("<table id='muh_table' style='display:inline-block;text-align:left'>"+this.genTableContents()+"</table>").show();
 		return 1;
 	},
 	regenTable: function() {
 		$("#muh_table > tbody").html(this.genTableContents());
-		return 1
+		return 1;
 	},
 	genTableContents: function() {
 		var temp = "<tr><th>Icon</th><th style='min-width:600px'>Name</th><th title='Approximate, check store page for all supported platforms.'>Platform</th><th>Size</th><th>Date</th></tr>";
 		var safesys = this.safeSystemCheck();
 		$.each(repod.muh_games.gamelist,function(index,val) {
-			var sys = repod.muh_games.safeGuessSystem(val['platform']); 
+			var sys = repod.muh_games.safeGuessSystem(val['platform']);
 			if ($.inArray(sys,safesys) > -1) { 
 				//Valid system.
 				var a = true; var t = val['title'];
@@ -86,28 +87,57 @@ repod.muh_games = {
 	},
 	genSearchOptions: function() {
 		//TO-DO: Make scalable.
-		$(document).on("click","span[id^=system_], span[id^=filter_]", function() { repod.muh_games.toggleButton($(this)); });
-		$(document).on("click","span#psdle_regen", function() { repod.muh_games.regenTable(); });
+		$(document).on("click","span[id^=system_], span[id^=filter_]", function() { repod.muh_games.toggleButton($(this)); repod.muh_games.regenTable(); });
+		$(document).on("click","span[id^=sort_]", function(e) { repod.muh_games.toggleSort($(this)); });
+		//$(document).on("click","span#psdle_regen", function() { repod.muh_games.regenTable(); });
 		var temp = '<div style="text-align:center;width:100%">' +
 					'<span id="system_ps3">PS3</span>' +
 					'<span id="system_ps4">PS4</span>' +
 					'<span id="system_psp">PSP</span>' +
 					'<span id="system_psv">PS Vita</span>' +
-					'<hr style="display:inline-block" width="50">' +
+					'<hr style="display:inline-block;width:20px">' +
 					'<span id="filter_avatar">Avatars</span>' +
 					'<span id="filter_demo">Demos</span>' +
 					'<span id="filter_unlock">Unlocks</span>' +
 					'<span id="filter_pass">Passes</span>' +
 					'<span id="filter_pack">Packs</span>' +
 					'<span id="filter_theme">Themes</span>' +
-					'<hr style="display:inline-block" width="50">' +
-					'<span id="psdle_regen">Regenerate</span>' +
+					'<hr style="display:inline-block;width:20px">' +
+					//'<span id="psdle_regen">Regenerate</span>' +
+					'<span id="sort_date">New ... Old</span>' +
+					'<span id="sort_az">A ... Z</span>' +
 					'</div>';
 		return temp;
+	},
+	sortGamelist: function(e) {
+		var e = (e) ? e : $("span[id^=sort_]:not('.toggled_off')").attr("id");
+		if (e !== this.config.lastsort) {
+			if (e == "sort_date") {
+				this.gamelist.sort(function (a, b) {
+					if (a.id > b.id) return 1;
+					if (a.id < b.id) return -1;
+					return 0;
+				});
+			}
+			if (e == "sort_az") {
+				this.gamelist.sort(function (a, b) {
+					if (a.title.toLocaleLowerCase() > b.title.toLocaleLowerCase()) return 1;
+					if (a.title.toLocaleLowerCase() < b.title.toLocaleLowerCase()) return -1;
+					return 0;
+				});
+			}
+			this.config.lastsort = e;
+			this.regenTable();
+		}
 	},
 	toggleButton: function(e) {
 		$(e).toggleClass("toggled_off");
 		return 1
+	},
+	toggleSort: function(e) {
+		$("span[id^=sort_]").addClass("toggled_off");
+		$(e).removeClass("toggled_off");
+		this.sortGamelist();
 	},
 	safeSystemCheck: function() {
 		var temp = [];
@@ -128,7 +158,7 @@ repod.muh_games = {
 	injectCSS: function() {
 		var temp = "";
 		temp += "table,th,td{border:1px solid #999;border-collapse:collapse;} th {padding:5px;} td a.psdle_game_link {display:block;width:100%;height:100%;color:#000 !important;padding-left:2px;} th, tr:hover{background-color:#ccc;}"; //Table
-		temp += "span[id^=system_], span[id^=filter_], span#psdle_regen { border-radius:5px;border:1px solid #fff;font-weight:bold;text-transform:uppercase;font-size:small;color:#fff;padding:1px 3px;bottom:3px;display:inline-block;vertical-align:20%;background-color:#000;cursor:pointer; } .toggled_off { opacity:0.4; }"; //Search buttons
+		temp += "span[id^=system_], span[id^=filter_], span#psdle_regen, span[id^=sort_] { border-radius:5px;border:1px solid #fff;font-weight:bold;text-transform:uppercase;font-size:small;color:#fff;padding:1px 3px;bottom:3px;display:inline-block;vertical-align:20%;background-color:#000;cursor:pointer; } .toggled_off { opacity:0.4; }"; //Search buttons
 		temp += ".psdle_game_icon { max-width:100%;vertical-align:middle }"; //Content icons
 		$("<style type='text/css'>"+temp+"</style>").appendTo("head");
 		return 1;
