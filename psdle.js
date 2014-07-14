@@ -9,7 +9,8 @@ repod.muh_games = {
 			past: "",
 			timerID: 0,
 			delay: 3000,
-			lastsort: "sort_date"
+			lastsort: "",
+			lastsort_r: false
 		}
 		this.injectCSS();
 		this.genDisplay();
@@ -58,8 +59,9 @@ repod.muh_games = {
 	},
 	genTable: function() {
 		$("#psdle_bar").animate({"width":"0%"});
-		$("#sub_container").html(repod.muh_games.genSearchOptions()); repod.muh_games.toggleSort("span#sort_date");
-		$("#sub_container").append("<table id='muh_table' style='display:inline-block;text-align:left'>"+repod.muh_games.genTableContents()+"</table>");
+		$("#sub_container").html(repod.muh_games.genSearchOptions());
+		$("#sub_container").append("<table id='muh_table' style='display:inline-block;text-align:left'><thead><tr><th>Icon</th><th id='sort_name'>Name</th><th title='Approximate, check store page for all supported platforms.'>Platform</th><th id='sort_size'>Size</th><th id='sort_date'>Date</th></tr></thead><tbody>"+repod.muh_games.genTableContents()+"</tbody></table>");
+		this.sortGamelist("#sort_date");
 		return 1;
 	},
 	regenTable: function() {
@@ -67,7 +69,7 @@ repod.muh_games = {
 		return 1;
 	},
 	genTableContents: function() {
-		var temp = "<tr><th>Icon</th><th style='min-width:600px'>Name</th><th title='Approximate, check store page for all supported platforms.'>Platform</th><th>Size</th><th>Date</th></tr>";
+		var temp = "";
 		var safesys = this.safeSystemCheck();
 		$.each(repod.muh_games.gamelist,function(index,val) {
 			var sys = repod.muh_games.safeGuessSystem(val['platform']);
@@ -91,8 +93,7 @@ repod.muh_games = {
 	genSearchOptions: function() {
 		//TO-DO: Make scalable.
 		$(document).on("click","span[id^=system_], span[id^=filter_]", function() { repod.muh_games.toggleButton($(this)); repod.muh_games.regenTable(); });
-		$(document).on("click","span[id^=sort_]", function(e) { repod.muh_games.toggleSort($(this)); });
-		//$(document).on("click","span#psdle_regen", function() { repod.muh_games.regenTable(); });
+		$(document).on("click","th[id^=sort_]", function(e) { repod.muh_games.sortGamelist($(this)); });
 		var temp = '<div style="text-align:center;width:100%">' +
 					'<span id="system_ps3">PS3</span>' +
 					'<span id="system_ps4">PS4</span>' +
@@ -105,48 +106,48 @@ repod.muh_games = {
 					'<span id="filter_pass">Passes</span>' +
 					'<span id="filter_pack">Packs</span>' +
 					'<span id="filter_theme">Themes</span>' +
-					'<hr style="display:inline-block;width:20px">' +
-					//'<span id="psdle_regen">Regenerate</span>' +
-					'<span id="sort_date">New ... Old</span>' +
-					'<span id="sort_az">A ... Z</span>' +
+					//"<br /><input type='text' id='psdle_search_text' placeholder='Search by game title (/regex/mod)' title='Non-regex searches are case-insensitive, regex searches can toggle.'/>"+
 					'</div>';
 		return temp;
 	},
 	sortGamelist: function(e) {
-		var e = (e) ? e : $("span[id^=sort_]:not('.toggled_off')").attr("id");
-		if (e !== this.config.lastsort) {
-			if (e == "sort_date") {
-				this.gamelist.sort(function (a, b) {
-					if (a.id > b.id) return 1;
-					if (a.id < b.id) return -1;
-					return 0;
-				});
-			}
-			if (e == "sort_az") {
-				this.gamelist.sort(function (a, b) {
-					if (a.title.toLocaleLowerCase() > b.title.toLocaleLowerCase()) return 1;
-					if (a.title.toLocaleLowerCase() < b.title.toLocaleLowerCase()) return -1;
-					return 0;
-				});
-			}
-			this.config.lastsort = e;
-			this.regenTable();
+		var e = $(e).attr("id");
+		if (e == "sort_date") {
+			this.gamelist.sort(function (a, b) {
+				if (a.id > b.id) return 1;
+				if (a.id < b.id) return -1;
+				return 0;
+			});
 		}
+		if (e == "sort_name") {
+			this.gamelist.sort(function (a, b) {
+				if (a.title.toLocaleLowerCase() > b.title.toLocaleLowerCase()) return 1;
+				if (a.title.toLocaleLowerCase() < b.title.toLocaleLowerCase()) return -1;
+				return 0;
+			});	
+		}
+		if (e == "sort_size") {
+			this.gamelist.sort(function (a, b) {
+				if (repod.muh_games.returnKB(a.size) > repod.muh_games.returnKB(b.size)) return 1;
+				if (repod.muh_games.returnKB(a.size) < repod.muh_games.returnKB(b.size)) return -1;
+				return 0;
+			});
+		}
+		if (e == this.config.lastsort) { if (!this.config.lastsort_r) { this.gamelist.reverse(); } this.config.lastsort_r = !this.config.lastsort_r; }
+		else { this.config.lastsort_r = false; }
+		$("#psdle_sort_display").remove();
+		$("#"+e).append("<span id='psdle_sort_display' class='psdle_sort_"+((this.config.lastsort_r)?"asc":"desc")+"' />");
+		this.config.lastsort = e;
+		this.regenTable();
+		return 1;
 	},
 	toggleButton: function(e) {
 		$(e).toggleClass("toggled_off");
-		return 1
-	},
-	toggleSort: function(e) {
-		$("span[id^=sort_]").addClass("toggled_off");
-		$(e).removeClass("toggled_off");
-		this.sortGamelist();
+		return 1;
 	},
 	safeSystemCheck: function() {
 		var temp = [];
-		$("span[id^=system_]:not('.toggled_off')").each(function() {
-			temp.push($(this).text());
-		});
+		$("span[id^=system_]:not('.toggled_off')").each(function() { temp.push($(this).text()); });
 		return temp;
 	},
 	safeGuessSystem: function(e) {
@@ -160,11 +161,20 @@ repod.muh_games = {
 	},
 	injectCSS: function() {
 		var temp = "#muh_games_container { display:none;position:absolute;top:0px;bottom:0px;right:0px;left:0px;color:#000;z-index:9001;text-align:center } #sub_container { background-color:#fff; padding:20px; } #psdle_progressbar { overflow:hidden;display:inline-block;width:400px;height:16px;border:1px solid #999;margin:10px;border-radius:10px; } #psdle_bar { background-color:#ccc;width:0%;height:100%;border-radius:10px; }" + //Startup
-					"table,th,td{border:1px solid #999;border-collapse:collapse;} th {padding:5px;} td a.psdle_game_link {display:block;width:100%;height:100%;color:#000 !important;padding-left:2px;} th, tr:hover{background-color:#ccc;}" + //Table
-					"span[id^=system_], span[id^=filter_], span#psdle_regen, span[id^=sort_] { border-radius:5px;border:1px solid #fff;font-weight:bold;text-transform:uppercase;font-size:small;color:#fff;padding:1px 3px;bottom:3px;display:inline-block;vertical-align:20%;background-color:#000;cursor:pointer; } .toggled_off { opacity:0.4; }" + //Search buttons
-					".psdle_game_icon { max-width:100%;vertical-align:middle }"; //Content icons
+					"th[id^=sort] { cursor:pointer; } table,th,td{border:1px solid #999;border-collapse:collapse;} th {padding:5px;} td a.psdle_game_link {display:block;width:100%;height:100%;color:#000 !important;padding:3px;} th, tr:hover{background-color:#ccc;}" + //Table
+					"#psdle_search_text { margin:5px auto;padding:5px;font-size:large;width:100%; } span[id^=system_], span[id^=filter_], span#psdle_regen, span[id^=sort_] { border-radius:5px;border:1px solid #fff;font-weight:bold;text-transform:uppercase;font-size:small;color:#fff;padding:1px 3px;bottom:3px;display:inline-block;vertical-align:20%;background-color:#000;cursor:pointer; } .toggled_off { opacity:0.4; }" + //Search buttons
+					".psdle_game_icon { max-width:100%;vertical-align:middle }" + //Content icons
+					".psdle_sort_asc { float:right; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 5px solid black; } .psdle_sort_desc { float:right; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid black; }";
 		$("<style type='text/css'>"+temp+"</style>").appendTo("head");
 		return 1;
+	},
+	returnKB: function(e) {
+		var e = e.match(/(\d+\.?\d+?)([a-z]+)/i);
+		var f = e[1];
+		if (e[2] == "GB") f *= 1000000;
+		if (e[2] == "MB") f *= 1000;
+		if (e[2] == "KB") f *= 1;
+		return f;
 	}
 }
 repod.muh_games.init();
