@@ -84,7 +84,7 @@ repod.muh_games = {
 				if ($("#filter_theme").hasClass("toggled_off") && / Theme$/i.test(t)) a = false;
 				if (a) {
 					var u = val['url'];
-					temp += "<tr><td style='max-width:31px;max-height:31px;'><a target='_blank' href='"+u+"'><img src='"+val['icon']+"' class='psdle_game_icon' /></a></td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+t+"</a></td><td>"+sys+"</td><td>"+val['size']+"</td><td>"+val['date']+"</td></tr>";
+					temp += "<tr><td style='max-width:31px;max-height:31px;'><a target='_blank' href='"+u+"'><img title='Page #"+Math.ceil(val['id']/24)+"' src='"+val['icon']+"' class='psdle_game_icon' /></a></td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+t+"</a></td><td>"+sys+"</td><td>"+val['size']+"</td><td>"+val['date']+"</td></tr>";
 				}
 			}
 		});
