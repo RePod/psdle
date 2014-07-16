@@ -11,7 +11,7 @@ Doubtful? Have some in-action screenshots:
 
 Usage
 =====
-**Users of Greasemonkey:** [Get the user script](https://github.com/RePod/psdle/raw/master/psdle.user.js) then go to the download list.    
+**Users of Greasemonkey:** [Get the user script](https://repod.github.io/psdle/psdle.user.js) then go to the download list.    
 Compatibility with Greasemonkey variants is not guaranteed, yet.
 
 **Everyone else:**
@@ -19,9 +19,12 @@ Compatibility with Greasemonkey variants is not guaranteed, yet.
 1. Navigate to the desired account's download page from the online store
 2. Ensure the displayed page is the first (top has latest purchase)
 3. Open the Web Console (Firefox: Ctrl+Shift+K) (Chrome: Ctrl+Shift+J)
-4. Input **$.getScript("https://raw.githubusercontent.com/RePod/psdle/master/psdle.js");** 
+4. Input **$.getScript("https://repod.github.io/psdle/psdle.js");** 
 5. Execute (Enter) and let the magic happen
- 
+
+**Bleeding edge users:**
+
+The repository files will always be the latest possible versions, excluding forks/branches/etc. Feel free to give them a try.
 If you get an error involving strict MIME checking, run the URL through something like [RawGit](http://rawgit.com/).
 
 What Needs To Be Done
