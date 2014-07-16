@@ -174,7 +174,7 @@ repod.muh_games = {
 		return 1;
 	},
 	returnKB: function(e) {
-		e = e.match(/(\d+\.?\d+?)([a-z]+)/i);
+		e = e.match(/([\d+\.]+)([a-z]+)/i);
 		var f = e[1];
 		if (e[2] == "GB") { f *= 1000000; }
 		if (e[2] == "MB") { f *= 1000; }
