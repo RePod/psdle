@@ -1,3 +1,12 @@
+// ==UserScript==
+// @name        PSDLE for Greasemonkey
+// @description Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
+// @namespace   https://github.com/RePod/psdle
+// @version     1.0
+// @require		https://code.jquery.com/jquery-1.11.1.min.js
+// @include 	https://store.sonyentertainmentnetwork.com/#!/*/download/list
+// ==/UserScript==
+
 //See LICENSE file for licensing details, available in the "psdle" repository on GitHub. TL;DR: MIT, do what you want.
 
 var repod = {};
