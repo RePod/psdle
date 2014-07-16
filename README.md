@@ -11,6 +11,11 @@ Doubtful? Have some in-action screenshots:
 
 Usage
 =====
+**Users of Greasemonkey:** [Get the user script](https://github.com/RePod/psdle/raw/master/psdle.user.js) then go to the download list.    
+Compatibility with Greasemonkey variants is not guaranteed, yet.
+
+**Everyone else:**
+
 1. Navigate to the desired account's download page from the online store
 2. Ensure the displayed page is the first (top has latest purchase)
 3. Open the Web Console (Firefox: Ctrl+Shift+K) (Chrome: Ctrl+Shift+J)
@@ -24,7 +29,6 @@ What Needs To Be Done
 * Improve appearance
 * Possibly make the parsing process more detailed?
 * In-depth information gathering (i.e. if system filtering is vague such as PS1 games marked for PSP)
-* Possibly userscript format?
 * Exporting options: database delimiters?
 * Make it translatable
 
