@@ -4,7 +4,8 @@ var repod = {};
 repod.muh_games = {
 	gamelist: [],
 	lang: {
-		"en-us":{"startup":"Waiting on page to load.","columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"avatar":"Avatars","demo":"Demos","unlock":"Unlocks","pass":"Passes","pack":"Packs","theme":"Themes","page":"Page"},"regex":{"avatar":" Avatar$","demo":" Demo$","unlock":" Unlock$","pass":" Pass$","pack":" Pack$","theme":" Theme$"}	}
+		"en-us":{"startup":"Waiting on page to load.","columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"avatar":"Avatars","demo":"Demos","unlock":"Unlocks","pass":"Passes","pack":"Packs","theme":"Themes","page":"Page"},"regex":{"avatar":" Avatar$","demo":" Demo$","unlock":" Unlock$","pass":" Pass$","pack":" Pack$","theme":" Theme$"}}
+		"de-de":{"startup":"Seite wird geladen, bitte warten.","columns":{"icon":"Symbol","name":"Name","platform":"Plattform","size":"Größe","date":"Datum"},"labels":{"avatar":"Spielerbilder","demo":"Demos","unlock":"Freischaltbares","pass":"Pässe","pack":"Bündel","theme":"Themen","page":"Seite"},"regex":{"avatar":" (Avatare?|Spielerbilder)$","demo":" Demo$","unlock":" Freigeschaltet$","pass":" Pass$","pack":" (Kollektion|Bündel|Sammlung)$","theme":" Thema$"}} // Provided by /u/_MrBubbles
 	}, 
 	init: function() {
 		this.config = {
