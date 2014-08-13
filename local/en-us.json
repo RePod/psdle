@@ -1,0 +1,26 @@
+{
+	"columns": {
+		"icon": "Icon",
+		"name": "Name",
+		"platform": "Platform",
+		"size": "Size",
+		"date": "Date"
+	},
+	"labels": {
+		"avatar": "Avatars",
+		"demo": "Demos",
+		"unlock": "Unlocks",
+		"pass": "Passes",
+		"pack": "Packs",
+		"theme": "Themes",
+		"page": "Page"
+	},
+	"regex": {
+		"avatar": "/ Avatar$/i",
+		"demo": "/ Demo$/i",
+		"unlock": "/ Unlock$/i",
+		"pass": "/ Pass$/i",
+		"pack": "/ Pack$/i",
+		"theme": "/ Theme$/i"
+	}
+}
