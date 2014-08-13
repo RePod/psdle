@@ -3,10 +3,12 @@
 var repod = {};
 repod.muh_games = {
 	gamelist: [],
-	lang: {
-		"en-us":{"startup":"Waiting on page to load.","columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"avatar":"Avatars","demo":"Demos","unlock":"Unlocks","pass":"Passes","pack":"Packs","theme":"Themes","page":"Page"},"regex":{"avatar":" Avatar$","demo":" Demo$","unlock":" Unlock$","pass":" Pass$","pack":" Pack$","theme":" Theme$"}},
-		"de-de":{"startup":"Seite wird geladen, bitte warten.","columns":{"icon":"Symbol","name":"Name","platform":"Plattform","size":"Größe","date":"Datum"},"labels":{"avatar":"Spielerbilder","demo":"Demos","unlock":"Freischaltbares","pass":"Pässe","pack":"Bündel","theme":"Themen","page":"Seite"},"regex":{"avatar":" (Avatare?|Spielerbilder)$","demo":" Demo$","unlock":" Freigeschaltet$","pass":" Pass$","pack":" (Kollektion|Bündel|Sammlung)$","theme":" Thema$"}} // Provided by /u/_MrBubbles
-	}, 
+	gamelist_cur: [],
+	lang_cache: {
+		"en-us":{"startup":"Waiting on page to load.","columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"export_view":"Export View","avatar":"Avatars","demo":"Demos","unlock":"Unlocks","pass":"Passes","pack":"Packs","theme":"Themes","page":"Page"},"regex":{"avatar":" Avatar$","demo":" Demo$","unlock":" Unlock$","pass":" Pass$","pack":" Pack$","theme":" Theme$"},"strings":{"delimiter":"Enter delimiter:","stringify_error":"Error: Browser does not have JSON.stringify."}},
+		"de-de":{"startup":"Seite wird geladen, bitte warten.","columns":{"icon":"Symbol","name":"Name","platform":"Plattform","size":"Größe","date":"Datum"},"labels":{"export_view":"Export View","avatar":"Spielerbilder","demo":"Demos","unlock":"Freischaltbares","pass":"Pässe","pack":"Bündel","theme":"Themen","page":"Seite"},"regex":{"avatar":" (Avatare?|Spielerbilder)$","demo":" Demo$","unlock":" Freigeschaltet$","pass":" Pass$","pack":" (Kollektion|Bündel|Sammlung)$","theme":" Thema$"}} // Provided by /u/_MrBubbles
+	},
+	lang: {},
 	init: function() {
 		this.config = {
 			totalgames: 0,
@@ -17,10 +19,11 @@ repod.muh_games = {
 			lastsort_r: false,
 			language: window.location.href.match(/\/([a-z]{2}\-(?:[a-z]{4}-)?[a-z]{2})\//i)[1]
 		};
-		this.lang = (this.config.language in this.lang) ? this.lang[this.config.language] : this.lang["en-us"];
+		this.lang = this.lang_cache["en-us"]; if (this.config.language in this.lang_cache) { $.extend(this.lang,this.lang_cache[this.config.language]); }
 		this.injectCSS();
 		this.genDisplay();
 		this.startTimer();
+		this.genExternal.parent = this;
 		return 1;
 	},
 	parsePage: function() {
@@ -80,6 +83,7 @@ repod.muh_games = {
 		var that = this;
 		var temp = "";
 		var safesys = this.safeSystemCheck();
+		this.gamelist_cur = [];
 		$.each(this.gamelist,function(index,val) {
 			var sys = that.safeGuessSystem(val.platform);
 			if ($.inArray(sys,safesys) > -1) { 
@@ -94,6 +98,7 @@ repod.muh_games = {
 				if (a) {
 					var u = val.url;
 					temp += "<tr><td style='max-width:31px;max-height:31px;'><a target='_blank' href='"+u+"'><img title='"+that.lang.labels.page+" #"+Math.ceil(val.id/24)+"' src='"+val.icon+"' class='psdle_game_icon' /></a></td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+t+"</a></td><td>"+sys+"</td><td>"+val.size+"</td><td>"+val.date+"</td></tr>";
+					that.gamelist_cur.push(val);
 				}
 			}
 		});
@@ -104,7 +109,10 @@ repod.muh_games = {
 		var that = this;
 		$(document).on("click","span[id^=system_], span[id^=filter_]", function() { that.toggleButton($(this)); that.regenTable(); });
 		$(document).on("click","th[id^=sort_]", function(e) { that.sortGamelist($(this)); });
-		var temp = '<div style="text-align:center;width:100%">' +
+		$(document).on("click","span[id=export_view]", function() { that.displayOutput(); });
+		var temp = '<span id="search_options" style="text-align:center;">' +
+					'<span id="export_view">'+this.lang.labels.export_view+'</span>' +
+					'<hr style="display:inline-block;width:20px">' +
 					'<span id="system_ps3">PS3</span>' +
 					'<span id="system_ps4">PS4</span>' +
 					'<span id="system_psp">PSP</span>' +
@@ -117,7 +125,7 @@ repod.muh_games = {
 					'<span id="filter_pack">'+this.lang.labels.pack+'</span>' +
 					'<span id="filter_theme">'+this.lang.labels.theme+'</span>' +
 					//"<br /><input type='text' id='psdle_search_text' placeholder='Search by game title (/regex/mod)' title='Non-regex searches are case-insensitive, regex searches can toggle.'/>"+
-					'</div>';
+					'</span><br />';
 		return temp;
 	},
 	sortGamelist: function(e) {
@@ -173,7 +181,7 @@ repod.muh_games = {
 	injectCSS: function() {
 		var temp = "#muh_games_container { display:none;position:absolute;top:0px;bottom:0px;right:0px;left:0px;color:#000;z-index:9001;text-align:center } #sub_container { background-color:#fff; padding:20px; } #psdle_progressbar { overflow:hidden;display:inline-block;width:400px;height:16px;border:1px solid #999;margin:10px;border-radius:10px; } #psdle_bar { background-color:#ccc;width:0%;height:100%;border-radius:10px; }" + //Startup
 					"th[id^=sort] { cursor:pointer; } table,th,td{border:1px solid #999;border-collapse:collapse;} th {padding:5px;} td a.psdle_game_link {display:block;width:100%;height:100%;color:#000 !important;padding:3px;} th, tr:hover{background-color:#ccc;}" + //Table
-					"#psdle_search_text { margin:5px auto;padding:5px;font-size:large;width:100%; } span[id^=system_], span[id^=filter_], span#psdle_regen, span[id^=sort_] { border-radius:5px;border:1px solid #fff;font-weight:bold;text-transform:uppercase;font-size:small;color:#fff;padding:1px 3px;bottom:3px;display:inline-block;vertical-align:20%;background-color:#000;cursor:pointer; } .toggled_off { opacity:0.4; }" + //Search buttons
+					"#psdle_search_text { margin:5px auto;padding:5px;font-size:large;width:100%; } span[id^=system_], span[id^=filter_], span#psdle_regen, span[id^=sort_], span[id=export_view] { border-radius:5px;border:1px solid #fff;font-weight:bold;text-transform:uppercase;font-size:small;color:#fff;padding:1px 3px;bottom:3px;display:inline-block;vertical-align:20%;background-color:#000;cursor:pointer; } .toggled_off { opacity:0.4; }" + //Search buttons
 					".psdle_game_icon { max-width:100%;vertical-align:middle }" + //Content icons
 					".psdle_sort_asc { float:right; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 5px solid black; } .psdle_sort_desc { float:right; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid black; }";
 		$("<style type='text/css'>"+temp+"</style>").appendTo("head");
@@ -186,6 +194,30 @@ repod.muh_games = {
 		if (e[2] == "MB") { f *= 1000; }
 		if (e[2] == "KB") { f *= 1; }
 		return f;
+	},
+	displayOutput: function(e) {
+		var w = 600;
+		$("#sotextarea").remove();
+		$("#search_options").append("<span id='sotextarea' style='display:none'><br /><textarea></textarea></span>");
+		$("#sotextarea > textarea").css({"width":w,"max-width":w}).text(this.genExternal.delimited(prompt(this.lang.strings.delimiter,"	"))).select().parent().delay(500).slideDown();
+	},
+	genExternal: {
+		json: function() {
+			if (!!JSON.stringify) {
+				return JSON.stringify(this.parent.gamelist_cur);
+			} else {
+				return this.parent.lang.strings.stringify_error;
+			}
+		},
+		delimited: function(e) {
+			var that = this;
+			var sep = (e) ? e : "	";
+			var t = this.parent.lang.columns.name+sep+this.parent.lang.columns.platform+sep+this.parent.lang.columns.size+sep+this.parent.lang.columns.date+"\n";
+			$.each(this.parent.gamelist_cur, function(a,b) {
+			  t += b.title+sep+that.parent.safeGuessSystem(b.platform)+sep+b.size+sep+b.date+"\n";
+			})
+			return t;
+		}
 	}
 };
 repod.muh_games.init();
