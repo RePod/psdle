@@ -25,7 +25,7 @@ repod.muh_games = {
 			lastsort_r: false,
 			language: window.location.href.toString().match("\/([a-z]{2}\-[a-z]{2})\/")[1]
 		};
-		this.lang = (this.config.language in this.lang) ? this.lang[this.config.language] : "en-us";
+		this.lang = (this.config.language in this.lang) ? this.lang[this.config.language] : this.lang["en-us"];
 		this.injectCSS();
 		this.genDisplay();
 		this.startTimer();
