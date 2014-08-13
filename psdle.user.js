@@ -12,6 +12,9 @@
 var repod = {};
 repod.muh_games = {
 	gamelist: [],
+	lang: {
+		"en-us":{"startup":"Waiting on page to load.","columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"avatar":"Avatars","demo":"Demos","unlock":"Unlocks","pass":"Passes","pack":"Packs","theme":"Themes","page":"Page"},"regex":{"avatar":" Avatar$","demo":" Demo$","unlock":" Unlock$","pass":" Pass$","pack":" Pack$","theme":" Theme$"}	}
+	}, 
 	init: function() {
 		this.config = {
 			totalgames: 0,
@@ -19,8 +22,10 @@ repod.muh_games = {
 			timerID: 0,
 			delay: 3000,
 			lastsort: "",
-			lastsort_r: false
+			lastsort_r: false,
+			language: window.location.href.toString().match("\/([a-z]{2}\-[a-z]{2})\/")[1]
 		};
+		this.lang = (this.config.language in this.lang) ? this.lang[this.config.language] : "en-us";
 		this.injectCSS();
 		this.genDisplay();
 		this.startTimer();
@@ -28,7 +33,7 @@ repod.muh_games = {
 	},
 	parsePage: function() {
 		var that = this;
-		this.config.totalgames = parseInt($(".statsText").text().match(/(\d+)/g).pop())
+		this.config.totalgames = parseInt($(".statsText").text().match(/(\d+)/g).pop());
 		if ($(".gridViewportPaneWrapper").html() !== this.config.past) {
 			this.config.past = $(".gridViewportPaneWrapper").html();
 			$("#psdle_status").text((this.gamelist.length/24+1)+" / "+Math.ceil(this.config.totalgames/24));
@@ -65,13 +70,13 @@ repod.muh_games = {
 	},
 	genDisplay:function() {
 		$("body").append("<div id='muh_games_container' />");
-		$("#muh_games_container").append("<div id='sub_container'><span style='display:inline-block;font-size:300%;font-weight:bold'>psdle</span><br /><div id='psdle_progressbar'><div id='psdle_bar'>&nbsp;</div></div><br /><span id='psdle_status'>Waiting on page to load.</span></div>");
+		$("#muh_games_container").append("<div id='sub_container'><span style='display:inline-block;font-size:300%;font-weight:bold'>psdle</span><br /><div id='psdle_progressbar'><div id='psdle_bar'>&nbsp;</div></div><br /><span id='psdle_status'>"+this.lang.startup+"</span></div>");
 		$("#muh_games_container").slideDown('slow');
 		return 1;
 	},
 	genTable: function() {
 		$("#sub_container").html(this.genSearchOptions());
-		$("#sub_container").append("<table id='muh_table' style='display:inline-block;text-align:left'><thead><tr><th>Icon</th><th id='sort_name'>Name</th><th title='Approximate, check store page for all supported platforms.'>Platform</th><th id='sort_size'>Size</th><th id='sort_date'>Date</th></tr></thead><tbody>"+this.genTableContents()+"</tbody></table>");
+		$("#sub_container").append("<table id='muh_table' style='display:inline-block;text-align:left'><thead><tr><th>"+this.lang.columns.icon+"</th><th id='sort_name'>"+this.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+this.lang.columns.platform+"</th><th id='sort_size'>"+this.lang.columns.size+"</th><th id='sort_date'>"+this.lang.columns.date+"</th></tr></thead><tbody>"+this.genTableContents()+"</tbody></table>");
 		this.sortGamelist("#sort_date");
 		return 1;
 	},
@@ -88,15 +93,15 @@ repod.muh_games = {
 			if ($.inArray(sys,safesys) > -1) { 
 				//Valid system.
 				var a = true; var t = val.title;
-				if ($("#filter_avatar").hasClass("toggled_off") && / Avatar$/i.test(t)) a = false; 
-				if ($("#filter_demo").hasClass("toggled_off") && / Demo$/i.test(t)) a = false;
-				if ($("#filter_unlock").hasClass("toggled_off") && / Unlock$/i.test(t)) a = false;
-				if ($("#filter_pass").hasClass("toggled_off") && / Pass$/i.test(t)) a = false;
-				if ($("#filter_pack").hasClass("toggled_off") && / Pack$/i.test(t)) a = false;
-				if ($("#filter_theme").hasClass("toggled_off") && / Theme$/i.test(t)) a = false;
+				if ($("#filter_avatar").hasClass("toggled_off") && new RegExp(that.lang.regex.avatar,"i").test(t)) a = false; 
+				if ($("#filter_demo").hasClass("toggled_off") && new RegExp(that.lang.regex.demo,"i").test(t)) a = false;
+				if ($("#filter_unlock").hasClass("toggled_off") && new RegExp(that.lang.regex.unlock,"i").test(t)) a = false;
+				if ($("#filter_pass").hasClass("toggled_off") && new RegExp(that.lang.regex.pass,"i").test(t)) a = false;
+				if ($("#filter_pack").hasClass("toggled_off") && new RegExp(that.lang.regex.pack,"i").test(t)) a = false;
+				if ($("#filter_theme").hasClass("toggled_off") && new RegExp(that.lang.regex.theme,"i").test(t)) a = false;
 				if (a) {
 					var u = val.url;
-					temp += "<tr><td style='max-width:31px;max-height:31px;'><a target='_blank' href='"+u+"'><img title='Page #"+Math.ceil(val.id/24)+"' src='"+val.icon+"' class='psdle_game_icon' /></a></td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+t+"</a></td><td>"+sys+"</td><td>"+val.size+"</td><td>"+val.date+"</td></tr>";
+					temp += "<tr><td style='max-width:31px;max-height:31px;'><a target='_blank' href='"+u+"'><img title='"+that.lang.labels.page+" #"+Math.ceil(val.id/24)+"' src='"+val.icon+"' class='psdle_game_icon' /></a></td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+t+"</a></td><td>"+sys+"</td><td>"+val.size+"</td><td>"+val.date+"</td></tr>";
 				}
 			}
 		});
@@ -113,12 +118,12 @@ repod.muh_games = {
 					'<span id="system_psp">PSP</span>' +
 					'<span id="system_psv">PS Vita</span>' +
 					'<hr style="display:inline-block;width:20px">' +
-					'<span id="filter_avatar">Avatars</span>' +
-					'<span id="filter_demo">Demos</span>' +
-					'<span id="filter_unlock">Unlocks</span>' +
-					'<span id="filter_pass">Passes</span>' +
-					'<span id="filter_pack">Packs</span>' +
-					'<span id="filter_theme">Themes</span>' +
+					'<span id="filter_avatar">'+this.lang.labels.avatar+'</span>' +
+					'<span id="filter_demo">'+this.lang.labels.demo+'</span>' +
+					'<span id="filter_unlock">'+this.lang.labels.unlock+'</span>' +
+					'<span id="filter_pass">'+this.lang.labels.pass+'</span>' +
+					'<span id="filter_pack">'+this.lang.labels.pack+'</span>' +
+					'<span id="filter_theme">'+this.lang.labels.theme+'</span>' +
 					//"<br /><input type='text' id='psdle_search_text' placeholder='Search by game title (/regex/mod)' title='Non-regex searches are case-insensitive, regex searches can toggle.'/>"+
 					'</div>';
 		return temp;
