@@ -33,7 +33,7 @@ What Needs To Be Done
 * Possibly make the parsing process more detailed?
 * In-depth information gathering (i.e. if system filtering is vague such as PS1 games marked for PSP)
 * Exporting options: database delimiters?
-* Make it translatable
+* **Translations!** Language code ("en-us") and JSON format required. See source or contact me.
 
 What Cannot Be Done
 =====
