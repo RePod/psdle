@@ -68,3 +68,10 @@ I put it on GitHub for a reason, feel free to view the ~~horribly effective~~ co
 If and when I get pull requests I'll let them sizzle and look through them while allowing the "community" to as well.
 
 If authentication details were left around openly on the download list page I would take my concerns elsewhere.
+
+License
+=====
+MIT, have fun.
+
+**PSDLE is not sponsored, endorsed, or created by Sony, SNEI, SCEA, SCEE, SCEI, or affiliates.**
+**Third-party content (icons, names) re-rendered by PSDLE is provided from the download list.**
