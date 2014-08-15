@@ -33,7 +33,7 @@
 
 <p>Improving everyone's favorite online download list, one loop at a time.</p>
 
-<p>Doubtful? Have some in-action screenshots:<br><a href="http://i.imgur.com/hFIw450.png">PS4 games</a> Example: All Plus offerings.<br><a href="http://i.imgur.com/1Iz43kd.png">PS3 games, no unlocks or passes</a> Example: DS3 has an online pass, DDU has an unlock.<br><a href="http://i.imgur.com/WekNUVc.png">PS3+V games</a> Example: Plus offerings for PS3+V.<br><a href="http://i.imgur.com/ta3YOO5.png">Sorting</a> Example: Ordering alphabetically instead of date.</p>
+<p>Doubtful? Have some in-action screenshots: (outdated)<br><a href="http://i.imgur.com/hFIw450.png">PS4 games</a> Example: All Plus offerings.<br><a href="http://i.imgur.com/1Iz43kd.png">PS3 games, no unlocks or passes</a> Example: DS3 has an online pass, DDU has an unlock.<br><a href="http://i.imgur.com/WekNUVc.png">PS3+V games</a> Example: Plus offerings for PS3+V.<br><a href="http://i.imgur.com/ta3YOO5.png">Sorting</a> Example: Ordering alphabetically instead of date.</p>
 
 <h1>
 <a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h1>
@@ -59,9 +59,6 @@ If you get an error involving strict MIME checking, run the URL through somethin
 
 <ul>
 <li>Improve appearance</li>
-<li>Possibly make the parsing process more detailed?</li>
-<li>In-depth information gathering (i.e. if system filtering is vague such as PS1 games marked for PSP)</li>
-<li>Exporting options: database delimiters?</li>
 <li>
 <strong>Translations!</strong> Language code ("en-us") and JSON format required. See source or contact me.</li>
 </ul><h1>
@@ -75,19 +72,26 @@ If you get an error involving strict MIME checking, run the URL through somethin
 <h3>
 <a name="why-does-it-take-so-long-to-parse" class="anchor" href="#why-does-it-take-so-long-to-parse"><span class="octicon octicon-link"></span></a>Why does it take so long to parse?</h3>
 
-<p>PSDLE works by parsing each page of the download list one at a time with a delay inbetween. Currently a timeout of 3 seconds seems to hit the sweet spot of changing the page and detecting the content (on a reasonable connection and assuming the server isn't already dying).
-This may change in the future.</p>
+<p>PSDLE works by parsing each page of the download list one at a time with a delay inbetween. Currently a timeout of 3 seconds seems to hit the sweet spot of changing the page and detecting the content (on a reasonable connection and assuming the server isn't already dying).</p>
+
+<p>If using the API, PSDLE waits for all requests to finish before proceeding.</p>
+
+<p>This may change in the future.</p>
 
 <h3>
-<a name="why-are-thumbnailsicons-missing" class="anchor" href="#why-are-thumbnailsicons-missing"><span class="octicon octicon-link"></span></a>Why are thumbnails/icons missing?</h3>
+<a name="what-difference-does-using-the-api-make" class="anchor" href="#what-difference-does-using-the-api-make"><span class="octicon octicon-link"></span></a>What difference does using the API make?</h3>
 
-<p>Seems to be a cache issue, a noticable solution would be going to problematic pages then running PSDLE again.<br>
-Trust me, I noticed.</p>
+<p>Using the API forces PSDLE to look "behind the scenes" to find more accurate information than what the download list provides.
+This in turn allows it to offer different options (such as PS1/2 games) to filter by.</p>
+
+<p>Nobody except the end-user will not be held responsible for problems that arise from using the API.</p>
+
+<p><strong>API usage is currently early in its development so not everything may be detected properly.</strong></p>
 
 <h3>
 <a name="why-are-ps1-classicsetc-showing-as-psp-and-ps2-classics-as-ps3" class="anchor" href="#why-are-ps1-classicsetc-showing-as-psp-and-ps2-classics-as-ps3"><span class="octicon octicon-link"></span></a>Why are PS1 classics/etc showing as PSP and PS2 classics as PS3?</h3>
 
-<p>PSDLE currently operates with data it obtains solely from the download list. It is safer and cleaner to resolve like this instead of guessing. There are few methods being looked into to overcome these scenarios.</p>
+<p>Enable deep search/use API on PSDLE startup.</p>
 
 <h3>
 <a name="why-is-this-so-horrible" class="anchor" href="#why-is-this-so-horrible"><span class="octicon octicon-link"></span></a>Why is this so horrible?</h3>
