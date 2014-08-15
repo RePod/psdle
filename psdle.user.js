@@ -13,11 +13,29 @@ var repod = {};
 repod.muh_games = {
 	gamelist: [],
 	gamelist_cur: [],
-	lang_cache: {
-		"en-us":{"startup":"Waiting on page to load.","columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"export_view":"Export View","avatar":"Avatars","demo":"Demos","unlock":"Unlocks","pass":"Passes","pack":"Packs","theme":"Themes","page":"Page"},"regex":{"avatar":" Avatar$","demo":" Demo$","unlock":" Unlock$","pass":" Pass$","pack":" Pack$","theme":" Theme$"},"strings":{"delimiter":"Enter delimiter:","stringify_error":"Error: Browser does not have JSON.stringify."}},
-		"de-de":{"startup":"Seite wird geladen, bitte warten.","columns":{"icon":"Symbol","name":"Name","platform":"Plattform","size":"Größe","date":"Datum"},"labels":{"export_view":"Export View","avatar":"Spielerbilder","demo":"Demos","unlock":"Freischaltbares","pass":"Pässe","pack":"Bündel","theme":"Themen","page":"Seite"},"regex":{"avatar":" (Avatare?|Spielerbilder)$","demo":" Demo$","unlock":" Freigeschaltet$","pass":" Pass$","pack":" (Kollektion|Bündel|Sammlung)$","theme":" Thema$"}} // Provided by /u/_MrBubbles
-	},
 	lang: {},
+	lang_cache: {
+		"en": {
+			"def": "us",
+			"us": {"startup":"Waiting on page to load.","columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"export_view":"Export View","games":"Games","avatar":"Avatars","demo":"Demos","unlock":"Unlocks","pass":"Passes","pack":"Packs","theme":"Themes","addon":"Add-ons","app":"Applications","page":"Page"},"regex":{"avatar":" Avatar$","demo":" Demo$","unlock":" Unlock$","pass":" Pass$","pack":" Pack$","theme":" Theme$"},"strings":{"delimiter":"Enter delimiter:","stringify_error":"Error: Browser does not have JSON.stringify.","yes":"Yes","no":"No","use_api":"Use API for in-depth scanning? (Beta, buggy)"}}
+		},
+		"de": {
+			"def": "de",
+			"de": {"startup":"Seite wird geladen, bitte warten.","columns":{"icon":"Symbol","name":"Name","platform":"Plattform","size":"Größe","date":"Datum"},"labels":{"export_view":"Export View","avatar":"Spielerbilder","demo":"Demos","unlock":"Freischaltbares","pass":"Pässe","pack":"Bündel","theme":"Themen","page":"Seite"},"regex":{"avatar":" (Avatare?|Spielerbilder)$","demo":" Demo$","unlock":" Freigeschaltet$","pass":" Pass$","pack":" (Kollektion|Bündel|Sammlung)$","theme":" Thema$"}} // Provided by /u/_MrBubbles
+		}
+	},
+	determineLanguage: function(e) {
+		e = e.split("-");
+		if (e[0] in lang_cache) {
+			if (e[1] in lang_cache[e[0]]) {
+				return lang_cache[e[0]][e[1]];
+			} else {
+				return lang_cache[e[0]][lang_cache[e[0]].def];
+			}
+		} else {
+			return lang_cache.en.us;
+		}
+	},
 	init: function() {
 		this.config = {
 			totalgames: 0,
@@ -26,22 +44,28 @@ repod.muh_games = {
 			delay: 3000,
 			lastsort: "",
 			lastsort_r: false,
-			language: window.location.href.match(/\/([a-z]{2}\-(?:[a-z]{4}-)?[a-z]{2})\//i)[1]
+			language: window.location.href.match(/\/([a-z]{2}\-(?:[a-z]{4}-)?[a-z]{2})\//i)[1],
+			deep_search: false,
+			deep_waiting: 0
 		};
-		this.lang = this.lang_cache["en-us"]; if (this.config.language in this.lang_cache) { $.extend(this.lang,this.lang_cache[this.config.language]); }
+		this.lang = this.lang_cache["en-us"]; $.extend(this.lang,determineLanguage[this.config.language]);
 		this.injectCSS();
 		this.genDisplay();
-		this.startTimer();
 		this.genExternal.parent = this;
 		return 1;
 	},
 	parsePage: function() {
 		var that = this;
-		this.config.totalgames = parseInt($(".statsText").text().match(/(\d+)/g).pop());
-		if ($(".gridViewportPaneWrapper").html() !== this.config.past) {
+		if (this.gamelist.length >= this.config.totalgames) {
+			if (this.config.deep_waiting == 0) {
+				clearInterval(this.config.timerID);
+				this.genTable();
+			}
+		} else if ($(".gridViewportPaneWrapper").html() !== this.config.past) {
 			this.config.past = $(".gridViewportPaneWrapper").html();
 			$("#psdle_status").text((this.gamelist.length/24+1)+" / "+Math.ceil(this.config.totalgames/24));
 			$("li.cellDlItemGame").each(function() {
+				var id = (that.gamelist.length +1);
 				var info = $(this).find(".mediaInfo");
 				var gametitle = info.find(".gameTitle").text();
 				var size = info.find(".size").text().replace("|","");
@@ -50,19 +74,27 @@ repod.muh_games = {
 				var icon = $(this).find(".thumbPane").find("img").attr("src");
 				var url = $(this).find(".thumbPane").parent().attr("href");
 				info.find(".playableOn").children("a").each(function() { platform.push($(this).text()) });
-				that.gamelist.push({id:(that.gamelist.length +1),title:gametitle,size:size,platform:platform,date:date,url:url,icon:icon});
+				that.gamelist.push({id:id,title:gametitle,size:size,platform:platform,date:date,url:url,icon:icon});
+				if (that.config.deep_search && !!icon && !!icon.match(/(.+?)\/image\?.*$/)) {
+					that.config.deep_waiting++;
+					$.getJSON(icon.match(/(.+?)\/image\?.*$/).pop(),function(data) { that.parseDeep(id,data); });
+				}
 			});
 			$("#psdle_progressbar > #psdle_bar").animate({"width":Math.round((this.gamelist.length/24) / Math.ceil(this.config.totalgames/24) * 100)+"%"});
 			if (this.gamelist.length >= this.config.totalgames) {
-				clearInterval(this.config.timerID);
-				this.genTable();
+				if (this.config.deep_waiting == 0) {
+					clearInterval(this.config.timerID);
+					this.genTable();
+				}
 			} else {
 				this.nextPage();
 			}
 		}
+		
 		return 1;
 	},
 	startTimer: function(delay) {
+		console.log("start timer called");
 		var that = this;
 		var delay = (delay) ? delay : this.config.delay;
 		this.config.timerID = setInterval(function(){that.parsePage();},delay);
@@ -72,13 +104,32 @@ repod.muh_games = {
 		$(".navLinkNext").trigger("click"); //Anonymous functions, please.
 		return 1;
 	},
-	genDisplay:function() {
-		$("body").append("<div id='muh_games_container' />");
-		$("#muh_games_container").append("<div id='sub_container'><span style='display:inline-block;font-size:300%;font-weight:bold'>psdle</span><br /><div id='psdle_progressbar'><div id='psdle_bar'>&nbsp;</div></div><br /><span id='psdle_status'>"+this.lang.startup+"</span></div>");
-		$("#muh_games_container").slideDown('slow');
+	genDisplay:function(mode) {
+		var that = this;
+		if (!$("#muh_games_container").length) { $("body").append("<div id='muh_games_container' />"); }
+		$("#muh_games_container").slideUp('slow', function() {
+			a = "<div id='sub_container'><span style='display:inline-block;font-size:300%;font-weight:bold'>psdle</span>";
+			if (!mode) {
+				$(document).on('click',".psdle_btn",function () { that.config.deep_search = ($(this).attr("id") == "yes") ? true : false; $(document).off('click',".psdle_btn"); that.genDisplay("progress"); });
+				a += "<br /><br />"+that.lang.strings.use_api+"<br /><span id='yes' class='psdle_btn'>"+that.lang.strings.yes+"</span> <span id='no' class='psdle_btn'>"+that.lang.strings.no+"</span></div>";
+			} else if (mode == "progress") {
+				a += "<br /><div id='psdle_progressbar'><div id='psdle_bar'>&nbsp;</div></div><br /><span id='psdle_status'>"+that.lang.startup+"</span>";
+				var t = 0;
+				$("li.cellDlItemGame:even").each(function() {
+					$("html, body").animate({ scrollTop: $(this).offset().top }, "slow").promise().done(function() {
+						that.config.totalgames = parseInt($(".statsText").text().match(/(\d+)/g).pop());
+						t++;
+						t == $("li.cellDlItemGame:even").length && that.startTimer();
+					});
+				});
+			}
+			$("#muh_games_container").html(a);
+			$("#muh_games_container").slideDown('slow');
+		});
 		return 1;
 	},
 	genTable: function() {
+		$("#muh_games_container").css({"position":"absolute"});
 		$("#sub_container").html(this.genSearchOptions());
 		$("#sub_container").append("<table id='muh_table' style='display:inline-block;text-align:left'><thead><tr><th>"+this.lang.columns.icon+"</th><th id='sort_name'>"+this.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+this.lang.columns.platform+"</th><th id='sort_size'>"+this.lang.columns.size+"</th><th id='sort_date'>"+this.lang.columns.date+"</th></tr></thead><tbody>"+this.genTableContents()+"</tbody></table>");
 		this.sortGamelist("#sort_date");
@@ -98,12 +149,21 @@ repod.muh_games = {
 			if ($.inArray(sys,safesys) > -1) { 
 				//Valid system.
 				var a = true; var t = val.title;
-				if ($("#filter_avatar").hasClass("toggled_off") && new RegExp(that.lang.regex.avatar,"i").test(t)) a = false; 
-				if ($("#filter_demo").hasClass("toggled_off") && new RegExp(that.lang.regex.demo,"i").test(t)) a = false;
-				if ($("#filter_unlock").hasClass("toggled_off") && new RegExp(that.lang.regex.unlock,"i").test(t)) a = false;
-				if ($("#filter_pass").hasClass("toggled_off") && new RegExp(that.lang.regex.pass,"i").test(t)) a = false;
-				if ($("#filter_pack").hasClass("toggled_off") && new RegExp(that.lang.regex.pack,"i").test(t)) a = false;
-				if ($("#filter_theme").hasClass("toggled_off") && new RegExp(that.lang.regex.theme,"i").test(t)) a = false;
+				if (that.config.deep_search) {
+					if ($("#filter_avatar").hasClass("toggled_off") && val.deep_type == "avatar") a = false;
+					if ($("#filter_demo").hasClass("toggled_off") && val.deep_type == "demo") a = false;
+					if ($("#filter_add_on").hasClass("toggled_off") && val.deep_type == "add_on") a = false;
+					if ($("#filter_theme").hasClass("toggled_off") && val.deep_type == "theme") a = false;
+					if ($("#filter_app").hasClass("toggled_off") && val.deep_type == "application") a = false;
+					if ($("#filter_games").hasClass("toggled_off") && val.deep_type == "downloadable_game") a = false;
+				} else {
+					if ($("#filter_avatar").hasClass("toggled_off") && new RegExp(that.lang.regex.avatar,"i").test(t)) a = false; 
+					if ($("#filter_demo").hasClass("toggled_off") && new RegExp(that.lang.regex.demo,"i").test(t)) a = false;
+					if ($("#filter_unlock").hasClass("toggled_off") && new RegExp(that.lang.regex.unlock,"i").test(t)) a = false;
+					if ($("#filter_pass").hasClass("toggled_off") && new RegExp(that.lang.regex.pass,"i").test(t)) a = false;
+					if ($("#filter_pack").hasClass("toggled_off") && new RegExp(that.lang.regex.pack,"i").test(t)) a = false;
+					if ($("#filter_theme").hasClass("toggled_off") && new RegExp(that.lang.regex.theme,"i").test(t)) a = false;
+				}
 				if (a) {
 					var u = val.url;
 					temp += "<tr><td style='max-width:31px;max-height:31px;'><a target='_blank' href='"+u+"'><img title='"+that.lang.labels.page+" #"+Math.ceil(val.id/24)+"' src='"+val.icon+"' class='psdle_game_icon' /></a></td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+t+"</a></td><td>"+sys+"</td><td>"+val.size+"</td><td>"+val.date+"</td></tr>";
@@ -121,18 +181,25 @@ repod.muh_games = {
 		$(document).on("click","span[id=export_view]", function() { that.displayOutput(); });
 		var temp = '<span id="search_options" style="text-align:center;">' +
 					'<span id="export_view">'+this.lang.labels.export_view+'</span>' +
-					'<hr style="display:inline-block;width:20px">' +
-					'<span id="system_ps3">PS3</span>' +
+					'<hr style="display:inline-block;width:20px">';
+		if (this.config.deep_search) { temp += '<span id="system_ps1">PS1</span><span id="system_ps2">PS2</span>'; }
+		temp += 	'<span id="system_ps3">PS3</span>' +
 					'<span id="system_ps4">PS4</span>' +
 					'<span id="system_psp">PSP</span>' +
 					'<span id="system_psv">PS Vita</span>' +
-					'<hr style="display:inline-block;width:20px">' +
-					'<span id="filter_avatar">'+this.lang.labels.avatar+'</span>' +
-					'<span id="filter_demo">'+this.lang.labels.demo+'</span>' +
-					'<span id="filter_unlock">'+this.lang.labels.unlock+'</span>' +
-					'<span id="filter_pass">'+this.lang.labels.pass+'</span>' +
-					'<span id="filter_pack">'+this.lang.labels.pack+'</span>' +
-					'<span id="filter_theme">'+this.lang.labels.theme+'</span>' +
+					'<hr style="display:inline-block;width:20px">';
+		if (this.config.deep_search) temp += '<span id="filter_games">'+this.lang.labels.games+'</span>';
+		temp +=		'<span id="filter_avatar">'+this.lang.labels.avatar+'</span>' +
+					'<span id="filter_demo">'+this.lang.labels.demo+'</span>';
+					if (this.config.deep_search) {
+						temp += '<span id="filter_add_on">'+this.lang.labels.addon+'</span>' +
+								'<span id="filter_app">'+this.lang.labels.app+'</span>' ;
+					} else {
+						temp += '<span id="filter_unlock">'+this.lang.labels.unlock+'</span>' +
+						'<span id="filter_pass">'+this.lang.labels.pass+'</span>' +
+						'<span id="filter_pack">'+this.lang.labels.pack+'</span>';
+					}
+					temp += '<span id="filter_theme">'+this.lang.labels.theme+'</span>' +
 					//"<br /><input type='text' id='psdle_search_text' placeholder='Search by game title (/regex/mod)' title='Non-regex searches are case-insensitive, regex searches can toggle.'/>"+
 					'</span><br />';
 		return temp;
@@ -180,7 +247,7 @@ repod.muh_games = {
 	},
 	safeGuessSystem: function(e) {
 		//Quick, dirty, and easy.
-		var sys = e.join(" ");
+		var sys = e.join(" ").replace("™","");
 		if (sys == "PS3 PSP PS Vita" || sys == "PS3 PSP") { sys = "PSP"; }
 		if (sys == "PS3 PS Vita") { sys = "PS Vita"; }
 		if (sys == "PS3") { sys = sys; }
@@ -188,7 +255,7 @@ repod.muh_games = {
 		return sys;
 	},
 	injectCSS: function() {
-		var temp = "#muh_games_container { display:none;position:absolute;top:0px;bottom:0px;right:0px;left:0px;color:#000;z-index:9001;text-align:center } #sub_container { background-color:#fff; padding:20px; } #psdle_progressbar { overflow:hidden;display:inline-block;width:400px;height:16px;border:1px solid #999;margin:10px;border-radius:10px; } #psdle_bar { background-color:#ccc;width:0%;height:100%;border-radius:10px; }" + //Startup
+		var temp = "#muh_games_container { display:none;position:fixed;top:0px;bottom:0px;right:0px;left:0px;color:#000;z-index:9001;text-align:center } #sub_container { background-color:#fff; padding:20px; } #psdle_progressbar { overflow:hidden;display:inline-block;width:400px;height:16px;border:1px solid #999;margin:10px;border-radius:10px; } #psdle_bar { background-color:#2185f4;width:0%;height:100%;border-radius:10px; } .psdle_btn { cursor:pointer;border-radius:13px;background-color:#2185f4;color:#fff;padding:1px 15px;display:inline-block;margin-top:5px; }" + //Startup
 					"th[id^=sort] { cursor:pointer; } table,th,td{border:1px solid #999;border-collapse:collapse;} th {padding:5px;} td a.psdle_game_link {display:block;width:100%;height:100%;color:#000 !important;padding:3px;} th, tr:hover{background-color:#ccc;}" + //Table
 					"#psdle_search_text { margin:5px auto;padding:5px;font-size:large;width:100%; } span[id^=system_], span[id^=filter_], span#psdle_regen, span[id^=sort_], span[id=export_view] { border-radius:5px;border:1px solid #fff;font-weight:bold;text-transform:uppercase;font-size:small;color:#fff;padding:1px 3px;bottom:3px;display:inline-block;vertical-align:20%;background-color:#000;cursor:pointer; } .toggled_off { opacity:0.4; }" + //Search buttons
 					".psdle_game_icon { max-width:100%;vertical-align:middle }" + //Content icons
@@ -227,6 +294,24 @@ repod.muh_games = {
 			})
 			return t;
 		}
+	},
+	parseDeep: function(id,data) {
+		if (!!this.gamelist[id]) {
+			var sys, top;
+			if (data.default_sku.entitlements.length == 1) {
+				if (!!data.metadata.game_subtype) {
+					if (!!data.metadata.game_subtype.values[0].match(/(PS(?:1|2)) Classic/)) { sys = data.metadata.game_subtype.values[0].match(/(PS(?:1|2)) Classic/).pop(); }
+					else if (!!data.metadata.primary_classification.values[0].match(/(PS(?:1|2))_Classic/i)) { sys = data.metadata.secondary_classification.values[0].match(/(PS(?:1|2))_Classic/i).pop(); }
+					else if (!!data.metadata.secondary_classification.values[0].match(/(PS(?:1|2))_Classic/i)) { sys = data.metadata.secondary_classification.values[0].match(/(PS(?:1|2))_Classic/i).pop(); }
+				} else if (!!data.metadata.playable_platform) { sys = data.metadata.playable_platform.values; } 
+			}
+			//metadata.game_subtype.values[0] -- PS1/PS2 Classic/Demo/Character/Bundle
+			//top_category -- downloadable_game, avatar, demo, etc.
+			if (!!sys) this.gamelist[(id -1)].platform = [sys];
+		}
+		this.gamelist[(id -1)].deep_type = data.top_category;
+		this.config.deep_waiting--;
 	}
 };
 repod.muh_games.init();
+
