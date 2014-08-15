@@ -8,16 +8,15 @@ repod.muh_games = {
 	lang_cache: {
 		"en": {
 			"def": "us",
-			"us": {"startup":"Waiting on page to load.","columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"export_view":"Export View","games":"Games","avatar":"Avatars","demo":"Demos","unlock":"Unlocks","pass":"Passes","pack":"Packs","theme":"Themes","addon":"Add-ons","app":"Applications","page":"Page"},"regex":{"avatar":" Avatar$","demo":" Demo$","unlock":" Unlock$","pass":" Pass$","pack":" Pack$","theme":" Theme$"},"strings":{"delimiter":"Enter delimiter:","stringify_error":"Error: Browser does not have JSON.stringify.","yes":"Yes","no":"No","use_api":"Use API for in-depth scanning? (Beta, buggy)"}}
+			"us": {"startup":"Waiting on page to load.","columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"export_view":"Export View","games":"Games","avatar":"Avatars","demo":"Demos","unlock":"Unlocks","pass":"Passes","pack":"Packs","theme":"Themes","addon":"Add-ons","app":"Applications","unknown":"Unknown","page":"Page"},"regex":{"avatar":" Avatar$","demo":" Demo$","unlock":" Unlock$","pass":" Pass$","pack":" Pack$","theme":" Theme$"},"strings":{"delimiter":"Enter delimiter:","stringify_error":"Error: Browser does not have JSON.stringify.","yes":"Yes","no":"No","use_api":"Use API for in-depth scanning? (Beta, buggy)"}}
 		},
 		"de": {
 			"def": "de",
-			"de": {"startup":"Seite wird geladen, bitte warten.","columns":{"icon":"Symbol","name":"Name","platform":"Plattform","size":"Größe","date":"Datum"},"labels":{"export_view":"Export View","avatar":"Spielerbilder","demo":"Demos","unlock":"Freischaltbares","pass":"Pässe","pack":"Bündel","theme":"Themen","page":"Seite"},"regex":{"avatar":" (Avatare?|Spielerbilder)$","demo":" Demo$","unlock":" Freigeschaltet$","pass":" Pass$","pack":" (Kollektion|Bündel|Sammlung)$","theme":" Thema$"}} // Provided by /u/_MrBubbles
+			"de": {"startup":"Seite wird geladen, bitte warten.","columns":{"icon":"Symbol","name":"Name","platform":"Plattform","size":"Größe","date":"Datum"},"labels":{"export_view":"Exportiere Ansicht","games":"Spiele","avatar":"Spielerbilder","demo":"Demos","unlock":"Freischaltbares","pass":"Pässe","pack":"Bündel","theme":"Themen","addon":"Erweiterungen","app":"Anwendungen","page":"Seite"},"regex":{"avatar":" Spielerbilder$","demo":" Demo$","unlock":" Freigeschaltet$","pass":" Pass$","pack":" Bündel$","theme":" Theme$"},"strings":{"delimiter":"Geben sie ein Trennzeichen ein","stringify_error":"Fehler: Browser fehlt \"JSON.stringify\".","yes":"Ja","no":"Nein","use_api":"Möchten Sie die API für einen Tiefenscan benutzen? (Beta Version, möglicherweise treten Fehler auf)"}} // Provided by /u/_MrBubbles
 		}
 	},
 	determineLanguage: function(e) {
 		e = e.split("-");
-		console.log('!');
 		if (e[0] in this.lang_cache) {
 			if (e[1] in this.lang_cache[e[0]]) {
 				return this.lang_cache[e[0]][e[1]];
@@ -25,7 +24,7 @@ repod.muh_games = {
 				return this.lang_cache[e[0]][this.lang_cache[e[0]].def];
 			}
 		} else {
-			return this.lang_cache.en.us;
+			return 0; //this.lang_cache.en.us
 		}
 	},
 	init: function() {
@@ -40,7 +39,7 @@ repod.muh_games = {
 			deep_search: false,
 			deep_waiting: 0
 		};
-		this.lang = this.lang_cache.en.us; $.extend(this.lang,this.determineLanguage[this.config.language]);
+		this.lang = this.lang_cache.en.us; $.extend(this.lang,this.determineLanguage(this.config.language));
 		this.injectCSS();
 		this.genDisplay();
 		this.genExternal.parent = this;
@@ -74,7 +73,7 @@ repod.muh_games = {
 			});
 			$("#psdle_progressbar > #psdle_bar").animate({"width":Math.round((this.gamelist.length/24) / Math.ceil(this.config.totalgames/24) * 100)+"%"});
 			if (this.gamelist.length >= this.config.totalgames) {
-				if (this.config.deep_waiting == 0) {
+				if (this.config.deep_waiting <= 1) {
 					clearInterval(this.config.timerID);
 					this.genTable();
 				}
@@ -82,7 +81,6 @@ repod.muh_games = {
 				this.nextPage();
 			}
 		}
-		
 		return 1;
 	},
 	startTimer: function(delay) {
@@ -121,6 +119,7 @@ repod.muh_games = {
 		return 1;
 	},
 	genTable: function() {
+		clearInterval(this.config.timerID); //Just in case.
 		$("#muh_games_container").css({"position":"absolute"});
 		$("#sub_container").html(this.genSearchOptions());
 		$("#sub_container").append("<table id='muh_table' style='display:inline-block;text-align:left'><thead><tr><th>"+this.lang.columns.icon+"</th><th id='sort_name'>"+this.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+this.lang.columns.platform+"</th><th id='sort_size'>"+this.lang.columns.size+"</th><th id='sort_date'>"+this.lang.columns.date+"</th></tr></thead><tbody>"+this.genTableContents()+"</tbody></table>");
@@ -147,7 +146,8 @@ repod.muh_games = {
 					if ($("#filter_add_on").hasClass("toggled_off") && val.deep_type == "add_on") a = false;
 					if ($("#filter_theme").hasClass("toggled_off") && val.deep_type == "theme") a = false;
 					if ($("#filter_app").hasClass("toggled_off") && val.deep_type == "application") a = false;
-					if ($("#filter_games").hasClass("toggled_off") && val.deep_type == "downloadable_game") a = false;
+					if ($("#filter_games").hasClass("toggled_off") && val.deep_type == "downloadable_game") a = false
+					if ($("#filter_unknown").hasClass("toggled_off") && !val.deep_type) a = false;
 				} else {
 					if ($("#filter_avatar").hasClass("toggled_off") && new RegExp(that.lang.regex.avatar,"i").test(t)) a = false; 
 					if ($("#filter_demo").hasClass("toggled_off") && new RegExp(that.lang.regex.demo,"i").test(t)) a = false;
@@ -185,7 +185,8 @@ repod.muh_games = {
 					'<span id="filter_demo">'+this.lang.labels.demo+'</span>';
 					if (this.config.deep_search) {
 						temp += '<span id="filter_add_on">'+this.lang.labels.addon+'</span>' +
-								'<span id="filter_app">'+this.lang.labels.app+'</span>' ;
+								'<span id="filter_app">'+this.lang.labels.app+'</span>' +
+								'<span id="filter_unknown">'+this.lang.labels.unknown+'</span>';
 					} else {
 						temp += '<span id="filter_unlock">'+this.lang.labels.unlock+'</span>' +
 						'<span id="filter_pass">'+this.lang.labels.pass+'</span>' +
