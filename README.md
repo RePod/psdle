@@ -3,7 +3,7 @@ psdle
 
 Improving everyone's favorite online download list, one loop at a time.
 
-Doubtful? Have some in-action screenshots:    
+Doubtful? Have some in-action screenshots: (outdated)    
 [PS4 games](http://i.imgur.com/hFIw450.png) Example: All Plus offerings.    
 [PS3 games, no unlocks or passes](http://i.imgur.com/1Iz43kd.png) Example: DS3 has an online pass, DDU has an unlock.    
 [PS3+V games](http://i.imgur.com/WekNUVc.png) Example: Plus offerings for PS3+V.    
@@ -30,9 +30,6 @@ If you get an error involving strict MIME checking, run the URL through somethin
 What Needs To Be Done
 =====
 * Improve appearance
-* Possibly make the parsing process more detailed?
-* In-depth information gathering (i.e. if system filtering is vague such as PS1 games marked for PSP)
-* Exporting options: database delimiters?
 * **Translations!** Language code ("en-us") and JSON format required. See source or contact me.
 
 What Cannot Be Done
@@ -43,14 +40,21 @@ Potentially Asked Questions
 =====
 ###Why does it take so long to parse?
 PSDLE works by parsing each page of the download list one at a time with a delay inbetween. Currently a timeout of 3 seconds seems to hit the sweet spot of changing the page and detecting the content (on a reasonable connection and assuming the server isn't already dying).
+
+If using the API, PSDLE waits for all requests to finish before proceeding.
+
 This may change in the future.
 
-###Why are thumbnails/icons missing?
-Seems to be a cache issue, a noticable solution would be going to problematic pages then running PSDLE again.    
-Trust me, I noticed.
+###What difference does using the API make?
+Using the API forces PSDLE to look "behind the scenes" to find more accurate information than what the download list provides.
+This in turn allows it to offer different options (such as PS1/2 games) to filter by.
+
+Nobody except the end-user will not be held responsible for problems that arise from using the API.
+
+**API usage is currently early in its development so not everything may be detected properly.**
 
 ###Why are PS1 classics/etc showing as PSP and PS2 classics as PS3?
-PSDLE currently operates with data it obtains solely from the download list. It is safer and cleaner to resolve like this instead of guessing. There are few methods being looked into to overcome these scenarios.
+Enable deep search/use API on PSDLE startup.
 
 ###Why is this so horrible?
 At the time of writing a concept version is available simply showing off what can be done.    
