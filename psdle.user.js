@@ -26,14 +26,15 @@ repod.muh_games = {
 	},
 	determineLanguage: function(e) {
 		e = e.split("-");
-		if (e[0] in lang_cache) {
-			if (e[1] in lang_cache[e[0]]) {
-				return lang_cache[e[0]][e[1]];
+		console.log('!');
+		if (e[0] in this.lang_cache) {
+			if (e[1] in this.lang_cache[e[0]]) {
+				return this.lang_cache[e[0]][e[1]];
 			} else {
-				return lang_cache[e[0]][lang_cache[e[0]].def];
+				return this.lang_cache[e[0]][this.lang_cache[e[0]].def];
 			}
 		} else {
-			return lang_cache.en.us;
+			return this.lang_cache.en.us;
 		}
 	},
 	init: function() {
@@ -48,7 +49,7 @@ repod.muh_games = {
 			deep_search: false,
 			deep_waiting: 0
 		};
-		this.lang = this.lang_cache["en-us"]; $.extend(this.lang,determineLanguage[this.config.language]);
+		this.lang = this.lang_cache.en.us; $.extend(this.lang,this.determineLanguage[this.config.language]);
 		this.injectCSS();
 		this.genDisplay();
 		this.genExternal.parent = this;
@@ -314,4 +315,3 @@ repod.muh_games = {
 	}
 };
 repod.muh_games.init();
-
