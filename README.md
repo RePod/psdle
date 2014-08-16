@@ -34,42 +34,42 @@ What Cannot Be Done
 
 Potentially Asked Questions
 =====
-###Why does it take so long to parse?
+#####Why does it take so long to parse?
 PSDLE works by parsing each page of the download list one at a time with a delay inbetween. Currently a timeout of 3 seconds seems to hit the sweet spot of changing the page and detecting the content (on a reasonable connection and assuming the server isn't already dying).
 
 If using the API, PSDLE waits for all requests to finish before proceeding.
 
 This may change in the future.
 
-###What difference does using the API make?
+#####What difference does using the API make?
 Using the API forces PSDLE to look "behind the scenes" to find more accurate information than what the download list provides.
 This in turn allows it to offer different options (such as PS1/2 games) to filter by.
 
 Nobody except the end-user will not be held responsible for problems that arise from using the API.
 
-**API usage is currently early in its development so not everything may be detected properly.**
+API usage is currently early in its development so not everything may be detected properly.
 
-###Why are PS1 classics/etc showing as PSP and PS2 classics as PS3?
+#####Why are PS1 classics/etc showing as PSP and PS2 classics as PS3?
 Enable deep search/use API on PSDLE startup.
 
-###How can I exclude results that aren't touched by the system or tag filters?
+#####How can I exclude results that aren't touched by the system or tag filters?
 In the search box make a regular expression to match what you want to exclude then attach /d as a mod.
 
 For instance, /Avatar/id will exclude every instance of "Avatar" instead of only showing them. (/i is case in-sensitive)
 
 If the box turns red when the search is executed, /d is working as it should.
 
-###Why is this so horrible?
+#####Why is this so horrible?
 At the time of writing a concept version is available simply showing off what can be done.    
 Feel free to fork and submit pull requests.
 
-###Why is this so good?
+#####Why is this so good?
 I ask myself that every time I wake up.
 
-###Does this work in any browser/my toaster's web browser?
+#####Does this work in any browser/my toaster's web browser?
 Probably, as long as it allows local Javascript execution.
 
-###Is this safe or a ploy to phish account details?
+#####Is this safe or a ploy to phish account details?
 **Yes it is safe, no it is not for phishing account details.**    
 I put it on GitHub for a reason, feel free to view the ~~horribly effective~~ code yourself and decide.    
 If and when I get pull requests I'll let them sizzle and look through them while allowing the "community" to as well.
