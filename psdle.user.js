@@ -166,7 +166,7 @@ repod.muh_games = {
 					a = false;
 					var regex = search.match(/^\/(.+?)\/([img])?$/);
 					if (regex) { 
-						if (RegExp((regex[1])?regex[1]:search,(regex[2])?regex[2]:"i").test(t)) {
+						if (RegExp((regex[1])?regex[1]:search,(regex[2])?regex[2]:"").test(t)) {
 							a = true; 
 						}
 					}
