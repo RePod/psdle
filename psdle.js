@@ -8,26 +8,54 @@ repod.muh_games = {
 	lang_cache: {
 		"en": {
 			"def": "us",
-			"us": {"startup":"Waiting on page to load.","columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"export_view":"Export View","games":"Games","avatar":"Avatars","demo":"Demos","unlock":"Unlocks","pass":"Passes","pack":"Packs","theme":"Themes","addon":"Add-ons","app":"Applications","unknown":"Unknown","page":"Page"},"strings":{"delimiter":"Enter delimiter:","stringify_error":"Error: Browser does not have JSON.stringify.","yes":"Yes","no":"No","use_api":"Use API for in-depth scanning? (Beta, buggy)","regex_search":"Search by game title (/regex/mod)"}}
+			"us": {"local":"English","startup":"Waiting on page to load.","columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"export_view":"Export View","games":"Games","avatar":"Avatars","demo":"Demos","unlock":"Unlocks","pass":"Passes","pack":"Packs","theme":"Themes","addon":"Add-ons","app":"Applications","unknown":"Unknown","page":"Page"},"strings":{"delimiter":"Enter delimiter:","stringify_error":"Error: Browser does not have JSON.stringify.","yes":"Yes","no":"No","use_api":"Use API for in-depth scanning? (Beta, buggy)","regex_search":"Search by game title (/regex/id)"}}
+		},
+		"es": {
+			"def": "mx",
+			"mx": {"local":"Español","startup":"Esperando en la página se cargue.","columns":{"icon":"Icono","name":"Nombre","platform":"Plataforma","size":"Tamaño","date":"Fecha"},"labels":{"export_view":"Exportar vista","games":"juegos","avatar":"avatares","demo":"población","unlock":"descubrir","pass":"adelantar","pack":"paquete","theme":"Temas","addon":"Complementos","app":"Aplicaciones","unknown":"Desconocido","page":"paje"},"strings":{"delimiter":"Ingrese delimitador:","stringify_error":"Error: Navegador no tiene JSON.stringify.","yes":"Sí","no":"No","use_api":"Utilice la API para la exploración en profundidad? (Beta, con errores)","regex_search":"Búsqueda por título del juego (/regex/id)"}} // Caaz, somebody.
 		},
 		"de": {
 			"def": "de",
-			"de": {"startup":"Seite wird geladen, bitte warten.","columns":{"icon":"Symbol","name":"Name","platform":"Plattform","size":"Größe","date":"Datum"},"labels":{"export_view":"Exportiere Ansicht","games":"Spiele","avatar":"Spielerbilder","demo":"Demos","unlock":"Freischaltbares","pass":"Pässe","pack":"Bündel","theme":"Themen","addon":"Erweiterungen","app":"Anwendungen","page":"Seite"},"strings":{"delimiter":"Geben sie ein Trennzeichen ein","stringify_error":"Fehler: Browser fehlt \"JSON.stringify\".","yes":"Ja","no":"Nein","use_api":"Möchten Sie die API für einen Tiefenscan benutzen? (Beta Version, möglicherweise treten Fehler auf)"}} // Provided by /u/_MrBubbles
+			"de": {"local":"Deutsch","startup":"Seite wird geladen, bitte warten.","columns":{"icon":"Symbol","name":"Name","platform":"Plattform","size":"Größe","date":"Datum"},"labels":{"export_view":"Exportiere Ansicht","games":"Spiele","avatar":"Spielerbilder","demo":"Demos","unlock":"Freischaltbares","pass":"Pässe","pack":"Bündel","theme":"Themen","addon":"Erweiterungen","app":"Anwendungen","page":"Seite"},"strings":{"delimiter":"Geben sie ein Trennzeichen ein","stringify_error":"Fehler: Browser fehlt \"JSON.stringify\".","yes":"Ja","no":"Nein","use_api":"Möchten Sie die API für einen Tiefenscan benutzen? (Beta Version, möglicherweise treten Fehler auf)"}} // Provided by /u/_MrBubbles
+		},
+		"ps": {
+			"def": "pi",
+			"pi": {"local":"Pirate","startup":"Ye be waitin on da page.","columns":{"icon":"Doubloon","name":"Title","platform":"Ship","size":"Boat","date":"Date"},"labels":{"export_view":"Compass","games":"Booty","avatar":"Shipmates","demo":"Plans","unlock":"Keys","pass":"Sails","pack":"Treasure Hoard","theme":"Paint","addon":"Cannons","app":"Galley","unknown":"Davey Jones' Locker","page":"Map"},"strings":{"delimiter":"Enter delimiter:","stringify_error":"The sea don't have a JSON.stringify.","yes":"Yargh","no":"Nay","use_api":"Use da API fer deep digging? (Beta, buggy)","regex_search":"Set a course for booty (/regex/id)"}}, //Arcon
+			"dz": {"local":"Dovahzul","startup":"Saraan fah deykel wah genun.","columns":{"icon":"Andiir","name":"For","platform":"Palaar","size":"Raaz","date":"Zahtiid"},"labels":{"export_view":"Sav Fahzon","games":"Kred","avatar":"Rahnunahst","demo":"Gor","unlock":"Bex","pass":"Rahn","pack":"Edrah","theme":"Niin","addon":"Malur","app":"Mii","unknown":"Vomindok","page":"Deykel"},"strings":{"delimiter":"Haav krenok:","stringify_error":"Tozein Hi dreh ni lost JSON.stringify","yes":"Geh","no":"Nid","use_api":"Nuft API fah ko rud tovit?  (Gor, lost diron)","regex_search":"Tovit naal kred tet (/qurnen/id)"}}, // Caaz
+			"ha": {"local":"H4k3r","startup":"G4th3ring rez0urc3s.","columns":{"icon":"1con","name":"H4ndle","platform":"P|a+f0rm","size":"S1z3","date":"D4te"},"labels":{"export_view":"D0x","games":"W4rez","avatar":"4va+ar","demo":"Freeware","unlock":"H4x","pass":"Pa55e5","pack":"Pax","theme":"R1cez","addon":"Add-0ns","app":"S0f+w4r3","unknown":"?","page":"P4g3"},"strings":{"delimiter":"5pli+ by:","stringify_error":"3rr0r: No JSON.stringify.","yes":"Y","no":"N","use_api":"D33p sc4n with API? (Beta, buggy)","regex_search":"grep (/regex/id)"}} //Caaz
 		}
 	},
-	determineLanguage: function(e) {
-		e = e.split("-");
+	determineLanguage: function(e,f) {
+		e = (e) ? e.split("-") : this.config.language.split("-");
+		if (f == true) { this.lang = {}; $.extend(this.lang,this.lang_cache.en.us); }
 		if (e[0] in this.lang_cache) {
 			if (e[1] in this.lang_cache[e[0]]) {
-				return this.lang_cache[e[0]][e[1]];
+				if (f == true) { $.extend(this.lang,this.lang_cache[e[0]][e[1]]); }
+				return e[0]+"-"+e[1];
 			} else {
-				return this.lang_cache[e[0]][this.lang_cache[e[0]].def];
+				if (f == true) { $.extend(this.lang,this.lang_cache[e[0]][this.lang_cache[e[0]].def]); }
+				return e[0]+"-"+this.lang_cache[e[0]].def;
 			}
 		} else {
-			return 0; //this.lang_cache.en.us
+			return "en-us";
 		}
 	},
+	generateLangBox: function(e) {
+		var temp = "<select>";
+		e = (e) ? this.determineLanguage(e) : this.determineLanguage();
+		for (var i in this.lang_cache) {
+			for (var h in this.lang_cache[i]) {
+				if (!!this.lang_cache[i][h].local) {
+					var a = (e == i+"-"+h) ? "selected='selected'" : "";
+					temp += "<option "+a+" value='"+i+"-"+h+"'>"+this.lang_cache[i][h].local+" ["+i+"-"+h+"]</option>";
+				}
+			}
+		}
+		temp += "</select>";
+		return temp;
+	},
 	init: function() {
+		var that = this;
 		this.config = {
 			totalgames: 1,
 			past: "",
@@ -41,8 +69,10 @@ repod.muh_games = {
 			api_url: "",
 			last_search: ""
 		};
-		this.lang = this.lang_cache.en.us; $.extend(this.lang,this.determineLanguage(this.config.language));
+		this.determineLanguage(this.config.language,true);
 		this.injectCSS();
+		$(document).on('change', "#sub_container > select", function() { that.config.language = $(this).val(); that.determineLanguage($(this).val(),true); that.genDisplay(); });
+		$(document).on('click',".psdle_btn",function () { that.config.deep_search = ($(this).attr("id") == "yes") ? true : false; $(document).off('click',".psdle_btn"); that.genDisplay("progress"); });
 		this.genDisplay();
 		this.exportTable.parent = this;
 		return 1;
@@ -86,7 +116,6 @@ repod.muh_games = {
 		return 1;
 	},
 	startTimer: function(delay) {
-		console.log("start timer called");
 		var that = this;
 		var delay = (delay) ? delay : this.config.delay;
 		this.config.timerID = setInterval(function(){that.parsePage();},delay);
@@ -102,9 +131,9 @@ repod.muh_games = {
 		$("#muh_games_container").slideUp('slow', function() {
 			a = "<div id='sub_container'><span style='display:inline-block;font-size:300%;font-weight:bold'>psdle</span>";
 			if (!mode) {
-				$(document).on('click',".psdle_btn",function () { that.config.deep_search = ($(this).attr("id") == "yes") ? true : false; $(document).off('click',".psdle_btn"); that.genDisplay("progress"); });
-				a += "<br /><br />"+that.lang.strings.use_api+"<br /><span id='yes' class='psdle_btn'>"+that.lang.strings.yes+"</span> <span id='no' class='psdle_btn'>"+that.lang.strings.no+"</span></div>";
+				a += "<br /><br />"+that.lang.strings.use_api+"<br /><span id='yes' class='psdle_btn'>"+that.lang.strings.yes+"</span> <span id='no' class='psdle_btn'>"+that.lang.strings.no+"</span><br />"+that.generateLangBox()+"</div>";
 			} else if (mode == "progress") {
+				$("#sub_container > select").off("change"); $(".psdle_btn").off("click");
 				a += "<br /><div id='psdle_progressbar'><div id='psdle_bar'>&nbsp;</div></div><br /><span id='psdle_status'>"+that.lang.startup+"</span>";
 				var t = 0;
 				$("li.cellDlItemGame:even").each(function() {
@@ -139,6 +168,7 @@ repod.muh_games = {
 		var safesys = this.safeSystemCheck();
 		this.gamelist_cur = [];
 		var search = (!!$("#psdle_search_text")) ? $("#psdle_search_text").val() : this.config.last_search;
+		$("#psdle_search_text").removeClass("negate_regex");
 		$.each(this.gamelist,function(index,val) {
 			var sys = that.safeGuessSystem(val.platform);
 			if ($.inArray(sys,safesys) > -1) { 
@@ -154,14 +184,11 @@ repod.muh_games = {
 					if ($("#filter_unknown").hasClass("toggled_off") && !val.deep_type) a = false;
 				}
 				if (a == true && search !== "") {
-					a = false;
-					var regex = search.match(/^\/(.+?)\/([img])?$/);
-					if (regex) { 
-						if (RegExp((regex[1])?regex[1]:search,(regex[2])?regex[2]:"").test(t)) {
-							a = true; 
-						}
-					}
-					else if (t.toLowerCase().indexOf(search.toLowerCase()) >= 0) { a = true; }
+					var regex = search.match(/^\/(.+?)\/([imgd]+)?$/i);
+					var a = (!!regex && !!regex[2] && regex[2].toLowerCase().indexOf("d") >= 0) ? true : false;
+					if (a) { $("#psdle_search_text").addClass("negate_regex"); regex[2] = regex[2].replace("d",""); }
+					if (!!regex) { if (RegExp((regex[1])?regex[1]:search,(regex[2])?regex[2]:"").test(t)) { a = !a; } }
+					else if (t.toLowerCase().indexOf(search.toLowerCase()) >= 0) { a = !a; }
 				}
 				if (a == true) {
 					var u = val.url;
@@ -253,11 +280,11 @@ repod.muh_games = {
 		return sys;
 	},
 	injectCSS: function() {
-		var temp = "#muh_games_container { display:none;position:fixed;top:0px;bottom:0px;right:0px;left:0px;color:#000;z-index:9001;text-align:center } #sub_container { background-color:#fff; padding:20px; } #psdle_progressbar { overflow:hidden;display:inline-block;width:400px;height:16px;border:1px solid #999;margin:10px;border-radius:10px; } #psdle_bar { background-color:#2185f4;width:0%;height:100%;border-radius:10px; } .psdle_btn { cursor:pointer;border-radius:13px;background-color:#2185f4;color:#fff;padding:1px 15px;display:inline-block;margin-top:5px; }" + //Startup
+		var temp = "#muh_games_container { display:none;position:fixed;top:0px;bottom:0px;right:0px;left:0px;color:#000;z-index:9001;text-align:center } #sub_container { background-color:#fff; padding:20px; } #psdle_progressbar { overflow:hidden;display:inline-block;width:400px;height:16px;border:1px solid #999;margin:10px;border-radius:10px; } #psdle_bar { background-color:#2185f4;width:0%;height:100%;border-radius:10px; } .psdle_btn { cursor:pointer;border-radius:13px;background-color:#2185f4;color:#fff;padding:1px 15px;display:inline-block;margin:5px auto; }" + //Startup
 					"th[id^=sort] { cursor:pointer; } table,th,td{border:1px solid #999;border-collapse:collapse;} th {padding:5px;} td a.psdle_game_link {display:block;width:100%;height:100%;color:#000 !important;padding:3px;} th, tr:hover{background-color:#ccc;}" + //Table
-					"#psdle_search_text { margin:5px auto;padding:5px;font-size:large;max-width:600px;width:100% } span[id^=system_], span[id^=filter_], span#psdle_regen, span[id^=sort_], span[id=export_view] { border-radius:5px;border:1px solid #fff;font-weight:bold;text-transform:uppercase;font-size:small;color:#fff;padding:1px 3px;bottom:3px;display:inline-block;vertical-align:20%;background-color:#000;cursor:pointer; } .toggled_off { opacity:0.4; }" + //Search buttons
+					"#psdle_search_text { margin:5px auto;padding:5px;font-size:large;max-width:600px;width:100% } .negate_regex { background-color:#FF8080;color:#fff; } span[id^=system_], span[id^=filter_], span#psdle_regen, span[id^=sort_], span[id=export_view] { border-radius:5px;border:1px solid #fff;font-weight:bold;text-transform:uppercase;font-size:small;color:#fff;padding:1px 3px;bottom:3px;display:inline-block;vertical-align:20%;background-color:#000;cursor:pointer; } .toggled_off { opacity:0.4; }" + //Search buttons
 					".psdle_game_icon { max-width:100%;vertical-align:middle }" + //Content icons
-					".psdle_sort_asc { float:right; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 5px solid black; } .psdle_sort_desc { float:right; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid black; }";
+					".psdle_sort_asc { float:right; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 5px solid black; } .psdle_sort_desc { float:right; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid black; }"; //Sorting
 		$("<style type='text/css'>"+temp+"</style>").appendTo("head");
 		return 1;
 	},
