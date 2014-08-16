@@ -52,6 +52,13 @@ Nobody except the end-user will not be held responsible for problems that arise 
 ###Why are PS1 classics/etc showing as PSP and PS2 classics as PS3?
 Enable deep search/use API on PSDLE startup.
 
+###How can I exclude results that aren't touched by the system or tag filters?
+In the search box make a regular expression to match what you want to exclude then attach /d as a mod.
+
+For instance, /Avatar/id will exclude every instance of "Avatar" instead of only showing them. (/i is case in-sensitive)
+
+If the box turns red when the search is executed, /d is working as it should.
+
 ###Why is this so horrible?
 At the time of writing a concept version is available simply showing off what can be done.    
 Feel free to fork and submit pull requests.
