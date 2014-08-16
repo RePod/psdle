@@ -3,11 +3,7 @@ psdle
 
 Improving everyone's favorite online download list, one loop at a time.
 
-Doubtful? Have some in-action screenshots: (outdated)    
-[PS4 games](http://i.imgur.com/hFIw450.png) Example: All Plus offerings.    
-[PS3 games, no unlocks or passes](http://i.imgur.com/1Iz43kd.png) Example: DS3 has an online pass, DDU has an unlock.    
-[PS3+V games](http://i.imgur.com/WekNUVc.png) Example: Plus offerings for PS3+V.    
-[Sorting](http://i.imgur.com/ta3YOO5.png) Example: Ordering alphabetically instead of date.
+Doubtful? [Check out the Imgur album for some screenshots!](http://imgur.com/a/m5Rxw)
 
 Usage
 =====
