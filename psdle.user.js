@@ -25,7 +25,7 @@ repod.muh_games = {
 		},
 		"de": {
 			"def": "de",
-			"de": {"local":"Deutsch","startup":"Seite wird geladen, bitte warten.","columns":{"icon":"Symbol","name":"Name","platform":"Plattform","size":"Größe","date":"Datum"},"labels":{"export_view":"Exportiere Ansicht","games":"Spiele","avatar":"Spielerbilder","demo":"Demos","unlock":"Freischaltbares","pass":"Pässe","pack":"Bündel","theme":"Themen","addon":"Erweiterungen","app":"Anwendungen","page":"Seite"},"strings":{"delimiter":"Geben sie ein Trennzeichen ein","stringify_error":"Fehler: Browser fehlt \"JSON.stringify\".","yes":"Ja","no":"Nein","use_api":"Möchten Sie die API für einen Tiefenscan benutzen? (Beta Version, möglicherweise treten Fehler auf)"}} // Provided by /u/_MrBubbles
+			"de": {"local":"Deutsch","startup":"Seite wird geladen, bitte warten.","columns":{"icon":"Symbol","name":"Name","platform":"Plattform","size":"Größe","date":"Datum"},"labels":{"export_view":"Exportiere Ansicht","games":"Spiele","avatar":"Spielerbilder","demo":"Demos","unlock":"Freischaltbares","pass":"Pässe","pack":"Bündel","theme":"Themen","addon":"Erweiterungen","app":"Anwendungen","unknown": "Unbekannt","page":"Seite"},"strings":{"delimiter":"Geben sie ein Trennzeichen ein","stringify_error":"Fehler: Browser fehlt \"JSON.stringify\".","yes":"Ja","no":"Nein","use_api": "Möchten Sie mit Hilfe der API Tiefenscan ausführen? (Beta Version, möglicherweise treten Fehler auf)","regex_search": "Spiele titel eingeben für direkte suche (/regex/id)"}} // Provided by /u/_MrBubbles
 		},
 		"ps": {
 			"def": "pi",
@@ -138,7 +138,7 @@ repod.muh_games = {
 		var that = this;
 		if (!$("#muh_games_container").length) { $("body").append("<div id='muh_games_container' />"); }
 		$("#muh_games_container").slideUp('slow', function() {
-			a = "<div id='sub_container'><span style='display:inline-block;font-size:300%;font-weight:bold'>psdle</span>";
+			var a = "<div id='sub_container'><span style='display:inline-block;font-size:300%;font-weight:bold'>psdle</span>";
 			if (!mode) {
 				a += "<br /><br />"+that.lang.strings.use_api+"<br /><span id='yes' class='psdle_btn'>"+that.lang.strings.yes+"</span> <span id='no' class='psdle_btn'>"+that.lang.strings.no+"</span><br />"+that.generateLangBox()+"</div>";
 			} else if (mode == "progress") {
@@ -212,6 +212,7 @@ repod.muh_games = {
 	genSearchOptions: function() {
 		//TO-DO: Not this. Make scalable.
 		var that = this;
+		$(document).keypress(function(e) { if (e.which == 13 && $("#psdle_search_text").is(":focus")) { this.regenTable(); } });
 		$(document).on("click","span[id^=system_], span[id^=filter_]", function() { that.toggleButton($(this)); that.regenTable(); });
 		$(document).on("click","th[id^=sort_]", function(e) { that.sortGamelist($(this)); });
 		$(document).on("click","span[id=export_view]", function() { that.exportTable.display(); });
