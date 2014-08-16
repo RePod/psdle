@@ -69,8 +69,8 @@ If you get an error involving strict MIME checking, run the URL through somethin
 </ul><h1>
 <a name="potentially-asked-questions" class="anchor" href="#potentially-asked-questions"><span class="octicon octicon-link"></span></a>Potentially Asked Questions</h1>
 
-<h3>
-<a name="why-does-it-take-so-long-to-parse" class="anchor" href="#why-does-it-take-so-long-to-parse"><span class="octicon octicon-link"></span></a>Why does it take so long to parse?</h3>
+<h5>
+<a name="why-does-it-take-so-long-to-parse" class="anchor" href="#why-does-it-take-so-long-to-parse"><span class="octicon octicon-link"></span></a>Why does it take so long to parse?</h5>
 
 <p>PSDLE works by parsing each page of the download list one at a time with a delay inbetween. Currently a timeout of 3 seconds seems to hit the sweet spot of changing the page and detecting the content (on a reasonable connection and assuming the server isn't already dying).</p>
 
@@ -78,23 +78,23 @@ If you get an error involving strict MIME checking, run the URL through somethin
 
 <p>This may change in the future.</p>
 
-<h3>
-<a name="what-difference-does-using-the-api-make" class="anchor" href="#what-difference-does-using-the-api-make"><span class="octicon octicon-link"></span></a>What difference does using the API make?</h3>
+<h5>
+<a name="what-difference-does-using-the-api-make" class="anchor" href="#what-difference-does-using-the-api-make"><span class="octicon octicon-link"></span></a>What difference does using the API make?</h5>
 
 <p>Using the API forces PSDLE to look "behind the scenes" to find more accurate information than what the download list provides.
 This in turn allows it to offer different options (such as PS1/2 games) to filter by.</p>
 
 <p>Nobody except the end-user will not be held responsible for problems that arise from using the API.</p>
 
-<p><strong>API usage is currently early in its development so not everything may be detected properly.</strong></p>
+<p>API usage is currently early in its development so not everything may be detected properly.</p>
 
-<h3>
-<a name="why-are-ps1-classicsetc-showing-as-psp-and-ps2-classics-as-ps3" class="anchor" href="#why-are-ps1-classicsetc-showing-as-psp-and-ps2-classics-as-ps3"><span class="octicon octicon-link"></span></a>Why are PS1 classics/etc showing as PSP and PS2 classics as PS3?</h3>
+<h5>
+<a name="why-are-ps1-classicsetc-showing-as-psp-and-ps2-classics-as-ps3" class="anchor" href="#why-are-ps1-classicsetc-showing-as-psp-and-ps2-classics-as-ps3"><span class="octicon octicon-link"></span></a>Why are PS1 classics/etc showing as PSP and PS2 classics as PS3?</h5>
 
 <p>Enable deep search/use API on PSDLE startup.</p>
 
-<h3>
-<a name="how-can-i-exclude-results-that-arent-touched-by-the-system-or-tag-filters" class="anchor" href="#how-can-i-exclude-results-that-arent-touched-by-the-system-or-tag-filters"><span class="octicon octicon-link"></span></a>How can I exclude results that aren't touched by the system or tag filters?</h3>
+<h5>
+<a name="how-can-i-exclude-results-that-arent-touched-by-the-system-or-tag-filters" class="anchor" href="#how-can-i-exclude-results-that-arent-touched-by-the-system-or-tag-filters"><span class="octicon octicon-link"></span></a>How can I exclude results that aren't touched by the system or tag filters?</h5>
 
 <p>In the search box make a regular expression to match what you want to exclude then attach /d as a mod.</p>
 
@@ -102,24 +102,24 @@ This in turn allows it to offer different options (such as PS1/2 games) to filte
 
 <p>If the box turns red when the search is executed, /d is working as it should.</p>
 
-<h3>
-<a name="why-is-this-so-horrible" class="anchor" href="#why-is-this-so-horrible"><span class="octicon octicon-link"></span></a>Why is this so horrible?</h3>
+<h5>
+<a name="why-is-this-so-horrible" class="anchor" href="#why-is-this-so-horrible"><span class="octicon octicon-link"></span></a>Why is this so horrible?</h5>
 
 <p>At the time of writing a concept version is available simply showing off what can be done.<br>
 Feel free to fork and submit pull requests.</p>
 
-<h3>
-<a name="why-is-this-so-good" class="anchor" href="#why-is-this-so-good"><span class="octicon octicon-link"></span></a>Why is this so good?</h3>
+<h5>
+<a name="why-is-this-so-good" class="anchor" href="#why-is-this-so-good"><span class="octicon octicon-link"></span></a>Why is this so good?</h5>
 
 <p>I ask myself that every time I wake up.</p>
 
-<h3>
-<a name="does-this-work-in-any-browsermy-toasters-web-browser" class="anchor" href="#does-this-work-in-any-browsermy-toasters-web-browser"><span class="octicon octicon-link"></span></a>Does this work in any browser/my toaster's web browser?</h3>
+<h5>
+<a name="does-this-work-in-any-browsermy-toasters-web-browser" class="anchor" href="#does-this-work-in-any-browsermy-toasters-web-browser"><span class="octicon octicon-link"></span></a>Does this work in any browser/my toaster's web browser?</h5>
 
 <p>Probably, as long as it allows local Javascript execution.</p>
 
-<h3>
-<a name="is-this-safe-or-a-ploy-to-phish-account-details" class="anchor" href="#is-this-safe-or-a-ploy-to-phish-account-details"><span class="octicon octicon-link"></span></a>Is this safe or a ploy to phish account details?</h3>
+<h5>
+<a name="is-this-safe-or-a-ploy-to-phish-account-details" class="anchor" href="#is-this-safe-or-a-ploy-to-phish-account-details"><span class="octicon octicon-link"></span></a>Is this safe or a ploy to phish account details?</h5>
 
 <p><strong>Yes it is safe, no it is not for phishing account details.</strong><br>
 I put it on GitHub for a reason, feel free to view the <del>horribly effective</del> code yourself and decide.<br>
