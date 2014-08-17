@@ -7,8 +7,7 @@ Doubtful? [Check out the Imgur album for some screenshots!](http://imgur.com/a/m
 
 Usage
 =====
-**Users of Greasemonkey:** [Get the user script](https://repod.github.io/psdle/psdle.user.js) then go to the download list.    
-Compatibility with Greasemonkey variants is not guaranteed, yet.
+**Grease/Tamper/etcmonkey users:** [Get the user script](https://repod.github.io/psdle/psdle.user.js) then go to the download list.    
 
 **Everyone else:**
 
