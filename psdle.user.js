@@ -1,15 +1,15 @@
 // ==UserScript==
 // @author		RePod
-// @name        PSDLE for Greasemonkey
-// @description Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
-// @namespace   https://github.com/RePod/psdle
+// @name		PSDLE for Greasemonkey
+// @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
+// @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version     1.0
+// @version		1.0
 // @require		https://code.jquery.com/jquery-1.11.1.min.js
-// @include 	https://store.sonyentertainmentnetwork.com/*
+// @include		https://store.sonyentertainmentnetwork.com/*
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
 // @downloadURL	https://repod.github.io/psdle/psdle.user.js
-// @icon64URL	https://repod.github.io/psdle/logo/6_psdle_64px.png
+// @icon		https://repod.github.io/psdle/logo/6_psdle_64px.png
 // ==/UserScript==
 
 //See LICENSE file for licensing details, available in the "psdle" repository on GitHub. TL;DR: MIT, do what you want.
