@@ -1,4 +1,4 @@
-![psdle](../master/logo/4_psdle.png?raw=true)
+![psdle](logo/4_psdle.png?raw=true)
 =====
 
 Improving everyone's favorite online download list, one loop at a time.
