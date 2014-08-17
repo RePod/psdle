@@ -9,6 +9,7 @@
 // @include 	https://store.sonyentertainmentnetwork.com/*
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
 // @downloadURL	https://repod.github.io/psdle/psdle.user.js
+// @icon64URL	https://repod.github.io/psdle/logos/6_psdle_64px.png
 // ==/UserScript==
 
 //See LICENSE file for licensing details, available in the "psdle" repository on GitHub. TL;DR: MIT, do what you want.
