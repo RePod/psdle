@@ -129,9 +129,9 @@ repod.muh_games = {
 		var that = this;
 		if (!$("#muh_games_container").length) { $("body").append("<div id='muh_games_container' />"); }
 		$("#muh_games_container").slideUp('slow', function() {
-			var a = "<div id='sub_container'><span style='display:inline-block;font-size:300%;font-weight:bold'>psdle</span>";
+			var a = "<div id='sub_container'><img src='https://repod.github.io/psdle/logo/3_psdle_mini.png' style='display:inline-block;font-size:200%;font-weight:bold' alt='psdle' /></span>";
 			if (!mode) {
-				a += "<br /><br />"+that.lang.strings.use_api+"<br /><span id='yes' class='psdle_btn'>"+that.lang.strings.yes+"</span> <span id='no' class='psdle_btn'>"+that.lang.strings.no+"</span><br />"+that.generateLangBox()+"</div>";
+				a += "<br />"+that.lang.strings.use_api+"<br /><span id='yes' class='psdle_btn'>"+that.lang.strings.yes+"</span> <span id='no' class='psdle_btn'>"+that.lang.strings.no+"</span><br />"+that.generateLangBox()+"</div>";
 			} else if (mode == "progress") {
 				$("#sub_container > select").off("change"); $(".psdle_btn").off("click");
 				a += "<br /><div id='psdle_progressbar'><div id='psdle_bar'>&nbsp;</div></div><br /><span id='psdle_status'>"+that.lang.startup+"</span>";
