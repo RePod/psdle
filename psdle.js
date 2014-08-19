@@ -139,10 +139,9 @@ repod.muh_games = {
 				$("li.cellDlItemGame:even").each(function() {
 					$("html, body").animate({ scrollTop: $(this).offset().top }, "slow").promise().done(function() {
 						t++;
-						if (t == $("li.cellDlItemGame:even").length) {
-							$(".gridViewportPaneWrapper").promise().done(function() {
-								that.config.totalgames = parseInt($(".statsText").text().match(/(\d+)/g).pop()); that.startTimer();
-							});
+						if (t == $("li.cellDlItemGame:even").length) {	
+							that.config.totalgames = parseInt($(".statsText").text().match(/(\d+)/g).pop());
+							that.startTimer();
 						}
 					});
 				});
