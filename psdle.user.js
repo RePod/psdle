@@ -30,7 +30,7 @@ repod.muh_games = {
 		},
 		"de": {
 			"def": "de",
-			"de": {"local":"Deutsch","startup":"Seite wird geladen, bitte warten.","columns":{"icon":"Symbol","name":"Name","platform":"Plattform","size":"Größe","date":"Datum"},"labels":{"export_view":"Exportiere Ansicht","games":"Spiele","avatar":"Spielerbilder","demo":"Demos","unlock":"Freischaltbares","pass":"Pässe","pack":"Bündel","theme":"Themen","addon":"Erweiterungen","app":"Anwendungen","unknown": "Unbekannt","page":"Seite"},"strings":{"delimiter":"Geben sie ein Trennzeichen ein","stringify_error":"Fehler: Browser fehlt \"JSON.stringify\".","yes":"Ja","no":"Nein","use_api": "Möchten Sie mit Hilfe der API Tiefenscan ausführen? (Beta Version, möglicherweise treten Fehler auf)","regex_search": "Spiele titel eingeben für direkte suche (/regex/id)"}} // Provided by /u/_MrBubbles
+			"de": {"local":"Deutsch","startup":"Seite wird geladen, bitte warten.","columns":{"icon":"Symbol","name":"Name","platform":"Plattform","size":"Größe","date":"Datum"},"labels":{"export_view":"Exportiere Ansicht","games":"Spiele","avatar":"Spielerbilder","demo":"Demos","unlock":"Freischaltbares","pass":"Pässe","pack":"Bündel","theme":"Themen","addon":"Erweiterungen","app":"Anwendungen","unknown": "Unbekannt","page":"Seite"},"strings":{"delimiter":"Geben sie ein Trennzeichen ein","stringify_error":"Fehler: Browser fehlt \"JSON.stringify\".","yes":"Ja","no":"Nein","use_api": "Möchten Sie mit Hilfe der API einen Tiefenscan ausführen? (Beta Version, möglicherweise treten Fehler auf)","regex_search": "Spiele titel eingeben für direkte suche (/regex/id)"}} // Provided by /u/_MrBubbles
 		},
 		"ps": {
 			"def": "pi",
@@ -153,10 +153,8 @@ repod.muh_games = {
 				$("li.cellDlItemGame:even").each(function() {
 					$("html, body").animate({ scrollTop: $(this).offset().top }, "slow").promise().done(function() {
 						t++;
-						if (t == $("li.cellDlItemGame:even").length) {
-							$(".gridViewportPaneWrapper").promise().done(function() {
-								that.config.totalgames = parseInt($(".statsText").text().match(/(\d+)/g).pop()); that.startTimer();
-							});
+						if (t == $("li.cellDlItemGame:even").length) {	
+							that.config.totalgames = parseInt($(".statsText").text().match(/(\d+)/g).pop()); that.startTimer();
 						}
 					});
 				});
