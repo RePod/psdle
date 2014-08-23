@@ -97,7 +97,7 @@ repod.muh_games = {
 				var size = t.find(".size").text().replace("|","");
 				var platform = []; t.find(".playableOn > a").each(function() { platform.push($(this).text()) });
 				var date = t.find(".purchaseDate").text().replace("|","");
-				that.gamelist.push({id:id,title:gametitle,size:size,platform:platform,date:date,url:url,icon:icon});
+				that.gamelist.push({id:id,title:gametitle,size:size,platform:platform,date:date,url:url,icon:icon,deep_type:"unknown"});
 				if (that.config.deep_search && !!icon && !!icon.match(/(.+?)\/image\?.*$/)) {
 					that.config.deep_waiting++;
 					$.getJSON(icon.match(/(.+?)\/image\?.*$/).pop(),function(data) { that.parseDeep(id,data); });
