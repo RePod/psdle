@@ -26,6 +26,7 @@ What Needs To Be Done
 =====
 * Improve appearance
 * **Translations!** Language code ("en-us") and JSON format required. See source or contact me.
+* Make it faster! How? How indeed.
 
 What Cannot Be Done
 =====
@@ -61,12 +62,12 @@ Enable deep search/use API on PSDLE startup.
 #####How can I exclude results that aren't touched by the system or tag filters?
 In the search box make a regular expression to match what you want to exclude then attach /d as a mod.
 
-For instance, /Avatar/id will exclude every instance of "Avatar" instead of only showing them. (/i is case in-sensitive)
+For instance, /Avatar/id will exclude every instance of "Avatar" instead of only showing them. (/i is case-insensitive)
 
 If the box turns red when the search is executed, /d is working as it should.
 
 #####Why is this so horrible?
-At the time of writing a concept version is available simply showing off what can be done.    
+Functionally, PSDLE is complete. If you have suggestions make them known!   
 Feel free to fork and submit pull requests.
 
 #####Why is this so good?
