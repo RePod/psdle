@@ -137,9 +137,10 @@ repod.muh_games = {
 				a += "<br /><div id='psdle_progressbar'><div id='psdle_bar'>&nbsp;</div></div><br /><span id='psdle_status'>"+that.lang.startup+"</span>";
 				var t = 0;
 				$("li.cellDlItemGame:even").each(function() {
-					$("html, body").animate({ scrollTop: $(this).offset().top }, "slow").promise().done(function() {
+					$("html, body").animate({scrollTop: $(this).offset().top}, 200).promise().done(function() {
 						t++;
 						if (t == $("li.cellDlItemGame:even").length) {	
+							$('html, body').animate({scrollTop: 0}, 0);
 							that.config.totalgames = parseInt($(".statsText").text().match(/(\d+)/g).pop());
 							that.startTimer();
 						}
