@@ -4,15 +4,13 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		1.01
+// @version		1.02
 // @require		https://code.jquery.com/jquery-1.11.1.min.js
 // @include		https://store.sonyentertainmentnetwork.com/*
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
 // @downloadURL	https://repod.github.io/psdle/psdle.user.js
 // @icon		https://repod.github.io/psdle/logo/6_psdle_64px.png
 // ==/UserScript==
-
-//See LICENSE file for licensing details, available in the "psdle" repository on GitHub. TL;DR: MIT, do what you want.
 
 //See LICENSE file for licensing details, available in the "psdle" repository on GitHub. TL;DR: MIT, do what you want.
 
@@ -75,8 +73,7 @@ repod.muh_games = {
 		var that = this;
 		this.config = {
 			totalgames: 1,
-			past: "",
-			delay: 3000,
+			delay: 1000,
 			lastsort: "",
 			lastsort_r: false,
 			language: window.location.href.match(/\/([a-z]{2}\-(?:[a-z]{4}-)?[a-z]{2})\//i)[1],
@@ -96,12 +93,9 @@ repod.muh_games = {
 	parsePage: function() {
 		var that = this;
 		if (this.gamelist.length >= this.config.totalgames) {
-			if (this.config.deep_waiting <= 1) {
 				clearInterval(this.config.timerID);
 				this.genTable();
-			}
-		} else if ($(".gridViewportPaneWrapper").html() !== this.config.past) {
-			this.config.past = $(".gridViewportPaneWrapper").html();
+		} else if (parseInt($(".range").text().split("-")[0]) > this.gamelist.length) {
 			$("#psdle_status").text((this.gamelist.length/24+1)+" / "+Math.ceil(this.config.totalgames/24));
 			$("li.cellDlItemGame").each(function() {
 				var id = (that.gamelist.length +1);
