@@ -81,7 +81,7 @@ repod.muh_games = {
 		if (this.gamelist.length >= this.config.totalgames) {
 				clearInterval(this.config.timerID);
 				this.genTable();
-		} else if (parseInt($(".range").text().split("-")[0]) > this.gamelist.length) {
+		} else if (Number($(".range").text().split("-")[0]) > this.gamelist.length) {
 			$("#psdle_status").text((this.gamelist.length/24+1)+" / "+Math.ceil(this.config.totalgames/24));
 			$("li.cellDlItemGame").each(function() {
 				var id = (that.gamelist.length +1);
@@ -91,7 +91,7 @@ repod.muh_games = {
 				t = t.find(".mediaInfo");
 				var gametitle = t.find(".gameTitle").text();
 				var size = t.find(".size").text().replace("|","");
-				var platform = []; t.find(".playableOn > a").each(function() { platform.push($(this).text()) });
+				var platform = []; t.find(".playableOn > a").each(function() { platform.push($(this).text()); });
 				var date = t.find(".purchaseDate").text().replace("|","");
 				that.gamelist.push({id:id,title:gametitle,size:size,platform:platform,date:date,url:url,icon:icon,deep_type:"unknown"});
 				if (that.config.deep_search && !!icon && !!icon.match(/(.+?)\/image\?.*$/)) {
@@ -109,7 +109,6 @@ repod.muh_games = {
 				this.nextPage();
 			}
 		}
-		return 1;
 	},
 	startTimer: function(delay) {
 		var that = this;
@@ -118,8 +117,7 @@ repod.muh_games = {
 		return 1;
 	},
 	nextPage: function() {
-		$(".navLinkNext").trigger("click"); //Anonymous functions, please.
-		return 1;
+		$(".navLinkNext:first").click(); //Anonymous functions, please.
 	},
 	genDisplay:function(mode) {
 		var that = this;
@@ -137,7 +135,7 @@ repod.muh_games = {
 						t++;
 						if (t == $("li.cellDlItemGame:even").length) {	
 							$('html, body').animate({scrollTop: 0}, 0);
-							that.config.totalgames = parseInt($(".statsText").text().match(/(\d+)/g).pop());
+							that.config.totalgames = Number($(".statsText").text().match(/(\d+)/g).pop());
 							that.startTimer();
 						}
 					});
@@ -203,12 +201,12 @@ repod.muh_games = {
 					'<span id="export_view">'+this.lang.labels.export_view+'</span>' +
 					'<hr style="display:inline-block;width:20px">';
 		if (this.config.deep_search) { temp += '<span id="system_ps1">PS1</span><span id="system_ps2">PS2</span>'; }
-		temp += 	'<span id="system_ps3">PS3</span>' +
+		temp +=		'<span id="system_ps3">PS3</span>' +
 					'<span id="system_ps4">PS4</span>' +
 					'<span id="system_psp">PSP</span>' +
 					'<span id="system_psv">PS Vita</span>';
 		if (this.config.deep_search) {					
-		temp += 	'<hr style="display:inline-block;width:20px">' +
+		temp +=		'<hr style="display:inline-block;width:20px">' +
 					'<span id="filter_downloadable_game">'+this.lang.labels.games+'</span>' +
 					'<span id="filter_avatar">'+this.lang.labels.avatar+'</span>' +
 					'<span id="filter_demo">'+this.lang.labels.demo+'</span>'+
@@ -224,25 +222,25 @@ repod.muh_games = {
 	},
 	sortGamelist: function(e) {
 		var that = this;
-		var e = $(e).attr("id");
+		e = $(e).attr("id");
 		if (e == "sort_date") {
 			this.gamelist.sort(function (a, b) {
-				if (a.id > b.id) return 1;
-				if (a.id < b.id) return -1;
+				if (a.id > b.id) { return 1 };
+				if (a.id < b.id) { return -1 };
 				return 0;
 			});
 		}
 		if (e == "sort_name") {
 			this.gamelist.sort(function (a, b) {
-				if (a.title.toLocaleLowerCase() > b.title.toLocaleLowerCase()) return 1;
-				if (a.title.toLocaleLowerCase() < b.title.toLocaleLowerCase()) return -1;
+				if (a.title.toLocaleLowerCase() > b.title.toLocaleLowerCase()) { return 1; }
+				if (a.title.toLocaleLowerCase() < b.title.toLocaleLowerCase()) { return -1; }
 				return 0;
 			});	
 		}
 		if (e == "sort_size") {
 			this.gamelist.sort(function (a, b) {
-				if (that.returnKB(a.size) > that.returnKB(b.size)) return 1;
-				if (that.returnKB(a.size) < that.returnKB(b.size)) return -1;
+				if (that.returnKB(a.size) > that.returnKB(b.size)) { return 1; }
+				if (that.returnKB(a.size) < that.returnKB(b.size)) { return -1; }
 				return 0;
 			});
 		}
@@ -269,8 +267,6 @@ repod.muh_games = {
 		var sys = e.join(" ").replace("™","");
 		if (sys == "PS3 PSP PS Vita" || sys == "PS3 PSP") { sys = "PSP"; }
 		if (sys == "PS3 PS Vita") { sys = "PS Vita"; }
-		if (sys == "PS3") { sys = sys; }
-		if (sys == "PS4") { sys = sys; }
 		return sys;
 	},
 	injectCSS: function() {
@@ -313,7 +309,7 @@ repod.muh_games = {
 			var t = this.parent.lang.columns.name+sep+this.parent.lang.columns.platform+sep+this.parent.lang.columns.size+sep+this.parent.lang.columns.date+"\n";
 			$.each(this.parent.gamelist_cur, function(a,b) {
 			  t += b.title+sep+that.parent.safeGuessSystem(b.platform)+sep+b.size+sep+b.date+"\n";
-			})
+			});
 			return t;
 		}
 	},
@@ -329,7 +325,7 @@ repod.muh_games = {
 			}
 			//metadata.game_subtype.values[0] -- PS1/PS2 Classic/Demo/Character/Bundle
 			//top_category -- downloadable_game, avatar, demo, etc.
-			if (!!sys) this.gamelist[(id -1)].platform = [sys];
+			if (!!sys) { this.gamelist[(id -1)].platform = [sys]; }
 		}
 		this.gamelist[(id -1)].deep_type = data.top_category;
 		this.config.deep_waiting--;
