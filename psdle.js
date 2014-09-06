@@ -59,8 +59,7 @@ repod.muh_games = {
 		var that = this;
 		this.config = {
 			totalgames: 1,
-			past: "",
-			delay: 3000,
+			delay: 1000,
 			lastsort: "",
 			lastsort_r: false,
 			language: window.location.href.match(/\/([a-z]{2}\-(?:[a-z]{4}-)?[a-z]{2})\//i)[1],
@@ -80,12 +79,9 @@ repod.muh_games = {
 	parsePage: function() {
 		var that = this;
 		if (this.gamelist.length >= this.config.totalgames) {
-			if (this.config.deep_waiting <= 1) {
 				clearInterval(this.config.timerID);
 				this.genTable();
-			}
-		} else if ($(".gridViewportPaneWrapper").html() !== this.config.past) {
-			this.config.past = $(".gridViewportPaneWrapper").html();
+		} else if (parseInt($(".range").text().split("-")[0]) > this.gamelist.length) {
 			$("#psdle_status").text((this.gamelist.length/24+1)+" / "+Math.ceil(this.config.totalgames/24));
 			$("li.cellDlItemGame").each(function() {
 				var id = (that.gamelist.length +1);
