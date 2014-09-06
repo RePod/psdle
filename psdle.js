@@ -117,7 +117,15 @@ repod.muh_games = {
 		return 1;
 	},
 	nextPage: function() {
-		$(".navLinkNext:first").click(); //Anonymous functions, please.
+		//$(".navLinkNext:first").click(); //Anonymous functions, please.
+		triggerMouseEvent ( $('.navLinkNext').eq(0), "click");
+
+		function triggerMouseEvent (jNode, eventType) {
+			if (jNode  &&  jNode.length) {
+				var clickEvent  = new MouseEvent (eventType,{canBubble: true, cancelable: true});
+				jNode[0].dispatchEvent (clickEvent);
+			}
+		}
 	},
 	genDisplay:function(mode) {
 		var that = this;
@@ -194,7 +202,7 @@ repod.muh_games = {
 		var that = this;
 		$(document).keypress(function(e) { if (e.which == 13 && $("#psdle_search_text").is(":focus")) { that.regenTable(); } });
 		$(document).on("click","span[id^=system_], span[id^=filter_]", function() { that.toggleButton($(this)); });
-		$(document).on("click","th[id^=sort_]", function(e) { that.sortGamelist($(this)); });
+		$(document).on("click","th[id^=sort_]", function() { that.sortGamelist($(this)); });
 		$(document).on("click","span[id=export_view]", function() { that.exportTable.display(); });
 		$(document).on("blur", "#psdle_search_text", function() { that.regenTable(); });
 		var temp = '<span id="search_options" style="text-align:center;">' +
@@ -225,8 +233,8 @@ repod.muh_games = {
 		e = $(e).attr("id");
 		if (e == "sort_date") {
 			this.gamelist.sort(function (a, b) {
-				if (a.id > b.id) { return 1 };
-				if (a.id < b.id) { return -1 };
+				if (a.id > b.id) { return 1; }
+				if (a.id < b.id) { return -1; }
 				return 0;
 			});
 		}
