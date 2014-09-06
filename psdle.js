@@ -105,10 +105,10 @@ repod.muh_games = {
 			});
 			$("#psdle_progressbar > #psdle_bar").animate({"width":Math.round((this.gamelist.length/24) / Math.ceil(this.config.totalgames/24) * 100)+"%"});
 			if (this.gamelist.length >= this.config.totalgames) {
-				if (this.config.deep_waiting <= 1) {
+				//if (this.config.deep_waiting <= 1) {
 					clearInterval(this.config.timerID);
 					this.genTable();
-				}
+				//}
 			} else {
 				this.nextPage();
 			}
