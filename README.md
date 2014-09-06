@@ -3,11 +3,13 @@
 
 Improving everyone's favorite online download list, one loop at a time.
 
-Doubtful? [Check out the Imgur album for some screenshots!](http://imgur.com/a/m5Rxw)
+Doubtful? [Check out the Imgur album for some screenshots!](//imgur.com/a/m5Rxw)
 
 Usage
 =====
-**Grease/Tamper/etcmonkey users:** [Get the user script](https://repod.github.io/psdle/psdle.user.js) then go to the download list.    
+**Grease/Tamper/etcmonkey users:** [Get the user script](//repod.github.io/psdle/psdle.user.js) then go to the download list.    
+
+**Bookmarklet:** [Get it here!](//repod.github.io/psdle/bookmarklet.html)
 
 **Everyone else:**
 
@@ -20,11 +22,11 @@ Usage
 **Bleeding edge users:**
 
 The repository files will always be the latest possible versions, excluding forks/branches/etc. Feel free to give them a try.
-If you get an error involving strict MIME checking, run the URL through something like [RawGit](http://rawgit.com/).
+If you get an error involving strict MIME checking, run the URL through something like [RawGit](//rawgit.com/).
 
 What Needs To Be Done
 =====
-* Improve appearance
+* Improve appearance.
 * **Translations!** Language code ("en-us") and JSON format required. See source or contact me.
 * Make it faster! How? How indeed.
 
