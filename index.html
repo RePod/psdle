@@ -63,6 +63,7 @@ If you get an error involving strict MIME checking, run the URL through somethin
 <li>
 <strong>Translations!</strong> Language code ("en-us") and JSON format required. See source or contact me.</li>
 <li>Make it faster! How? How indeed.</li>
+<li>Iron out problems with APIs.</li>
 </ul><h1>
 <a name="what-cannot-be-done" class="anchor" href="#what-cannot-be-done"><span class="octicon octicon-link"></span></a>What Cannot Be Done</h1>
 
@@ -81,23 +82,22 @@ If and when I get pull requests I'll let them sizzle and look through them while
 <p>If authentication details were left around openly on the download list page I would take my concerns elsewhere.</p>
 
 <h5>
-<a name="why-does-it-take-so-long-to-parse" class="anchor" href="#why-does-it-take-so-long-to-parse"><span class="octicon octicon-link"></span></a>Why does it take so long to parse?</h5>
+<a name="does-this-support-ps-titles" class="anchor" href="#does-this-support-ps-titles"><span class="octicon octicon-link"></span></a>Does this support PS+ titles?</h5>
 
-<p>PSDLE works by parsing each page of the download list one at a time with a delay inbetween. Currently a timeout of 3 seconds seems to hit the sweet spot of changing the page and detecting the content (on a reasonable connection and assuming the server isn't already dying).</p>
+<p>Yes, or tries to, listing them as normal as well as distinguishing them from other entries with a yellow background.</p>
 
-<p>If using the API, PSDLE waits for all requests to finish before proceeding.</p>
-
-<p>This may change in the future.</p>
+<p>Report any issues <a href="//github.com/RePod/psdle/issues/3">here</a>.</p>
 
 <h5>
-<a name="what-difference-does-using-the-api-make" class="anchor" href="#what-difference-does-using-the-api-make"><span class="octicon octicon-link"></span></a>What difference does using the API make?</h5>
+<a name="what-difference-does-using-the-apis-make" class="anchor" href="#what-difference-does-using-the-apis-make"><span class="octicon octicon-link"></span></a>What difference does using the APIs make?</h5>
 
-<p>Using the API forces PSDLE to look "behind the scenes" to find more accurate information than what the download list provides.
-This in turn allows it to offer different options (such as PS1/2 games) to filter by.</p>
+<p>The <strong>Game API</strong> (deep search) accesses individual game information to enhance results (detecting PS1/2 games, demos, etc.).<br>
+The <strong>Entitlements API</strong> accesses the user's entitlement (purchases) information to determine PS+ titles.</p>
 
-<p>Nobody except the end-user will not be held responsible for problems that arise from using the API.</p>
+<p>All API usage is optional, usage is to enhance the list but required.</p>
 
-<p>API usage is currently early in its development so not everything may be detected properly.</p>
+<p>End-users are to be held responsible for problems that arise from using the API.<br>
+API usage is currently early in its development so not everything may be detected properly.</p>
 
 <h5>
 <a name="why-are-ps1-classicsetc-showing-as-psp-and-ps2-classics-as-ps3" class="anchor" href="#why-are-ps1-classicsetc-showing-as-psp-and-ps2-classics-as-ps3"><span class="octicon octicon-link"></span></a>Why are PS1 classics/etc showing as PSP and PS2 classics as PS3?</h5>
@@ -112,6 +112,15 @@ This in turn allows it to offer different options (such as PS1/2 games) to filte
 <p>For instance, /Avatar/id will exclude every instance of "Avatar" instead of only showing them. (/i is case-insensitive)</p>
 
 <p>If the box turns red when the search is executed, /d is working as it should.</p>
+
+<h5>
+<a name="why-does-it-take-so-long-to-parse" class="anchor" href="#why-does-it-take-so-long-to-parse"><span class="octicon octicon-link"></span></a>Why does it take so long to parse?</h5>
+
+<p>PSDLE works by parsing each page of the download list one at a time with a delay inbetween. Currently a timeout of 3 seconds seems to hit the sweet spot of changing the page and detecting the content (on a reasonable connection and assuming the server isn't already dying).</p>
+
+<p>If using the API, PSDLE waits for all requests to finish before proceeding.</p>
+
+<p>This may change in the future.</p>
 
 <h5>
 <a name="why-is-this-so-horrible" class="anchor" href="#why-is-this-so-horrible"><span class="octicon octicon-link"></span></a>Why is this so horrible?</h5>
