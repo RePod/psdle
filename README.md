@@ -9,7 +9,7 @@ Usage
 =====
 **Grease/Tamper/etcmonkey users:** [Get the user script](//repod.github.io/psdle/psdle.user.js) then go to the download list.    
 
-**Bookmarklet:** [Get it here!](//repod.github.io/psdle/bookmarklet.html)
+**Bookmarklet:** [Get it here!](//repod.github.io/psdle/bookmarklet.html) (Works on iOS, possibly Android.)
 
 **Everyone else:**
 
