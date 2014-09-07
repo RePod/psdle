@@ -29,6 +29,7 @@ What Needs To Be Done
 * Improve appearance.
 * **Translations!** Language code ("en-us") and JSON format required. See source or contact me.
 * Make it faster! How? How indeed.
+* Iron out problems with APIs.
 
 What Cannot Be Done
 =====
@@ -43,19 +44,18 @@ If and when I get pull requests I'll let them sizzle and look through them while
 
 If authentication details were left around openly on the download list page I would take my concerns elsewhere.
 
-#####Why does it take so long to parse?
-PSDLE works by parsing each page of the download list one at a time with a delay inbetween. Currently a timeout of 3 seconds seems to hit the sweet spot of changing the page and detecting the content (on a reasonable connection and assuming the server isn't already dying).
+#####Does this support PS+ titles?
+Yes, or tries to, listing them as normal as well as distinguishing them from other entries with a yellow background.
 
-If using the API, PSDLE waits for all requests to finish before proceeding.
+Report any issues [here](//github.com/RePod/psdle/issues/3).
 
-This may change in the future.
+#####What difference does using the APIs make?
+The **Game API** (deep search) accesses individual game information to enhance results (detecting PS1/2 games, demos, etc.).    
+The **Entitlements API** accesses the user's entitlement (purchases) information to determine PS+ titles.
 
-#####What difference does using the API make?
-Using the API forces PSDLE to look "behind the scenes" to find more accurate information than what the download list provides.
-This in turn allows it to offer different options (such as PS1/2 games) to filter by.
+All API usage is optional, usage is to enhance the list but required.
 
-Nobody except the end-user will not be held responsible for problems that arise from using the API.
-
+End-users are to be held responsible for problems that arise from using the API.    
 API usage is currently early in its development so not everything may be detected properly.
 
 #####Why are PS1 classics/etc showing as PSP and PS2 classics as PS3?
@@ -67,6 +67,13 @@ In the search box make a regular expression to match what you want to exclude th
 For instance, /Avatar/id will exclude every instance of "Avatar" instead of only showing them. (/i is case-insensitive)
 
 If the box turns red when the search is executed, /d is working as it should.
+
+#####Why does it take so long to parse?
+PSDLE works by parsing each page of the download list one at a time with a delay inbetween. Currently a timeout of 3 seconds seems to hit the sweet spot of changing the page and detecting the content (on a reasonable connection and assuming the server isn't already dying).
+
+If using the API, PSDLE waits for all requests to finish before proceeding.
+
+This may change in the future.
 
 #####Why is this so horrible?
 Functionally, PSDLE is complete. If you have suggestions make them known!   
