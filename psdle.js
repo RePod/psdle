@@ -344,7 +344,7 @@ repod.muh_games = {
 		this.config.deep_waiting--;
 	}
 };
-if (/^https:\/\/store\.sonyentertainmentnetwork\.com\/#!\/.+?\/download\/list$/.test(window.location.href)) {
-	var a = setInterval(function(a){ if ($(".gridViewportPaneWrapper").length) { clearInterval(repod.muh_games.config.timerID); repod.muh_games.init(); } },1000);
+//if (/^https:\/\/store\.sonyentertainmentnetwork\.com\/#!\/.+?\/download\/list$/.test(window.location.href)) {
+	var a = setInterval(function(a){ if ($("li.cellDlItemGame").length) { clearInterval(repod.muh_games.config.timerID); repod.muh_games.init(); } },1000);
 	repod.muh_games.config = {"timerID":a};
-}
+//}
