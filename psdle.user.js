@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		1.026
+// @version		1.027
 // @require		https://code.jquery.com/jquery-1.11.1.min.js
 // @include		https://store.sonyentertainmentnetwork.com/*
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -358,7 +358,7 @@ repod.muh_games = {
 		this.config.deep_waiting--;
 	}
 };
-if (/^https:\/\/store\.sonyentertainmentnetwork\.com\/#!\/.+?\/download\/list$/.test(window.location.href)) {
-	var a = setInterval(function(a){ if ($(".gridViewportPaneWrapper").length) { clearInterval(repod.muh_games.config.timerID); repod.muh_games.init(); } },1000);
+//if (/^https:\/\/store\.sonyentertainmentnetwork\.com\/#!\/.+?\/download\/list$/.test(window.location.href)) {
+	var a = setInterval(function(a){ if ($("li.cellDlItemGame").length) { clearInterval(repod.muh_games.config.timerID); repod.muh_games.init(); } },1000);
 	repod.muh_games.config = {"timerID":a};
-}
+//}
