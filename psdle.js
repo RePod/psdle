@@ -4,11 +4,12 @@ var repod = {};
 repod.muh_games = {
 	gamelist: [],
 	gamelist_cur: [],
+	entitlement_cache: {},
 	lang: {},
 	lang_cache: {
 		"en": {
 			"def": "us",
-			"us": {"local":"English","startup":"Waiting on page to load.","columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"export_view":"Export View","games":"Games","avatar":"Avatars","demo":"Demos","unlock":"Unlocks","pass":"Passes","pack":"Packs","theme":"Themes","addon":"Add-ons","app":"Applications","unknown":"Unknown","page":"Page"},"strings":{"delimiter":"Enter delimiter:","stringify_error":"Error: Browser does not have JSON.stringify.","yes":"Yes","no":"No","use_api":"Use API for in-depth scanning? (Beta, buggy)","regex_search":"Search by game title (/regex/id)"}}
+			"us": {"local":"English","startup":"Waiting on page to load.","columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"export_view":"Export View","games":"Games","avatar":"Avatars","demo":"Demos","unlock":"Unlocks","pass":"Passes","pack":"Packs","theme":"Themes","addon":"Add-ons","app":"Applications","unknown":"Unknown","page":"Page"},"strings":{"delimiter":"Enter delimiter:","stringify_error":"Error: Browser does not have JSON.stringify.","yes":"Yes","no":"No","use_api":"Use API for in-depth scanning? (Beta, buggy)","use_entitled_api":"Use Entitlements API? (For PS+/etc, contains purchase information)","regex_search":"Search by game title (/regex/id)"}}
 		},
 		"es": {
 			"def": "mx",
@@ -31,13 +32,13 @@ repod.muh_games = {
 	},
 	determineLanguage: function(e,f) {
 		e = (e) ? e.split("-") : this.config.language.split("-");
-		if (f === true) { this.lang = {}; $.extend(this.lang,this.lang_cache.en.us); }
+		if (f === true) { this.lang = {}; this.lang = this.lang_cache.en.us; }
 		if (e[0] in this.lang_cache) {
 			if (e[1] in this.lang_cache[e[0]]) {
-				if (f === true) { $.extend(this.lang,this.lang_cache[e[0]][e[1]]); }
+				if (f === true) { $.extend(true,this.lang,this.lang_cache[e[0]][e[1]]); }
 				e = e[0]+"-"+e[1];
 			} else {
-				if (f === true) { $.extend(this.lang,this.lang_cache[e[0]][this.lang_cache[e[0]].def]); }
+				if (f === true) { $.extend(true,this.lang,this.lang_cache[e[0]][this.lang_cache[e[0]].def]); }
 				e = e[0]+"-"+this.lang_cache[e[0]].def;
 			}
 		} else {
@@ -46,7 +47,7 @@ repod.muh_games = {
 		return e;
 	},
 	generateLangBox: function(e) {
-		var temp = "<select>";
+		var temp = "<select id='lang_select'>";
 		e = (e) ? this.determineLanguage(e) : this.determineLanguage();
 		for (var i in this.lang_cache) {
 			for (var h in this.lang_cache[i]) {
@@ -62,6 +63,7 @@ repod.muh_games = {
 	init: function() {
 		var that = this;
 		this.config = {
+			display_step: "",
 			totalgames: 1,
 			delay: 1000,
 			lastsort: "",
@@ -70,12 +72,15 @@ repod.muh_games = {
 			deep_search: false,
 			deep_waiting: 0,
 			api_url: "",
-			last_search: ""
-		};
+			last_search: "",
+			check_entitlements: false,
+			entitlements_count: 0,
+			entitlements_total: 1,
+			entitlements_plus: 0
+		}; 
 		this.determineLanguage(this.config.language,true);
 		this.injectCSS();
-		$(document).on('change', "#sub_container > select", function() { that.config.language = $(this).val(); that.determineLanguage($(this).val(),true); that.genDisplay(); });
-		$(document).on('click',".psdle_btn",function () { that.config.deep_search = ($(this).attr("id") == "yes") ? true : false; $(document).off('click',".psdle_btn"); that.genDisplay("progress"); });
+		$(document).on('change', "#sub_container > select#lang_select", function() { that.config.language = $(this).val(); that.determineLanguage($(this).val(),true); that.genDisplay(); });
 		this.genDisplay();
 		this.exportTable.parent = this;
 		return 1;
@@ -84,7 +89,7 @@ repod.muh_games = {
 		var that = this;
 		if (this.gamelist.length >= this.config.totalgames) {
 				clearInterval(this.config.timerID);
-				this.genTable();
+				this.checkEntitlements();
 		} else if (Number($(".range").text().split("-")[0]) > this.gamelist.length) {
 			$("#psdle_status").text((this.gamelist.length/24+1)+" / "+Math.ceil(this.config.totalgames/24));
 			$("li.cellDlItemGame").each(function() {
@@ -97,7 +102,9 @@ repod.muh_games = {
 				var size = t.find(".size").text().replace("|","");
 				var platform = []; t.find(".playableOn > a").each(function() { platform.push($(this).text()); });
 				var date = t.find(".purchaseDate").text().replace("|","");
-				that.gamelist.push({id:id,title:gametitle,size:size,platform:platform,date:date,url:url,icon:icon,deep_type:"unknown"});
+				var gid = url.split("=").pop();
+				that.entitlement_cache[gid] = (id -1);
+				that.gamelist.push({id:id,pid:gid,title:gametitle,size:size,platform:platform,date:date,url:url,icon:icon,deep_type:"unknown"});
 				if (that.config.deep_search && !!icon && !!icon.match(/(.+?)\/image\?.*$/)) {
 					that.config.deep_waiting++;
 					$.getJSON(icon.match(/(.+?)\/image\?.*$/).pop(),function(data) { that.parseDeep(id,data); });
@@ -107,7 +114,7 @@ repod.muh_games = {
 			if (this.gamelist.length >= this.config.totalgames) {
 				//if (this.config.deep_waiting <= 1) {
 					clearInterval(this.config.timerID);
-					this.genTable();
+					this.checkEntitlements();
 				//}
 			} else {
 				this.nextPage();
@@ -134,10 +141,17 @@ repod.muh_games = {
 	genDisplay:function(mode) {
 		var that = this;
 		if (!$("#muh_games_container").length) { $("body").append("<div id='muh_games_container' />"); }
+		$(document).off("click",".psdle_btn");
 		$("#muh_games_container").slideUp('slow', function() {
 			var a = "<div id='sub_container'><a href='//repod.github.io/psdle/' target='_blank'><img src='https://repod.github.io/psdle/logo/3_psdle_mini.png' style='display:inline-block;font-size:200%;font-weight:bold' alt='psdle' /></a></span>";
 			if (!mode) {
 				a += "<br />"+that.lang.strings.use_api+"<br /><span id='yes' class='psdle_btn'>"+that.lang.strings.yes+"</span> <span id='no' class='psdle_btn'>"+that.lang.strings.no+"</span><br />"+that.generateLangBox()+"</div>";
+				/*opsbox = "<select><option selected='selected' value='t'>"+that.lang.strings.yes+"</option><option value='f'>"+that.lang.strings.no+"</option></select>";
+				a += "<br />"+that.lang.strings.use_api+" "+opsbox+"<br />"+that.lang.strings.use_entitle_api+" "+opsbox+"<br />"+that.generateLangBox()+"</div>";*/
+				$(document).one('click',".psdle_btn",function () { that.config.deep_search = ($(this).attr("id") == "yes") ? true : false; that.genDisplay("entitled_api"); });
+			} else if (mode == "entitled_api") {
+				a += "<br />"+that.lang.strings.use_entitled_api+"<br /><span id='yes' class='psdle_btn'>"+that.lang.strings.yes+"</span> <span id='no' class='psdle_btn'>"+that.lang.strings.no+"</span></div>";
+				$(document).one('click',".psdle_btn",function () { that.config.check_entitlements = ($(this).attr("id") == "yes") ? true : false; that.genDisplay("progress"); });
 			} else if (mode == "progress") {
 				$("#sub_container > select").off("change"); $(".psdle_btn").off("click");
 				a += "<br /><div id='psdle_progressbar'><div id='psdle_bar'>&nbsp;</div></div><br /><span id='psdle_status'>"+that.lang.startup+"</span>";
@@ -156,6 +170,19 @@ repod.muh_games = {
 			$("#muh_games_container").html(a).slideDown('slow');
 		});
 		return 1;
+	},
+	checkEntitlements: function() {
+		$("#psdle_status").text(this.lang.startup);
+		if (this.config.check_entitlements) {
+			if (this.config.entitlements_count < this.config.entitlements_total) {
+				var that = this;
+				$.getJSON("https://store.sonyentertainmentnetwork.com/kamaji/api/chihiro/00_09_000/gateway/store/v1/users/me/internal_entitlements?start="+this.config.entitlements_count+"&size=100&fields=game_meta%2Cdrm_def",function(e) { that.parseEntitlements(e); });
+			} else {
+				this.genTable();
+			}
+		} else {
+			this.genTable();
+		}
 	},
 	genTable: function() {
 		clearInterval(this.config.timerID); //Just in case.
@@ -177,13 +204,15 @@ repod.muh_games = {
 		this.gamelist_cur = [];
 		var search = (!!$("#psdle_search_text")) ? $("#psdle_search_text").val() : this.config.last_search;
 		$("#psdle_search_text").removeClass("negate_regex");
+		var plus = 0;
 		$.each(this.gamelist,function(index,val) {
 			var sys = that.safeGuessSystem(val.platform);
 			if ($.inArray(sys,safesys) > -1) { 
 				var a = true; var t = val.title;
 				if (that.config.deep_search) {
+					console.log('genTableConents() -> checking filters');
 					if ($("span[id=filter_"+val.deep_type+"]").hasClass("toggled_off")) { a = false; }
-				}
+				}				
 				if (a == true && search !== "") {
 					var regex = search.match(/^\/(.+?)\/([imgd]+)?$/i);
 					a = (!!regex && !!regex[2] && regex[2].toLowerCase().indexOf("d") >= 0) ? true : false;
@@ -192,21 +221,22 @@ repod.muh_games = {
 					else if (t.toLowerCase().indexOf(search.toLowerCase()) >= 0) { a = !a; }
 				}
 				if (a == true) {
-					var u = val.url;
-					temp += "<tr><td style='max-width:31px;max-height:31px;'><a target='_blank' href='"+u+"'><img title='"+that.lang.labels.page+" #"+Math.ceil(val.id/24)+"' src='"+val.icon+"' class='psdle_game_icon' /></a></td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+t+"</a></td><td>"+sys+"</td><td>"+val.size+"</td><td>"+val.date+"</td></tr>";
+					var u = val.url, is_plus = "";
+					if (that.entitlement_cache[val.pid] === true && that.config.check_entitlements) { is_plus = "is_plus"; plus++; }
+					temp += "<tr class='"+is_plus+"'><td style='max-width:31px;max-height:31px;'><a target='_blank' href='"+u+"'><img title='"+that.lang.labels.page+" #"+Math.ceil(val.id/24)+"' src='"+val.icon+"' class='psdle_game_icon' /></a></td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+t+"</a></td><td>"+sys+"</td><td>"+val.size+"</td><td>"+val.date+"</td></tr>";
 					that.gamelist_cur.push(val);
 				}
 			}
 		});
 		that.config.last_search = search;
-		$("#table_stats").text(this.gamelist_cur.length+" / "+this.gamelist.length);
+		$("#table_stats").html(this.gamelist_cur.length+((this.config.check_entitlements)?" (PS+: "+plus+")":"")+" / "+this.gamelist.length);
 		return temp;
 	},
 	genSearchOptions: function() {
 		//TO-DO: Not this. Make scalable.
 		var that = this;
 		$(document).keypress(function(e) { if (e.which == 13 && $("#psdle_search_text").is(":focus")) { that.regenTable(); } });
-		$(document).on("click","span[id^=system_], span[id^=filter_]", function() { that.toggleButton($(this)); });
+		$(document).on("click","span[id^=system_], span[id^=filter_]", function() { console.log($(this).attr("id")); $(this).toggleClass("toggled_off"); that.regenTable(); });
 		$(document).on("click","th[id^=sort_]", function() { that.sortGamelist($(this)); });
 		$(document).on("click","span[id=export_view]", function() { that.exportTable.display(); });
 		$(document).on("blur", "#psdle_search_text", function() { that.regenTable(); });
@@ -228,12 +258,12 @@ repod.muh_games = {
 					'<span id="filter_theme">'+this.lang.labels.theme+'</span>' +
 					'<span id="filter_unknown">'+this.lang.labels.unknown+'</span>';
 		}
-		temp += "<br /><input type='text' id='psdle_search_text' placeholder='"+this.lang.strings.regex_search+"' />";
-						
+		temp += "<br /><input type='text' id='psdle_search_text' placeholder='"+this.lang.strings.regex_search+"' />";			
 		temp += '</span><br />';
 		return temp;
 	},
 	sortGamelist: function(e) {
+		console.log('sortGamelist() called');
 		var that = this;
 		e = $(e).attr("id");
 		if (e == "sort_date") {
@@ -257,16 +287,17 @@ repod.muh_games = {
 				return 0;
 			});
 		}
-		if (e == this.config.lastsort) { if (!this.config.lastsort_r) { this.gamelist.reverse(); } this.config.lastsort_r = !this.config.lastsort_r; }
-		else { this.config.lastsort_r = false; }
+		if (e == this.config.lastsort) {
+			if (!this.config.lastsort_r) {
+				this.gamelist.reverse();
+			}
+			this.config.lastsort_r = !this.config.lastsort_r;
+		} else {
+			this.config.lastsort_r = false;
+		}
 		$("#psdle_sort_display").remove();
 		$("#"+e).append("<span id='psdle_sort_display' class='psdle_sort_"+((this.config.lastsort_r)?"asc":"desc")+"' />");
 		this.config.lastsort = e;
-		this.regenTable();
-		return 1;
-	},
-	toggleButton: function(e) {
-		$(e).toggleClass("toggled_off");
 		this.regenTable();
 		return 1;
 	},
@@ -284,7 +315,7 @@ repod.muh_games = {
 	},
 	injectCSS: function() {
 		var temp = "#muh_games_container { display:none;position:fixed;top:0px;right:0px;left:0px;color:#000;z-index:9001;text-align:center } #sub_container { background-color:#fff; padding:20px; } #psdle_progressbar { overflow:hidden;display:inline-block;width:400px;height:16px;border:1px solid #999;margin:10px;border-radius:10px; } #psdle_bar { background-color:#2185f4;width:0%;height:100%;border-radius:10px; } .psdle_btn { cursor:pointer;border-radius:13px;background-color:#2185f4;color:#fff;padding:1px 15px;display:inline-block;margin:5px auto; }" + //Startup
-					"th[id^=sort] { cursor:pointer; } table,th,td{border:1px solid #999;border-collapse:collapse;} th {padding:5px;} td a.psdle_game_link {display:block;width:100%;height:100%;color:#000 !important;padding:3px;} th, tr:hover{background-color:#ccc;}" + //Table
+					"th[id^=sort] { cursor:pointer; } table,th,td{border:1px solid #999;border-collapse:collapse;} th {padding:5px;} td a.psdle_game_link {display:block;width:100%;height:100%;color:#000 !important;padding:3px;} th, tr:hover{background-color:#ccc;} .is_plus{background-color:#FFFC0D;}" + //Table
 					"#psdle_search_text { margin:5px auto;padding:5px;font-size:large;max-width:600px;width:100% } .negate_regex { background-color:#FF8080;color:#fff; } span[id^=system_], span[id^=filter_], span#psdle_regen, span[id^=sort_], span[id=export_view] { border-radius:5px;border:1px solid #fff;font-weight:bold;text-transform:uppercase;font-size:small;color:#fff;padding:1px 3px;bottom:3px;display:inline-block;vertical-align:20%;background-color:#000;cursor:pointer; } .toggled_off { opacity:0.4; }" + //Search buttons
 					".psdle_game_icon { max-width:100%;vertical-align:middle }" + //Content icons
 					".psdle_sort_asc { float:right; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 5px solid black; } .psdle_sort_desc { float:right; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid black; }"; //Sorting
@@ -342,9 +373,35 @@ repod.muh_games = {
 		}
 		this.gamelist[(id -1)].deep_type = data.top_category;
 		this.config.deep_waiting--;
+	},
+	parseEntitlements: function(data) {
+		console.log("parsing entitlements: "+this.config.entitlements_count);
+		var that = this;
+		this.config.entitlements_total = data.total_results;
+		$.each(data.entitlements,function(index,value) {
+			if (value.drm_def) {
+				//Some index don't have drm_def, if we don't check we'll crash.
+				//PS4 games don't have this at all, check feature_type.
+				if(value.drm_def.rewards) {
+					//Likewise?
+					if (value.drm_def.rewards[0].rewardType == 2 || value.drm_def.rewards[0].rewardType == 3) {
+						if (value.license && value.license.infinite_duration !== true) {
+							that.entitlement_cache[value.drm_def.productId] = true;
+							that.config.entitlements_plus++;
+						}
+					}
+				}
+			} else if (value.feature_type == 3) {
+				that.entitlement_cache[value.product_id] = true;
+				that.config.entitlements_plus++;
+			}
+		});
+		this.config.entitlements_count += data.entitlements.length;
+		$("#psdle_progressbar > #psdle_bar").animate({"width":Math.round((this.config.entitlements_count / this.config.entitlements_total) * 100)+"%"});
+		$("#psdle_status").text(this.config.entitlements_count+" / "+this.config.entitlements_total);
+		this.checkEntitlements();
 	}
 };
-//if (/^https:\/\/store\.sonyentertainmentnetwork\.com\/#!\/.+?\/download\/list$/.test(window.location.href)) {
-	var a = setInterval(function(a){ if ($("li.cellDlItemGame").length) { clearInterval(repod.muh_games.config.timerID); repod.muh_games.init(); } },1000);
-	repod.muh_games.config = {"timerID":a};
-//}
+
+var a = setInterval(function(a){ if ($("li.cellDlItemGame").length) { clearInterval(repod.muh_games.config.timerID); repod.muh_games.init(); } },1000);
+repod.muh_games.config = {"timerID":a};
