@@ -50,10 +50,11 @@ Yes, or tries to, listing them as normal as well as distinguishing them from oth
 Report any issues [here](//github.com/RePod/psdle/issues/3).
 
 #####What difference does using the APIs make?
-The **Game API** (deep search) accesses individual game information to enhance results (detecting PS1/2 games, demos, etc.).    
+The **Game API** (deep search) accesses individual game information to enhance results (detecting PS1/2 games, demos, etc.).
+
 The **Entitlements API** accesses the user's entitlement (purchases) information to determine PS+ titles.
 
-All API usage is optional, usage is to enhance the list but required.
+All API usage is optional, they're used only to enhance the experience 
 
 End-users are to be held responsible for problems that arise from using the API.    
 API usage is currently early in its development so not everything may be detected properly.
