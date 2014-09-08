@@ -3,7 +3,7 @@
 
 Improving everyone's favorite online download list, one loop at a time.
 
-Doubtful? [Check out the Imgur album for some screenshots!](//imgur.com/a/m5Rxw)
+Doubtful? [Check out the Imgur album for some screenshots!](//imgur.com/a/m5Rxw) - [PS+ Support!](//imgur.com/a/46K6L)
 
 Usage
 =====
@@ -52,11 +52,11 @@ Report any issues [here](//github.com/RePod/psdle/issues/3).
 #####What difference does using the APIs make?
 The **Game API** (deep search) accesses individual game information to enhance results (detecting PS1/2 games, demos, etc.).
 
-The **Entitlements API** accesses the user's entitlement (purchases) information to determine PS+ titles.
+The **Entitlements API** accesses the user's entitlements (purchases) information to determine PS+ titles.
 
 All API usage is optional, they're used only to enhance the experience 
 
-End-users are to be held responsible for problems that arise from using the API.    
+End-users are to be held responsible for problems that arise from using the APIs.    
 API usage is currently early in its development so not everything may be detected properly.
 
 #####Why are PS1 classics/etc showing as PSP and PS2 classics as PS3?
@@ -70,14 +70,14 @@ For instance, /Avatar/id will exclude every instance of "Avatar" instead of only
 If the box turns red when the search is executed, /d is working as it should.
 
 #####Why does it take so long to parse?
-PSDLE works by parsing each page of the download list one at a time with a delay inbetween. Currently a timeout of 3 seconds seems to hit the sweet spot of changing the page and detecting the content (on a reasonable connection and assuming the server isn't already dying).
+PSDLE uses a crude method to detect page changes which takes a while, but is definitely faster than it was before. After all pages are parsed it then starts checking the APIs (if enabled) to get more information which also takes time from getting the result to storing the information where it needs to go.
 
 If using the API, PSDLE waits for all requests to finish before proceeding.
 
 This may change in the future.
 
 #####Why is this so horrible?
-Functionally, PSDLE is complete. If you have suggestions make them known!   
+Functionally, PSDLE is complete. If you have suggestions make them known!    
 Feel free to fork and submit pull requests.
 
 #####Why is this so good?
