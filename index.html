@@ -33,7 +33,7 @@
 
 <p>Improving everyone's favorite online download list, one loop at a time.</p>
 
-<p>Doubtful? <a href="//imgur.com/a/m5Rxw">Check out the Imgur album for some screenshots!</a></p>
+<p>Doubtful? <a href="//imgur.com/a/m5Rxw">Check out the Imgur album for some screenshots!</a> - <a href="//imgur.com/a/46K6L">PS+ Support!</a></p>
 
 <h1>
 <a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h1>
@@ -93,11 +93,11 @@ If and when I get pull requests I'll let them sizzle and look through them while
 
 <p>The <strong>Game API</strong> (deep search) accesses individual game information to enhance results (detecting PS1/2 games, demos, etc.).</p>
 
-<p>The <strong>Entitlements API</strong> accesses the user's entitlement (purchases) information to determine PS+ titles.</p>
+<p>The <strong>Entitlements API</strong> accesses the user's entitlements (purchases) information to determine PS+ titles.</p>
 
 <p>All API usage is optional, they're used only to enhance the experience </p>
 
-<p>End-users are to be held responsible for problems that arise from using the API.<br>
+<p>End-users are to be held responsible for problems that arise from using the APIs.<br>
 API usage is currently early in its development so not everything may be detected properly.</p>
 
 <h5>
@@ -117,7 +117,7 @@ API usage is currently early in its development so not everything may be detecte
 <h5>
 <a name="why-does-it-take-so-long-to-parse" class="anchor" href="#why-does-it-take-so-long-to-parse"><span class="octicon octicon-link"></span></a>Why does it take so long to parse?</h5>
 
-<p>PSDLE works by parsing each page of the download list one at a time with a delay inbetween. Currently a timeout of 3 seconds seems to hit the sweet spot of changing the page and detecting the content (on a reasonable connection and assuming the server isn't already dying).</p>
+<p>PSDLE uses a crude method to detect page changes which takes a while, but is definitely faster than it was before. After all pages are parsed it then starts checking the APIs (if enabled) to get more information which also takes time from getting the result to storing the information where it needs to go.</p>
 
 <p>If using the API, PSDLE waits for all requests to finish before proceeding.</p>
 
