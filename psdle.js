@@ -405,6 +405,7 @@ repod.muh_games = {
 		}
 	},
 	parseDeep: function(id,data,sku) {
+		id--;
 		if (!!this.gamelist[id]) {
 			if (sku) {
 				if (!data.codeName) {

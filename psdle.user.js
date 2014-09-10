@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		1.030
+// @version		1.031
 // @require		https://code.jquery.com/jquery-1.11.1.min.js
 // @include		https://store.sonyentertainmentnetwork.com/*
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -419,6 +419,7 @@ repod.muh_games = {
 		}
 	},
 	parseDeep: function(id,data,sku) {
+		id--;
 		if (!!this.gamelist[id]) {
 			if (sku) {
 				if (!data.codeName) {
