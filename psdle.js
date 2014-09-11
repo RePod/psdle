@@ -303,9 +303,9 @@ repod.muh_games = {
 					'<span id="filter_add_on">'+this.lang.labels.addon+'</span>' +
 					'<span id="filter_application">'+this.lang.labels.app+'</span>' +
 					'<span id="filter_theme">'+this.lang.labels.theme+'</span>' +
-					'<span id="filter_unknown">'+this.lang.labels.unknown+'</span></span>';
+					'<span id="filter_unknown">'+this.lang.labels.unknown+'</span></span><br />';
 		}
-		temp += "<br /><input type='text' id='psdle_search_text' placeholder='"+this.lang.strings.regex_search+"' />";			
+		temp += "<input type='text' id='psdle_search_text' placeholder='"+this.lang.strings.regex_search+"' />";			
 		temp += '</span><br />';
 		return temp;
 	},
