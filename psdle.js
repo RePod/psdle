@@ -26,7 +26,7 @@ SOFTWARE.
 //TO-DO: Try to find the game API through the download list first, cannot confirm if US/en would work in every store territory/language (probably not).
 
 var repod = {};
-repod.muh_games = {
+repod.psdle = {
 	gamelist: [],
 	gamelist_cur: [],
 	entitlement_cache: {},
@@ -276,7 +276,8 @@ repod.muh_games = {
 			}
 		});
 		that.config.last_search = search;
-		$("#table_stats").html(this.gamelist_cur.length+((this.config.check_entitlements)?" (PS+: "+plus+")":"")+" / "+this.gamelist.length);
+		$("#table_stats").html(this.gamelist_cur.length+((this.config.check_entitlements)?" (<div id='psdleplus' style='display:inline-block' /> "+plus+")":"")+" / "+this.gamelist.length);
+		if (this.config.check_entitlements) { $("#psdleplus").css($(".psPlusIcon").css(["background-image","height","width","background-repeat","background-position"])); }
 		return temp;
 	},
 	genSearchOptions: function() {
@@ -466,5 +467,5 @@ repod.muh_games = {
 	}
 };
 
-var a = setInterval(function(a){ if ($("li.cellDlItemGame").length) { clearInterval(repod.muh_games.config.timerID); repod.muh_games.init(); } },1000);
-repod.muh_games.config = {"timerID":a};
+var a = setInterval(function(a){ if ($("li.cellDlItemGame").length) { clearInterval(repod.psdle.config.timerID); repod.psdle.init(); } },1000);
+repod.psdle.config = {"timerID":a};
