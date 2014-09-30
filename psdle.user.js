@@ -118,7 +118,7 @@ repod.psdle = {
 			check_entitlements: false,
 			entitlements_count: 0,
 			entitlements_total: 1,
-			entitlements_plus: 0,
+			entitlements_plus: 0
 		}; 
 		this.determineLanguage(this.config.language,true);
 		this.injectCSS();
