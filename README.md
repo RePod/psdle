@@ -1,7 +1,8 @@
 ![psdle](logo/4_psdle.png?raw=true)
 =====
 
-Improving everyone's favorite online download list, one loop at a time.
+Improving everyone's favorite online download list, one loop at a time.    
+**Downloading/saving files other than the userscript is not required!**
 
 Doubtful? [Check out the Imgur album for some screenshots!](//imgur.com/a/m5Rxw) - [PS+ Support!](//imgur.com/a/46K6L)
 
@@ -30,6 +31,7 @@ What Needs To Be Done
 * **Translations!** Language code ("en-us") and JSON format required. See source or contact me.
 * Make it faster! How? How indeed.
 * Iron out problems with APIs.
+* Internal Download Queue support.
 
 What Cannot Be Done
 =====
@@ -49,6 +51,9 @@ Yes, or tries to, listing them as normal as well as distinguishing them from oth
 
 Report any issues [here](//github.com/RePod/psdle/issues/3).
 
+#####Download Queue support when?
+Soon, there is research to be done!
+
 #####What difference does using the APIs make?
 The **Game API** (deep search) accesses individual game information to enhance results (detecting PS1/2 games, demos, etc.).
 
@@ -61,6 +66,11 @@ API usage is currently early in its development so not everything may be detecte
 
 #####Why are PS1 classics/etc showing as PSP and PS2 classics as PS3?
 Enable deep search/use API on PSDLE startup.
+
+#####Why is PS4 content not correctly identified? (Games as unknown, etc.)
+A **non-PS4 item** (PS3/P/Vita game, demo, application, avatar, etc) is required to be on the download list, as well as using the **Game API** (deep search).
+
+There was going to be an explanation behind this but nobody would care anyway.
 
 #####How can I exclude results that aren't touched by the system or tag filters?
 In the search box make a regular expression to match what you want to exclude then attach /d as a mod.
@@ -87,13 +97,7 @@ I ask myself that every time I wake up.
 Probably, as long as it allows local Javascript execution.
 
 #####How do I contribute?
-Unfortunately due to the single-file nature of PSDLE (due to browser restrictions) merging forks will be impossible, if not very difficult by only merging one fork at a time and having others sync to master.
-
-Remote JSON is out of the question (original intent for translations) due to cross-domain policies and *monkey variants run the script in an anonymous function/"sandbox" (preventing external interactions) for security, which I do not plan on bypassing.
-
-If there's one main category of what PSDLE needs contributions for: translations. I would like to see PSDLE offer at least every language the store offers (and possibly more!).
-
-If this doesn't sound like the way it should be done feel free to rewrite it, maybe it'll be better for everyone.
+Translations, let me have them! See source for format.
 
 License
 =====
