@@ -23,14 +23,13 @@ SOFTWARE.
 */
 
 //The license information above is also available in PSDLE's GitHub repository located here: https://github.com/RePod/psdle
-//TO-DO: Try to find the game API through the download list first, cannot confirm if US/en would work in every store territory/language (probably not).
+//TO-DO:
+// - All the things!
 
 var repod = {};
 repod.psdle = {
-	gamelist: [],
-	gamelist_cur: [],
-	entitlement_cache: {},
-	sku_id_cache: {},
+	gamelist: [], gamelist_cur: [],
+	entitlement_cache: {}, sku_id_cache: {}, api_cache: [],
 	lang: {},
 	lang_cache: {
 		"en": {
@@ -89,7 +88,8 @@ repod.psdle = {
 	init: function() {
 		var that = this;
 		this.config = {
-			game_api: "PLSFILLWHENUSED",
+			game_page: "",
+			game_api: "",
 			entitled_api: "https://store.sonyentertainmentnetwork.com/kamaji/api/chihiro/00_09_000/gateway/store/v1/users/me/internal_entitlements?start=",
 			totalgames: 1,
 			delay: 1000,
@@ -104,7 +104,7 @@ repod.psdle = {
 			check_entitlements: false,
 			entitlements_count: 0,
 			entitlements_total: 1,
-			entitlements_plus: 0
+			entitlements_plus: 0,
 		}; 
 		this.determineLanguage(this.config.language,true);
 		this.injectCSS();
@@ -116,8 +116,8 @@ repod.psdle = {
 	parsePage: function() {
 		var that = this;
 		if (this.gamelist.length >= this.config.totalgames) {
-				clearInterval(this.config.timerID);
-				this.checkEntitlements();
+			clearInterval(this.config.timerID);
+			this.checkEntitlements();
 		} else if (Number($(".range").text().split("-")[0]) > this.gamelist.length) {
 			$("#psdle_status").text((this.gamelist.length/24+1)+" / "+Math.ceil(this.config.totalgames/24));
 			$("li.cellDlItemGame").each(function() {
@@ -125,18 +125,31 @@ repod.psdle = {
 				var t = $(this).clone();
 				var icon = t.find(".thumbPane").find("img").attr("src");
 				var url = t.find(".thumbPane").parent().attr("href");
+				if (that.config.game_page == "") { that.config.game_page = url.match(/(.+?=).+/).pop(); }
 				t = t.find(".mediaInfo");
 				var gametitle = t.find(".gameTitle").text();
 				var size = t.find(".size").text().replace("|","");
 				var platform = []; t.find(".playableOn > a").each(function() { platform.push($(this).text()); });
 				var date = t.find(".purchaseDate").text().replace("|","");
 				var gid = url.split("=").pop();
-				that.entitlement_cache[gid] = {"glid":(id -1),"gid":""};
-				that.gamelist.push({id:id,pid:gid,title:gametitle,size:size,platform:platform,date:date,url:url,icon:icon,deep_type:"unknown"});
-				//if (that.config.deep_search) { $.getJSON(that.config.game_api+gid,function(data) { that.parseDeep((id -1),data); }); }
-				if (that.config.deep_search && !!icon && !!icon.match(/(.+?)\/image\?.*$/)) {
-					that.config.deep_waiting++;
-					$.getJSON(icon.match(/(.+?)\/image\?.*$/).pop(),function(data) { that.parseDeep(id,data); });
+				if (!that.entitlement_cache[gid]) { that.entitlement_cache[gid] = []; }
+				that.entitlement_cache[gid].push({"glid":(id -1),"gid":""});
+				that.gamelist.push({id:id,pid:gid,title:gametitle,size:size,platform:platform,date:date,icon:icon,deep_type:"unknown"});
+				if (that.config.deep_search) {
+					if (!!icon && !!icon.match(/(.+?)\/image\?.*$/)) {
+						that.config.deep_waiting++;
+						if (that.config.game_api == "") {
+							that.config.game_api = icon.match(/^((?:.+?)\/)[^\/]+\/[^\/]+$/).pop();
+							$.each(that.api_cache,function(a,b) { $.getJSON(that.config.game_api+b.gid,function(data) { that.parseDeep(b.id,data); }); });
+						}
+						$.getJSON(icon.match(/(.+?)\/image\?.*$/).pop(),function(data) { that.parseDeep(id,data); });
+					} else {
+						if (that.config.game_api !== "") {
+							$.getJSON(that.config.game_api+gid,function(data) { that.parseDeep(id,data); });
+						} else {
+							that.api_cache.push({id:id,gid:gid});
+						}
+					}
 				}
 			});
 			$("#psdle_progressbar > #psdle_bar").animate({"width":Math.round((this.gamelist.length/24) / Math.ceil(this.config.totalgames/24) * 100)+"%"});
@@ -157,28 +170,20 @@ repod.psdle = {
 		return 1;
 	},
 	nextPage: function() {
-		//$(".navLinkNext:first").click(); //Anonymous functions, please.
-		triggerMouseEvent ( $('.navLinkNext').eq(0), "click");
-		function triggerMouseEvent (jNode, eventType) {
-			if (jNode  &&  jNode.length) {
-				var clickEvent  = new MouseEvent (eventType,{canBubble: true, cancelable: true});
-				jNode[0].dispatchEvent (clickEvent);
-			}
-		}
+		//.trigger("click") wasn't working in Chrome, here's a native solution.
+		$('.navLinkNext').eq(0)[0].dispatchEvent(new MouseEvent("click",{canBubble:true,cancelable:true}));
 	},
 	genDisplay:function(mode) {
-		var that = this;
+		var that = this, yn = "<span class='psdle_fancy_bar'><span id='yes' class='psdle_btn'>"+that.lang.strings.yes+"</span> <span id='no' class='psdle_btn'>"+that.lang.strings.no+"</span></span>";
 		if (!$("#muh_games_container").length) { $("body").append("<div id='muh_games_container' />"); }
 		$(document).off("click",".psdle_btn");
 		$("#muh_games_container").slideUp('slow', function() {
-			var a = "<div id='sub_container'><a href='//repod.github.io/psdle/' target='_blank'><img src='https://repod.github.io/psdle/logo/3_psdle_mini.png' style='display:inline-block;font-size:200%;font-weight:bold' alt='psdle' /></a></span>";
+			var a = "<div id='sub_container'><a href='//repod.github.io/psdle/' target='_blank'><img src='//repod.github.io/psdle/logo/3_psdle_mini.png' style='display:inline-block;font-size:200%;font-weight:bold' alt='psdle' /></a></span>";
 			if (!mode) {
-				a += "<br />"+that.lang.strings.use_api+"<br /><span id='yes' class='psdle_btn'>"+that.lang.strings.yes+"</span> <span id='no' class='psdle_btn'>"+that.lang.strings.no+"</span><br />"+that.generateLangBox()+"</div>";
-				/*opsbox = "<select><option selected='selected' value='t'>"+that.lang.strings.yes+"</option><option value='f'>"+that.lang.strings.no+"</option></select>";
-				a += "<br />"+that.lang.strings.use_api+" "+opsbox+"<br />"+that.lang.strings.use_entitle_api+" "+opsbox+"<br />"+that.generateLangBox()+"</div>";*/
+				a += "<br />"+that.lang.strings.use_api+"<br />"+yn+"<br />"+that.generateLangBox()+"</div>";
 				$(document).one('click',".psdle_btn",function () { that.config.deep_search = ($(this).attr("id") == "yes") ? true : false; that.genDisplay("entitled_api"); });
 			} else if (mode == "entitled_api") {
-				a += "<br />"+that.lang.strings.use_entitled_api+"<br /><span id='yes' class='psdle_btn'>"+that.lang.strings.yes+"</span> <span id='no' class='psdle_btn'>"+that.lang.strings.no+"</span></div>";
+				a += "<br />"+that.lang.strings.use_entitled_api+"<br />"+yn+"</div>";
 				$(document).one('click',".psdle_btn",function () { that.config.check_entitlements = ($(this).attr("id") == "yes") ? true : false; that.genDisplay("progress"); });
 			} else if (mode == "progress") {
 				$("#sub_container > select").off("change"); $(".psdle_btn").off("click");
@@ -206,11 +211,11 @@ repod.psdle = {
 				var that = this;
 				$.getJSON(this.config.entitled_api+this.config.entitlements_count+"&size=100&fields=game_meta%2Cdrm_def",function(e) { that.parseEntitlements(e); });
 			} else {
-				/*if (this.config.deep_search) {
+				if (this.config.deep_search) {
 					this.checkSkus();
-				} else {*/
+				} else {
 					this.genTable();
-				//}
+				}
 			}
 		} else {
 			this.genTable();
@@ -218,25 +223,23 @@ repod.psdle = {
 	},
 	checkSkus: function() {
 		var that = this;
-		$.each(this.sku_id_cache,function(a,b) {
-			if (b.length > 1) {
-				//If length > 1 multiple items identified to SKU <a>.
-				//We need to determine which one is the main entry, in parseDeep().
-				$.each(b,function(c,d) {
-					var e = that.entitlement_cache[d.id];
-					if (e) {
-						that.config.deep_waiting++;
-						$.getJSON(that.config.game_api+d.id,function(data) { that.parseDeep(e.glid,data,true); });
-					}
-				});
-			}
+		$.each(that.sku_id_cache,function(a,b) {
+			$.each(b, function(c,d) {
+				if (that.entitlement_cache[a] && that.entitlement_cache[a][c]) {
+					//$.extend(true,that.gamelist[that.entitlement_cache[a][c].glid],b[c]);
+					var id = that.entitlement_cache[a][c].glid;
+					if (b[c].pid && b[c].pid.length > 0) { that.gamelist[id].pid = b[c].pid; }
+					that.gamelist[id].plus = b[c].plus;
+					if (that.gamelist[id].icon && that.gamelist[id].icon.indexOf("pc/img/furniture") > -1 && b[c].icon && b[c].icon.length > 0) { that.gamelist[id].icon = b[c].icon; }
+				}
+			});
 		});
+		this.genTable();
 	},
 	genTable: function() {
 		clearInterval(this.config.timerID); //Just in case.
 		$("#muh_games_container").css({"position":"absolute"});
-		$("#sub_container").html(this.genSearchOptions());
-		$("#sub_container").append("<span id='table_stats'></span><br /><table id='muh_table' style='display:inline-block;text-align:left'><thead><tr><th>"+this.lang.columns.icon+"</th><th id='sort_name'>"+this.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+this.lang.columns.platform+"</th><th id='sort_size'>"+this.lang.columns.size+"</th><th id='sort_date'>"+this.lang.columns.date+"</th></tr></thead><tbody>"+this.genTableContents()+"</tbody></table>");
+		$("#sub_container").html(this.genSearchOptions()).append("<span id='table_stats'></span><br /><table id='muh_table' style='display:inline-block;text-align:left'><thead><tr><th>"+this.lang.columns.icon+"</th><th id='sort_name'>"+this.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+this.lang.columns.platform+"</th><th id='sort_size'>"+this.lang.columns.size+"</th><th id='sort_date'>"+this.lang.columns.date+"</th></tr></thead><tbody>"+this.genTableContents()+"</tbody></table>");
 		this.sortGamelist("#sort_date");
 		return 1;
 	},
@@ -246,17 +249,14 @@ repod.psdle = {
 	},
 	genTableContents: function() {
 		this.exportTable.destroy();
-		var that = this;
-		var temp = "";
-		var safesys = this.safeSystemCheck();
 		this.gamelist_cur = [];
+		var that = this, temp = "", safesys = this.safeSystemCheck(), plus = 0;
 		var search = (!!$("#psdle_search_text")) ? $("#psdle_search_text").val() : this.config.last_search;
 		$("#psdle_search_text").removeClass("negate_regex");
-		var plus = 0;
 		$.each(this.gamelist,function(index,val) {
 			var sys = that.safeGuessSystem(val.platform);
 			if ($.inArray(sys,safesys) > -1) { 
-				var a = true; var t = val.title;
+				var a = true, t = val.title;
 				if (that.config.deep_search) {
 					if ($("span[id=filter_"+val.deep_type+"]").hasClass("toggled_off")) { a = false; }
 				}				
@@ -268,8 +268,8 @@ repod.psdle = {
 					else if (t.toLowerCase().indexOf(search.toLowerCase()) >= 0) { a = !a; }
 				}
 				if (a == true) {
-					var u = val.url, is_plus = "";
-					if (that.entitlement_cache[val.pid].plus === true && that.config.check_entitlements) { is_plus = "is_plus"; plus++; }
+					var u = that.config.game_page+val.pid, is_plus = "";
+					if (val.plus === true && that.config.check_entitlements) { is_plus = "is_plus"; plus++; }
 					temp += "<tr class='"+is_plus+"'><td style='max-width:31px;max-height:31px;'><a target='_blank' href='"+u+"'><img title='"+that.lang.labels.page+" #"+Math.ceil(val.id/24)+"' src='"+val.icon+"' class='psdle_game_icon' /></a></td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+t+"</a></td><td>"+sys+"</td><td>"+val.size+"</td><td>"+val.date+"</td></tr>";
 					that.gamelist_cur.push(val);
 				}
@@ -283,11 +283,15 @@ repod.psdle = {
 	genSearchOptions: function() {
 		//TO-DO: Not this. Make scalable.
 		var that = this;
+		
+		//Delegated handlers.
 		$(document).keypress(function(e) { if (e.which == 13 && $("#psdle_search_text").is(":focus")) { that.regenTable(); } });
-		$(document).on("click","span[id^=system_], span[id^=filter_]", function() { console.log($(this).attr("id")); $(this).toggleClass("toggled_off"); that.regenTable(); });
+		$(document).on("click","span[id^=system_], span[id^=filter_]", function() { $(this).toggleClass("toggled_off"); that.regenTable(); });
 		$(document).on("click","th[id^=sort_]", function() { that.sortGamelist($(this)); });
 		$(document).on("click","span[id=export_view]", function() { that.exportTable.display(); });
 		$(document).on("blur", "#psdle_search_text", function() { that.regenTable(); });
+		
+		//Search options.
 		var temp = '<span id="search_options" style="text-align:center;">' +
 					'<span><span class="psdle_fancy_but" id="export_view">'+this.lang.labels.export_view+'</span></span> ' +
 					'<span class="psdle_fancy_bar">';
@@ -295,9 +299,10 @@ repod.psdle = {
 		temp +=		'<span id="system_ps3">PS3</span>' +
 					'<span id="system_ps4">PS4</span>' +
 					'<span id="system_psp">PSP</span>' +
-					'<span id="system_psv">PS Vita</span></span><br />';
+					'<span id="system_psv">PS Vita</span></span>';
+		if (1 == 2 /* Queue enabled? */) { temp += ' <span><span class="psdle_fancy_but toggled_off" id="dl_queue">Queue</span></span>'; }
 		if (this.config.deep_search) {					
-		temp +=		'<span class="psdle_fancy_bar">' +
+		temp +=		'<br /><span class="psdle_fancy_bar">' +
 					'<span id="filter_downloadable_game">'+this.lang.labels.games+'</span>' +
 					'<span id="filter_avatar">'+this.lang.labels.avatar+'</span>' +
 					'<span id="filter_demo">'+this.lang.labels.demo+'</span>'+
@@ -311,7 +316,6 @@ repod.psdle = {
 		return temp;
 	},
 	sortGamelist: function(e) {
-		console.log('sortGamelist() called');
 		var that = this;
 		e = $(e).attr("id");
 		if (e == "sort_date") {
@@ -364,10 +368,10 @@ repod.psdle = {
 	injectCSS: function() {
 		var temp = "#muh_games_container { display:none;position:fixed;top:0px;right:0px;left:0px;color:#000;z-index:9001;text-align:center } #sub_container { background-color:#fff; padding:20px; } #psdle_progressbar { overflow:hidden;display:inline-block;width:400px;height:16px;border:1px solid #999;margin:10px;border-radius:10px; } #psdle_bar { background-color:#2185f4;width:0%;height:100%;border-radius:10px; } .psdle_btn { cursor:pointer;border-radius:13px;background-color:#2185f4;color:#fff;padding:1px 15px;display:inline-block;margin:5px auto; }" + //Startup
 					"th[id^=sort] { cursor:pointer; } table,th,td{border:1px solid #999;border-collapse:collapse;} th {padding:5px;} td a.psdle_game_link {display:block;width:100%;height:100%;color:#000 !important;padding:3px;} th, tr:hover{background-color:#ccc;} .is_plus{background-color:#FFFC0D;}" + //Table
-					"#psdle_search_text { margin:5px auto;padding:5px 10px;font-size:large;max-width:600px;width:100%;border-style:solid;border-radius:90px; } .negate_regex { background-color:#FF8080;color:#fff; } span[id^=system_], span[id^=filter_], span#export_view { font-weight:bold; text-transform:uppercase; font-size:small; color:#fff; background-color:#2185f4; display:inline-block; margin-right:2px; margin-bottom:5px; padding:1px 15px; cursor:pointer; } .psdle_fancy_but { border-radius:12px; } .psdle_fancy_bar > span:first-child { border-radius:12px 0px 0px 12px; } .psdle_fancy_bar > span:last-child { border-radius:0px 12px 12px 0px; } .toggled_off { opacity:0.4; }" + //Search buttons
+					"#psdle_search_text { margin:5px auto;padding:5px 10px;font-size:large;max-width:600px;width:100%;border-style:solid;border-radius:90px; } .negate_regex { background-color:#FF8080;color:#fff; } span[id^=system_], span[id^=filter_], span#export_view, span#dl_queue { font-weight:bold; text-transform:uppercase; font-size:small; color:#fff; background-color:#2185f4; display:inline-block; margin-right:2px; margin-bottom:5px; padding:1px 15px; cursor:pointer; } .psdle_fancy_but { border-radius:12px; } .psdle_fancy_bar > span:first-child { border-radius:12px 0px 0px 12px; } .psdle_fancy_bar > span:last-child { border-radius:0px 12px 12px 0px; } .toggled_off { opacity:0.4; }" + //Search buttons
 					".psdle_game_icon { max-width:100%;vertical-align:middle }" + //Content icons
 					".psdle_sort_asc { float:right; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 5px solid black; } .psdle_sort_desc { float:right; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid black; }"; //Sorting
-		$("<style type='text/css'>"+temp+"</style>").appendTo("head");
+		$("head").append("<style type='text/css'>"+temp+"</style>");
 		return 1;
 	},
 	returnKB: function(e) {
@@ -385,19 +389,10 @@ repod.psdle = {
 			$("#search_options").append("<span id='sotextarea' style='display:none'><br /><textarea></textarea></span>");
 			$("#sotextarea > textarea").css({"width":w,"max-width":w}).text(this.delimited(prompt(this.parent.lang.strings.delimiter,"	"))).select().parent().delay(500).slideDown();
 		},
-		destroy: function() {
-			$("#sotextarea").remove();
-		},
-		json: function() {
-			if (!!JSON.stringify) {
-				return JSON.stringify(this.parent.gamelist_cur);
-			} else {
-				return this.parent.lang.strings.stringify_error;
-			}
-		},
+		destroy: function() { $("#sotextarea").remove(); },
+		json: function() { return (!!JSON.stringify) ? JSON.stringify(this.parent.gamelist_cur) : this.parent.lang.strings.stringify_error; },
 		delimited: function(e) {
-			var that = this;
-			var sep = (e) ? e : "	";
+			var that = this, sep = (e) ? e : "	";
 			var t = this.parent.lang.columns.name+sep+this.parent.lang.columns.platform+sep+this.parent.lang.columns.size+sep+this.parent.lang.columns.date+"\n";
 			$.each(this.parent.gamelist_cur, function(a,b) {
 			  t += b.title+sep+that.parent.safeGuessSystem(b.platform)+sep+b.size+sep+b.date+"\n";
@@ -434,36 +429,68 @@ repod.psdle = {
 		}		
 	},
 	parseEntitlements: function(data) {
-		console.log("parsing entitlements: "+this.config.entitlements_count);
 		var that = this;
 		this.config.entitlements_total = data.total_results;
 		$.each(data.entitlements,function(index,value) {
+			var plus = false, id, eimg;
 			if (value.drm_def) {
 				if (!that.sku_id_cache[value.sku_id]) { that.sku_id_cache[value.sku_id] = []; }
-				var id = value.license.entitlement_id;
-				var img = (value.drm_def && value.drm_def.image_url) ? value.drm_def.image_url+"&w=124&h=124" : "";
-				that.sku_id_cache[value.sku_id].push({"id":id,"img":img});
+				id = value.license.entitlement_id;
+				eimg = (value.drm_def && value.drm_def.image_url) ? value.drm_def.image_url+"&w=124&h=124" : "";
+				
+				/*if (that.entitlement_cache[id] && img !== "") {
+					$.each(that.entitlement_cache[id], function(a,b) {
+						if (that.gamelist[b.glid].icon.indexOf("pc/img/furniture") >= 0) {
+							that.gamelist[b.glid].icon = img;
+						}
+					});
+				}*/
+				
+				//that.gamelist[a.glid].icon = img;
+				
 				
 				//Some index don't have drm_def, if we don't check we'll crash.
 				//PS4 games don't have this at all, check feature_type.
-				if(value.drm_def.rewards) {
+				if (value.drm_def.rewards) {
 					//Likewise?
 					if (value.drm_def.rewards[0].rewardType == 2 || value.drm_def.rewards[0].rewardType == 3) {
 						if (value.license && value.license.infinite_duration !== true) {
-							that.entitlement_cache[value.drm_def.productId].plus = true;
+							plus = true;
 							that.config.entitlements_plus++;
 						}
 					}
 				}
 			} else if (value.feature_type == 3) {
-				that.entitlement_cache[value.product_id].plus = true;
+				id = "", eimg = "", plus = true;
 				that.config.entitlements_plus++;
+			}
+			
+			if (id !== undefined && eimg !== undefined) {
+				if (!that.sku_id_cache[value.product_id]) { that.sku_id_cache[value.product_id] = []; }
+				that.sku_id_cache[value.product_id].push({"pid":id,"icon":eimg,"plus":plus});
 			}
 		});
 		this.config.entitlements_count += data.entitlements.length;
 		$("#psdle_progressbar > #psdle_bar").animate({"width":Math.round((this.config.entitlements_count / this.config.entitlements_total) * 100)+"%"});
 		$("#psdle_status").text(this.config.entitlements_count+" / "+this.config.entitlements_total);
 		this.checkEntitlements();
+	},
+	dlQueue: {
+		//Easter egg. Soon(tm).
+		batch: {
+			cache: {},
+			get: function() {
+			
+			},
+			add: function(id,sys) {
+				
+			}
+		},
+		generate: {
+			display: function() {
+				//Generate table from batch.
+			}
+		}
 	}
 };
 
