@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		1.034
+// @version		1.035
 // @require		https://code.jquery.com/jquery-1.11.1.min.js
 // @include		https://store.sonyentertainmentnetwork.com/*
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -291,7 +291,7 @@ repod.psdle = {
 		});
 		that.config.last_search = search;
 		$("#table_stats").html(this.gamelist_cur.length+((this.config.check_entitlements)?" (<div id='psdleplus' style='display:inline-block' /> "+plus+")":"")+" / "+this.gamelist.length);
-		if (this.config.check_entitlements) { $("#psdleplus").css($(".psPlusIcon").css(["background-image","height","width","background-repeat","background-position"])); }
+		if (this.config.check_entitlements) { $("#psdleplus").css($(".headerUserInfo.cart").css(["background-image","background-repeat"])).css({"height":"14px","width":"14px","background-position":"left -5px"}); }
 		return temp;
 	},
 	genSearchOptions: function() {

@@ -277,7 +277,7 @@ repod.psdle = {
 		});
 		that.config.last_search = search;
 		$("#table_stats").html(this.gamelist_cur.length+((this.config.check_entitlements)?" (<div id='psdleplus' style='display:inline-block' /> "+plus+")":"")+" / "+this.gamelist.length);
-		if (this.config.check_entitlements) { $("#psdleplus").css($(".psPlusIcon").css(["background-image","height","width","background-repeat","background-position"])); }
+		if (this.config.check_entitlements) { $("#psdleplus").css($(".headerUserInfo.cart").css(["background-image","background-repeat"])).css({"height":"14px","width":"14px","background-position":"left -5px"}); }
 		return temp;
 	},
 	genSearchOptions: function() {
