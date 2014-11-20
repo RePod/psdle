@@ -29,9 +29,10 @@ What Needs To Be Done
 =====
 * Improve appearance.
 * **Translations!** Language code ("en-us") and JSON format required. See source or contact me.
-* Make it faster! How? How indeed.
-* Iron out problems with APIs.
-* Internal Download Queue support.
+* Make it faster! How? How indeed. (Always in progress)
+* Iron out problems with APIs. (Various degress of progress)
+* Internal Download Queue support. (In-progress)
+* Custom-make the gh-pages branch page to remove useless links (downloading the zip).
 
 What Cannot Be Done
 =====
@@ -52,7 +53,7 @@ Yes, or tries to, listing them as normal as well as distinguishing them from oth
 Report any issues [here](//github.com/RePod/psdle/issues/3).
 
 #####Download Queue support when?
-Soon, there is research to be done!
+Initial support is available from the versions on the PSDLE repository, go test it out!
 
 #####What difference does using the APIs make?
 The **Game API** (deep search) accesses individual game information to enhance results (detecting PS1/2 games, demos, etc.).
