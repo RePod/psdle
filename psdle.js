@@ -86,6 +86,7 @@ repod.psdle = {
 		return temp;
 	},
 	init: function() {
+		console.log("PSDLE | Init.");
 		var that = this;
 		this.config = {
 			game_page: "",
@@ -244,29 +245,23 @@ repod.psdle = {
 	table: {
 		bindSearch: function() {
 			//Unbind for safety.
-			//$(document).off("click","#muh_table > tbody > tr, span[id^=system_], span[id^=filter_], span[id^=dl_], th[id^=sort_], span[id=export_view]").off("blur","#psdle_search_text");
+			$(document).off("click","#muh_table > tbody > tr, span[id^=system_], span[id^=filter_], span[id^=dl_], th[id^=sort_], span[id=export_view]").off("blur","#psdle_search_text");
 			//Bind.
 			$(document).keypress(function(e) { if (e.which == 13 && $("#psdle_search_text").is(":focus")) { repod.psdle.table.regen(); } });
-			$(document).off("click").on("click","span[id^=system_], span[id^=filter_]", function() { $(this).toggleClass("toggled_off"); repod.psdle.table.regen(); });
-			$(document).off("click").on("click","th[id^=sort_]", function() { repod.psdle.sortGamelist($(this)); });
-			$(document).off("click").on("click","span[id=export_view]", function() { repod.psdle.exportTable.display(); });
-			$(document).off("click").on("blur", "#psdle_search_text", function() { repod.psdle.table.regen(); });
-			$(document).off("click").on("click", "#dl_queue", function() { repod.psdle.dlQueue.generate.display(); });
-			$(document).off("click").on("click", "#dl_queue_add", function() {
-				$.each($(".dlQueueMe"),function() {
-					$(this).removeClass(".dlQueueMe");
-					repod.psdle.dlQueue.batch.add.go("ps3",repod.psdle.gamelist[Number($(this).find(".psdle_game_link").attr("id").split("_").pop())].pid);
-				});
-			});
+			$("span[id^=system_], span[id^=filter_]").off("click").on("click", function() { $(this).toggleClass("toggled_off"); repod.psdle.table.regen(); });
+			$("th[id^=sort_]").off("click").on("click", function() { repod.psdle.sortGamelist($(this)); });
+			$("span[id=export_view]").off("click").on("click", function() { repod.psdle.exportTable.display(); });
+			$("#psdle_search_text").off("blur").on("blur", function() { repod.psdle.table.regen(); });
+			$("#dl_queue").one("click", function() { repod.psdle.dlQueue.generate.display(); });
+			$("#dl_queue_add").off("click").on("click", function() { repod.psdle.dlQueue.batch.add.parse(); });
 			$(document).on("click", "#muh_table > tbody > tr", function(e) { e.preventDefault(); $(this).toggleClass("dlQueueMe"); });
 		},
 		gen: function() {
 			clearInterval(repod.psdle.config.timerID); //Just in case.
-			this.bindSearch();
 			repod.psdle.config.lastsort = ""; repod.psdle.config.lastsort_r = false;
 			$("#muh_games_container").css({"position":"absolute"});
 			$("#sub_container").html(repod.psdle.genSearchOptions()).append("<span id='table_stats'></span><br /><table id='muh_table' style='display:inline-block;text-align:left'><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+repod.psdle.lang.columns.platform+"</th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table>");
-			this.regen();
+			this.regen(); this.bindSearch();
 			repod.psdle.sortGamelist("#sort_date");
 			return 1;
 		},
@@ -290,13 +285,14 @@ repod.psdle = {
 		this.gamelist_cur = [];
 		var that = this, temp = "", safesys = this.safeSystemCheck();
 		var search = (!!$("#psdle_search_text")) ? $("#psdle_search_text").val() : this.config.last_search;
+		/* Determine filters. */ var filters = {}; $.each($("[id^=filter_]"), function() {var n = $(this).attr("id").split("_").splice(1).join("_");filters[n] = $(this).hasClass("toggled_off");});
 		$("#psdle_search_text").removeClass("negate_regex");
 		$.each(this.gamelist,function(index,val) {
 			var sys = that.safeGuessSystem(val.platform);
 			if ($.inArray(sys,safesys) > -1) { 
 				var a = true, t = val.title;
 				if (that.config.deep_search) {
-					if ($("span[id=filter_"+val.deep_type+"]").hasClass("toggled_off")) { a = false; }
+					if (filters[val.deep_type]) { a = false; }
 				}				
 				if (a == true && search !== "") {
 					var regex = search.match(/^\/(.+?)\/([imgd]+)?$/i);
@@ -534,8 +530,17 @@ repod.psdle = {
 				}
 			},
 			add: {
+				parse: function() {
+					$.each($(".dlQueueMe"),function() {
+						$(this).removeClass(".dlQueueMe");
+						var game = repod.psdle.gamelist[Number($(this).find(".psdle_game_link").attr("id").split("_").pop())];
+						repod.psdle.dlQueue.batch.add.go(repod.psdle.safeGuessSystem(game.platform).replace("PS ","").toLowerCase(),game.pid);
+						//Potentially move target system determining to this.ask();
+					});
+				},
 				ask: function(sys,id) {
 					//Ask which system to queue for. (cannot validate outside of this.go() response, if we care)
+					//See notes for determining active consoles, probably the way to go.
 					
 				},
 				go: function(sys,id) {
@@ -544,35 +549,40 @@ repod.psdle = {
 						type:'POST', url: "https://store.sonyentertainmentnetwork.com/kamaji/api/chihiro/00_09_000/user/notification/download",
 						contentType: 'application/json; charset=utf-8', dataType: 'json',
 						data: JSON.stringify([{"platformString":sys,"contentId":id}]),
-						complete: repod.psdle.dlQueue.batch.get()
+						complete: repod.psdle.dlQueue.batch.get(),
+						error: function(d) { console.error("PSDLE | Download Queue > Add | "+d.responseJSON.header.status_code+" "+d.responseJSON.header.message_key+" ("+sys+" / "+id+")"); }
 					});
 				},
 			},
-			remove: function(sys,id) {
-				//Remove game from batch.
-				$.ajax({
-					type:'POST', url: "https://store.sonyentertainmentnetwork.com/kamaji/api/chihiro/00_09_000/user/notification/download/status",
-					contentType: 'application/json; charset=utf-8', dataType: 'json',
-					data: JSON.stringify([{"platformString":sys,"contentId":id,"status":"usercancelled"}]),
-					complete: repod.psdle.dlQueue.batch.get()
-				});
+			remove: {
+				parse: function() {
+					$.each($(".dlQueueMe"),function() {
+						$(this).removeClass(".dlQueueMe");
+						repod.psdle.dlQueue.batch.remove.go($(this).children("td:eq(3)").text().replace("PS ","").toLowerCase(),repod.psdle.gamelist[Number($(this).find(".psdle_game_link").attr("id").split("_").pop())].pid);
+					});
+				},
+				go: function(sys,id) {
+					//Remove game from batch.
+					$.ajax({
+						type:'POST', url: "https://store.sonyentertainmentnetwork.com/kamaji/api/chihiro/00_09_000/user/notification/download/status",
+						contentType: 'application/json; charset=utf-8', dataType: 'json',
+						data: JSON.stringify([{"platformString":sys,"contentId":id,"status":"usercancelled"}]),
+						complete: repod.psdle.dlQueue.batch.get(),
+						error: function(d) { console.error("PSDLE | Download Queue > Remove | "+d.responseJSON.header.status_code+" "+d.responseJSON.header.message_key+" ("+sys+" / "+id+")"); }
+					});
+				}
 			}
 		},
 		generate: {
 			bindings: function () {
 				//Unbind for safety.
-				$(document).off("click","#muh_table > tbody > tr, span[id^=dl_queue]");
+				//$(document).off("click","#muh_table > tbody > tr, span[id^=dl_queue]");
 				//Bind.
 				//$(document).on("click","span[id^=system_], span[id^=filter_]", function() { $(this).toggleClass("toggled_off"); repod.psdle.table.regen(); });
 				//$(document).on("click","th[id^=sort_]", function() { repod.psdle.sortGamelist($(this)); });
 				$(document).one("click", "#dl_list", function() { repod.psdle.table.gen(); });
-				$(document).on("click", "#dl_queue_del", function() {
-					$.each($(".dlQueueMe"),function() {
-						$(this).removeClass(".dlQueueMe");
-						repod.psdle.dlQueue.batch.remove($(this).children("td:eq(3)").text().replace("PS ","").toLowerCase(),repod.psdle.gamelist[Number($(this).find(".psdle_game_link").attr("id").split("_").pop())].pid);
-					});
-				});
-				$(document).on("click", "#muh_table > tbody > tr", function(e) { e.preventDefault(); $(this).toggleClass("dlQueueMe"); });
+				$(document).on("click", "#dl_queue_del", function() { repod.psdle.dlQueue.batch.remove.parse(); });
+				//$(document).on("click", "#muh_table > tbody > tr", function(e) { e.preventDefault(); $(this).toggleClass("dlQueueMe"); });
 			},
 			table: function() {
 				$("#muh_table").remove();
@@ -613,3 +623,4 @@ repod.psdle = {
 
 var a = setInterval(function(a){ if ($("li.cellDlItemGame").length) { clearInterval(repod.psdle.config.timerID); repod.psdle.init(); } },1000);
 repod.psdle.config = {"timerID":a};
+console.log("PSDLE | Ready.");
