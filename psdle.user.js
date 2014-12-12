@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		1.041
+// @version		1.042
 // @require		https://code.jquery.com/jquery-1.11.1.min.js
 // @include		https://store.sonyentertainmentnetwork.com/*
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -582,7 +582,7 @@ repod.psdle = {
 						type:'POST', url: "https://store.sonyentertainmentnetwork.com/kamaji/api/chihiro/00_09_000/user/notification/download",
 						contentType: 'application/json; charset=utf-8', dataType: 'json',
 						data: JSON.stringify([{"platformString":sys,"contentId":id}]),
-						complete: $("#dl_queue").animate({"background-color":"green"}).animate({"background-color":"#2185F4"});,
+						complete: function() { $("#dl_queue").animate({"background-color":"green"}).animate({"background-color":"#2185F4"}); },
 						error: function(d) {
 							$("#dl_queue").animate({"background-color":"red"}).animate({"background-color":"#2185F4"});
 							console.error("PSDLE | Download Queue > Add | "+d.responseJSON.header.status_code+" "+d.responseJSON.header.message_key+" ("+sys+" / "+id+")");
