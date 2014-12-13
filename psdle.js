@@ -34,7 +34,7 @@ repod.psdle = {
 	lang_cache: {
 		"en": {
 			"def": "us",
-			"us": {"local":"English","startup":"Waiting on page to load.","columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"export_view":"Export View","games":"Games","avatar":"Avatars","demo":"Demos","unlock":"Unlocks","pass":"Passes","pack":"Packs","theme":"Themes","addon":"Add-ons","app":"Applications","unknown":"Unknown","page":"Page"},"strings":{"delimiter":"Enter delimiter:","stringify_error":"Error: Browser does not have JSON.stringify.","yes":"Yes","no":"No","use_api":"Use API for in-depth scanning? (Beta, buggy)","use_queue":"Enable Download Queue support?","use_entitled_api":"Use Entitlements API? (For PS+/bundles/etc, contains purchase information)","regex_search":"Search by game title (/regex/id)"}}
+			"us": {"local":"English","startup":"Waiting on page to load.","columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"export_view":"Export View","games":"Games","avatar":"Avatars","demo":"Demos","unlock":"Unlocks","pass":"Passes","pack":"Packs","theme":"Themes","addon":"Add-ons","app":"Applications","unknown":"Unknown","page":"Page"},"strings":{"delimiter":"Enter delimiter:","stringify_error":"Error: Browser does not have JSON.stringify.","yes":"Yes","no":"No","use_api":"Use API for in-depth scanning? (Beta, buggy)","use_queue":"Enable Download Queue support? (accesses queue and activated consoles)","use_entitled_api":"Use Entitlements API? (For PS+/bundles/etc, contains purchase information)","regex_search":"Search by game title (/regex/id)","dlQueue":"Queue","dlList":"List"}}
 		},
 		"es": {
 			"def": "mx",
@@ -102,11 +102,8 @@ repod.psdle = {
 			deep_current: 0,
 			api_url: "",
 			last_search: "",
-			check_entitlements: false,
-			entitlements_count: 0,
-			entitlements_total: 1,
-			entitlements_plus: 0,
-			use_queue: 0
+			check_entitlements: false, entitlements_count: 0, entitlements_total: 1, entitlements_plus: 0,
+			use_queue: 0, active_consoles: {}
 		}; 
 		this.determineLanguage(this.config.language,true);
 		this.injectCSS();
@@ -192,6 +189,7 @@ repod.psdle = {
 					$(document).one('click',".psdle_btn",function () { that.config.use_queue = ($(this).attr("id") == "yes") ? true : false; that.genDisplay("progress"); });
 					break;
 				case "progress":
+					if (that.config.use_queue) { $.getJSON("https://store.sonyentertainmentnetwork.com/kamaji/api/chihiro/00_09_000/gateway/store/v1/users/me/device/activation/count",function(data) { that.config.active_consoles = data; }) }
 					a += "<br /><div id='psdle_progressbar'><div id='psdle_bar'>&nbsp;</div></div><br /><span id='psdle_status'>"+that.lang.startup+"</span>";
 					var t = 0;
 					$("li.cellDlItemGame:even").each(function() {
@@ -327,9 +325,9 @@ repod.psdle = {
 		temp +=		'<span id="system_psv">PS Vita</span></span>';
 		if (this.config.use_queue) {
 			if (!dlQueue) {
-				temp += ' <span class="psdle_fancy_but" id="dl_queue">Queue</span>';
+				temp += ' <span class="psdle_fancy_but" id="dl_queue">'+this.lang.strings.dlQueue+'</span>';
 			} else {
-				temp += ' <span><span class="psdle_fancy_but" id="dl_list">List</span></span>';
+				temp += ' <span><span class="psdle_fancy_but" id="dl_list">'+this.lang.strings.dlList+'</span></span>';
 			}
 		}
 		if (this.config.deep_search && !dlQueue) {					
@@ -403,7 +401,7 @@ repod.psdle = {
 					/* Search buttons	*/ "#psdle_search_text { margin:5px auto;padding:5px 10px;font-size:large;max-width:600px;width:100%;border-style:solid;border-radius:90px; } .negate_regex { background-color:#FF8080;color:#fff; } span[id^=system_], span[id^=filter_], span#export_view, span#dl_queue, span#dl_list, .psdle_fancy_bar > span { font-weight:bold; text-transform:uppercase; font-size:small; color:#fff; background-color:#2185f4; display:inline-block; margin-right:2px; margin-bottom:5px; padding:1px 15px; cursor:pointer; } .psdle_fancy_but { border-radius:12px; } .psdle_fancy_bar > span:first-child { border-top-left-radius:12px; border-bottom-left-radius:12px; } .psdle_fancy_bar > span:last-child { border-top-right-radius:12px; border-bottom-right-radius:12px; } .toggled_off { opacity:0.4; }" +
 					/* Content icons	*/ ".psdle_game_icon { max-width:100%;vertical-align:middle }" +
 					/* Sorting			*/ ".psdle_sort_asc { float:right; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 5px solid black; } .psdle_sort_desc { float:right; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid black; }" +
-					/* Newbox			*/ "#dlQueueAsk { display:inline-block;width:400px;height:400px;background-color:#FFF;border-radius:20px;overflow:hidden;position:relative;background-size:cover; } #dlQAN { background-color:rgba(33,133,244,0.8);padding:7px 15px;color:#fff;overflow:hidden;white-space:nowrap;text-overflow:ellipsis; } #dlQASys { position:absolute;bottom:0px;padding:7px 0px;color:#FFF;display:table;width:100%;table-layout:fixed; } #dlQASys > div { display:table-cell; } #dlQASys > div > div { cursor:pointer;background-color:rgba(33,133,244,0.8);border-radius:10px;padding:2px;margin:0px 10px; } #dlQAStat { color:#fff;background-color:rgba(33,133,244,0.8);border-bottom-left-radius:20px;padding:0px 10px 0px 15px;font-size:small;float:right; }" +
+					/* Newbox			*/ "#dlQueueAsk { display:inline-block;width:400px;height:400px;background-color:#FFF;border-radius:20px;overflow:hidden;position:relative;background-size:cover; } #dlQAN { cursor:pointer;background-color:rgba(33,133,244,0.8);padding:7px 15px;color:#fff;overflow:hidden;white-space:nowrap;text-overflow:ellipsis; } #dlQASys { position:absolute;bottom:0px;padding:7px 0px;color:#FFF;display:table;width:100%;table-layout:fixed; } #dlQASys > div { display:table-cell; } #dlQASys > div > div { cursor:pointer;background-color:rgba(33,133,244,0.8);border-radius:10px;padding:2px;margin:0px 10px; } #dlQAStat { color:#fff;background-color:rgba(33,133,244,0.8);border-bottom-left-radius:20px;padding:0px 10px 0px 15px;font-size:small;float:right; }" +
 					/* Newbox Container	*/ "#dlQueue_newbox { z-index:9001;position:fixed;top:0px;left:0px;width:100%;height:100%;display:table;background-color:rgba(0,0,0,0.25); } #dlQueue_newbox > div { display:table-cell;vertical-align:middle;height:inherit;text-align:center; }";
 		$("head").append("<style type='text/css'>"+temp+"</style>");
 	},
@@ -514,14 +512,9 @@ repod.psdle = {
 		batch: {
 			cache: {},
 			get: function(callback) {
-				this.cache = {"PS3":[], "PS4":[], "Vita":[]};
-				var that = this, sys = ["PS3", "PS4", "Vita"];
-				$.each(sys,function(a,sys) {
-					$.getJSON("https://store.sonyentertainmentnetwork.com/kamaji/api/chihiro/00_09_000/user/notification/download/status/?status=notstarted&status=stopped&status=waitfordownload&platformString="+sys.toLowerCase()+"&size=100",function(data) {
-						that.parse(sys,data);
-					});
-				});
-				var sys = ["PS3","PS4","Vita"], promises = [], base_url = "https://store.sonyentertainmentnetwork.com/kamaji/api/chihiro/00_09_000/user/notification/download/status/?status=notstarted&status=stopped&status=waitfordownload&platformString=$$1&size=100"
+				this.cache = {"PS3":[], "PS4":[], "Vita":[]}, that = this, sys = [], promises = [];
+				for (var i in repod.psdle.config.active_consoles.activatedConsoles) { sys.push(i.toUpperCase().replace("PSP2","Vita")); }
+				var base_url = "https://store.sonyentertainmentnetwork.com/kamaji/api/chihiro/00_09_000/user/notification/download/status/?status=notstarted&status=stopped&status=waitfordownload&platformString=$$1&size=100"
 				$.each(sys,function(a,b) { promises.push($.getJSON(base_url.replace("$$1",b.toLowerCase()))); });
 				$.when(promises).done(function(ps3,ps4,vita) {
 					try { that.parse("PS3",ps3.responseJSON); } catch (e) {};
@@ -541,9 +534,22 @@ repod.psdle = {
 					console.error("PSDLE | DL Queue parse error for \""+sys+"\". Is it activated on the account?");
 				}
 			},
+			send: function(sys,id,cancel,completeCb,errorCb) {
+				var dat = {"platformString":sys,"contentId":id}, base_url = "https://store.sonyentertainmentnetwork.com/kamaji/api/chihiro/00_09_000/user/notification/download";
+				if (cancel) { dat.status = "usercancelled"; base_url += "/status" }
+				$.ajax({
+					type:'POST', url: base_url,
+					contentType: 'application/json; charset=utf-8', dataType: 'json',
+					data: JSON.stringify([dat]),
+					complete: completeCb,
+					error: function(d) {
+						console.error("PSDLE | Download Queue | "+d.responseJSON.header.status_code+" "+d.responseJSON.header.message_key+" ("+sys+" / "+id+")");
+						errorCb(d);
+					}
+				});
+			},
 			add: {
 				parse: function(index,sys) {
-					console.log(sys);
 					var game = repod.psdle.gamelist[index], that = this;
 					switch (sys) {
 						case "ps4":
@@ -564,15 +570,10 @@ repod.psdle = {
 				},
 				go: function(sys,id) {
 					//Add game to batch.
-					$.ajax({
-						type:'POST', url: "https://store.sonyentertainmentnetwork.com/kamaji/api/chihiro/00_09_000/user/notification/download",
-						contentType: 'application/json; charset=utf-8', dataType: 'json',
-						data: JSON.stringify([{"platformString":sys,"contentId":id}]),
-						complete: function() { $("#dl_queue").animate({"background-color":"green"}).animate({"background-color":"#2185F4"}); },
-						error: function(d) {
-							$("#dl_queue").animate({"background-color":"red"}).animate({"background-color":"#2185F4"});
-							console.error("PSDLE | Download Queue > Add | "+d.responseJSON.header.status_code+" "+d.responseJSON.header.message_key+" ("+sys+" / "+id+")");
-						}
+					repod.psdle.dlQueue.batch.send(sys,id,false,function() {
+						$("div[id^=dla_"+sys+"]").animate({"background-color":"green"});
+					},function(a) {
+						$("div[id^=dla_"+sys+"]").stop().animate({"background-color":"red"});
 					});
 				},
 			},
@@ -582,13 +583,7 @@ repod.psdle = {
 				},
 				go: function(sys,id) {
 					//Remove game from batch.
-					$.ajax({
-						type:'POST', url: "https://store.sonyentertainmentnetwork.com/kamaji/api/chihiro/00_09_000/user/notification/download/status",
-						contentType: 'application/json; charset=utf-8', dataType: 'json',
-						data: JSON.stringify([{"platformString":sys,"contentId":id,"status":"usercancelled"}]),
-						complete: repod.psdle.dlQueue.batch.get(repod.psdle.dlQueue.generate.table()),
-						error: function(d) { console.error("PSDLE | Download Queue > Remove | "+d.responseJSON.header.status_code+" "+d.responseJSON.header.message_key+" ("+sys+" / "+id+")"); }
-					});
+					repod.psdle.dlQueue.batch.send(sys,id,true,repod.psdle.dlQueue.batch.get(repod.psdle.dlQueue.generate.table()))
 				}
 			}
 		},
@@ -635,16 +630,20 @@ repod.psdle = {
 	},
 	newbox: {
 		generate: function(e) {
-			var i = (isNaN(e)) ? Number($(e).find(".psdle_game_link").attr("id").split("_").pop()) : Number(e), game = repod.psdle.gamelist[i], id = (game.id -1);
+			var plus = "", i = (isNaN(e)) ? Number($(e).find(".psdle_game_link").attr("id").split("_").pop()) : Number(e), game = repod.psdle.gamelist[i], id = (game.id -1);
 			var dialog = $("<div id='dlQueueAsk' style='background-image:url(\""+game.icon.replace(/=124/g,"=400")+"\");'/>");
-			if (game.plus) { /* Prepend plus icon */ }
-			dialog.append("<div id='dlQAN'>"+game.title+"</div>");
+			try { if (game.plus) { plus = $("#psdleplus").clone()[0].outerHTML+" "; } } catch(e) {}
+			dialog.append("<div id='dlQAN'>"+plus+game.title+"</div>");
 			var t = "<div><div id='dla_all_"+id+"'>All</div></div>";
 			if (game.plat_og.length > 1) {
 				var temp = game.plat_og, i = $.inArray("PSP", temp); if(i != -1) { temp.splice(i, 1); } /* Make sure we don't have PSP */
-				$.each(temp,function(a,b) { t += "<div><div id='dla_"+b.replace(/ps /i,"").toLowerCase()+"_"+id+"'>"+b+"</div></div>"; });
+				$.each(temp,function(a,b) {
+					var c = b.replace(/ps /i,"").toLowerCase(), d = (repod.psdle.config.active_consoles.activatedConsoles.hasOwnProperty(c.replace("vita","psp2"))) ? "" : "toggled_off";
+					t += "<div><div id='dla_"+c+"_"+id+"' class='"+d+"'>"+b+"</div></div>";
+				});
 			} else {
-				t = "<div><div id='dla_"+game.plat_og[0].replace(/ps /i,"").toLowerCase()+"_"+id+"'>Download to "+game.plat_og[0]+"</div></div>";
+				var c = game.plat_og[0].replace(/ps /i,"").toLowerCase(), d = (repod.psdle.config.active_consoles.activatedConsoles.hasOwnProperty(c.replace("vita","psp2"))) ? "" : "toggled_off";
+				t = "<div><div id='dla_"+c+"_"+id+"' class='"+d+"'>Download to "+game.plat_og[0]+"</div></div>";
 			}
 			dialog.append("<div id='dlQASys'>"+t+"</div>");
 			dialog.append("<div id='dlQAStat'>"+repod.psdle.safeGuessSystem(game.platform)+" | "+game.size+" | "+game.date+"</div>");
@@ -657,7 +656,7 @@ repod.psdle = {
 					$("#dlQueueAsk").draggable({handle:"#dlQAN",containment:"parent"});
 					$("#dlQueue_newbox").one("click", function() { $(this).remove(); repod.psdle.newbox.bind("off"); });
 					$("#dlQueueAsk").on("click", function(event) {	event.stopPropagation(); });
-					$("div[id^=dla_]").on("click", function() {
+					$("div[id^=dla_]:not('.toggled_off')").on("click", function() {
 						repod.psdle.dlQueue.batch.add.parse($(this).attr("id").split("_")[2],$(this).attr("id").split("_")[1]);
 					});
 					break;
