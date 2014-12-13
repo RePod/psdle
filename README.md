@@ -68,11 +68,6 @@ API usage is currently early in its development so not everything may be detecte
 #####Why are PS1 classics/etc showing as PSP and PS2 classics as PS3?
 Enable deep search/use API on PSDLE startup.
 
-#####Why is PS4 content not correctly identified? (Games as unknown, etc.)
-A **non-PS4 item** (PS3/P/Vita game, demo, application, avatar, etc) is required to be on the download list, as well as using the **Game API** (deep search).
-
-There was going to be an explanation behind this but nobody would care anyway.
-
 #####How can I exclude results that aren't touched by the system or tag filters?
 In the search box make a regular expression to match what you want to exclude then attach /d as a mod.
 

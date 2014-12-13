@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		1.043
+// @version		1.044
 // @require		https://code.jquery.com/jquery-1.11.1.min.js
 // @include		https://store.sonyentertainmentnetwork.com/*
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -43,7 +43,7 @@ SOFTWARE.
 var repod = {};
 repod.psdle = {
 	gamelist: [], gamelist_cur: [],
-	entitlement_cache: {}, sku_id_cache: {}, api_cache: [],
+	entitlement_cache: {}, sku_id_cache: {},
 	lang: {},
 	lang_cache: {
 		"en": {
@@ -104,8 +104,8 @@ repod.psdle = {
 		var that = this;
 		this.config = {
 			game_page: "",
-			game_api: "",
-			entitled_api: "https://store.sonyentertainmentnetwork.com/kamaji/api/chihiro/00_09_000/gateway/store/v1/users/me/internal_entitlements?start=",
+			game_api: SonyChi_SessionManagerSingleton.getBaseCatalogURL()+"/",
+			entitled_api: SonyChi_SessionManagerSingleton.getInternalEntitlementhsAPI()+"?start=",
 			totalgames: 1,
 			delay: 1000,
 			lastsort: "",
@@ -117,6 +117,7 @@ repod.psdle = {
 			api_url: "",
 			last_search: "",
 			check_entitlements: false, entitlements_count: 0, entitlements_total: 1, entitlements_plus: 0,
+			dlQueue: { base: SonyChi_SessionManagerSingleton.getDLQueueBaseURL(), status: SonyChi_SessionManagerSingleton.getDLQueueStatusURL(), status2: SonyChi_SessionManagerSingleton.getDLQueueStatusURL2() },
 			use_queue: 0, active_consoles: {}
 		}; 
 		this.determineLanguage(this.config.language,true);
@@ -148,20 +149,7 @@ repod.psdle = {
 				that.entitlement_cache[gid].push({"glid":(id -1),"gid":""});
 				that.gamelist.push({id:id,pid:gid,title:gametitle,url_og:url,size:size,platform:platform,plat_og:platform,date:date,icon:icon,deep_type:"unknown"});
 				if (that.config.deep_search) {
-					if (!!icon && !!icon.match(/(.+?)\/image\?.*$/)) {
-						that.config.deep_waiting++;
-						if (that.config.game_api == "") {
-							that.config.game_api = icon.match(/^((?:.+?)\/)[^\/]+\/[^\/]+$/).pop();
-							$.each(that.api_cache,function(a,b) { $.getJSON(that.config.game_api+b.gid,function(data) { that.parseDeep(b.id,data); }); });
-						}
-						$.getJSON(icon.match(/(.+?)\/image\?.*$/).pop(),function(data) { that.parseDeep(id,data); });
-					} else {
-						if (that.config.game_api !== "") {
-							$.getJSON(that.config.game_api+gid,function(data) { that.parseDeep(id,data); });
-						} else {
-							that.api_cache.push({id:id,gid:gid});
-						}
-					}
+					$.getJSON(that.config.game_api+gid,function(data) { that.parseDeep(id,data); });
 				}
 			});
 			$("#psdle_progressbar > #psdle_bar").animate({"width":Math.round((this.gamelist.length/24) / Math.ceil(this.config.totalgames/24) * 100)+"%"});
@@ -203,7 +191,13 @@ repod.psdle = {
 					$(document).one('click',".psdle_btn",function () { that.config.use_queue = ($(this).attr("id") == "yes") ? true : false; that.genDisplay("progress"); });
 					break;
 				case "progress":
-					if (that.config.use_queue) { $.getJSON("https://store.sonyentertainmentnetwork.com/kamaji/api/chihiro/00_09_000/gateway/store/v1/users/me/device/activation/count",function(data) { that.config.active_consoles = data; }) }
+					if (that.config.use_queue) {
+						var sys = {}, c = SonyChi_SessionManagerSingleton.getUserObject();
+						if (c.getActiveVitaCount() > 0) { sys.vita = 1; }
+						if (c.getActivePS3Count() > 0) { sys.ps3 = 1; }
+						if (c.getActivePS4Count() > 0) { sys.ps4 = 1; }
+						that.config.active_consoles = sys;
+					}
 					a += "<br /><div id='psdle_progressbar'><div id='psdle_bar'>&nbsp;</div></div><br /><span id='psdle_status'>"+that.lang.startup+"</span>";
 					var t = 0;
 					$("li.cellDlItemGame:even").each(function() {
@@ -522,17 +516,17 @@ repod.psdle = {
 		this.checkEntitlements();
 	},
 	dlQueue: {
-		//Easter egg. Soon(tm).
 		batch: {
 			cache: {},
 			get: function(callback) {
-				this.cache = {"PS3":[], "PS4":[], "Vita":[]}, that = this, sys = [], promises = [];
-				for (var i in repod.psdle.config.active_consoles.activatedConsoles) { sys.push(i.toUpperCase().replace("PSP2","Vita")); }
-				var base_url = "https://store.sonyentertainmentnetwork.com/kamaji/api/chihiro/00_09_000/user/notification/download/status/?status=notstarted&status=stopped&status=waitfordownload&platformString=$$1&size=100"
-				$.each(sys,function(a,b) { promises.push($.getJSON(base_url.replace("$$1",b.toLowerCase()))); });
+				this.cache = {"ps3":[], "ps4":[], "vita":[]}, that = this, promises = [];
+				var base_url = repod.psdle.config.dlQueue.status+"/?status=notstarted&status=stopped&status=waitfordownload&platformString=$$1&size=100"
+				for (var i in repod.psdle.config.active_consoles) {
+					promises.push($.getJSON(base_url.replace("$$1",ib.toLowerCase())));
+				}
 				$.when(promises).done(function(ps3,ps4,vita) {
-					try { that.parse("PS3",ps3.responseJSON); } catch (e) {};
-					try { that.parse("PS4",ps4.responseJSON); } catch (e) {};
+					try { that.parse("ps3",ps3.responseJSON); } catch (e) {};
+					try { that.parse("ps4",ps4.responseJSON); } catch (e) {};
 					try { that.parse("vita",vita.responseJSON); } catch (e) {};
 				}).done(function() {
 					try { callback } catch (e) {};
@@ -549,8 +543,8 @@ repod.psdle = {
 				}
 			},
 			send: function(sys,id,cancel,completeCb,errorCb) {
-				var dat = {"platformString":sys,"contentId":id}, base_url = "https://store.sonyentertainmentnetwork.com/kamaji/api/chihiro/00_09_000/user/notification/download";
-				if (cancel) { dat.status = "usercancelled"; base_url += "/status" }
+				var dat = {"platformString":sys,"contentId":id}, base_url = (cancel) ? repod.psdle.config.dlQueue.status : repod.psdle.config.dlQueue.base;
+				if (cancel) { dat.status = "usercancelled"; }
 				$.ajax({
 					type:'POST', url: base_url,
 					contentType: 'application/json; charset=utf-8', dataType: 'json',
@@ -648,18 +642,20 @@ repod.psdle = {
 			var dialog = $("<div id='dlQueueAsk' style='background-image:url(\""+game.icon.replace(/=124/g,"=400")+"\");'/>");
 			try { if (game.plus) { plus = $("#psdleplus").clone()[0].outerHTML+" "; } } catch(e) {}
 			dialog.append("<div id='dlQAN'>"+plus+game.title+"</div>");
-			var t = "<div><div id='dla_all_"+id+"'>All</div></div>";
-			if (game.plat_og.length > 1) {
-				var temp = game.plat_og, i = $.inArray("PSP", temp); if(i != -1) { temp.splice(i, 1); } /* Make sure we don't have PSP */
-				$.each(temp,function(a,b) {
-					var c = b.replace(/ps /i,"").toLowerCase(), d = (repod.psdle.config.active_consoles.activatedConsoles.hasOwnProperty(c.replace("vita","psp2"))) ? "" : "toggled_off";
-					t += "<div><div id='dla_"+c+"_"+id+"' class='"+d+"'>"+b+"</div></div>";
-				});
-			} else {
-				var c = game.plat_og[0].replace(/ps /i,"").toLowerCase(), d = (repod.psdle.config.active_consoles.activatedConsoles.hasOwnProperty(c.replace("vita","psp2"))) ? "" : "toggled_off";
-				t = "<div><div id='dla_"+c+"_"+id+"' class='"+d+"'>Download to "+game.plat_og[0]+"</div></div>";
+			if (repod.psdle.config.use_queue) {
+				var t = "<div><div id='dla_all_"+id+"'>All</div></div>";
+				if (game.plat_og.length > 1) {
+					var temp = game.plat_og, i = $.inArray("PSP", temp); if(i != -1) { temp.splice(i, 1); } /* Make sure we don't have PSP */
+					$.each(temp,function(a,b) {
+						var c = b.replace(/ps /i,"").toLowerCase(), d = (repod.psdle.config.active_consoles.hasOwnProperty(c)) ? "" : "toggled_off";
+						t += "<div><div id='dla_"+c+"_"+id+"' class='"+d+"'>"+b+"</div></div>";
+					});
+				} else {
+					var c = game.plat_og[0].replace(/ps /i,"").toLowerCase(), d = (repod.psdle.config.active_consoles.hasOwnProperty(c)) ? "" : "toggled_off";
+					t = "<div><div id='dla_"+c+"_"+id+"' class='"+d+"'>Download to "+game.plat_og[0]+"</div></div>";
+				}
+				dialog.append("<div id='dlQASys'>"+t+"</div>");
 			}
-			dialog.append("<div id='dlQASys'>"+t+"</div>");
 			dialog.append("<div id='dlQAStat'>"+repod.psdle.safeGuessSystem(game.platform)+" | "+game.size+" | "+game.date+"</div>");
 			return dialog;
 		},
@@ -675,7 +671,7 @@ repod.psdle = {
 					});
 					break;
 				case "off":
-					$("div[id^=dla_]").off("click");
+					$("div[id^=dla_]").off("click"); 
 					$("#dlQueueAsk").off("click");
 					break;
 			}
