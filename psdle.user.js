@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		1.044
+// @version		1.045
 // @require		https://code.jquery.com/jquery-1.11.1.min.js
 // @include		https://store.sonyentertainmentnetwork.com/*
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -566,7 +566,7 @@ repod.psdle = {
 							this.go(sys,game.pid);
 							break;
 						case "all":
-							var temp = game.plat_og, i = $.inArray("PSP", temp); if(i != -1) { temp.splice(i, 1); } /* Make sure we don't have PSP */
+							var temp = game.plat_og.slice(0), i = $.inArray("PSP", temp); if(i != -1) { temp.splice(i, 1); } /* Make sure we don't have PSP */
 							$.each(temp,function(a,b) { that.go(b.replace(/ps /i,"").toLowerCase(),game.pid); });
 							break;
 					}
@@ -645,18 +645,18 @@ repod.psdle = {
 			if (repod.psdle.config.use_queue) {
 				var t = "<div><div id='dla_all_"+id+"'>All</div></div>";
 				if (game.plat_og.length > 1) {
-					var temp = game.plat_og, i = $.inArray("PSP", temp); if(i != -1) { temp.splice(i, 1); } /* Make sure we don't have PSP */
+					var temp = game.plat_og.slice(0), i = $.inArray("PSP", temp); if(i != -1) { temp.splice(i, 1); } /* Make sure we don't have PSP */
 					$.each(temp,function(a,b) {
 						var c = b.replace(/ps /i,"").toLowerCase(), d = (repod.psdle.config.active_consoles.hasOwnProperty(c)) ? "" : "toggled_off";
 						t += "<div><div id='dla_"+c+"_"+id+"' class='"+d+"'>"+b+"</div></div>";
 					});
 				} else {
-					var c = game.plat_og[0].replace(/ps /i,"").toLowerCase(), d = (repod.psdle.config.active_consoles.hasOwnProperty(c)) ? "" : "toggled_off";
-					t = "<div><div id='dla_"+c+"_"+id+"' class='"+d+"'>Download to "+game.plat_og[0]+"</div></div>";
+					var c = game.plat_og[0].slice(0).replace(/ps /i,"").toLowerCase(), d = (repod.psdle.config.active_consoles.hasOwnProperty(c)) ? "" : "toggled_off";
+					t = "<div><div id='dla_"+c+"_"+id+"' class='"+d+"'>Download to "+game.plat_og[0].slice(0)+"</div></div>";
 				}
 				dialog.append("<div id='dlQASys'>"+t+"</div>");
 			}
-			dialog.append("<div id='dlQAStat'>"+repod.psdle.safeGuessSystem(game.platform)+" | "+game.size+" | "+game.date+"</div>");
+			dialog.append("<div id='dlQAStat'>"+repod.psdle.safeGuessSystem(game.plat_og)+" | "+game.size+" | "+game.date+"</div>");
 			return dialog;
 		},
 		bind: function(e) {
