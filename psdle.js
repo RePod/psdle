@@ -363,6 +363,7 @@ repod.psdle = {
 				return 0;
 			});
 		}
+		
 		if (e == this.config.lastsort) {
 			if (!this.config.lastsort_r) {
 				this.gamelist_cur.reverse();
@@ -395,7 +396,7 @@ repod.psdle = {
 					/* Search buttons	*/ "#psdle_search_text { margin:5px auto;padding:5px 10px;font-size:large;max-width:600px;width:100%;border-style:solid;border-radius:90px; } .negate_regex { background-color:#FF8080;color:#fff; } span[id^=system_], span[id^=filter_], span#export_view, span#dl_queue, span#dl_list, .psdle_fancy_bar > span { font-weight:bold; text-transform:uppercase; font-size:small; color:#fff; background-color:#2185f4; display:inline-block; margin-right:2px; margin-bottom:5px; padding:1px 15px; cursor:pointer; } .psdle_fancy_but { border-radius:12px; } .psdle_fancy_bar > span:first-child { border-top-left-radius:12px; border-bottom-left-radius:12px; } .psdle_fancy_bar > span:last-child { border-top-right-radius:12px; border-bottom-right-radius:12px; } .toggled_off { opacity:0.4; }" +
 					/* Content icons	*/ ".psdle_game_icon { max-width:100%;vertical-align:middle }" +
 					/* Sorting			*/ ".psdle_sort_asc { float:right; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 5px solid black; } .psdle_sort_desc { float:right; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid black; }" +
-					/* Newbox			*/ "#dlQueueAsk { display:inline-block;width:400px;height:400px;background-color:#FFF;border-radius:20px;overflow:hidden;position:relative;background-size:cover; } #dlQAN { cursor:move;background-color:rgba(33,133,244,0.8);padding:7px 15px;color:#fff;overflow:hidden;white-space:nowrap;text-overflow:ellipsis; } #dlQASys { position:absolute;bottom:0px;padding:7px 0px;color:#FFF;display:table;width:100%;table-layout:fixed; } #dlQASys > div { display:table-cell; } #dlQASys > div > div { cursor:pointer;background-color:rgba(33,133,244,0.8);border-radius:10px;padding:2px;margin:0px 10px; } #dlQAStat { color:#fff;background-color:rgba(33,133,244,0.8);border-bottom-left-radius:20px;padding:0px 10px 0px 15px;font-size:small;float:right; }" +
+					/* Newbox			*/ "#dlQueueAsk { display:inline-block;width:400px;height:400px;background-color:#FFF;border-radius:20px;overflow:hidden;position:relative;background-size:cover; } #dlQAN { cursor:move;background-color:rgba(33,133,244,0.8);padding:7px 15px;color:#fff;overflow:hidden;white-space:nowrap;text-overflow:ellipsis; } #dlQASys { position:absolute;bottom:0px;padding:7px 0px;color:#FFF;display:table;width:100%;table-layout:fixed; } #dlQASys > div { display:table-cell; } #dlQASys > div > div { cursor:pointer;background-color:rgba(33,133,244,0.8);border-radius:10px;padding:2px;margin:0px 10px; } #dlQAStat { color:#fff;background-color:rgba(33,133,244,0.8);border-bottom-left-radius:20px;padding:0px 10px 0px 15px;font-size:small;float:right; } #dlQARating { color:#fff;background-color:rgba(33,133,244,0.8);border-bottom-right-radius:20px;padding:0px 15px 0px 10px;font-size:small;float:left; } " +
 					/* Newbox Container	*/ "#dlQueue_newbox { z-index:9001;position:fixed;top:0px;left:0px;width:100%;height:100%;display:table;background-color:rgba(0,0,0,0.25); } #dlQueue_newbox > div { display:table-cell;vertical-align:middle;height:inherit;text-align:center; }";
 		$("head").append("<style type='text/css'>"+temp+"</style>");
 	},
@@ -450,6 +451,7 @@ repod.psdle = {
 				//metadata.game_subtype.values[0] -- PS1/PS2 Classic/Demo/Character/Bundle
 				//top_category -- downloadable_game, avatar, demo, etc.
 				if (!!sys) { this.gamelist[id].platform = [sys]; }
+				try { this.gamelist[id].rating = data.star_rating.score; } catch (e) { }
 				this.gamelist[id].deep_type = data.top_category;
 			}
 		}		
@@ -642,6 +644,8 @@ repod.psdle = {
 				}
 				dialog.append("<div id='dlQASys'>"+t+"</div>");
 			}
+			var star = '<div class="star-rating rater-0 ratingStarGeneric star-rating-applied star-rating-readonly star-rating-on" style="display:inline-block !important;float:none !important;vertical-align:text-top"><a title="1">1</a></div>';
+			try { if (!isNaN(game.rating)) { dialog.append("<div id='dlQARating'>"+star+" "+game.rating+" / 5</div>"); } } catch (e) { }
 			dialog.append("<div id='dlQAStat'>"+repod.psdle.safeGuessSystem(game.plat_og)+" | "+game.size+" | "+game.date+"</div>");
 			return dialog;
 		},
