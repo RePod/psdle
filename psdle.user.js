@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		1.047
+// @version		1.048
 // @require		https://code.jquery.com/jquery-1.11.1.min.js
 // @include		https://store.sonyentertainmentnetwork.com/*
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -660,7 +660,7 @@ repod.psdle = {
 			}
 			var star = '<div class="star-rating rater-0 ratingStarGeneric star-rating-applied star-rating-readonly star-rating-on" style="display:inline-block !important;float:none !important;vertical-align:text-top"><a title="1">1</a></div>';
 			try { if (!isNaN(game.rating)) { dialog.append("<div id='dlQARating'>"+star+" "+game.rating+" / 5</div>"); } } catch (e) { }
-			dialog.append("<div id='dlQAStat'>"+repod.psdle.safeGuessSystem(game.plat_og)+" | "+game.size+" | "+game.date+"</div>");
+			dialog.append("<div id='dlQAStat'>"+repod.psdle.safeGuessSystem(game.platform)+" | "+game.size+" | "+game.date+"</div>");
 			return dialog;
 		},
 		bind: function(e) {
