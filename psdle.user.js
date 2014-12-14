@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		1.048
+// @version		1.049
 // @require		https://code.jquery.com/jquery-1.11.1.min.js
 // @include		https://store.sonyentertainmentnetwork.com/*
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -48,7 +48,7 @@ repod.psdle = {
 	lang_cache: {
 		"en": {
 			"def": "us",
-			"us": {"local":"English","startup":"Waiting on page to load.","columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"export_view":"Export View","games":"Games","avatar":"Avatars","demo":"Demos","unlock":"Unlocks","pass":"Passes","pack":"Packs","theme":"Themes","addon":"Add-ons","app":"Applications","unknown":"Unknown","page":"Page"},"strings":{"delimiter":"Enter delimiter:","stringify_error":"Error: Browser does not have JSON.stringify.","yes":"Yes","no":"No","use_api":"Use API for in-depth scanning? (Beta, buggy)","use_queue":"Enable Download Queue support? (accesses queue and activated consoles)","use_entitled_api":"Use Entitlements API? (For PS+/bundles/etc, contains purchase information)","regex_search":"Search by game title (/regex/id)","dlQueue":"Queue","dlList":"List"}}
+			"us": {"local":"English","startup":"Waiting on page to load.","columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"export_view":"Export View","games":"Games","avatar":"Avatars","demo":"Demos","unlock":"Unlocks","pass":"Passes","pack":"Packs","theme":"Themes","addon":"Add-ons","app":"Applications","unknown":"Unknown","page":"Page"},"strings":{"delimiter":"Enter delimiter:","stringify_error":"Error: Browser does not have JSON.stringify.","yes":"Yes","no":"No","use_api":"Use API for in-depth scanning? (Beta, buggy)","use_queue":"Enable Download Queue support? (accesses queue and activated consoles)","use_entitled_api":"Use Entitlements API? (For PS+/bundles/etc, contains purchase information)<br /><small><strong>Required for dates on Mobile site.</strong></small>","regex_search":"Search by game title (/regex/id)","dlQueue":"Queue","dlList":"List"}}
 		},
 		"es": {
 			"def": "mx",
@@ -118,7 +118,8 @@ repod.psdle = {
 			last_search: "",
 			check_entitlements: false, entitlements_count: 0, entitlements_total: 1, entitlements_plus: 0,
 			dlQueue: { base: SonyChi_SessionManagerSingleton.getDLQueueBaseURL(), status: SonyChi_SessionManagerSingleton.getDLQueueStatusURL(), status2: SonyChi_SessionManagerSingleton.getDLQueueStatusURL2() },
-			use_queue: 0, active_consoles: {}
+			use_queue: 0, active_consoles: {},
+			tag_line: "<br /><a class='psdle_tiny_link' href='//repod.github.io/psdle' target='_blank'>Website</a> - <a class='psdle_tiny_link' href='//github.com/RePod/psdle' target='_blank'>Repository</a> - <a class='psdle_tiny_link' href='//github.com/RePod/psdle/issues' target='_blank'>Report A Bug</a>"
 		}; 
 		this.determineLanguage(this.config.language,true);
 		this.injectCSS();
@@ -132,27 +133,41 @@ repod.psdle = {
 			clearInterval(this.config.timerID);
 			this.checkEntitlements();
 		} else if (Number($(".range").text().split("-")[0]) > this.gamelist.length) {
-			$("#psdle_status").text((this.gamelist.length/24+1)+" / "+Math.ceil(this.config.totalgames/24));
+			var count = (chihiro.isMobile()) ? 50 : 24;
+			$("#psdle_status").text((this.gamelist.length/count+1)+" / "+Math.ceil(this.config.totalgames/count));
 			$("li.cellDlItemGame").each(function() {
-				var id = (that.gamelist.length +1);
-				var t = $(this).clone();
-				var icon = t.find(".thumbPane").find("img").attr("src");
-				var url = t.find(".thumbPane").parent().attr("href");
-				if (that.config.game_page == "") { that.config.game_page = url.match(/(.+?=).+/).pop(); }
-				t = t.find(".mediaInfo");
-				var gametitle = t.find(".gameTitle").text();
-				var size = t.find(".size").text().replace("|","");
-				var platform = []; t.find(".playableOn > a").each(function() { platform.push($(this).text()); });
-				var date = t.find(".purchaseDate").text().replace("|","");
-				var gid = url.split("=").pop();
-				if (!that.entitlement_cache[gid]) { that.entitlement_cache[gid] = []; }
-				that.entitlement_cache[gid].push({"glid":(id -1),"gid":""});
-				that.gamelist.push({id:id,pid:gid,title:gametitle,url_og:url,size:size,platform:platform,plat_og:platform,date:date,icon:icon,deep_type:"unknown"});
+				var entry = {}, id = (that.gamelist.length +1), t = $(this).clone(), p = [], n, d;
+				/* Compatible on mobile and desktop versions. */
+				entry.id = id;
+				entry.icon = t.find(".thumbPane img").attr("src");
+				entry.url = t.find(".cellCtnr a").eq(0).attr("href");
+				entry.pid = entry.url.split("=").pop();
+				entry.size = t.find(".size").text().match(/(\d+(?:\.\d+)?[gmk]b)/i)[0];
+				entry.deep_type = "unknown";
+				if (that.config.game_page == "") { that.config.game_page = entry.url.match(/(.+?=).+/).pop(); }
+				if (chihiro.isMobile()) {
+					/* Mobile */
+					p = t.find(".platformList").text().split(" | ");
+					n = t.find("h3").text();
+					d = "?";
+				} else { 
+					/* Desktop */
+					t.find(".playableOn > a").each(function() { p.push($(this).text()); });
+					n = t.find(".gameTitle").text();
+					d = t.find(".purchaseDate").text().replace("|","");
+				}
+				entry.platform = p; entry.plat_og = p;
+				entry.title = n;
+				entry.date = d;
+				
+				if (!that.entitlement_cache[entry.pid]) { that.entitlement_cache[entry.pid] = []; }
+				that.entitlement_cache[entry.pid].push({"glid":(id -1),"gid":""});
+				that.gamelist.push(entry);
 				if (that.config.deep_search) {
-					$.getJSON(that.config.game_api+gid,function(data) { that.parseDeep(id,data); });
+					$.getJSON(that.config.game_api+entry.pid,function(data) { that.parseDeep(id,data); });
 				}
 			});
-			$("#psdle_progressbar > #psdle_bar").animate({"width":Math.round((this.gamelist.length/24) / Math.ceil(this.config.totalgames/24) * 100)+"%"});
+			$("#psdle_progressbar > #psdle_bar").animate({"width":Math.round((this.gamelist.length/count) / Math.ceil(this.config.totalgames/count) * 100)+"%"});
 			if (this.gamelist.length >= this.config.totalgames) {
 				//if (this.config.deep_waiting <= 1) {
 					clearInterval(this.config.timerID);
@@ -179,7 +194,7 @@ repod.psdle = {
 		$(document).off("click",".psdle_btn");
 		$("#muh_games_container").slideUp('slow', function() {
 			var a = "<div id='sub_container'><a href='//repod.github.io/psdle/' target='_blank'><img src='//repod.github.io/psdle/logo/3_psdle_mini.png' style='display:inline-block;font-size:200%;font-weight:bold' alt='psdle' /></a></span>";
-			var b = ""; //"<br /><a class='psdle_tiny_link' href='//github.com/RePod/psdle/issues' target='_blank'>Repository</a> - <a class='psdle_tiny_link' href='//github.com/RePod/psdle/issues' target='_blank'>Report A Bug</a>";
+			var b = that.config.tag_line;
 			
 			switch (mode) {
 				case "entitled_api":
@@ -200,16 +215,20 @@ repod.psdle = {
 					}
 					a += "<br /><div id='psdle_progressbar'><div id='psdle_bar'>&nbsp;</div></div><br /><span id='psdle_status'>"+that.lang.startup+"</span>";
 					var t = 0;
-					$("li.cellDlItemGame:even").each(function() {
-						$("html, body").animate({scrollTop: $(this).offset().top}, 200).promise().done(function() {
-							t++;
-							if (t == $("li.cellDlItemGame:even").length) {	
-								$('html, body').animate({scrollTop: 0}, 0);
-								that.config.totalgames = Number($(".statsText").text().match(/(\d+)/g).pop());
-								that.startTimer();
-							}
+					that.config.totalgames = Number($(".statsText").text().match(/(\d+)/g).pop());
+					if (chihiro.isMobile()) {
+						that.startTimer();
+					} else {
+						$("li.cellDlItemGame:even").each(function() {
+							$("html, body").animate({scrollTop: $(this).offset().top}, 200).promise().done(function() {
+								t++;
+								if (t == $("li.cellDlItemGame:even").length) {	
+									$('html, body').animate({scrollTop: 0}, 0);
+									that.startTimer();
+								}
+							});
 						});
-					});
+					}
 					break;
 				default:
 					a += "<br />"+that.lang.strings.use_api+"<br />"+yn+"<br />"+that.generateLangBox()+b+"</div>";
@@ -239,12 +258,14 @@ repod.psdle = {
 	checkSkus: function() {
 		var that = this;
 		$.each(that.sku_id_cache,function(a,b) {
-			$.each(b, function(c,d) {
+			$.each(b.reverse(), function(c,d) {
 				if (that.entitlement_cache[a] && that.entitlement_cache[a][c]) {
+					console.log(b[c]);
 					//$.extend(true,that.gamelist[that.entitlement_cache[a][c].glid],b[c]);
 					var id = that.entitlement_cache[a][c].glid;
 					if (b[c].pid && b[c].pid.length > 0) { that.gamelist[id].pid = b[c].pid; }
 					that.gamelist[id].plus = b[c].plus;
+					if (that.gamelist[id].date == "?") { that.gamelist[id].date = b[c].date; }
 					if (that.gamelist[id].icon && that.gamelist[id].icon.indexOf("pc/img/furniture") > -1 && b[c].icon && b[c].icon.length > 0) { that.gamelist[id].icon = b[c].icon; }
 				}
 			});
@@ -268,7 +289,7 @@ repod.psdle = {
 			clearInterval(repod.psdle.config.timerID); //Just in case.
 			repod.psdle.config.lastsort = ""; repod.psdle.config.lastsort_r = false;
 			$("#muh_games_container").css({"position":"absolute"});
-			$("#sub_container").html(repod.psdle.genSearchOptions()).append("<table id='muh_table' style='display:inline-block;text-align:left'><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+repod.psdle.lang.columns.platform+"</th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table>");
+			$("#sub_container").html(repod.psdle.genSearchOptions()).append("<table id='muh_table' style='display:inline-block;text-align:left'><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+repod.psdle.lang.columns.platform+"</th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table><br />"+repod.psdle.config.tag_line);
 			this.regen(); this.bindSearch();
 			this.margin();
 			repod.psdle.sortGamelist("#sort_date");
@@ -280,10 +301,16 @@ repod.psdle = {
 				var u = repod.psdle.config.game_page+val.pid, is_plus = "";
 				var sys = repod.psdle.safeGuessSystem(val.platform);
 				if (val.plus === true && repod.psdle.config.check_entitlements) { is_plus = "is_plus"; plus++; }
-				temp += "<tr class='"+is_plus+"'><td style='max-width:31px;max-height:31px;'><a target='_blank' href='"+val.url_og+"'><img title='"+repod.psdle.lang.labels.page+" #"+Math.ceil(val.id/24)+"' src='"+val.icon+"' class='psdle_game_icon' /></a></td><td><a id='psdle_index_"+(val.id -1)+"' class='psdle_game_link' target='_blank' href='"+u+"'>"+val.title+"</a></td><td>"+sys+"</td><td>"+val.size+"</td><td>"+val.date+"</td></tr>";
+				temp += "<tr class='"+is_plus+"'><td style='max-width:31px;max-height:31px;'><a target='_blank' href='"+val.url+"'><img title='"+repod.psdle.lang.labels.page+" #"+Math.ceil(val.id/24)+"' src='"+val.icon+"' class='psdle_game_icon' /></a></td><td><a id='psdle_index_"+(val.id -1)+"' class='psdle_game_link' target='_blank' href='"+u+"'>"+val.title+"</a></td><td>"+sys+"</td><td>"+val.size+"</td><td>"+val.date+"</td></tr>";
 			});
 			$("#table_stats").html(repod.psdle.gamelist_cur.length+((repod.psdle.config.check_entitlements)?" (<div id='psdleplus' style='display:inline-block' /> "+plus+")":"")+" / "+repod.psdle.gamelist.length);
-			if (repod.psdle.config.check_entitlements) { $("#psdleplus").css($(".headerUserInfo.cart").css(["background-image","background-repeat"])).css({"height":"14px","width":"14px","background-position":"left -5px"}); }
+			if (repod.psdle.config.check_entitlements) {
+				if (chihiro.isMobile()) {
+					$("#psdleplus").html('<img class="psPlusIcon" src="mobile/img/furniture/psplusicon-small.a2ec8f23.png">');
+				} else {
+					$("#psdleplus").css($(".headerUserInfo.cart").css(["background-image","background-repeat"])).css({"height":"14px","width":"14px","background-position":"left -5px"});
+				}
+			}
 			$("#muh_table > tbody").html(temp);
 		},
 		margin: function() {
@@ -352,33 +379,36 @@ repod.psdle = {
 		temp += '<br /><span id="table_stats"></span></div>';
 		return temp;
 	},
-	sortGamelist: function(e) {
+	sortGamelist: function(sort_method) {
 		this.determineGames();
 		var that = this;
-		e = $(e).attr("id");
-		if (e == "sort_date") {
-			this.gamelist_cur.sort(function (a, b) {
-				if (a.id > b.id) { return 1; }
-				if (a.id < b.id) { return -1; }
+		sort_method = $(sort_method).attr("id");
+		switch (sort_method) {
+			default:
+			case "sort_date":
+				this.gamelist_cur.sort(function (a, b) {
+					if (a.id > b.id) { return 1; }
+					if (a.id < b.id) { return -1; }
+					return 0;
+				});
+				break;
+			case "sort_name":
+				this.gamelist_cur.sort(function (a, b) {
+					if (a.title.toLocaleLowerCase() > b.title.toLocaleLowerCase()) { return 1; }
+					if (a.title.toLocaleLowerCase() < b.title.toLocaleLowerCase()) { return -1; }
+					return 0;
+				});	
+				break;
+			case "sort_size":
+				this.gamelist_cur.sort(function (a, b) {
+					if (that.returnKB(a.size) > that.returnKB(b.size)) { return 1; }
+					if (that.returnKB(a.size) < that.returnKB(b.size)) { return -1; }
 				return 0;
 			});
-		}
-		if (e == "sort_name") {
-			this.gamelist_cur.sort(function (a, b) {
-				if (a.title.toLocaleLowerCase() > b.title.toLocaleLowerCase()) { return 1; }
-				if (a.title.toLocaleLowerCase() < b.title.toLocaleLowerCase()) { return -1; }
-				return 0;
-			});	
-		}
-		if (e == "sort_size") {
-			this.gamelist_cur.sort(function (a, b) {
-				if (that.returnKB(a.size) > that.returnKB(b.size)) { return 1; }
-				if (that.returnKB(a.size) < that.returnKB(b.size)) { return -1; }
-				return 0;
-			});
+				break;
 		}
 		
-		if (e == this.config.lastsort) {
+		if (sort_method == this.config.lastsort) {
 			if (!this.config.lastsort_r) {
 				this.gamelist_cur.reverse();
 			}
@@ -387,8 +417,8 @@ repod.psdle = {
 			this.config.lastsort_r = false;
 		}
 		$("#psdle_sort_display").remove();
-		$("#"+e).append("<span id='psdle_sort_display' class='psdle_sort_"+((this.config.lastsort_r)?"asc":"desc")+"' />");
-		this.config.lastsort = e;
+		$("#"+sort_method).append("<span id='psdle_sort_display' class='psdle_sort_"+((this.config.lastsort_r)?"asc":"desc")+"' />");
+		this.config.lastsort = sort_method;
 		this.table.regen(true);
 	},
 	safeSystemCheck: function() {
@@ -396,9 +426,9 @@ repod.psdle = {
 		$("span[id^=system_]:not('.toggled_off')").each(function() { temp.push($(this).text()); });
 		return temp;
 	},
-	safeGuessSystem: function(e) {
+	safeGuessSystem: function(sys_in) {
 		//Quick, dirty, and easy.
-		var sys = e.join(" ").replace("™","");
+		var sys = sys_in.join(" ").replace("™","");
 		if (sys == "PS3 PSP PS Vita" || sys == "PS3 PSP") { sys = "PSP"; }
 		if (sys == "PS3 PS Vita") { sys = "PS Vita"; }
 		return sys;
@@ -464,11 +494,13 @@ repod.psdle = {
 				}
 				//metadata.game_subtype.values[0] -- PS1/PS2 Classic/Demo/Character/Bundle
 				//top_category -- downloadable_game, avatar, demo, etc.
-				if (!!sys) { this.gamelist[id].platform = [sys]; }
+				if (!!sys) { 
+					this.gamelist[id].platform = [sys];
+				}
 				try { this.gamelist[id].rating = data.star_rating.score; } catch (e) { }
 				this.gamelist[id].deep_type = data.top_category;
 			}
-		}		
+		}
 	},
 	parseEntitlements: function(data) {
 		var that = this;
@@ -506,11 +538,17 @@ repod.psdle = {
 				that.config.entitlements_plus++;
 			}
 			
+			var temp = {};
+			temp.pid = id;
+			temp.plus = plus;
+			if (chihiro.isMobile()) { temp.date = convertToNumericDateSlashes(convertStrToDateObj(value.active_date)); }
 			if (id !== undefined && eimg !== undefined) {
-				if (!that.sku_id_cache[value.product_id]) { that.sku_id_cache[value.product_id] = []; }
-				var temp = {"pid":id,"plus":plus}; if (eimg !== "") { temp.icon = eimg; }
-				that.sku_id_cache[value.product_id].push(temp);
+				if (eimg !== "") { temp.icon = eimg; }
+				
+				
 			}
+			if (!that.sku_id_cache[value.product_id]) { that.sku_id_cache[value.product_id] = []; }
+			that.sku_id_cache[value.product_id].push(temp);
 		});
 		this.config.entitlements_count += data.entitlements.length;
 		$("#psdle_progressbar > #psdle_bar").animate({"width":Math.round((this.config.entitlements_count / this.config.entitlements_total) * 100)+"%"});
@@ -641,7 +679,7 @@ repod.psdle = {
 	newbox: {
 		generate: function(e) {
 			var plus = "", i = (isNaN(e)) ? Number($(e).find(".psdle_game_link").attr("id").split("_").pop()) : Number(e), game = repod.psdle.gamelist[i], id = (game.id -1);
-			var dialog = $("<div id='dlQueueAsk' style='background-image:url(\""+game.icon.replace(/=124/g,"=400")+"\");'/>");
+			var dialog = $("<div id='dlQueueAsk' style='background-image:url(\""+game.icon.replace(/(w|h)=\d+/g,"=400")+"\");'/>");
 			try { if (game.plus) { plus = $("#psdleplus").clone()[0].outerHTML+" "; } } catch(e) {}
 			dialog.append("<div id='dlQAN'>"+plus+game.title+"</div>");
 			if (repod.psdle.config.use_queue) {
@@ -680,6 +718,11 @@ repod.psdle = {
 					break;
 			}
 		}
+	},
+	debug: function() {
+		this.gamelist = []; 
+		/* */
+		this.table.gen();
 	}
 };
 
