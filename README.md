@@ -4,7 +4,7 @@
 Improving everyone's favorite online download list, one loop at a time.    
 **Downloading/saving files other than the userscript is not required!**
 
-Doubtful? [Check out the Imgur album for some screenshots!](//imgur.com/a/m5Rxw) - [PS+ Support!](//imgur.com/a/46K6L)
+Check out [PSDLE in-action!](//imgur.com/a/4oRjv "12/23/2014") **/** [Retro!](//imgur.com/a/m5Rxw "08/15/14") **/** [PS+](//imgur.com/a/46K6L "09/8/2014")
 
 Features
 =====
