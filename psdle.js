@@ -128,7 +128,7 @@ repod.psdle = {
 				entry.icon = t.find(".thumbPane img").attr("src");
 				entry.url = t.find(".cellCtnr a").eq(0).attr("href");
 				entry.pid = entry.url.split("=").pop();
-				try { entry.size = t.find(".size").text().match(/[\d\.]+[a-z]{1,2}b/i)[0]); } catch(e) { entry.size = "0KB"; } //Probably want to do something else later.
+				try { entry.size = t.find(".size").text().match(/[\d\.]+[a-z]{1,2}b/i)[0]; } catch(e) { entry.size = "0KB"; } //Probably want to do something else later.
 				entry.deep_type = "unknown";
 				if (that.config.game_page == "") { that.config.game_page = entry.url.match(/(.+?=).+/).pop(); }
 				if (chihiro.isMobile()) {
