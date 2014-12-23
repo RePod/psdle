@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		1.050
+// @version		1.051
 // @require		https://code.jquery.com/jquery-1.11.1.min.js
 // @include		https://store.sonyentertainmentnetwork.com/*
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -142,7 +142,7 @@ repod.psdle = {
 				entry.icon = t.find(".thumbPane img").attr("src");
 				entry.url = t.find(".cellCtnr a").eq(0).attr("href");
 				entry.pid = entry.url.split("=").pop();
-				entry.size = t.find(".size").text().match(/(\d+(?:\.\d+)?[gmk]b)/i)[0];
+				try { entry.size = t.find(".size").text().match(/[\d\.]+[a-z]{1,2}b/i)[0]); } catch(e) { entry.size = "0KB"; } //Probably want to do something else later.
 				entry.deep_type = "unknown";
 				if (that.config.game_page == "") { that.config.game_page = entry.url.match(/(.+?=).+/).pop(); }
 				if (chihiro.isMobile()) {
