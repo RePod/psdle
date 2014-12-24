@@ -34,25 +34,25 @@ repod.psdle = {
 	lang_cache: {
 		"en": {
 			"def": "us",
-			"us": {"local":"English","startup":"Waiting on page to load.","columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"export_view":"Export View","games":"Games","avatar":"Avatars","demo":"Demos","unlock":"Unlocks","pass":"Passes","pack":"Packs","theme":"Themes","addon":"Add-ons","app":"Applications","unknown":"Unknown","page":"Page"},"strings":{"delimiter":"Enter delimiter:","stringify_error":"Error: Browser does not have JSON.stringify.","yes":"Yes","no":"No","use_api":"Use API for in-depth scanning? (Beta, buggy)","use_queue":"Enable Download Queue support? (accesses queue and activated consoles)","use_entitled_api":"Use Entitlements API? (For PS+/bundles/etc, contains purchase information)<br /><small><strong>Required for dates on Mobile site.</strong></small>","regex_search":"Search by game title (/regex/id)","dlQueue":"Queue","dlList":"List"}}
+			"us": {"local":"English","startup":"Waiting on page to load.","columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"export_view":"Export View","games":"Games","avatar":"Avatars","demo":"Demos","unlock":"Unlocks","pass":"Passes","pack":"Packs","theme":"Themes","addon":"Add-ons","app":"Applications","unknown":"Unknown","page":"Page"},"strings":{"delimiter":"Enter delimiter:","stringify_error":"Error: Browser does not have JSON.stringify.","yes":"Yes","no":"No","use_api":"Use API for in-depth scanning?","use_queue":"Enable Download Queue support? (accesses queue and activated consoles)","use_entitled_api":"Use Entitlements API? (For PS+/bundles/etc, contains purchase information)<br /><small><strong>Required for dates on Mobile site.</strong></small>","regex_search":"Search by game title","dlQueue":"Queue","dlList":"List"}}
 		},
 		"es": {
 			"def": "mx",
-			"mx": {"local":"Español","startup":"Esperando en la página se cargue.","columns":{"icon":"Icono","name":"Nombre","platform":"Plataforma","size":"Tamaño","date":"Fecha"},"labels":{"export_view":"Exportar vista","games":"juegos","avatar":"avatares","demo":"población","unlock":"descubrir","pass":"adelantar","pack":"paquete","theme":"Temas","addon":"Complementos","app":"Aplicaciones","unknown":"Desconocido","page":"paje"},"strings":{"delimiter":"Ingrese delimitador:","stringify_error":"Error: Navegador no tiene JSON.stringify.","yes":"Sí","no":"No","use_api":"Utilice la API para la exploración en profundidad? (Beta, con errores)","regex_search":"Búsqueda por título del juego (/regex/id)"}} // Caaz, somebody.
+			"mx": {"local":"Español","startup":"Esperando en la página se cargue.","columns":{"icon":"Icono","name":"Nombre","platform":"Plataforma","size":"Tamaño","date":"Fecha"},"labels":{"export_view":"Exportar vista","games":"juegos","avatar":"avatares","demo":"población","unlock":"descubrir","pass":"adelantar","pack":"paquete","theme":"Temas","addon":"Complementos","app":"Aplicaciones","unknown":"Desconocido","page":"paje"},"strings":{"delimiter":"Ingrese delimitador:","stringify_error":"Error: Navegador no tiene JSON.stringify.","yes":"Sí","no":"No","use_api":"Utilice la API para la exploración en profundidad?","regex_search":"Búsqueda por título del juego"}} // Caaz, somebody.
 		},
 		"de": {
 			"def": "de",
-			"de": {"local":"Deutsch","startup":"Seite wird geladen, bitte warten.","columns":{"icon":"Symbol","name":"Name","platform":"Plattform","size":"Größe","date":"Datum"},"labels":{"export_view":"Exportiere Ansicht","games":"Spiele","avatar":"Spielerbilder","demo":"Demos","unlock":"Freischaltbares","pass":"Pässe","pack":"Bündel","theme":"Themen","addon":"Erweiterungen","app":"Anwendungen","unknown": "Unbekannt","page":"Seite"},"strings":{"delimiter":"Geben sie ein Trennzeichen ein","stringify_error":"Fehler: Browser fehlt \"JSON.stringify\".","yes":"Ja","no":"Nein","use_api": "Möchten Sie mit Hilfe der API einen Tiefenscan ausführen? (Beta Version, möglicherweise treten Fehler auf)","regex_search": "Spiele titel eingeben für direkte suche (/regex/id)"}} // Provided by /u/_MrBubbles
+			"de": {"local":"Deutsch","startup":"Seite wird geladen, bitte warten.","columns":{"icon":"Symbol","name":"Name","platform":"Plattform","size":"Größe","date":"Datum"},"labels":{"export_view":"Exportiere Ansicht","games":"Spiele","avatar":"Spielerbilder","demo":"Demos","unlock":"Freischaltbares","pass":"Pässe","pack":"Bündel","theme":"Themen","addon":"Erweiterungen","app":"Anwendungen","unknown": "Unbekannt","page":"Seite"},"strings":{"delimiter":"Geben sie ein Trennzeichen ein","stringify_error":"Fehler: Browser fehlt \"JSON.stringify\".","yes":"Ja","no":"Nein","use_api": "Möchten Sie mit Hilfe der API einen Tiefenscan ausführen?","regex_search": "Spiele titel eingeben für direkte suche"}} // Provided by /u/_MrBubbles
 		},
 		"ru": {
 			"def": "ru",
-			"ru": {"local":"Русский","startup":"Ожиданиезагрузкистраниц...","columns":{"icon":"Иконка","name":"Название","platform":"Платформа","size":"Размер","date":"Дата"},"labels":{"export_view":"ExportView","games":"Игры","avatar":"Аватары","demo":"Демо-версии","unlock":"Разблокировки","pass":"Сезонныепропуски","pack":"Набор","theme":"Темы","addon":"Дополенния","app":"Приложения","unknown":"Неизвестно","page":"Страница"},"strings":{"delimiter":"Введитеразделитель: ","stringify_error":"Ошибка: вбраузереотсутствуетJSON.stringify.","yes":"Да","no":"Нет","use_api":"ИспользоватьAPIдляглубокогосканирования?(бета,работаетнестабильно)","regex_search":"Поискпоназваниюигры(/regex/id)"}} //Provided by MorbertDou (issue #2)
+			"ru": {"local":"Русский","startup":"Ожиданиезагрузкистраниц...","columns":{"icon":"Иконка","name":"Название","platform":"Платформа","size":"Размер","date":"Дата"},"labels":{"export_view":"ExportView","games":"Игры","avatar":"Аватары","demo":"Демо-версии","unlock":"Разблокировки","pass":"Сезонныепропуски","pack":"Набор","theme":"Темы","addon":"Дополенния","app":"Приложения","unknown":"Неизвестно","page":"Страница"},"strings":{"delimiter":"Введитеразделитель: ","stringify_error":"Ошибка: вбраузереотсутствуетJSON.stringify.","yes":"Да","no":"Нет","use_api":"ИспользоватьAPIдляглубокогосканирования?","regex_search":"Поискпоназваниюигры"}} //Provided by MorbertDou (issue #2)
 		},
 		"ps": {
 			"def": "pi",
-			"pi": {"local":"Pirate","startup":"Ye be waitin on da page.","columns":{"icon":"Doubloon","name":"Title","platform":"Ship","size":"Boat","date":"Date"},"labels":{"export_view":"Compass","games":"Booty","avatar":"Shipmates","demo":"Plans","unlock":"Keys","pass":"Sails","pack":"Treasure Hoard","theme":"Paint","addon":"Cannons","app":"Galley","unknown":"Davey Jones' Locker","page":"Map"},"strings":{"delimiter":"Enter delimiter:","stringify_error":"The sea don't have a JSON.stringify.","yes":"Yargh","no":"Nay","use_api":"Use da API fer deep digging? (Beta, buggy)","regex_search":"Set a course for booty (/regex/id)"}}, //Arcon
-			"dz": {"local":"Dovahzul","startup":"Saraan fah deykel wah genun.","columns":{"icon":"Andiir","name":"For","platform":"Palaar","size":"Raaz","date":"Zahtiid"},"labels":{"export_view":"Sav Fahzon","games":"Kred","avatar":"Rahnunahst","demo":"Gor","unlock":"Bex","pass":"Rahn","pack":"Edrah","theme":"Niin","addon":"Malur","app":"Mii","unknown":"Vomindok","page":"Deykel"},"strings":{"delimiter":"Haav krenok:","stringify_error":"Tozein Hi dreh ni lost JSON.stringify","yes":"Geh","no":"Nid","use_api":"Nuft API fah ko rud tovit?  (Gor, lost diron)","regex_search":"Tovit naal kred tet (/qurnen/id)"}}, // Caaz
-			"ha": {"local":"H4k3r","startup":"G4th3ring rez0urc3s.","columns":{"icon":"1con","name":"H4ndle","platform":"P|a+f0rm","size":"S1z3","date":"D4te"},"labels":{"export_view":"D0x","games":"W4rez","avatar":"4va+ar","demo":"Freeware","unlock":"H4x","pass":"Pa55e5","pack":"Pax","theme":"R1cez","addon":"Add-0ns","app":"S0f+w4r3","unknown":"?","page":"P4g3"},"strings":{"delimiter":"5pli+ by:","stringify_error":"3rr0r: No JSON.stringify.","yes":"Y","no":"N","use_api":"D33p sc4n with API? (Beta, buggy)","regex_search":"grep (/regex/id)"}} //Caaz
+			"pi": {"local":"Pirate","startup":"Ye be waitin on da page.","columns":{"icon":"Doubloon","name":"Title","platform":"Ship","size":"Boat","date":"Date"},"labels":{"export_view":"Compass","games":"Booty","avatar":"Shipmates","demo":"Plans","unlock":"Keys","pass":"Sails","pack":"Treasure Hoard","theme":"Paint","addon":"Cannons","app":"Galley","unknown":"Davey Jones' Locker","page":"Map"},"strings":{"delimiter":"Enter delimiter:","stringify_error":"The sea don't have a JSON.stringify.","yes":"Yargh","no":"Nay","use_api":"Use da API fer deep digging?","regex_search":"Set a course for booty"}}, //Arcon
+			"dz": {"local":"Dovahzul","startup":"Saraan fah deykel wah genun.","columns":{"icon":"Andiir","name":"For","platform":"Palaar","size":"Raaz","date":"Zahtiid"},"labels":{"export_view":"Sav Fahzon","games":"Kred","avatar":"Rahnunahst","demo":"Gor","unlock":"Bex","pass":"Rahn","pack":"Edrah","theme":"Niin","addon":"Malur","app":"Mii","unknown":"Vomindok","page":"Deykel"},"strings":{"delimiter":"Haav krenok:","stringify_error":"Tozein Hi dreh ni lost JSON.stringify","yes":"Geh","no":"Nid","use_api":"Nuft API fah ko rud tovit?","regex_search":"Tovit naal kred tet (/qurnen/id)"}}, // Caaz
+			"ha": {"local":"H4k3r","startup":"G4th3ring rez0urc3s.","columns":{"icon":"1con","name":"H4ndle","platform":"P|a+f0rm","size":"S1z3","date":"D4te"},"labels":{"export_view":"D0x","games":"W4rez","avatar":"4va+ar","demo":"Freeware","unlock":"H4x","pass":"Pa55e5","pack":"Pax","theme":"R1cez","addon":"Add-0ns","app":"S0f+w4r3","unknown":"?","page":"P4g3"},"strings":{"delimiter":"5pli+ by:","stringify_error":"3rr0r: No JSON.stringify.","yes":"Y","no":"N","use_api":"D33p sc4n with API?","regex_search":"grep"}} //Caaz
 		}
 	},
 	determineLanguage: function(e,f) {
@@ -105,7 +105,9 @@ repod.psdle = {
 			check_entitlements: false, entitlements_count: 0, entitlements_total: 1, entitlements_plus: 0,
 			dlQueue: { base: SonyChi_SessionManagerSingleton.getDLQueueBaseURL(), status: SonyChi_SessionManagerSingleton.getDLQueueStatusURL(), status2: SonyChi_SessionManagerSingleton.getDLQueueStatusURL2() },
 			use_queue: 0, active_consoles: {},
-			tag_line: "<br /><a class='psdle_tiny_link' href='//repod.github.io/psdle' target='_blank'>Website</a> - <a class='psdle_tiny_link' href='//github.com/RePod/psdle' target='_blank'>Repository</a> - <a class='psdle_tiny_link' href='//github.com/RePod/psdle/wiki/Reporting-A-Bug' target='_blank'>Report A Bug</a>"
+			tag_line: "<br /><a class='psdle_tiny_link' href='//repod.github.io/psdle' target='_blank'>Website</a> - <a class='psdle_tiny_link' href='//github.com/RePod/psdle' target='_blank'>Repository</a> - <a class='psdle_tiny_link' href='//github.com/RePod/psdle/wiki/Reporting-A-Bug' target='_blank'>Report A Bug</a>",
+			switch_align: "center",
+			switch_color: "#85C107"
 		}; 
 		this.determineLanguage(this.config.language,true);
 		this.injectCSS();
@@ -246,7 +248,6 @@ repod.psdle = {
 		$.each(that.sku_id_cache,function(a,b) {
 			$.each(b.reverse(), function(c,d) {
 				if (that.entitlement_cache[a] && that.entitlement_cache[a][c]) {
-					console.log(b[c]);
 					//$.extend(true,that.gamelist[that.entitlement_cache[a][c].glid],b[c]);
 					var id = that.entitlement_cache[a][c].glid;
 					if (b[c].pid && b[c].pid.length > 0) { that.gamelist[id].pid = b[c].pid; }
@@ -282,14 +283,32 @@ repod.psdle = {
 		},
 		regen: function(a) {
 			if (a !== true) { repod.psdle.determineGames(); }
-			var that = this, temp = "", plus = 0;
+			var that = this, temp = "", plus = 0, count = 0;
 			$.each(repod.psdle.gamelist_cur,function (a,val) {
 				var u = repod.psdle.config.game_page+val.pid, is_plus = "";
-				var sys = repod.psdle.safeGuessSystem(val.platform);
-				if (val.plus === true && repod.psdle.config.check_entitlements) { is_plus = "is_plus"; plus++; }
-				temp += "<tr><td style='max-width:31px;max-height:31px;'><a target='_blank' href='"+val.url+"'><img title='"+repod.psdle.lang.labels.page+" #"+Math.ceil(val.id/24)+"' src='"+val.icon+"' class='psdle_game_icon "+is_plus+"' /></a></td><td><a id='psdle_index_"+(val.id -1)+"' class='psdle_game_link' target='_blank' href='"+u+"'>"+val.title+"</a></td><td>"+sys+"</td><td>"+val.size+"</td><td>"+val.date+"</td></tr>";
+				var sys = repod.psdle.safeGuessSystem(val.platform), valid = 1;
+				if (repod.psdle.config.check_entitlements) {
+					if (val.plus) { is_plus = "is_plus"; }
+					switch (repod.psdle.config.switch_align) {
+						case "left":
+							if (val.plus) { valid = 0; }
+							break;
+						case "center":
+						default:
+							if (val.plus) { plus++; }
+							break;
+						case "right":
+							if (!val.plus) { valid = 0; } else { plus++; }
+							break;
+					}
+				}
+				if (valid) {
+					count++;
+					temp += "<tr><td style='max-width:31px;max-height:31px;'><a target='_blank' href='"+val.url+"'><img title='"+repod.psdle.lang.labels.page+" #"+Math.ceil(val.id/24)+"' src='"+val.icon+"' class='psdle_game_icon "+is_plus+"' /></a></td><td><a id='psdle_index_"+(val.id -1)+"' class='psdle_game_link' target='_blank' href='"+u+"'>"+val.title+"</a></td><td>"+sys+"</td><td>"+val.size+"</td><td>"+val.date+"</td></tr>";
+				}
 			});
-			$("#table_stats").html(repod.psdle.gamelist_cur.length+((repod.psdle.config.check_entitlements)?" (<div id='psdleplus' style='display:inline-block' /> "+plus+")":"")+" / "+repod.psdle.gamelist.length);
+			$("#table_stats").html(count+((repod.psdle.config.check_entitlements)?" (<div id='slider'><div class='handle_container' style='text-align:"+repod.psdle.config.switch_align+"'><div class='handle' style='background-color:"+repod.psdle.config.switch_color+"'/></div></div> <div id='psdleplus' style='display:inline-block' /> "+plus+")":"")+" / "+repod.psdle.gamelist.length);
+			$("#slider").one("click",function() { that.plus_switch(); });
 			if (repod.psdle.config.check_entitlements) {
 				if (chihiro.isMobile()) {
 					$("#psdleplus").html('<img class="psPlusIcon" src="mobile/img/furniture/psplusicon-small.a2ec8f23.png">');
@@ -298,6 +317,25 @@ repod.psdle = {
 				}
 			}
 			$("#muh_table > tbody").html(temp);
+		},
+		plus_switch: function() {
+			var a, b;
+			switch ($(".handle_container").css("text-align")) {
+				case "left":
+				default:
+					a = "center"; b = "#85C107";
+					break;
+				case "center":
+					a = "right"; b = "#2185f4";
+					break;
+				case "right":
+					a = "left"; b = "#F6573A";
+					break;
+			}
+			console.log(a+" ~ "+b);
+			repod.psdle.config.switch_align = a;
+			repod.psdle.config.switch_color = b;
+			this.regen();
 		},
 		margin: function() {
 			$("#muh_table").animate({"margin-top":$("#search_options").outerHeight() - $("#sub_container").css("padding-top").replace("px","")+"px"});
@@ -422,12 +460,13 @@ repod.psdle = {
 	injectCSS: function() {
 		var temp =	/* Startup			*/ "#muh_games_container { display:none;position:fixed;top:0px;right:0px;left:0px;color:#000;z-index:9001;text-align:center } #sub_container { padding:20px;background-color:#fff; } #psdle_progressbar { overflow:hidden;display:inline-block;width:400px;height:16px;border:1px solid #999;margin:10px;border-radius:10px; } #psdle_bar { background-color:#2185f4;width:0%;height:100%;border-radius:10px; } .psdle_btn { cursor:pointer;border-radius:13px;background-color:#2185f4;color:#fff;padding:1px 15px;display:inline-block;margin:5px auto; } .psdle_tiny_link { color:#7F6D75 !important; font-size:x-small; } .psdle_tiny_link:hover { color:#000 !important; text-decoration:underline; } " +
 					/* Search options	*/ "#search_options { position:fixed;left:0px;top:0px;width:100%;padding:15px 0px;background-color:rgba(255,255,255,0.8); }" +
-					/* Table			*/ "th[id^=sort] { cursor:pointer; } table {} th {padding:5px;background-color:#2185F4;color:#fff;} tr:hover {background-color:rgba(33,133,244,0.7) !important;} td a.psdle_game_link {display:block;width:100%;height:100%;color:#000 !important;padding:8px;} .is_plus{background-color:#FFD10D;} tr:nth-child(2n) {background-color:#EEE;}" +
-					/* Search buttons	*/ "#psdle_search_text { margin:5px auto;padding:5px 10px;font-size:large;max-width:600px;width:100%;border-style:solid;border-radius:90px; } .negate_regex { background-color:#FF8080;color:#fff; } span[id^=system_], span[id^=filter_], span#export_view, span[id^=dl_], .psdle_fancy_bar > span { font-weight:bold; text-transform:uppercase; font-size:small; color:#fff; background-color:#2185f4; display:inline-block; margin-right:2px; margin-bottom:5px; padding:1px 15px; cursor:pointer; } .psdle_fancy_but { border-radius:12px; } .psdle_fancy_bar > span:first-child { border-top-left-radius:12px; border-bottom-left-radius:12px; } .psdle_fancy_bar > span:last-child { border-top-right-radius:12px; border-bottom-right-radius:12px; } .toggled_off { opacity:0.4; }" +
+					/* Table			*/ "th[id^=sort] { cursor:pointer; } table {} th {padding:5px;background-color:#2185F4;color:#fff;} tr:hover {background-color:rgba(33,133,244,0.7) !important;} td a.psdle_game_link {display:block;width:100%;height:100%;color:#000 !important;padding:8px;} .is_plus{background-color:#FFD10D;} tr:nth-child(2n) {background-color:#EEE;} td:nth-child(3) { text-align:center; padding:3px; } th:nth-child(n+3):nth-child(-n+7), td:nth-child(n+3):nth-child(-n+7) { text-align: center; padding: 0px 5px; }" +
+					/* Search buttons	*/ "#psdle_search_text { margin:5px auto;padding:5px 10px;font-size:large;max-width:600px;width:100%;border-style:solid;border-color:#F0F0F0;border-radius:90px; } .negate_regex { background-color:#FF8080;color:#fff; } span[id^=system_], span[id^=filter_], span#export_view, span[id^=dl_], .psdle_fancy_bar > span { font-weight:bold; text-transform:uppercase; font-size:small; color:#fff; background-color:#2185f4; display:inline-block; margin-right:2px; margin-bottom:5px; padding:1px 15px; cursor:pointer; } .psdle_fancy_but { border-radius:12px; } .psdle_fancy_bar > span:first-child { border-top-left-radius:12px; border-bottom-left-radius:12px; } .psdle_fancy_bar > span:last-child { border-top-right-radius:12px; border-bottom-right-radius:12px; } .toggled_off { opacity:0.4; }" +
 					/* Content icons	*/ ".psdle_game_icon { max-width:100%;vertical-align:middle;padding:3px; }" +
 					/* Sorting			*/ ".psdle_sort_asc { float:right; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 5px solid #fff; } .psdle_sort_desc { float:right; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid #fff; }" +
 					/* Newbox			*/ "#dlQueueAsk { display:inline-block;width:400px;height:400px;background-color:#FFF;border-radius:20px;overflow:hidden;position:relative;background-size:cover; } #dlQAN { cursor:move;background-color:rgba(33,133,244,0.8);padding:7px 15px;color:#fff;overflow:hidden;white-space:nowrap;text-overflow:ellipsis; } #dlQASys { position:absolute;bottom:0px;padding:7px 0px;color:#FFF;display:table;width:100%;table-layout:fixed; } #dlQASys > div { display:table-cell; } #dlQASys > div > div { cursor:pointer;background-color:rgba(33,133,244,0.8);border-radius:10px;padding:2px;margin:0px 10px; } #dlQAStat { color:#fff;background-color:rgba(33,133,244,0.8);border-bottom-left-radius:20px;padding:0px 10px 0px 15px;font-size:small;float:right; } #dlQARating { color:#fff;background-color:rgba(33,133,244,0.8);border-bottom-right-radius:20px;padding:0px 15px 0px 10px;font-size:small;float:left; } " +
-					/* Newbox Container	*/ "#dlQueue_newbox { z-index:9001;position:fixed;top:0px;left:0px;width:100%;height:100%;display:table;background-color:rgba(0,0,0,0.25); } #dlQueue_newbox > div { display:table-cell;vertical-align:middle;height:inherit;text-align:center; }";
+					/* Newbox Container	*/ "#dlQueue_newbox { z-index:9001;position:fixed;top:0px;left:0px;width:100%;height:100%;display:table;background-color:rgba(0,0,0,0.25); } #dlQueue_newbox > div { display:table-cell;vertical-align:middle;height:inherit;text-align:center; }" +
+					/* PS+ switch		*/ "#slider { vertical-align: bottom;display:inline-block;cursor:pointer;border-radius:100%;width:30px;height:12px;border-radius:10px;border:2px solid #F0F0F0; } .handle_container { text-align:center;width:100%;height:100%; } .handle { width:10px;height:10px;border-radius:100%;margin:0px 2px 6px;border:1px solid #FFF;display:inline-block;background-color:#85C107; }";
 		$("head").append("<style type='text/css'>"+temp+"</style>");
 	},
 	returnKB: function(e) {
@@ -451,8 +490,10 @@ repod.psdle = {
 		delimited: function(e) {
 			var that = this, sep = (e) ? e : "	";
 			var t = this.parent.lang.columns.name+sep+this.parent.lang.columns.platform+sep+this.parent.lang.columns.size+sep+this.parent.lang.columns.date+"\n";
-			$.each(this.parent.gamelist_cur, function(a,b) {
-			  t += b.title+sep+that.parent.safeGuessSystem(b.platform)+sep+b.size+sep+b.date+"\n";
+			var trs = $("tr").filter(":gt(0)");
+			trs.find(".psdle_game_link").each(function() {
+				var index = $(this).attr("id").split("_").pop(), b = that.parent.gamelist[index];
+				t += b.title+sep+that.parent.safeGuessSystem(b.platform)+sep+b.size+sep+b.date+"\n";
 			});
 			return t;
 		}
@@ -548,7 +589,7 @@ repod.psdle = {
 				this.cache = {"ps3":[], "ps4":[], "vita":[]}, that = this, promises = [];
 				var base_url = repod.psdle.config.dlQueue.status+"/?status=notstarted&status=stopped&status=waitfordownload&platformString=$$1&size=100"
 				for (var i in repod.psdle.config.active_consoles) {
-					promises.push($.getJSON(base_url.replace("$$1",ib.toLowerCase())));
+					promises.push($.getJSON(base_url.replace("$$1",i.toLowerCase())));
 				}
 				$.when(promises).done(function(ps3,ps4,vita) {
 					try { that.parse("ps3",ps3.responseJSON); } catch (e) {};
