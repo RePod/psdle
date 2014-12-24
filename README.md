@@ -45,7 +45,7 @@ What Needs To Be Done
 * Improve Download Queue.
 * Custom-make the gh-pages branch page to remove useless links (downloading the zip).
 
-Issues: [Submit](//github.com/RePod/psdle/issues) - [PS+](//github.com/RePod/psdle/issues/3).
+Submitting a Bug or Translation: [Submit](//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation) **/** [PS+](//github.com/RePod/psdle/issues/3).
 
 Potentially Asked Questions
 =====

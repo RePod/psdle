@@ -45,8 +45,8 @@ repod.psdle = {
 			"de": {"local":"Deutsch","startup":"Seite wird geladen, bitte warten.","columns":{"icon":"Symbol","name":"Name","platform":"Plattform","size":"Größe","date":"Datum"},"labels":{"export_view":"Exportiere Ansicht","games":"Spiele","avatar":"Spielerbilder","demo":"Demos","unlock":"Freischaltbares","pass":"Pässe","pack":"Bündel","theme":"Themen","addon":"Erweiterungen","app":"Anwendungen","unknown": "Unbekannt","page":"Seite"},"strings":{"delimiter":"Geben sie ein Trennzeichen ein","stringify_error":"Fehler: Browser fehlt \"JSON.stringify\".","yes":"Ja","no":"Nein","use_api": "Möchten Sie mit Hilfe der API einen Tiefenscan ausführen?","regex_search": "Spiele titel eingeben für direkte suche"}} // Provided by /u/_MrBubbles
 		},
 		"ru": {
-			"def": "ru",
-			"ru": {"local":"Русский","startup":"Ожиданиезагрузкистраниц...","columns":{"icon":"Иконка","name":"Название","platform":"Платформа","size":"Размер","date":"Дата"},"labels":{"export_view":"ExportView","games":"Игры","avatar":"Аватары","demo":"Демо-версии","unlock":"Разблокировки","pass":"Сезонныепропуски","pack":"Набор","theme":"Темы","addon":"Дополенния","app":"Приложения","unknown":"Неизвестно","page":"Страница"},"strings":{"delimiter":"Введитеразделитель: ","stringify_error":"Ошибка: вбраузереотсутствуетJSON.stringify.","yes":"Да","no":"Нет","use_api":"ИспользоватьAPIдляглубокогосканирования?","regex_search":"Поискпоназваниюигры"}} //Provided by MorbertDou (issue #2)
+			"def":"ru",
+			"ru": {"local":"Русский","startup":"Ожидание загрузки страниц...","columns":{"icon":"Иконка","name":"Название","platform":"Платформа","size":"Размер","date":"Дата"},"labels":{"export_view":"Export View","games":"Игры","avatar":"Аватары","demo":"Демо-версии","unlock":"Разблокировки","pass":"Сезонные пропуски ","pack":"Набор","theme":"Темы","addon":"Дополенния","app":"Приложения","unknown":"Неизвестно","page":"Страница"},"strings":{"delimiter":"Введите разделитель:","stringify_error":"Ошибка: в браузере отсутствует JSON.stringify.","yes":"Да","no":"Нет","use_api":"Использовать API для глубокого сканирования?","regex_search":"Поиск по названию игры (/regex/id)"}} //Provided by MorbertDou (issue #2)
 		},
 		"ps": {
 			"def": "pi",
@@ -105,7 +105,7 @@ repod.psdle = {
 			check_entitlements: false, entitlements_count: 0, entitlements_total: 1, entitlements_plus: 0,
 			dlQueue: { base: SonyChi_SessionManagerSingleton.getDLQueueBaseURL(), status: SonyChi_SessionManagerSingleton.getDLQueueStatusURL(), status2: SonyChi_SessionManagerSingleton.getDLQueueStatusURL2() },
 			use_queue: 0, active_consoles: {},
-			tag_line: "<br /><a class='psdle_tiny_link' href='//repod.github.io/psdle' target='_blank'>Website</a> - <a class='psdle_tiny_link' href='//github.com/RePod/psdle' target='_blank'>Repository</a> - <a class='psdle_tiny_link' href='//github.com/RePod/psdle/wiki/Reporting-A-Bug' target='_blank'>Report A Bug</a>",
+			tag_line: "<br /><a class='psdle_tiny_link' href='//repod.github.io/psdle' target='_blank'>Website</a> - <a class='psdle_tiny_link' href='//github.com/RePod/psdle' target='_blank'>Repository</a> - <a class='psdle_tiny_link' href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation' target='_blank'>Submit Bug/Translation</a>",
 			switch_align: "center",
 			switch_color: "#85C107"
 		}; 
