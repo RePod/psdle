@@ -112,7 +112,7 @@ repod.psdle = {
 	},
 	generateList: function() {
 		console.log("PSDLE | Generating download list.");
-		var entitlements = gEntitlementManager.getAllEntitlements(), that = this;
+		var entitlements = gEntitlementManager.getAllEntitlements().reverse(), that = this;
 		/*
 			TO-DO:
 			An array>1 in obj.drm_def probably means DLC, extra content, cross-buy, etc. Look into this. (Should just need to smart loop through them to build properly, with some info inheritance)
@@ -125,6 +125,7 @@ repod.psdle = {
 				//Constants/pre-determined.
 				temp.deep_type = "unknown";
 				temp.pid = obj.product_id;
+				temp.index = that.gamelist.length+1;
 
 				if (obj.entitlement_attributes) {
 					/* PS4 */
@@ -156,16 +157,20 @@ repod.psdle = {
 				//Get Plus status
 				if (!obj.drm_def && !!obj.inactive_date) { temp.plus = true; } //PS4, Vita, PSP
 				if (obj.license && obj.license.expiration) { temp.plus = true; } //PS3
-				
 				//url
-				
 				that.gamelist.push(temp);
+				
+				if (repod.psdle.config.deep_search) { that.game_api.queue(temp.index,temp.pid); }	
 			}
 		});
-		this.gamelist.reverse();
-		$.each(this.gamelist, function(a) { that.gamelist[a].index = a+1; }); //There's gotta be a better way.
 		console.log("PSDLE | Finished generating download list.");
-		repod.psdle.table.gen();
+		if (repod.psdle.config.deep_search) {
+			/* What could go wrong? */
+			this.game_api.run(); this.game_api.run();
+			this.game_api.run(); this.game_api.run();
+		} else {
+			this.table.gen();
+		}
 	},
 	nextPage: function() {
 		//.trigger("click") wasn't working in Chrome, here's a native solution.
@@ -189,7 +194,7 @@ repod.psdle = {
 					$(document).one('click',".psdle_btn",function () { that.config.use_queue = ($(this).attr("id") == "yes") ? true : false; that.genDisplay("progress"); });
 					break;
 				case "progress":
-					suppress = true;
+					//suppress = true;
 					if (that.config.use_queue) {
 						var sys = {}, c = SonyChi_SessionManagerSingleton.getUserObject();
 						if (c.getActiveVitaCount() > 0) { sys.vita = 1; }
@@ -197,7 +202,7 @@ repod.psdle = {
 						if (c.getActivePS4Count() > 0) { sys.ps4 = 1; }
 						that.config.active_consoles = sys;
 					}
-					//a += "<br /><div id='psdle_progressbar'><div id='psdle_bar'>&nbsp;</div></div><br /><span id='psdle_status'>"+that.lang.startup+"</span>";
+					a += "<br /><div id='psdle_progressbar'><div id='psdle_bar'>&nbsp;</div></div><br /><span id='psdle_status'>"+that.lang.startup+"</span>";
 					that.generateList();
 					break;
 				default:
@@ -451,34 +456,46 @@ repod.psdle = {
 			return t;
 		}
 	},
-	parseDeep: function(id,data,sku) {
-		id--;
-		if (!!this.gamelist[id]) {
-			if (sku) {
-				if (!data.codeName) {
-					if (data.images) { this.gamelist[id].icon = data.images[3].url; }
-					if (data.id) { this.gamelist[id].url = this.gamelist[id].url.replace(/cid=.+?$/,"cid="+data.id); }
-				}
-				this.config.deep_current++;
-				if (this.config.deep_current == this.config.deep_waiting) {
-					this.table.gen();
-				}
+	game_api: {
+		batch: [],
+		queue: function(index,pid) {
+			var that = this;
+			/* Do some queue/delay magic here. */
+			this.batch.push({pid:pid,index:index});
+		},
+		run: function() {
+			var that = this;
+			if (this.batch.length > 0) {
+				var a = this.batch.pop();
+				$.getJSON(repod.psdle.config.game_api+a.pid)
+				.done(function(data) { that.process(a.index,data); })
+				.success(function(data) { that.process(a.index,data); })
+				.complete(function(data) { that.process(a.index,data); })
+				.fail(function(data) { that.process(a.index,data); });
 			} else {
-				var sys;
-				if (data.default_sku.entitlements.length == 1) {
-					if (!!data.metadata.game_subtype) {
-						if (!!data.metadata.game_subtype.values[0].match(/(PS(?:1|2)) Classic/)) { sys = data.metadata.game_subtype.values[0].match(/(PS(?:1|2)) Classic/).pop(); }
-						else if (!!data.metadata.primary_classification.values[0].match(/(PS(?:1|2))_Classic/i)) { sys = data.metadata.secondary_classification.values[0].match(/(PS(?:1|2))_Classic/i).pop(); }
-						else if (!!data.metadata.secondary_classification.values[0].match(/(PS(?:1|2))_Classic/i)) { sys = data.metadata.secondary_classification.values[0].match(/(PS(?:1|2))_Classic/i).pop(); }
-					} else if (!!data.metadata.playable_platform) { sys = data.metadata.playable_platform.values; } 
-				}
-				//metadata.game_subtype.values[0] -- PS1/PS2 Classic/Demo/Character/Bundle
-				//top_category -- downloadable_game, avatar, demo, etc.
-				if (!!sys) { 
-					this.gamelist[id].platform = [sys];
-				}
-				try { this.gamelist[id].rating = data.star_rating.score; } catch (e) { }
-				this.gamelist[id].deep_type = data.top_category;
+				if (!$("#muh_table").length) { repod.psdle.table.gen(); }
+			}
+		},
+		process: function(index,data) {
+			var l = Math.abs(repod.psdle.gamelist.length - this.batch.length), r = repod.psdle.gamelist.length,
+				w = $('#psdle_bar').width(), pW = $('#psdle_bar').parent().width(), p = Math.round(100*w/pW), q = Math.round(100*l/r);
+			if (q > p) { $("#psdle_progressbar > #psdle_bar").stop().animate({"width":q+"%"}); }
+			$("#psdle_status").text(l+" / "+r);
+			this.run();
+			this.parse(index,data);
+		},
+		parse: function(index,data) {
+			index--;
+			if (!!repod.psdle.gamelist[index]) {
+				var sys, r = /(PS(?:1|2)) Classic/;
+				if (!!data.metadata.game_subtype) {
+					if (!!data.metadata.game_subtype.values[0].match(r)) { sys = data.metadata.game_subtype.values[0].match(r).pop(); }
+					else if (!!data.metadata.primary_classification.values[0].match(r)) { sys = data.metadata.secondary_classification.values[0].match(r).pop(); }
+					else if (!!data.metadata.secondary_classification.values[0].match(r)) { sys = data.metadata.secondary_classification.values[0].match(r).pop(); }
+				} else if (!!data.metadata.playable_platform) { sys = data.metadata.playable_platform.values; } 
+				if (!!sys) { repod.psdle.gamelist[index].platform = [sys]; }
+				try { repod.psdle.gamelist[index].rating = data.star_rating.score; } catch (e) { }
+				repod.psdle.gamelist[index].deep_type = data.top_category.replace("tumbler_index","unknown");
 			}
 		}
 	},
