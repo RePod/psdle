@@ -46,7 +46,7 @@ repod.psdle = {
 		},
 		"ru": {
 			"def":"ru",
-			"ru": {"local":"Русский","startup":"Ожидание загрузки страниц...","columns":{"icon":"Иконка","name":"Название","platform":"Платформа","size":"Размер","date":"Дата"},"labels":{"export_view":"Export View","games":"Игры","avatar":"Аватары","demo":"Демо-версии","unlock":"Разблокировки","pass":"Сезонные пропуски ","pack":"Набор","theme":"Темы","addon":"Дополенния","app":"Приложения","unknown":"Неизвестно","page":"Страница"},"strings":{"delimiter":"Введите разделитель:","stringify_error":"Ошибка: в браузере отсутствует JSON.stringify.","yes":"Да","no":"Нет","use_api":"Использовать API для глубокого сканирования?","regex_search":"Поиск по названию игры (/regex/id)"}} //Provided by MorbertDou (issue #2)
+			"ru": {"local":"Русский","startup":"Ожидание загрузки страниц...","columns":{"icon":"Иконка","name":"Название","platform":"Платформа","size":"Размер","date":"Дата"},"labels":{"export_view":"Export View","games":"Игры","avatar":"Аватары","demo":"Демо-версии","unlock":"Разблокировки","pass":"Сезонные пропуски ","pack":"Набор","theme":"Темы","addon":"Дополенния","app":"Приложения","unknown":"Неизвестно","page":"Страница"},"strings":{"delimiter":"Введите разделитель:","stringify_error":"Ошибка: в браузере отсутствует JSON.stringify.","yes":"Да","no":"Нет","use_api":"Использовать API для глубокого сканирования?","regex_search":"Поиск по названию игры"}} //Provided by MorbertDou (issue #2)
 		},
 		"ps": {
 			"def": "pi",
