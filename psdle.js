@@ -113,10 +113,7 @@ repod.psdle = {
 	generateList: function() {
 		console.log("PSDLE | Generating download list.");
 		var entitlements = gEntitlementManager.getAllEntitlements().reverse(), that = this;
-		/*
-			TO-DO:
-			An array>1 in obj.drm_def probably means DLC, extra content, cross-buy, etc. Look into this. (Should just need to smart loop through them to build properly, with some info inheritance)
-		*/
+
 		$.each(entitlements, function(index,obj) {
 			if (!obj.VUData && (obj.entitlement_attributes || obj.drm_def)) { /* Determine if game content. */
 				/* Go to fucking town. */
@@ -125,12 +122,14 @@ repod.psdle = {
 				//Constants/pre-determined.
 				temp.deep_type = "unknown";
 				temp.pid = obj.product_id;
+				temp.id = obj.id;
 				temp.index = that.gamelist.length+1;
 
 				if (obj.entitlement_attributes) {
 					/* PS4 */
 					if (obj.game_meta) {
 						temp.name = obj.game_meta.name;
+						temp.api_icon = obj.game_meta.icon_url;
 						//temp.icon = obj.game_meta.icon_url;
 					}
 					temp.size = obj.entitlement_attributes[0].package_file_size;
@@ -138,7 +137,7 @@ repod.psdle = {
 				} else if (obj.drm_def) {
 					/* PS3, PSP, or Vita */
 					temp.name = obj.drm_def.contentName;
-					//temp.icon = obj.drm_def.image_url;
+					temp.api_icon = obj.drm_def.image_url;
 					temp.size = obj.drm_def.drmContents[0].contentSize;
 					temp.platform = [];
 					$.each({"1":KamajiPlatformFlags.PS3,"3": KamajiPlatformFlags.PSP,"8":KamajiPlatformFlags.VITA}, function (t,u) {
@@ -150,8 +149,9 @@ repod.psdle = {
 				//Post-processing.
 				temp.size = formatFileSizeDisplayStr(temp.size);
 				temp.icon = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.pid)+"&w=124&h=124";
+				temp.api_icon = temp.api_icon+"&w=124&h=124";
 				temp.date = convertToNumericDateSlashes(convertStrToDateObj(obj.active_date));
-				temp.url = "#";
+				temp.url = repod.psdle.config.game_page+temp.pid;
 				temp.platform_og = temp.platform.slice(0);
 				
 				//Get Plus status
@@ -243,7 +243,7 @@ repod.psdle = {
 			if (a !== true) { repod.psdle.determineGames(); }
 			var that = this, temp = "", plus = 0, count = 0;
 			$.each(repod.psdle.gamelist_cur,function (a,val) {
-				var u = repod.psdle.config.game_page+val.pid, is_plus = "";
+				var u = repod.psdle.config.game_page+val.id, is_plus = "";
 				var sys = repod.psdle.safeGuessSystem(val.platform), valid = 1;
 				if (repod.psdle.config.check_entitlements) {
 					if (val.plus) { is_plus = "is_plus"; }
@@ -263,7 +263,8 @@ repod.psdle = {
 				if (valid) {
 					count++;
 					var pg = (chihiro.isMobile()) ? 50 : 24;
-					temp += "<tr><td style='max-width:31px;max-height:31px;'><a target='_blank' href='"+val.url+"'><img title='"+repod.psdle.lang.labels.page+" #"+Math.ceil(val.index/pg)+"' src='"+val.icon+"' class='psdle_game_icon "+is_plus+"' /></a></td><td><a id='psdle_index_"+(val.index -1)+"' class='psdle_game_link' target='_blank' href='"+u+"'>"+val.name+"</a></td><td>"+sys+"</td><td>"+val.size+"</td><td>"+val.date+"</td></tr>";
+					var icon = (val.safe_icon) ? val.icon : "";
+					temp += "<tr id='psdle_index_"+(val.index -1)+"'><td style='max-width:31px;max-height:31px;'><a target='_blank' href='"+val.url+"'><img title='"+repod.psdle.lang.labels.page+" #"+Math.ceil(val.index/pg)+"' src='"+icon+"' class='psdle_game_icon "+is_plus+"' /></a></td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+val.name+"</a></td><td>"+sys+"</td><td>"+val.size+"</td><td>"+val.date+"</td></tr>";
 				}
 			});
 			$("#table_stats").html(count+((repod.psdle.config.check_entitlements)?" (<div id='slider'><div class='handle_container' style='text-align:"+repod.psdle.config.switch_align+"'><div class='handle' style='background-color:"+repod.psdle.config.switch_color+"'/></div></div> <div id='psdleplus' style='display:inline-block' /> "+plus+")":"")+" / "+repod.psdle.gamelist.length);
@@ -276,6 +277,7 @@ repod.psdle = {
 				}
 			}
 			$("#muh_table > tbody").html(temp);
+			this.checkIcons();
 		},
 		plus_switch: function() {
 			var a, b;
@@ -297,6 +299,14 @@ repod.psdle = {
 		},
 		margin: function() {
 			$("#muh_table").animate({"margin-top":$("#search_options").outerHeight() - $("#sub_container").css("padding-top").replace("px","")+"px"});
+		},
+		checkIcons: function() {
+			$(".psdle_game_icon").filter(function() { return !$(this).attr("src"); }).each(function() {
+				var me = $(this).parent().parent().parent().attr("id"), index = me.split("_").pop();
+				$.get(repod.psdle.gamelist[index].icon)
+				.done(function() { repod.psdle.gamelist[index].safe_icon = true; $("#"+me+" .psdle_game_icon").attr("src", repod.psdle.gamelist[index].icon); })
+				.fail(function() { repod.psdle.gamelist[index].safe_icon = true; repod.psdle.gamelist[index].icon = repod.psdle.gamelist[index].api_icon; $("#"+me+" .psdle_game_icon").attr("src", repod.psdle.gamelist[index].icon); });
+			});
 		}
 	},
 	determineGames: function() {
@@ -622,7 +632,7 @@ repod.psdle = {
 	},
 	newbox: {
 		generate: function(e) {
-			var plus = "", i = (isNaN(e)) ? Number($(e).find(".psdle_game_link").attr("id").split("_").pop()) : Number(e), game = repod.psdle.gamelist[i], id = (game.index -1);
+			var plus = "", i = (isNaN(e)) ? Number($(e).attr("id").split("_").pop()) : Number(e), game = repod.psdle.gamelist[i], id = (game.index -1);
 			var dialog = $("<div id='dlQueueAsk' style='background-image:url(\""+game.icon.replace(/(w|h)=\d+/g,"=400")+"\");'/>");
 			try { if (game.plus) { plus = $("#psdleplus").clone()[0].outerHTML+" "; } } catch(e) {}
 			dialog.append("<div id='dlQAN'>"+plus+game.name+"</div>");
