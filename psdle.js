@@ -33,7 +33,7 @@ repod.psdle = {
 	lang_cache: {
 		"en": {
 			"def": "us",
-			"us":{"local":"English","startup":{"apis":"Select which APIs you would like to use, hover for more details.<br />Certain APIs may not be disabled.","wait":"Please wait.","start":"Start"},"columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"export_view":"Export View","games":"Games","avatar":"Avatars","demo":"Demos","unlock":"Unlocks","pass":"Passes","pack":"Packs","theme":"Themes","addon":"Add-ons","app":"Applications","unknown":"Unknown","page":"Page"},"strings":{"delimiter":"Enter delimiter:","stringify_error":"Error: Browser does not have JSON.stringify.","yes":"Yes","no":"No","use_api":"Use API for in-depth scanning?","use_queue":"Enable Download Queue support? (accesses queue and activated consoles)","use_entitled_api":"Use Entitlements API? (For PS+/bundles/etc, contains purchase information)<br /><small><strong>Required for dates on Mobile site.</strong></small>","regex_search":"Search by game title","dlQueue":"Queue","dlList":"List"},"apis":[{"internal_id":"api_game","name":"Catalog","desc":"Accesses additional game information to determine proper console, fix broken images, and more."},{"internal_id":"api_entitle","name":"Entitlements","desc":"Required by PSDLE. Accesses purchase information used to create the download list, determine PS+ status, and other things."},{"internal_id":"api_queue","name":"Download Queue","desc":"Allows adding and removing items from the download queue. Reads download queue information and the amount of activated consoles on the account."}]}
+			"us":{"local":"English","startup":{"apis":"Select which APIs you would like to use, hover for more details.<br />Certain APIs may not be disabled.","wait":"Please wait.","start":"Start"},"columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"export_view":"Export View","games":"Games","avatar":"Avatars","demo":"Demos","unlock":"Unlocks","pass":"Passes","pack":"Packs","theme":"Themes","addon":"Add-ons","app":"Applications","unknown":"Unknown","page":"Page"},"strings":{"delimiter":"Enter delimiter:","stringify_error":"Error: Browser does not have JSON.stringify.","yes":"Yes","no":"No","search":"Search by game title","dlQueue":"Queue","dlList":"List"},"apis":[{"internal_id":"api_entitle","name":"Entitlements","desc":"Cannot be disabled. Accesses purchase information used to create the download list, determine PS+ status, and other things."},{"internal_id":"api_game","name":"Catalog","desc":"Accesses additional game information to determine proper console, fix broken images, and more."},{"internal_id":"api_queue","name":"Download Queue","desc":"Allows adding and removing items from the download queue. Reads download queue information and the amount of activated consoles on the account."}]}
 		},
 		"es": {
 			"def": "mx",
@@ -45,7 +45,7 @@ repod.psdle = {
 		},
 		"ru": {
 			"def":"ru",
-			"ru":{"local":"Русский","startup":{"wait":"Ожидание загрузки страниц..."}"columns":{"icon":"Иконка","name":"Название","platform":"Платформа","size":"Размер","date":"Дата"},"labels":{"export_view":"Export View","games":"Игры","avatar":"Аватары","demo":"Демо-версии","unlock":"Разблокировки","pass":"Сезонные пропуски ","pack":"Набор","theme":"Темы","addon":"Дополенния","app":"Приложения","unknown":"Неизвестно","page":"Страница"},"strings":{"delimiter":"Введите разделитель:","stringify_error":"Ошибка: в браузере отсутствует JSON.stringify.","yes":"Да","no":"Нет","search":"Поиск по названию игры"}} //Provided by MorbertDou (issue #2)
+			"ru":{"local":"Русский","startup":{"wait":"Ожидание загрузки страниц..."},"columns":{"icon":"Иконка","name":"Название","platform":"Платформа","size":"Размер","date":"Дата"},"labels":{"export_view":"Export View","games":"Игры","avatar":"Аватары","demo":"Демо-версии","unlock":"Разблокировки","pass":"Сезонные пропуски ","pack":"Набор","theme":"Темы","addon":"Дополенния","app":"Приложения","unknown":"Неизвестно","page":"Страница"},"strings":{"delimiter":"Введите разделитель:","stringify_error":"Ошибка: в браузере отсутствует JSON.stringify.","yes":"Да","no":"Нет","search":"Поиск по названию игры"}} //Provided by MorbertDou (issue #2)
 		},
 		"ps": {
 			"def": "pi",
@@ -93,7 +93,7 @@ repod.psdle = {
 			game_api: SonyChi_SessionManagerSingleton.getBaseCatalogURL()+"/",
 			lastsort: "",
 			lastsort_r: false,
-			language: window.location.href.match(/\/([a-z]{2}\-(?:[a-z]{4}-)?[a-z]{2})\//i)[1],
+			language: chihiro.getCultureCode(),
 			deep_search: false,
 			deep_waiting: 0,
 			deep_current: 0,
@@ -172,7 +172,8 @@ repod.psdle = {
 		});
 		console.log("PSDLE | Finished generating download list.");
 		if (repod.psdle.config.deep_search) {
-			this.game_api.run();
+			this.game_api.run(); this.game_api.run();
+			this.game_api.run(); this.game_api.run();
 		} else {
 			this.table.gen();
 		}
@@ -258,8 +259,6 @@ repod.psdle = {
 					var pg = (chihiro.isMobile()) ? 50 : 24;
 					var icon = (val.safe_icon) ? val.icon : "";
 					temp += "<tr id='psdle_index_"+(val.index -1)+"'><td style='max-width:31px;max-height:31px;'><a target='_blank' href='"+val.url+"'><img title='"+repod.psdle.lang.labels.page+" #"+Math.ceil(val.index/pg)+"' src='"+icon+"' class='psdle_game_icon "+is_plus+"' /></a></td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+val.name+"</a></td><td>"+sys+"</td><td>"+val.size+"</td><td>"+val.date+"</td></tr>";
-				} else {
-					if (val.plus == true) { console.log("invalid?: "+JSON.stringify(val)); }
 				}
 			});
 			$("#table_stats").html(count+" (<div id='slider'><div class='handle_container' style='text-align:"+repod.psdle.config.switch_align+"'><div class='handle' style='background-color:"+repod.psdle.config.switch_color+"'/></div></div> <div id='psdleplus' style='display:inline-block' /> "+plus+")"+" / "+repod.psdle.gamelist.length);
