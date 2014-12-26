@@ -54,7 +54,7 @@ html, body { margin:0; padding:0; height:100%; "Arial", sans-serif; }
 /* Modules */
 .module > a { padding-top: 41px; margin-top: -41px; }
 .module h3 {
-	cursor:pointer; font-size:24px !important; border-bottom:1px solid #000; margin:0px;
+	cursor:pointer; font-size:24px !important; border-bottom:1px solid #000; margin-top:0px;
 }
 .module h3 i { color:#000; }
 .module > div { padding:0px 20px; }
