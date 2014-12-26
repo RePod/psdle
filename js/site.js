@@ -11,7 +11,7 @@ $(document).ready(function() {
 	$(".module h3").click(function() {
 		var that = this;
 		$(this).parent().parent().find("div").slideToggle(400, function() {
-			$(that).find(".module_toggle").removeClass("fa-caret-up fa-caret-down").addClass("fa-caret-"+($(that).parent().parent().find("div").is(':visible'))?"up":"down")
+			$(that).find(".module_toggle").removeClass("fa-caret-up fa-caret-down").addClass("fa-caret-"+(($(that).parent().parent().find("div").is(':visible'))?"up":"down"))
 		});
 	});
 	
