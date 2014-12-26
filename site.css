@@ -47,13 +47,12 @@ html, body { margin:0; padding:0; height:100%; "Arial", sans-serif; }
 
 /* Content */
 #content { 
-	padding: 122px 10% 180px;
-margin-top: -61px;
+	padding: 61px 10% 180px;
 }
 #content .module { margin:20px 20px 2em 20px; }
 .module h3 {
 	padding-top: 41px; margin-top: -41px;
-	cursor:pointer; font-size:24px !important; border-bottom:1px solid #000; max-width:50%;
+	cursor:pointer; font-size:24px !important; border-bottom:1px solid #000;
 }
 .module h3 i { color:#000; }
 .module > div { padding:0px 20px; }
