@@ -19,7 +19,7 @@ What Needs To Be Done
 * Improve appearance.
 * **Translations!** Language code ("en-us") and JSON format required. See source or contact me.
 * Make it faster! How? How indeed. (Always in progress)
-* Iron out problems with APIs. (Various degress of progress)
+* Iron out problems with APIs. (Various degrees of progress)
 * Improve Download Queue.
 
 Submitting a Bug or Translation: [Submit](//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation) **/** [PS+](//github.com/RePod/psdle/issues/3).
