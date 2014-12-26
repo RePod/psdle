@@ -1,0 +1,98 @@
+/*
+	Default CSS for PSDLE's website.
+	How inefficient could it possibly be?
+*/
+
+html, body { margin:0; padding:0; height:100%; "Arial", sans-serif; }
+#container { min-height:100%; position:relative; }
+.psdle_blue { background-color:#2185f4; }
+#header { 
+	padding:10px 10%;
+	max-height:31px;
+	position:fixed;
+	top:0px;left:0px;right:0px;
+}
+#psdle_logo { vertical-align: middle; }
+#psdle_logo:hover { box-shadow:0px 0px 8px #fff; }
+
+/* Menu */
+#menu {
+	display: inline-block;
+	float: right;
+	line-height:0;
+	margin-top:3px;
+}
+#menu a, #menu a:visited {
+	display:inline-block;
+	padding:0px 7px; margin-left:5px;
+	height:24px; color:#00E;
+	vertical-align:middle;
+}
+#menu a:hover { color:#fff; }
+#menu a i { font-size:24px; color:inherit; }
+.vline { width:1px; height:22px; background-color:#00E; display:inline-block; margin: 0px 4px; vertical-align:middle; }
+
+#screenshots { text-align:center;height:550px;padding:10px; }
+
+#tagline {
+	margin:10px 0px; padding:5px;color:#fff;text-align:center; font-size:200%; border-radius:90px;
+}
+.fa { font-size:24px; color:#fff; }
+
+/* Footer */
+#footer { padding:10px 0px;text-align:center;margin-top:10px; position:absolute; bottom:0; width:100%; max-height:180px; }
+#footer span { display:inline-block; text-align:left; margin-right:50px; vertical-align:text-top; }
+#footer a, #footer i, #footer .text { font-size:12px !important; color:#00E; text-decoration:none;  padding:2px; }
+#footer i { color:inherit; } #footer a:hover { color:#fff; }
+
+/* Content */
+#content { 
+	padding: 122px 10% 180px;
+margin-top: -61px;
+}
+#content .module { margin:20px 20px 2em 20px; }
+.module h3 {
+	padding-top: 41px; margin-top: -41px;
+	cursor:pointer; font-size:24px !important; border-bottom:1px solid #000; max-width:50%;
+}
+.module h3 i { color:#000; }
+.module > div { padding:0px 20px; }
+.module dl { margin:0px; }
+.module dt { }
+.module dd { font-size:0.8em; }
+
+.module_toggle {
+	float:right;
+}
+
+/* Tooltips */
+.ui-tooltip { position:fixed; box-shadow:none; border-left: 1px solid #fff; border-bottom: 1px solid #fff; border-right: 1px solid #fff; border-bottom-left-radius:15px; border-bottom-right-radius:15px; }
+.ui-tooltip-content { text-align:center; position: relative; color:#fff; padding:0px 10px; }
+
+.ui-tooltip-content::after {
+	content: '';
+	position: absolute;
+	border-style: solid;
+	display: block;
+	width: 0;
+}
+
+.bottom .ui-tooltip-content:after {
+	border-color: #FFF transparent;
+	border-width: 0px 6px 6px;
+	top: -15px;
+	left: calc(50% - 6px);
+}
+
+/* Generic */
+.psdle_btn { cursor:pointer;border-radius:13px;background-color:#2185f4;color:#fff;padding:1px 15px;display:inline-block; }
+.start_hidden { display:none; }
+.fake_url {
+	color: #0000EE;
+	text-decoration: underline;
+	cursor: pointer;
+}
+/* Slightly modified from source. */
+.psdle_fancy_bar span { font-weight:bold; text-transform:uppercase; font-size:small; color:#fff; background-color:#2185f4; display:inline-block; margin-right:2px; margin-bottom:5px; padding:1px 15px; text-decoration:none; cursor:pointer; }
+.psdle_fancy_bar > span:first-child { border-top-left-radius:12px; border-bottom-left-radius:12px; }
+.psdle_fancy_bar span:last-child, .psdle_fancy_bar a:last-child span { border-top-right-radius:12px; border-bottom-right-radius:12px; }

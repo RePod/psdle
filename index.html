@@ -1,122 +1,126 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>PSDLE by RePod</title>
-
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="javascripts/scale.fix.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-  </head>
-  <body>
-    <div class="wrapper">
-      <header>
-        <h1>PSDLE</h1>
-        <p>Improving everyone&#39;s favorite online download list, one loop at a time.</p>
-        <p class="view"><a href="https://github.com/RePod/psdle">View the Project on GitHub <small>RePod/psdle</small></a></p>
-        <ul>
-          <li><a href="https://github.com/RePod/psdle/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/RePod/psdle/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/RePod/psdle">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <h1>
-<a id="" class="anchor" href="#" aria-hidden="true"><span class="octicon octicon-link"></span></a><img src="logo/4_psdle.png?raw=true" alt="psdle">
-</h1>
-
-<p>Improving everyone's favorite online download list, one loop at a time.<br>
-<strong>Downloading/saving files other than the userscript is not required!</strong></p>
-
-<p>Check out <a href="//imgur.com/a/4oRjv" title="12/23/2014">PSDLE in-action!</a> <strong>/</strong> <a href="//imgur.com/a/m5Rxw" title="08/15/14">Retro!</a> <strong>/</strong> <a href="//imgur.com/a/46K6L" title="09/8/2014">PS+</a></p>
-
-<h1>
-<a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h1>
-
-<ul>
-<li>One convenient list of all your content!</li>
-<li>View, sort, and filter your download list as you desire!</li>
-<li>
-<strong>PS+ support:</strong> easily see what is and isn't tied to your subscription.</li>
-<li>
-<strong>Download queue support:</strong> easily send items where you want.</li>
-<li>
-<strong>Export your list</strong> in a database/spreadsheet format (CSV) to use as you like!</li>
-<li>Lightweight, portable, consistent: computer or mobile, always the same experience.</li>
-<li>
-<strong>Mobile!</strong> Even on-the-go, don't settle for a featureless download list! (<a href="#" title="Your mileage may vary.">YMMV</a>)</li>
-<li>Open source! (MIT) (Totally a feature.)</li>
-</ul>
-
-<h1>
-<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h1>
-
-<p><strong>Grease/Tamper/etcmonkey users:</strong> <a href="//repod.github.io/psdle/psdle.user.js">Get the user script</a> then go to the download list.    </p>
-
-<p><strong>Bookmarklet:</strong> <a href="//repod.github.io/psdle/bookmarklet.html">Get it here!</a> (Works on iOS, possibly Android.)</p>
-
-<p><strong>Everyone else:</strong></p>
-
-<ol>
-<li>Navigate to the desired account's download page from the online store</li>
-<li>Ensure the displayed page is the first (top has latest purchase)</li>
-<li>Open the Web Console (Firefox: Ctrl+Shift+K) (Chrome: Ctrl+Shift+J)</li>
-<li>Input <strong>$.getScript("<a href="https://repod.github.io/psdle/psdle.js">https://repod.github.io/psdle/psdle.js</a>");</strong> </li>
-<li>Execute (Enter) and let the magic happen</li>
-</ol>
-
-<p><strong>Bleeding edge users:</strong></p>
-
-<p>The repository files will always be the latest possible versions, excluding forks/branches/etc. Feel free to give them a try.
-If you get an error involving strict MIME checking, run the URL through something like <a href="//rawgit.com/">RawGit</a>.</p>
-
-<h1>
-<a id="what-needs-to-be-done" class="anchor" href="#what-needs-to-be-done" aria-hidden="true"><span class="octicon octicon-link"></span></a>What Needs To Be Done</h1>
-
-<ul>
-<li>Improve appearance.</li>
-<li>
-<strong>Translations!</strong> Language code ("en-us") and JSON format required. See source or contact me.</li>
-<li>Make it faster! How? How indeed. (Always in progress)</li>
-<li>Iron out problems with APIs. (Various degress of progress)</li>
-<li>Improve Download Queue.</li>
-<li>Custom-make the gh-pages branch page to remove useless links (downloading the zip).</li>
-</ul>
-
-<p>Issues: <a href="//github.com/RePod/psdle/issues">Submit</a> - <a href="//github.com/RePod/psdle/issues/3">PS+</a>.</p>
-
-<h1>
-<a id="potentially-asked-questions" class="anchor" href="#potentially-asked-questions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Potentially Asked Questions</h1>
-
-<h5>
-<a id="is-this-safe-or-a-ploy-to-phish-account-details" class="anchor" href="#is-this-safe-or-a-ploy-to-phish-account-details" aria-hidden="true"><span class="octicon octicon-link"></span></a>Is this safe or a ploy to phish account details?</h5>
-
-<p><strong>Yes it is safe, no it is not for phishing account details.</strong><br>
-I put it on GitHub for a reason, feel free to view the <del>horribly effective</del> code yourself and decide.<br>
-If/when I get pull requests I'll let them sit and look through them while allowing the <a href="#" title="What community?">"community"</a> to as well.</p>
-
-<p>If authentication details were left around openly on the download list page I would take my concerns elsewhere.</p>
-
-<h1>
-<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h1>
-
-<p>MIT, have fun.</p>
-
-<p><strong>PSDLE is not sponsored, endorsed, or created by Sony, SNEI, SCEA, SCEE, SCEI, or affiliates.</strong>
-<strong>Third-party content (icons, names) re-rendered by PSDLE is provided from the download list.</strong></p>
-      </section>
-    </div>
-    <footer>
-      <p>Project maintained by <a href="https://github.com/RePod">RePod</a></p>
-      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
-    </footer>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-    
-  </body>
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>PSDLE</title>
+		<meta name="description" content="PSDLE - Improving everyone's favorite online download list, one loop at a time.">
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8"> 
+		<link rel="SHORTCUT ICON" href="favicon.png">
+		<!-- Externals and jQuery/UI stuff -->
+		<script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+		<script type="text/javascript" src="js/plugins/jquery-color.js"></script>
+		<script type="text/javascript" src="js/jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="js/site.js"></script>
+		<link href="js/jquery-ui-1.11.2.custom/jquery-ui.min.css" rel="stylesheet">
+		<link rel="stylesheet" href="font-awesome-4.2.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="site.css">
+	</head>
+	<body>
+		<div id='container'>
+			<div id='header' class='psdle_blue'>
+				<a href='//repod.github.io/psdle'><img id='psdle_logo' src='logo/3_psdle_mini.png' alt='psdle' /></a>
+				<div id='menu'>
+					<a href='#' title="Back to top" id="btt" class='start_hidden'><i class="fa fa-arrow-up"></i></a>
+					<a href='#features' title="Features"><i class="fa fa-star"></i></a>
+					<a href='#getting_started' title="Getting Started"><i class="fa fa-check-square-o"></i></a>
+					<a href='#screenshots' title="Screenshots"><i class="fa fa-camera"></i></a>
+					<a href='#paq' title="P.A.Q."><i class="fa fa-question"></i></a>
+					<div class='vline'></div>
+					<a href='psdle.user.js' id='get_us' title="Download the Userscript.<br />Activates automatically!"><i class="fa fa-download"></i></a>
+					<a href='javascript:$.getScript("//repod.github.io/psdle/psdle.js");void(0);' id='get_bookmark' title="Bookmark or copy this!<br />Access bookmark from the store."><span style='display:none'>Run PSDLE</span><i class="fa fa-bookmark"></i></a>
+					<div class='vline'></div>
+					<a href='//repod.github.io/psdle' title="Home"><i class="fa fa-home"></i></a>
+					<a href='//github.com/RePod/psdle/' title="Repository"><i class="fa fa-code-fork"></i></a>
+					<a href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation'><i class="fa fa-exclamation-circle"></i></a>
+				</div>
+			</div>
+			<div id='content'>
+				<div id='tagline' class='psdle_blue'>
+					Improving everyone's favorite online download list, one loop at a time.
+				</div>
+				<div class='module'>
+					<a name="features">
+						<h3><i class="fa fa-star"></i> Features <i class="module_toggle fa fa-caret-down"></i></h3>
+					</a>
+					<div>
+						<dl>
+							<dt>One convenient list of all your content!</dt>
+							<dt>View, sort, and filter your download list as you desire!</dt>
+							<dt>PS+ Support</dt>
+								<dd>See what is and isn't tied to your subscription.</dd>
+							<dt>Export your list</dt>
+								<dd>CSV format for spreedsheets.</dd>
+							<dt>Download Queue support</dt>
+								<dd>Easily send items where you want them to go.</dd>
+							<dt>Mobile</dt>
+								<dd>Even on-the-go, don't settle for a featureless download list!</dd>
+							<dt>Lightweight, portable, consistent.</dt>
+								<dd>Computer or mobile, always the same experience.</dd>
+							<dt>Open source!</dt>
+						</dl> 
+					</div>
+				</div>
+				<div class='module'>
+					<a name="getting_started">
+						<h3><i class="fa fa-check-square-o"></i> Getting Started <i class="module_toggle fa fa-caret-up"></i></h3>
+					</a>
+					<div>
+						<span class='psdle_fancy_bar'><span id='get_userscript'>Userscript</span><a href="//wikipedia.org/wiki/Greasemonkey" target="_blank"><span>?</span></a></span>
+						<span class='psdle_fancy_bar'><span class='get_bookmarklet'>Bookmarklet</span><a href="//wikipedia.org/wiki/Bookmarklet" target="_blank"><span>?</span></a></span><br />
+						<br />
+						<strong>Direct:</strong><br />
+						<ol>
+							<li>Copy the <span class='get_bookmarklet fake_url'>bookmarklet's link</span>.</li>
+							<li>Navigate to the online store.</li>
+							<li>Paste into your browser's address bar.</li>
+							<li>Prepend <strong>javascript:</strong> to the start if it's not already there.</li>
+							<li>Submit.</li>
+						</ol>
+					</div>
+				</div>
+				<div class='module'>
+					<a name="screenshots">
+						<h3><i class="fa fa-camera"></i> Screenshots <i class="module_toggle fa fa-caret-down"></i></h3>
+					</a>
+					<div class='start_hidden'>
+						<iframe class="imgur-album" width="100%" height="550" frameborder="0" src="//imgur.com/a/4oRjv/embed?background=292929&text=ffffff&link=4e76c9&thumbs=true"></iframe>
+					</div>
+				</div>
+				<div class='module'>
+					<a name="paq">
+						<h3><i class="fa fa-question"></i> P.A.Q. (Potentially Asked Questions) <i class="module_toggle fa fa-caret-down"></i></h3>
+					</a>
+					<div class='start_hidden'>
+						<strong>Is this safe or a ploy to phish account details?</strong> <br />
+						Yes it is safe, no it is not for phishing account details.<br />
+						I put it on GitHub for a reason, feel free to view the horribly effective code yourself and decide.<br />
+						If/when I get pull requests I'll let them sit and look through them while allowing the "community" to as well.<br />
+						<br />
+						If authentication details were left around openly on the download list page I would take my concerns elsewhere.<br />
+						<br />
+						More soon(tm).
+					</div>
+				</div>
+			</div>
+			<div id='footer' class='psdle_blue'>
+				<span>
+					<a href='#'><i class="fa fa-arrow-up" style='font-size:16px;'></i> Back to top</a><br />
+					<a href='//fortawesome.github.io/Font-Awesome/'><i class="fa fa-flag" style='font-size:16px;'></i> Font Awesome</a><br />
+					<a href='//jquery.com'><i class="fa fa-external-link" style='font-size:16px;'></i> jQuery</a><br />
+					<a href='//jqueryui.com'><i class="fa fa-external-link" style='font-size:16px;'></i> jQuery UI</a><br />
+					<a href='//github.com/jquery/jquery-color/'><i class="fa fa-external-link" style='font-size:16px;'></i> jQuery Color</a><br />
+				</span>
+				<span>
+					<a href='//repod.github.io/psdle'><i class="fa fa-home"></i> Home</a><br />
+					<a href='//github.com/RePod/psdle/'><i class="fa fa-code-fork"></i> Repository</a><br />
+					<a href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation'><i class="fa fa-exclamation-circle"></i> Submit an Issue</a><br />
+					<a href='//github.com/RePod/psdle/blob/master/LICENSE'><i class="fa fa-file-text"></i> PSDLE License</a><br />
+					<a href='//github.com/RePod'><i class="fa fa-plus"></i> More</a><br />
+				</span><br /><br />
+				<span class='text'>
+					PSDLE is not sponsored, endorsed, or created by Sony, SNEI, SCEA, SCEE, SCEI, or affiliates.<br />
+					Third-party content (icons, names) re-rendered by PSDLE is provided from the download list.
+				</span>
+			</div>
+		</div>
+	</body>
 </html>
