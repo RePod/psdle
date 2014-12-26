@@ -1,11 +1,9 @@
 [![psdle](logo/4_psdle.png?raw=true)](//repod.github.io/psdle "To the website!")
 =====
 
-Improving everyone's favorite online download list, one loop at a time. 
-
-This is the PSDLE repository! Most of the information you'll be looking for is on [the website.](//repod.github.io/psdle "To the website!")
-
-Those with no interest of the inner workings of PSDLE won't find anything new here!
+Improving everyone's favorite online download list, one loop at a time.    
+This is the PSDLE repository! Most of the information you'll be looking for is on **[the website.](//repod.github.io/psdle "To the website!")**    
+Those with no interest of the inner workings of PSDLE **will not find anything new here**!
 
 
 Usage
