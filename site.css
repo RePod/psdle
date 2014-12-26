@@ -3,7 +3,7 @@
 	How inefficient could it possibly be?
 */
 
-html, body { margin:0; padding:0; height:100%; "Arial", sans-serif; }
+html, body { margin:0; padding:0; height:100%; font-family:"Arial", sans-serif; }
 #container { min-height:100%; position:relative; }
 .psdle_blue { background-color:#2185f4; }
 #header { 
@@ -19,7 +19,7 @@ html, body { margin:0; padding:0; height:100%; "Arial", sans-serif; }
 #menu {
 	display: inline-block;
 	float: right;
-	line-height:0;
+	line-height:0px;
 	margin-top:3px;
 }
 #menu a, #menu a:visited {
