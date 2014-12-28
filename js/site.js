@@ -15,12 +15,9 @@ $(document).ready(function() {
 		});
 	});
 	
-	$("#get_userscript").click(function() {
-		blink($("#menu .fa-download").parent());
-	});
-	$(".get_bookmarklet").click(function() {
-		blink($("#menu .fa-bookmark").parent());
-	});
+	$("#get_userscript").click(function() { blink($("#menu .fa-download").parent()); });
+	$(".get_bookmarklet").click(function() { blink($("#menu .fa-bookmark").parent()); });
+	$(".get_repo").click(function() { blink($("#menu .fa-code-fork").parent()); });
 	
 	$("#get_bookmark").click(function(e) {
 		e.preventDefault();
