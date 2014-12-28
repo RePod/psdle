@@ -118,66 +118,6 @@ repod.psdle = {
 			$(document).one("click","#psdle_start",function() {	$(this).remove(); that.genDisplay(); });
 		}
 	},
-	generateList: function() {
-		console.log("PSDLE | Generating download list.");
-		var entitlements = gEntitlementManager.getAllEntitlements().reverse(), that = this;
-
-		$.each(entitlements, function(index,obj) {
-			if (!obj.VUData && (obj.entitlement_attributes || obj.drm_def)) { /* Determine if game content. */
-				var temp = {};
-				
-				//Constants/pre-determined.
-				temp.deep_type = "unknown";
-				temp.pid = obj.product_id;
-				temp.id = obj.id;
-				temp.index = that.gamelist.length+1;
-
-				if (obj.entitlement_attributes) {
-					/* PS4 */
-					if (obj.game_meta) {
-						temp.name = obj.game_meta.name;
-						temp.api_icon = obj.game_meta.icon_url;
-						//temp.icon = obj.game_meta.icon_url;
-					}
-					temp.size = obj.entitlement_attributes[0].package_file_size;
-					temp.platform = ["PS4"];
-				} else if (obj.drm_def) {
-					/* PS3, PSP, or Vita */
-					temp.name = obj.drm_def.contentName;
-					temp.api_icon = obj.drm_def.image_url;
-					temp.size = obj.drm_def.drmContents[0].contentSize;
-					temp.platform = [];
-					$.each({"1":KamajiPlatformFlags.PS3,"3": KamajiPlatformFlags.PSP,"8":KamajiPlatformFlags.VITA}, function (t,u) {
-						0 !== (obj.drm_def.drmContents[0].platformIds >>> 1 & u >>> 1) && temp.platform.push(KamajiPlatforms[Number(t)]);
-					});
-					
-				}
-				
-				//Post-processing.
-				temp.size = formatFileSizeDisplayStr(temp.size);
-				temp.icon = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.pid)+"&w=124&h=124";
-				temp.api_icon = temp.api_icon+"&w=124&h=124";
-				temp.date = convertToNumericDateSlashes(convertStrToDateObj(obj.active_date));
-				temp.url = repod.psdle.config.game_page+temp.pid;
-				temp.platform_og = temp.platform.slice(0);
-				
-				//Get Plus status
-				if (!obj.drm_def && !!obj.inactive_date) { temp.plus = true; } //PS4, Vita, PSP
-				if (obj.license && obj.license.expiration) { temp.plus = true; } //PS3
-
-				that.gamelist.push(temp);
-				
-				if (repod.psdle.config.deep_search) { that.game_api.queue(temp.index,temp.pid); }	
-			}
-		});
-		console.log("PSDLE | Finished generating download list.");
-		if (repod.psdle.config.deep_search) {
-			this.game_api.run(); this.game_api.run();
-			this.game_api.run(); this.game_api.run();
-		} else {
-			this.table.gen();
-		}
-	},
 	genDisplay:function(mode) {
 		var that = this;
 		if (!$("#muh_games_container").length) { $("body").append("<div id='muh_games_container' />"); }
@@ -207,9 +147,69 @@ repod.psdle = {
 			}
 			$("#muh_games_container").html(a).slideDown('slow',function() {
 				if (mode == "progress") { that.generateList(); }
-				else { $('.psdle_btn').tooltip(); }
+				else { $('[id^=api_]').tooltip(); }
 			});
 		});
+	},
+	generateList: function() {
+		console.log("PSDLE | Generating download list.");
+		var entitlements = gEntitlementManager.getAllEntitlements().reverse(), that = this;
+
+		$.each(entitlements, function(index,obj) {
+			if (!obj.VUData && (obj.entitlement_attributes || obj.drm_def)) { /* Determine if game content. */
+				var temp = {};
+				
+				//Constants/pre-determined.
+				temp.deep_type = "unknown";
+				temp.pid = obj.product_id;
+				temp.id = obj.id;
+				temp.index = that.gamelist.length+1;
+
+				if (obj.entitlement_attributes) {
+					/* PS4 */
+					if (obj.game_meta) {
+						temp.name = obj.game_meta.name;
+						temp.api_icon = obj.game_meta.icon_url;
+						temp.id
+						//temp.icon = obj.game_meta.icon_url;
+					}
+					temp.size = obj.entitlement_attributes[0].package_file_size;
+					temp.platform = ["PS4"];
+				} else if (obj.drm_def) {
+					/* PS3, PSP, or Vita */
+					temp.name = obj.drm_def.contentName;
+					temp.api_icon = obj.drm_def.image_url;
+					temp.size = obj.drm_def.drmContents[0].contentSize;
+					temp.platform = [];
+					$.each({"1":KamajiPlatformFlags.PS3,"3": KamajiPlatformFlags.PSP,"8":KamajiPlatformFlags.VITA}, function (t,u) {
+						0 !== (obj.drm_def.drmContents[0].platformIds >>> 1 & u >>> 1) && temp.platform.push(KamajiPlatforms[Number(t)]);
+					});
+					
+				}
+				
+				//Post-processing.
+				temp.size = formatFileSizeDisplayStr(temp.size);
+				temp.icon = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.pid)+"&w=31&h=31";
+				temp.api_icon = temp.api_icon+"&w=124&h=124";
+				temp.date = convertToNumericDateSlashes(convertStrToDateObj(obj.active_date));
+				temp.url = repod.psdle.config.game_page+temp.pid;
+				temp.platform_og = temp.platform.slice(0);
+				
+				//Get Plus status
+				if (!obj.drm_def && !!obj.inactive_date) { temp.plus = true; } //PS4, Vita, PSP
+				if (obj.license && obj.license.expiration) { temp.plus = true; } //PS3
+
+				that.gamelist.push(temp);
+				
+				if (repod.psdle.config.deep_search) { that.game_api.queue(temp.index,temp.pid); }	
+			}
+		});
+		console.log("PSDLE | Finished generating download list.");
+		if (repod.psdle.config.deep_search) {
+			this.game_api.run();
+		} else {
+			this.table.gen();
+		}
 	},
 	table: {
 		bindSearch: function() {
@@ -240,7 +240,7 @@ repod.psdle = {
 			var that = this, temp = "", plus = 0, count = 0;
 			$.each(repod.psdle.gamelist_cur,function (a,val) {
 				var u = repod.psdle.config.game_page+val.id, is_plus = "";
-				var sys = repod.psdle.safeGuessSystem(val.platform), valid = 1;
+				var sys = repod.psdle.safeGuessSystem(val.platform_og), valid = 1;
 				if (val.plus) { is_plus = "is_plus"; }
 				switch (repod.psdle.config.switch_align) {
 					case "left":
@@ -309,8 +309,9 @@ repod.psdle = {
 		//$("[id^=filter_]").filter(function() { return !$(this).hasClass("toggled_off"); })
 		/* Determine filters. */ var filters = {}; $.each($("[id^=filter_]"), function() {var n = $(this).attr("id").split("_").splice(1).join("_");filters[n] = $(this).hasClass("toggled_off");});
 		$("#psdle_search_text").removeClass("negate_regex");
+		
 		$.each(this.gamelist,function(index,val) {
-			var sys = that.safeGuessSystem(val.platform), a = true, t = val.name;
+			var sys = that.safeGuessSystem(val.platform_og), a = true, t = val.name;
 			if ($.inArray(sys,safesys) > -1) { 
 				if (that.config.deep_search) {
 					if (filters[val.deep_type]) { a = false; }
@@ -412,7 +413,7 @@ repod.psdle = {
 	},
 	safeGuessSystem: function(sys_in) {
 		//Quick, dirty, and easy.
-		var sys = sys_in.join(" ").replace("™","");
+		var sys = (typeof(sys_in) == "object") ? sys_in.join(" ").replace("™","") : sys_in;
 		if (sys == "PS3 PSP PS Vita" || sys == "PS3 PSP") { sys = "PSP"; }
 		if (sys == "PS3 PS Vita") { sys = "PS Vita"; }
 		return sys;
@@ -476,7 +477,7 @@ repod.psdle = {
 				.complete(function(data) { that.process(a.index,data); })
 				.fail(function(data) { that.process(a.index,data); });
 			} else {
-				if (!$("#muh_table").length) { setTimeout(repod.psdle.table.gen(),1000); }
+				if (!$("#muh_table").length) { repod.psdle.table.gen(); }
 			}
 		},
 		process: function(index,data) {
@@ -484,22 +485,24 @@ repod.psdle = {
 				w = $('#psdle_bar').width(), pW = $('#psdle_bar').parent().width(), p = Math.round(100*w/pW), q = Math.round(100*l/r);
 			if (q > p) { $("#psdle_progressbar > #psdle_bar").stop().animate({"width":q+"%"}); }
 			$("#psdle_status").text(l+" / "+r);
-			setTimeout(this.run(),200);
 			this.parse(index,data);
 		},
 		parse: function(index,data) {
 			index--;
 			if (!!repod.psdle.gamelist[index]) {
 				var sys, r = /(PS(?:1|2)) Classic/;
-				if (!!data.metadata.game_subtype) {
-					if (!!data.metadata.game_subtype.values[0].match(r)) { sys = data.metadata.game_subtype.values[0].match(r).pop(); }
-					else if (!!data.metadata.primary_classification.values[0].match(r)) { sys = data.metadata.secondary_classification.values[0].match(r).pop(); }
-					else if (!!data.metadata.secondary_classification.values[0].match(r)) { sys = data.metadata.secondary_classification.values[0].match(r).pop(); }
-				} else if (!!data.metadata.playable_platform) { sys = data.metadata.playable_platform.values; } 
-				if (!!sys) { repod.psdle.gamelist[index].platform = [sys]; }
+				if (data.metadata) {
+					if (!!data.metadata.game_subtype) {
+						if (!!data.metadata.game_subtype.values[0].match(r)) { sys = data.metadata.game_subtype.values[0].match(r).pop(); }
+						else if (!!data.metadata.primary_classification.values[0].match(r)) { sys = data.metadata.secondary_classification.values[0].match(r).pop(); }
+						else if (!!data.metadata.secondary_classification.values[0].match(r)) { sys = data.metadata.secondary_classification.values[0].match(r).pop(); }
+					} else if (!!data.metadata.playable_platform) { sys = data.metadata.playable_platform.values; }
+				}
+				if (sys) { repod.psdle.gamelist[index].platform = sys; }
 				try { repod.psdle.gamelist[index].rating = data.star_rating.score; } catch (e) { }
-				repod.psdle.gamelist[index].deep_type = data.top_category.replace("tumbler_index","unknown");
+				repod.psdle.gamelist[index].deep_type = (data.top_category) ? data.top_category.replace("tumbler_index","unknown") : "unknown";
 			}
+			setTimeout(this.run(),200);
 		}
 	},
 	dlQueue: {
