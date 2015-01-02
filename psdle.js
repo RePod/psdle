@@ -269,7 +269,7 @@ repod.psdle = {
 				$("#psdleplus").css($(".headerUserInfo.cart").css(["background-image","background-repeat"])).css({"height":"14px","width":"14px","background-position":"left -5px"});
 			}
 			$("#muh_table > tbody").html(temp);
-			this.checkIcons();
+			this.icons.select();
 		},
 		plus_switch: function() {
 			var a, b;
@@ -292,13 +292,53 @@ repod.psdle = {
 		margin: function() {
 			$("#muh_table").animate({"margin-top":$("#search_options").outerHeight() - $("#sub_container").css("padding-top").replace("px","")+"px"});
 		},
-		checkIcons: function() {
-			$(".psdle_game_icon").filter(function() { return !$(this).attr("src"); }).each(function() {
-				var me = $(this).parent().parent().parent().attr("id"), index = me.split("_").pop();
-				$.get(repod.psdle.gamelist[index].icon)
-				.done(function() { repod.psdle.gamelist[index].safe_icon = true; $("#"+me+" .psdle_game_icon").attr("src", repod.psdle.gamelist[index].icon); })
-				.fail(function() { repod.psdle.gamelist[index].safe_icon = true; repod.psdle.gamelist[index].icon = repod.psdle.gamelist[index].api_icon; $("#"+me+" .psdle_game_icon").attr("src", repod.psdle.gamelist[index].icon); });
-			});
+		icons: {
+			select: function(type) {
+				type = (type) ? type : "smart";
+				var that = this;
+				if (type == "smart") $(document).off("scroll").on("scroll",function() { that.smartScroll(); }); this.smartScroll();
+				if (type == "batch") this.batch(0,true);
+			},
+			validate: function(source) {
+				console.log("validate: "+source);
+				var me = source, index = me.split("_").pop();
+				if (!repod.psdle.gamelist[index].safe_icon) { 
+					$.get(repod.psdle.gamelist[index].icon)
+					.done(function() { repod.psdle.gamelist[index].safe_icon = true; $("#"+me+" .psdle_game_icon").attr("src", repod.psdle.gamelist[index].icon); })
+					.fail(function() { repod.psdle.gamelist[index].safe_icon = true; repod.psdle.gamelist[index].icon = repod.psdle.gamelist[index].api_icon; $("#"+me+" .psdle_game_icon").attr("src", repod.psdle.gamelist[index].icon); });
+				}
+			},
+			smartScroll: function() {
+				/*
+					Get icons currently in view, and a few nearby.
+					TO-DO:
+						Probably slowly work through other icons when using this.
+				*/
+				var padding = 5, low = window.scrollY, high = low+window.innerHeight, that = this,
+				t = $("[id^=psdle_index_]").filter(function(a) { var pos = $(this).offset().top; if (pos >= low && pos <= high) { return 1; } }).filter(":first, :last"),
+				first = ($(t[0]).index()-padding <= 0) ? 0 : $(t[0]).index()-padding,
+				last = $(t[1]).index()+padding;
+				$("[id^=psdle_index_]").slice(first,last).not(".go_icon").each(function(a) { $(this).addClass("go_icon"); var b = this; setTimeout(function() { that.validate($(b).attr("id")); },a*50); });
+			},
+			batch: function(start,all) {
+				start = (start) ? start : 0;
+				var batch = (all) ? repod.psdle.gamelist.length : (chihiro.isMobile()) ? 50 : 24;
+				if ($(".psdle_game_icon").filter(function() { return !$(this).attr("src"); }).length > 0) {
+					this.runBatch(start,(start+batch));
+				}
+			},
+			runBatch: function(start,end) {
+				// Batches icon requests to avoid flooding the server at once. Batch size is determined in this.batch().
+				var that = this;
+				$(".psdle_game_icon").slice(start,end).each(function(a) {
+					var me = $(this).parent().parent().parent().attr("id"), index = me.split("_").pop();
+					setTimeout(function() {
+						$.get(repod.psdle.gamelist[index].icon)
+						.done(function() { if (a == end-start-1) { setTimeout(that.batch(end),200); } repod.psdle.gamelist[index].safe_icon = true; $("#"+me+" .psdle_game_icon").attr("src", repod.psdle.gamelist[index].icon); })
+						.fail(function() { if (a == end-start-1) { setTimeout(that.batch(end),200); } repod.psdle.gamelist[index].safe_icon = true; repod.psdle.gamelist[index].icon = repod.psdle.gamelist[index].api_icon; $("#"+me+" .psdle_game_icon").attr("src", repod.psdle.gamelist[index].icon); });
+					},(a*20));
+				});
+			}
 		}
 	},
 	determineGames: function() {
