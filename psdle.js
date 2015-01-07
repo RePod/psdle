@@ -290,6 +290,7 @@ repod.psdle = {
 			}
 			repod.psdle.config.switch_align = a;
 			repod.psdle.config.switch_color = b;
+			$("#slider").tooltip();
 			this.regen();
 		},
 		margin: function() {
@@ -303,7 +304,6 @@ repod.psdle = {
 				if (type == "batch") this.batch(0,true);
 			},
 			validate: function(source) {
-				console.log("validate: "+source);
 				var me = source, index = me.split("_").pop();
 				if (!repod.psdle.gamelist[index].safe_icon) { 
 					$.get(repod.psdle.gamelist[index].icon)
