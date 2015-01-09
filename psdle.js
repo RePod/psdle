@@ -208,7 +208,7 @@ repod.psdle = {
 		});
 		console.log("PSDLE | Finished generating download list.");
 		if (repod.psdle.config.deep_search) {
-			this.game_api.run();
+			this.game_api.run(); this.game_api.run(); this.game_api.run(); this.game_api.run();
 		} else {
 			this.table.gen();
 		}
@@ -233,9 +233,7 @@ repod.psdle = {
 			this.regen(); this.bindSearch();
 			console.log("PSDLE | Table generated.");
 			repod.psdle.sortGamelist("#sort_date");
-			$("#muh_games_container").slideDown('slow').promise().done(function() {
-				that.margin();
-			});
+			$("#muh_games_container").slideDown('slow').promise().done(function() { that.margin(); });
 		},
 		regen: function(a) {
 			if (a !== true) { repod.psdle.determineGames(); }
@@ -515,10 +513,8 @@ repod.psdle = {
 			if (this.batch.length > 0) {
 				var a = this.batch.pop();
 				$.getJSON(repod.psdle.config.game_api+a.pid)
-				.done(function(data) { that.process(a.index,data); })
 				.success(function(data) { that.process(a.index,data); })
-				.complete(function(data) { that.process(a.index,data); })
-				.fail(function(data) { that.process(a.index,data); });
+				.fail(function() { that.run(); });
 			} else {
 				if (!$("#muh_table").length) { repod.psdle.table.gen(); }
 			}
@@ -533,7 +529,7 @@ repod.psdle = {
 		parse: function(index,data) {
 			index--;
 			if (!!repod.psdle.gamelist[index]) {
-				var sys, r = /(PS(?:1|2)) Classic/;
+				var sys, type = "unknown", r = /(PS(?:1|2)) Classic/;
 				if (data.metadata) {
 					if (!!data.metadata.game_subtype) {
 						if (!!data.metadata.game_subtype.values[0].match(r)) { sys = data.metadata.game_subtype.values[0].match(r).pop(); }
@@ -543,9 +539,15 @@ repod.psdle = {
 				}
 				if (sys) { repod.psdle.gamelist[index].platform = sys; }
 				try { repod.psdle.gamelist[index].rating = data.star_rating.score; } catch (e) { }
-				repod.psdle.gamelist[index].deep_type = (data.top_category) ? data.top_category.replace("tumbler_index","unknown") : "unknown";
+				if (data.top_category == "tumbler_index") {
+					//We must go deeper.
+					if (data.metadata.secondary_classification.values[0] == "ADD-ON") { type = "add_on"; }
+				} else {
+					type = (data.top_category) ? data.top_category : "unknown";
+				}
+				repod.psdle.gamelist[index].deep_type = type;
 			}
-			setTimeout(this.run(),200);
+			this.run()
 		}
 	},
 	dlQueue: {
