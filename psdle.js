@@ -23,8 +23,6 @@ SOFTWARE.
 */
 
 //The license information above is also available in PSDLE's GitHub repository located here: https://github.com/RePod/psdle
-//TO-DO:
-// - All the things!
 
 var repod = {};
 repod.psdle = {
@@ -237,9 +235,7 @@ repod.psdle = {
 			if (a !== true) { repod.psdle.determineGames(); }
 			var that = this, temp = "", plus = 0, count = 0;
 			$.each(repod.psdle.gamelist_cur,function (a,val) {
-				var u = repod.psdle.config.game_page+val.id, is_plus = "";
-				var sys = repod.psdle.safeGuessSystem(val.platform), valid = 1;
-				if (val.plus) { is_plus = "is_plus"; }
+				var valid = 1;
 				switch (repod.psdle.config.switch_align) {
 					case "left":
 						if (val.plus) { valid = 0; }
@@ -254,9 +250,7 @@ repod.psdle = {
 				}
 				if (valid) {
 					count++;
-					var pg = (chihiro.isMobile()) ? 50 : 24;
-					var icon = (val.safe_icon) ? val.icon : "";
-					temp += "<tr id='psdle_index_"+(val.index -1)+"'><td style='max-width:31px;max-height:31px;'><a target='_blank' href='"+val.url+"'><img title='"+repod.psdle.lang.labels.page+" #"+Math.ceil(val.index/pg)+"' src='"+icon+"' class='psdle_game_icon "+is_plus+"' /></a></td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+val.name+"</a></td><td>"+sys+"</td><td>"+val.size_f+"</td><td>"+val.date+"</td></tr>";
+					temp += repod.psdle.table_utils.gen.row(val);					
 				}
 			});
 			var psswitch = (repod.psdle.config.has_plus) ? " (<div id='slider' title='"+repod.psdle.lang.strings.plus+"'><div class='handle_container' style='text-align:"+repod.psdle.config.switch_align+"'><div class='handle' style='background-color:"+repod.psdle.config.switch_color+"'/></div></div> <div id='psdleplus' style='display:inline-block' /> "+plus+")" : "";
@@ -382,7 +376,7 @@ repod.psdle = {
 					'<span id="system_ps4">PS4</span>';
 		if (!dlQueue) { temp += '<span id="system_psp">PSP</span>'; }
 		temp +=		'<span id="system_psv">PS Vita</span></span>';
-		if (1 == 2/*this.config.use_queue*/) {
+		if (this.config.use_queue) {
 			if (!dlQueue) {
 				temp += ' <span class="psdle_fancy_but" id="dl_queue">'+this.lang.strings.dlQueue+'</span>';
 			} else {
@@ -548,28 +542,18 @@ repod.psdle = {
 	dlQueue: {
 		batch: {
 			cache: {},
-			get: function(callback) {
-				this.cache = {"ps3":[], "ps4":[], "vita":[]}, that = this, promises = [];
-				var base_url = repod.psdle.config.dlQueue.status+"/?status=notstarted&status=stopped&status=waitfordownload&platformString=$$1&size=100"
-				for (var i in repod.psdle.config.active_consoles) {
-					promises.push($.getJSON(base_url.replace("$$1",i.toLowerCase())));
-				}
-				$.when(promises).done(function(ps3,ps4,vita) {
-					try { that.parse("ps3",ps3.responseJSON); } catch (e) {};
-					try { that.parse("ps4",ps4.responseJSON); } catch (e) {};
-					try { that.parse("vita",vita.responseJSON); } catch (e) {};
-				}).done(function() {
-					try { callback } catch (e) {};
-				});
-			},
-			parse: function(sys,data) {
-				var that = this;
-				try {
-					$.each(data.data.notifications,function(a,b) {
-						that.cache[sys].push(b);
-					});
-				} catch (e) {
-					console.error("PSDLE | DL Queue parse error for \""+sys+"\". Is it activated on the account?");
+			get: function(prev_sys) {
+				if (!prev_sys) { this.cache = {"ps3":[], "ps4":[], "vita":[]} }
+				var that = this, base_url = repod.psdle.config.dlQueue.status+"/?status=notstarted&status=stopped&status=waitfordownload&platformString=$$1&size=100", consoles = [];
+				for (var i in repod.psdle.config.active_consoles) { consoles.push(i) }
+				var index = $.inArray(prev_sys,consoles) + 1, n = consoles[index];
+				if (n) {
+					$.getJSON(base_url.replace("$$1",n))
+					.fail(function() { console.error("PSDLE | DL Queue parse error for \""+n+"\". Is it activated on the account?"); })
+					.success(function(data) { that.cache[n] = data.data.notifications; })
+					.complete(function() { that.get(n); });
+				} else {
+					repod.psdle.dlQueue.generate.table();
 				}
 			},
 			send: function(sys,id,cancel,completeCb,errorCb) {
@@ -593,11 +577,11 @@ repod.psdle = {
 						case "ps4":
 						case "ps3":
 						case "vita":
-							this.go(sys,game.pid);
+							this.go(sys,game.id);
 							break;
 						case "all":
 							var temp = game.platform_og.slice(0), i = $.inArray("PSP", temp); if(i != -1) { temp.splice(i, 1); } /* Make sure we don't have PSP */
-							$.each(temp,function(a,b) { that.go(b.replace(/ps /i,"").toLowerCase(),game.pid); });
+							$.each(temp,function(a,b) { that.go(b.replace(/ps /i,"").toLowerCase(),game.id); });
 							break;
 					}
 				},
@@ -617,11 +601,11 @@ repod.psdle = {
 			},
 			remove: {
 				parse: function(e) {
-					repod.psdle.dlQueue.batch.remove.go($(e).children("td:eq(3)").text().replace("PS ","").toLowerCase(),repod.psdle.gamelist[Number($(e).find(".psdle_game_link").attr("id").split("_").pop())].pid);
+					repod.psdle.dlQueue.batch.remove.go($(e).children("td:eq(3)").text().replace("PS ","").toLowerCase(),repod.psdle.gamelist[Number($(e).attr("id").split("_").pop())].id);
 				},
 				go: function(sys,id) {
 					//Remove game from batch.
-					repod.psdle.dlQueue.batch.send(sys,id,true,repod.psdle.dlQueue.batch.get(repod.psdle.dlQueue.generate.table()))
+					repod.psdle.dlQueue.batch.send(sys,id,true,repod.psdle.dlQueue.batch.get())
 				}
 			}
 		},
@@ -634,40 +618,50 @@ repod.psdle = {
 				$(document).off("click","#muh_table > tbody > tr").on("click","#muh_table > tbody > tr", function(e) { e.preventDefault(); repod.psdle.dlQueue.batch.remove.parse(this); });
 			},
 			table: function() {
-				/*
-				Figure this out eventually/rewrite.
-				
 				$("#muh_table").remove();
 				$("#sub_container").append("<table id='muh_table' style='display:inline-block;text-align:left'><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th>"+repod.psdle.lang.columns.platform+"</th><th> > </th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table>");
-				var temp = "", plus = 0;
-				$.each(repod.psdle.dlQueue.batch.cache, function(sys,contents) {
-					$.each(contents, function(a,val) {
-						var gid = 0;
-						//entitlement cache is now gone
-						$.each(repod.psdle.entitlement_cache[val.productId], function(c,b) {
-							if (repod.psdle.gamelist[b.glid].pid == val.contentId) { gid = b.glid; }
+				var temp = "";
+				$.each(repod.psdle.dlQueue.batch.cache, function(key,value) {
+					if (value.length) {
+						$.each(value, function(index,val) {
+							$.each(repod.psdle.gamelist, function(a,b) {
+								if (b.id == val.contentId) {
+									var c = val; c.to_sys = key;
+									temp += repod.psdle.table_utils.gen.row(b,c);
+								}
+							});
 						});
-						val = repod.psdle.gamelist[gid];
-						if (sys == "Vita") { sys = "PS Vita"; }	
-						var u = repod.psdle.config.game_page+val.pid, is_plus = "";
-						var sys2 = repod.psdle.safeGuessSystem(val.platform);
-						if (val.plus === true) { is_plus = "is_plus"; plus++; }
-						
-						temp += "<tr><td style='max-width:31px;max-height:31px;'><a target='_blank' href='"+u+"'><img title='"+repod.psdle.lang.labels.page+" #"+Math.ceil(val.index/24)+"' src='"+val.icon+"' class='psdle_game_icon "+is_plus+"' /></a></td><td><a id='psdle_index_"+(val.index -1)+"' class='psdle_game_link' target='_blank' href='"+u+"'>"+val.title+"</a></td><td>"+sys2+"</td><td>"+sys+"</td><td>"+val.size+"</td><td>"+val.date+"</td></tr>";
-					});
+					}
 				});
-				$("#table_stats").html(repod.psdle.gamelist_cur.length+" (<div id='psdleplus' style='display:inline-block' /> "+plus+")"+" / "+repod.psdle.gamelist.length);
-				$("#psdleplus").css($(".headerUserInfo.cart").css(["background-image","background-repeat"])).css({"height":"14px","width":"14px","background-position":"left -5px"});
-				$("#muh_table > tbody").html(temp).promise().done(function() { repod.psdle.table.margin(); });
-				*/
+				$("#muh_table > tbody").html(temp);
+				repod.psdle.table.margin();
 			},
 			display: function() {
 				this.bindings();
 				$("#sub_container").html("").append(repod.psdle.genSearchOptions(true));
-				repod.psdle.dlQueue.batch.get(repod.psdle.dlQueue.generate.table());
+				repod.psdle.dlQueue.batch.get();
 			},
 			destroy: function() {
 				$("#sub_container").html("");
+			}
+		}
+	},
+	table_utils: {
+		gen: {
+			row: function(val,dlQueue) {
+				var u = repod.psdle.config.game_page+val.id,
+				pg = (chihiro.isMobile()) ? 50 : 24,
+				icon = (val.safe_icon) ? val.icon : "",
+				is_plus = (val.plus) ? "is_plus" : "",
+				sys = repod.psdle.safeGuessSystem(val.platform),
+				temp = "<tr id='psdle_index_"+(val.index -1)+"'><td style='max-width:31px;max-height:31px;'><a target='_blank' href='"+val.url+"'><img title='"+repod.psdle.lang.labels.page+" #"+Math.ceil(val.index/pg)+"' src='"+icon+"' class='psdle_game_icon "+is_plus+"' /></a></td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+val.name+"</a></td>";
+				if (dlQueue) {
+					temp += "<td>"+sys+"</td><td>"+dlQueue.to_sys.toUpperCase().replace("VITA","PS Vita")+"</td><td>"+val.size_f+"</td><td>"+convertToNumericDateSlashes(convertStrToDateObj(dlQueue.createdTime))+"</td>"
+				} else {
+					temp += "<td>"+sys+"</td><td>"+val.size_f+"</td><td>"+val.date+"</td>";
+				}
+				temp += "</tr>";
+				return temp;
 			}
 		}
 	},
