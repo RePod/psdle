@@ -108,7 +108,6 @@ repod.psdle = {
 		this.injectCSS();
 		$(document).on('change', "#sub_container > select#lang_select", function() { that.config.language = $(this).val(); that.determineLanguage($(this).val(),true); that.genDisplay(); });
 		this.genStartup();
-		this.exportTable.parent = this;
 	},
 	genStartup: function() {
 		if ($("#psdle_start").length == 0) {
@@ -476,18 +475,18 @@ repod.psdle = {
 			this.destroy();
 			var w = 600;
 			$("#search_options").append("<span id='sotextarea' style='display:none'><br /><textarea></textarea></span>");
-			$("#sotextarea > textarea").css({"width":w,"max-width":w}).text(this.delimited(prompt(this.parent.lang.strings.delimiter,"	"))).select().parent().delay(500).slideDown();
+			$("#sotextarea > textarea").css({"width":w,"max-width":w}).text(this.delimited(prompt(repod.psdle.lang.strings.delimiter,"	"))).select().parent().delay(500).slideDown();
 			repod.psdle.table.margin();
 		},
 		destroy: function() { $("#sotextarea").remove(); repod.psdle.table.margin(); },
-		json: function() { return (!!JSON.stringify) ? JSON.stringify(this.parent.gamelist_cur) : this.parent.lang.strings.stringify_error; },
+		json: function() { return (!!JSON.stringify) ? JSON.stringify(repod.psdle.gamelist_cur) : repod.psdle.lang.strings.stringify_error; },
 		delimited: function(e) {
 			var that = this, sep = (e) ? e : "	";
-			var t = this.parent.lang.columns.name+sep+this.parent.lang.columns.platform+sep+this.parent.lang.columns.size+sep+this.parent.lang.columns.date+"\n";
+			var t = repod.psdle.lang.columns.name+sep+repod.psdle.lang.columns.platform+sep+repod.psdle.lang.columns.size+sep+repod.psdle.lang.columns.date+"\n";
 			var trs = $("tr").filter(":gt(0)");
-			trs.find(".psdle_game_link").each(function() {
-				var index = $(this).attr("id").split("_").pop(), b = that.parent.gamelist[index];
-				t += b.name+sep+that.parent.safeGuessSystem(b.platform)+sep+b.size_f+sep+b.date+"\n";
+			trs.each(function() {
+				var index = $(this).attr("id").split("_").pop(), b = repod.psdle.gamelist[index];
+				t += b.name+sep+repod.psdle.safeGuessSystem(b.platform)+sep+b.size_f+sep+b.date+"\n";
 			});
 			return t;
 		}
