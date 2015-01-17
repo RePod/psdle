@@ -145,7 +145,7 @@ repod.psdle = {
 			}
 			$("#muh_games_container").html(a).slideDown('slow',function() {
 				if (mode == "progress") { that.generateList(); }
-				else { $('[id^=api_]').tooltip(); }
+				else { var a = setInterval(function(a) { if ($('[id^=api_]').length > 0) { $('[id^=api_]').tooltip(); clearInterval(a); } },100); }
 			});
 		});
 	},
