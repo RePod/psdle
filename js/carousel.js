@@ -9,6 +9,7 @@ repod.grid = {
 	init: function() {
 		var that = this;
 		$("dl > span").click(function() {
+			ga('send', 'event', 'features', 'click', $(this).find("dt").text());
 			that.caro.goto_slide("#"+$(this).find("dt").attr("id").split("goto_").pop());
 		});
 		this.caro.bind();
@@ -30,7 +31,10 @@ repod.grid = {
 			$("#caro_slides").draggable({
 				axis: "x",
 				containment: [x1, y1, x2, y2],
-				start: function() { clearInterval(repod.grid.config.carousel_id); },
+				start: function() {
+					ga('send', 'event', 'slide', 'drag start', Math.abs(Number($("#caro_slides").css("left").replace("px",""))) / 800 + 1);
+					clearInterval(repod.grid.config.carousel_id);
+				},
 				stop: function(e, ui) {
 					var grid_x = 800;
 					var grid_y = 0;
@@ -47,7 +51,10 @@ repod.grid = {
 						left: new_left,
 						top: new_top,
 						opacity: 1,
-					}, 200);
+					}, 200, function() {
+						ga('send', 'event', 'slide', 'drag stop', Math.abs(Number($("#caro_slides").css("left").replace("px",""))) / 800 + 1);
+					});
+
 					repod.grid.caro.start();
 				},
 			});

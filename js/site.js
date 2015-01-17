@@ -9,18 +9,20 @@
 
 $(document).ready(function() {
 	$(".module h3").click(function() {
+		ga('send', 'event', 'header', 'click', $(this).text());
 		var that = this;
 		$(this).parent().parent().find("div").slideToggle(400, function() {
 			$(that).find(".module_toggle").removeClass("fa-caret-up fa-caret-down").addClass("fa-caret-"+(($(that).parent().parent().find("div").is(':visible'))?"up":"down"))
 		});
 	});
 	
-	$("#get_userscript").click(function() { blink($("#menu .fa-download").parent()); });
-	$(".get_bookmarklet").click(function() { blink($("#menu .fa-bookmark").parent()); });
-	$(".get_repo").click(function() { blink($("#menu .fa-code-fork").parent()); });
+	$("#get_userscript").click(function() { ga('send', 'event', 'pill', 'click', 'get userscript'); blink($("#menu .fa-download").parent()); });
+	$(".get_bookmarklet").click(function() { ga('send', 'event', 'pill', 'click', 'get bookmarklet'); blink($("#menu .fa-bookmark").parent()); });
+	$(".get_repo").click(function() { ga('send', 'event', 'inline', 'click', 'get repo'); blink($("#menu .fa-code-fork").parent()); });
 	
 	$("#get_bookmark").click(function(e) {
 		e.preventDefault();
+		ga('send', 'event', 'inline', 'click', 'get bookmarklet');
 		alert("Don't click this, bookmark it or copy the link!");
 	});
 	
