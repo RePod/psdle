@@ -22,7 +22,7 @@ $(document).ready(function() {
 	
 	$("#menu > a").click(function() {
 		// Only submit relevant menu items (that have IDs)
-		if ($(this).attr("id")) { ga('send', 'event', 'menu', 'click', $(this).attr("id")); }
+		if ($(this).attr("id")) { ga('send', 'event', 'menu', 'click', $(this).attr("id"), 1); }
 	});
 
 	$("#get_bookmark").click(function(e) {
