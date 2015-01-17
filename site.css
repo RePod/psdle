@@ -11,6 +11,7 @@ html, body { margin:0; padding:0; height:100%; font-family:"Arial", sans-serif; 
 	max-height:31px;
 	position:fixed;
 	top:0px;left:0px;right:0px;
+	z-index:1;
 }
 #psdle_logo { vertical-align: middle; }
 #psdle_logo:hover { box-shadow:0px 0px 8px #fff; }
@@ -38,6 +39,10 @@ html, body { margin:0; padding:0; height:100%; font-family:"Arial", sans-serif; 
 	margin:10px 0px; padding:5px;color:#fff;text-align:center; font-size:200%; border-radius:90px;
 }
 .fa { font-size:24px; color:#fff; }
+
+/* Feature list */
+dl > span { display:block; cursor:pointer; }
+dt i { font-size:16px !important; color: #000 !important; }
 
 /* Footer */
 #footer { padding:10px 0px;text-align:center;margin-top:10px; position:absolute; bottom:0; width:100%; max-height:180px; }
@@ -97,3 +102,39 @@ html, body { margin:0; padding:0; height:100%; font-family:"Arial", sans-serif; 
 .psdle_fancy_bar span { font-weight:bold; text-transform:uppercase; font-size:small; color:#fff; background-color:#2185f4; display:inline-block; margin-right:2px; margin-bottom:5px; padding:1px 15px; text-decoration:none; cursor:pointer; }
 .psdle_fancy_bar > span:first-child { border-top-left-radius:12px; border-bottom-left-radius:12px; }
 .psdle_fancy_bar span:last-child, .psdle_fancy_bar a:last-child span { border-top-right-radius:12px; border-bottom-right-radius:12px; }
+
+/* Caro */
+#caro {
+	background-color:#e6e6e6;
+	border-radius:20px;
+	width:800px; height:320px;
+	max-width:800px; max-height:320px;
+	overflow:hidden; white-space:nowrap;
+	padding: 0px; 
+	border:3px solid #f0f0f0;
+	cursor:pointer;
+}
+#caro_slides { position:relative; font-size:0; }
+#caro_slides > * {
+	font-size:initial;
+	display:inline-block; vertical-align:text-bottom;
+	min-width:800px; min-height:320px;
+	max-width:800px; max-height:320px;
+	text-decoration:none;
+	position:relative;
+}
+
+.cell-info.top { top:0px;left:0px;right:0px;padding:5px; }
+.cell-info.bottom {
+	bottom:0px !important;
+	text-align:left;
+	padding:5px;
+	border-top-right-radius:10px;
+}
+.cell-info.bottomfull {
+	bottom:0px; left:0px; right:0px; text-align:center;
+	padding:5px;
+}
+.grid-cell .bottom .fa { width:16px; }
+
+.cell-info { color:#fff; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; position:absolute; text-align:center; padding:2px 8px; background-color:rgba(0,0,0,0.5); }

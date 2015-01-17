@@ -10,6 +10,7 @@
 		<script type="text/javascript" src="js/plugins/jquery-color.js"></script>
 		<script type="text/javascript" src="js/jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
 		<script type="text/javascript" src="js/site.js"></script>
+		<script type="text/javascript" src="js/carousel.js"></script>
 		<link href="js/jquery-ui-1.11.2.custom/jquery-ui.min.css" rel="stylesheet">
 		<link rel="stylesheet" href="font-awesome-4.2.0/css/font-awesome.min.css">
 		<link rel="stylesheet" href="site.css">
@@ -37,20 +38,44 @@
 				<div id='tagline' class='psdle_blue'>
 					Improving everyone's favorite online download list, one loop at a time.
 				</div>
+				<div class='module' style='text-align:center'>
+					<div id='caro' style='display:inline-block;text-align:center'>
+						<div id='caro_slides'>
+							<div style='background-image:url("//i.imgur.com/nQShH6n.jpg")'><div class='cell-info top'>Sample Screenshots - Slide to navigate.</div><div class='cell-info bottomfull'>PSDLE startup options</div></div>
+							<div id='view' style='background-image:url("//i.imgur.com/1VmScOO.jpg")'><div class='cell-info bottomfull'>Default Download List view</div></div>
+							<div style='background-image:url("//i.imgur.com/nTX4hg6.jpg")'><div class='cell-info bottomfull'>Search by game title and oraganize by name, size, or date!</div></div>
+							<div style='background-image:url("//i.imgur.com/YP5Ft0l.jpg")'><div class='cell-info bottomfull'>Filter out items by category, like demos!</div></div>
+							<div id='plus_start' style='background-image:url("//i.imgur.com/IMLxpks.jpg")'><div class='cell-info bottomfull'>PS+ content shown with yellow border around icons.</div></div>
+							<div style='background-image:url("//i.imgur.com/UkB06Oy.jpg")'><div class='cell-info bottomfull'>Show only PS+ content!</div></div>
+							<div style='background-image:url("//i.imgur.com/ABVwIJA.jpg")'><div class='cell-info bottomfull'>Hide all PS+ content!</div></div>
+							<div id='newbox_start' style='background-image:url("//i.imgur.com/avzkd2S.jpg")'><div class='cell-info bottomfull'>Check out extended details and higher quality artwork in the info panel...</div></div>
+							<div style='background-image:url("//i.imgur.com/cTBEcS7.jpg")'><div class='cell-info bottomfull'>...and send content to the Download Queue!</div></div>
+							<div id='export' style='background-image:url("//i.imgur.com/SSxMHhq.jpg")'><div class='cell-info bottomfull'>Export what you see in a CSV format!</div></div>
+						</div>
+					</div>
+				</div>
 				<div class='module'>
 					<a name="features">
-						<h3 tabindex="0"><i class="fa fa-star fa-fw"></i> Features <i class="module_toggle fa fa-caret-up"></i></h3>
+						<h3 tabindex="0"><i class="fa fa-star fa-fw"></i> Features <small style='font-size:12px !important;'>(<i class="fa fa-search fa-fw" style='font-size:12px !important;'></i>: View screenshot)</small> <i class="module_toggle fa fa-caret-up"></i></h3>
 					</a>
 					<div>
 						<dl>
 							<dt>One convenient list of all your content!</dt>
-							<dt>View, sort, and filter your download list as you desire!</dt>
-							<dt>PS+ Support</dt>
+							<span>
+								<dt id='goto_view'><i class="fa fa-search fa-fw"></i> View, sort, and filter your download list as you desire!</dt>
+							</span>
+							<span>
+								<dt id='goto_plus_start'><i class="fa fa-search fa-fw"></i> PS+ Support</dt>
 								<dd>See what is and isn't tied to your subscription.</dd>
-							<dt>Export your list</dt>
-								<dd>CSV format for spreedsheets.</dd>
-							<dt>Download Queue support</dt>
+							</span>
+							<span>
+								<dt id='goto_newbox_start'><i class="fa fa-search fa-fw"></i> Download Queue support</dt>
 								<dd>Easily send items where you want them to go.</dd>
+							</span>
+							<span>
+								<dt id='goto_export'><i class="fa fa-search fa-fw"></i> Export your list</dt>
+								<dd>CSV format for spreedsheets.</dd>
+							</span>
 							<dt>Mobile</dt>
 								<dd>Even on-the-go, don't settle for a featureless download list!</dd>
 							<dt>Lightweight, portable, consistent.</dt>
@@ -83,14 +108,14 @@
 						<small>Legacy versions are available <a href='https://github.com/RePod/psdle/tree/da72902be7847ec93ae85555ab6f0e3b2f8948c4'>here</a>. Bug reports will not be accepted and support will not be given for these.</small>
 					</div>
 				</div>
-				<div class='module'>
+				<!-- <div class='module'>
 					<a name="screenshots">
 						<h3 tabindex="0"><i class="fa fa-camera fa-fw"></i> Screenshots <i class="module_toggle fa fa-caret-down"></i></h3>
 					</a>
 					<div class='start_hidden'>
 						<iframe class="imgur-album" width="100%" height="550" frameborder="0" src="//imgur.com/a/4oRjv/embed?background=292929&text=ffffff&link=4e76c9&thumbs=true"></iframe>
 					</div>
-				</div>
+				</div> -->
 				<div class='module'>
 					<a name="paq">
 						<h3 tabindex="0"><i class="fa fa-question fa-fw"></i> P.A.Q. (Potentially Asked Questions) <i class="module_toggle fa fa-caret-down"></i></h3>
