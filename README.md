@@ -29,4 +29,4 @@ License
 MIT, have fun.
 
 **PSDLE is not sponsored, endorsed, or created by Sony, SNEI, SCEA, SCEE, SCEI, or affiliates.**
-**Third-party content (icons, names) re-rendered by PSDLE is provided from the download list.**
+**Third-party content (icons, names) re-rendered by PSDLE is provided from the Entitlements API.**

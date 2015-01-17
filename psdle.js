@@ -26,8 +26,7 @@ SOFTWARE.
 
 var repod = {};
 repod.psdle = {
-	gamelist: [], gamelist_cur: [],
-	lang: {},
+	gamelist: [], gamelist_cur: [], lang: {},
 	lang_cache: {
 		"en": {
 			"def": "us",
@@ -102,6 +101,7 @@ repod.psdle = {
 			switch_align: "center", switch_color: "#85C107",
 			has_plus: false
 		}; 
+		try { if (GM_info) this.config.tag_line += " - <span class='psdle_tiny_link'>Userscript: "+GM_info.script.version+"</span>"; } catch (e) { };
 		this.determineLanguage(this.config.language,true);
 		this.injectCSS();
 		$(document).on('change', "#sub_container > select#lang_select", function() { that.config.language = $(this).val(); that.determineLanguage($(this).val(),true); that.genDisplay(); });
@@ -715,6 +715,6 @@ repod.psdle = {
 	}
 };
 
-var a = setInterval(function(a){ if (sonyChi_appLoadCnfrm && SonyChi_SessionManagerSingleton.getHasSession()) { clearInterval(repod.psdle.config.timerID); repod.psdle.init(); }});
+var a = setInterval(function(a){ if (chihiro.appReady === true) { clearInterval(repod.psdle.config.timerID); repod.psdle.init(); } },500);
 repod.psdle.config = {"timerID":a};
 console.log("PSDLE | Ready.");
