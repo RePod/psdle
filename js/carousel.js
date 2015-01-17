@@ -32,7 +32,7 @@ repod.grid = {
 				axis: "x",
 				containment: [x1, y1, x2, y2],
 				start: function() {
-					ga('send', 'event', 'slide', 'drag start', Math.abs(Number($("#caro_slides").css("left").replace("px",""))) / 800 + 1);
+					repod.grid.config.start_slide = Math.abs(Number($("#caro_slides").css("left").replace("px",""))) / 800 + 1;
 					clearInterval(repod.grid.config.carousel_id);
 				},
 				stop: function(e, ui) {
@@ -52,7 +52,8 @@ repod.grid = {
 						top: new_top,
 						opacity: 1,
 					}, 200, function() {
-						ga('send', 'event', 'slide', 'drag stop', Math.abs(Number($("#caro_slides").css("left").replace("px",""))) / 800 + 1);
+						var out = "{start: "+repod.grid.config.start_slide+", stop: "+(Math.abs(Number($("#caro_slides").css("left").replace("px",""))) / 800 + 1)+"}"
+						ga('send', 'event', 'slide', 'drag', out);
 					});
 
 					repod.grid.caro.start();

@@ -16,13 +16,17 @@ $(document).ready(function() {
 		});
 	});
 	
-	$("#get_userscript").click(function() { ga('send', 'event', 'pill', 'click', 'get userscript'); blink($("#menu .fa-download").parent()); });
-	$(".get_bookmarklet").click(function() { ga('send', 'event', 'pill', 'click', 'get bookmarklet'); blink($("#menu .fa-bookmark").parent()); });
+	$("#pill_get_us").click(function() { ga('send', 'event', 'pill', 'click', 'get userscript'); blink($("#menu .fa-download").parent()); });
+	$("#pill_get_bookmarklet, .get_bookmarklet").click(function() { ga('send', 'event', ($(this).attr("id")?'pill':'inline'), 'click', 'get bookmarklet'); blink($("#menu .fa-bookmark").parent()); });
 	$(".get_repo").click(function() { ga('send', 'event', 'inline', 'click', 'get repo'); blink($("#menu .fa-code-fork").parent()); });
 	
+	$("#menu > a").click(function() {
+		// Only submit relevant menu items (that have IDs)
+		if ($(this).attr("id")) { ga('send', 'event', 'menu', 'click', $(this).attr("id")); }
+	});
+
 	$("#get_bookmark").click(function(e) {
 		e.preventDefault();
-		ga('send', 'event', 'inline', 'click', 'get bookmarklet');
 		alert("Don't click this, bookmark it or copy the link!");
 	});
 	
