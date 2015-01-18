@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.002
+// @version		2.003
 // @require		https://code.jquery.com/jquery-1.11.1.min.js
 // @include		https://store.sonyentertainmentnetwork.com/*
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -394,13 +394,14 @@ repod.psdle = {
 		temp +=		'<span id="system_psv">PS Vita</span></span>';
 		if (this.config.use_queue) {
 			if (!dlQueue) {
-				temp += ' <span class="psdle_fancy_but" id="dl_queue">'+this.lang.strings.dlQueue+'</span><br />';
+				temp += ' <span class="psdle_fancy_but" id="dl_queue">'+this.lang.strings.dlQueue+'</span>';
 			} else {
-				temp += ' <span><span class="psdle_fancy_but" id="dl_list">'+this.lang.strings.dlList+'</span></span><br />';
+				temp += ' <span><span class="psdle_fancy_but" id="dl_list">'+this.lang.strings.dlList+'</span></span>';
 			}
 		}
+		temp += "<br />";
 		if (this.config.deep_search && !dlQueue) {					
-		temp +=		'<br /><span class="psdle_fancy_bar">' +
+		temp +=		'<span class="psdle_fancy_bar">' +
 					'<span id="filter_downloadable_game">'+this.lang.labels.games+'</span>' +
 					'<span id="filter_avatar">'+this.lang.labels.avatar+'</span>' +
 					'<span id="filter_demo">'+this.lang.labels.demo+'</span>'+
@@ -409,7 +410,8 @@ repod.psdle = {
 					'<span id="filter_theme">'+this.lang.labels.theme+'</span>' +
 					'<span id="filter_unknown">'+this.lang.labels.unknown+'</span></span><br />';
 		}
-		if (!dlQueue) { temp += "<input type='text' id='psdle_search_text' placeholder='"+this.lang.strings.search+"' /><br />"; }
+		if (!dlQueue) { temp += "<input type='text' id='psdle_search_text' placeholder='"+this.lang.strings.search+"' />"; }
+		temp += "<br />";
 		temp += '<span id="table_stats"></span></div>';
 		return temp;
 	},
