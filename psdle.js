@@ -26,7 +26,7 @@ SOFTWARE.
 
 var repod = {};
 repod.psdle = {
-	gamelist: [], gamelist_cur: [], lang: {},
+	gamelist: [], gamelist_cur: [], autocomplete_cache: [], lang: {},
 	lang_cache: {
 		"en": {
 			"def": "us",
@@ -233,6 +233,7 @@ repod.psdle = {
 		},
 		regen: function(a) {
 			if (a !== true) { repod.psdle.determineGames(); }
+			repod.psdle.autocomplete.bind();
 			var that = this, temp = "", plus = 0, count = 0;
 			$.each(repod.psdle.gamelist_cur,function (a,val) {
 				var valid = 1;
@@ -336,7 +337,7 @@ repod.psdle = {
 	},
 	determineGames: function() {
 		this.exportTable.destroy();
-		this.gamelist_cur = [];
+		this.gamelist_cur = []; this.autocomplete_cache = [];
 		var that = this, temp = "", safesys = this.safeSystemCheck();
 		var search = (!!$("#psdle_search_text")) ? $("#psdle_search_text").val() : this.config.last_search;
 		//$("[id^=filter_]").filter(function() { return !$(this).hasClass("toggled_off"); })
@@ -352,12 +353,13 @@ repod.psdle = {
 				if (a == true && search !== "") {
 					var regex = search.match(/^\/(.+?)\/([imgd]+)?$/i);
 					a = (!!regex && !!regex[2] && regex[2].toLowerCase().indexOf("d") >= 0) ? true : false;
-					if (a) { $("#psdle_search_text").addClass("negate_regex"); regex[2] = regex[2].replace("d",""); }
+					if (a) { $("#3").addClass("negate_regex"); regex[2] = regex[2].replace("d",""); }
 					if (!!regex) { if (RegExp((regex[1])?regex[1]:search,(regex[2])?regex[2]:"").test(t)) { a = !a; } }
 					else if (t.toLowerCase().indexOf(search.toLowerCase()) >= 0) { a = !a; }
 				}
 				if (a == true) {
 					that.gamelist_cur.push(val);
+					that.autocomplete_cache.push({"label":t,"value":t});
 				}
 			}
 		});
@@ -378,9 +380,9 @@ repod.psdle = {
 		temp +=		'<span id="system_psv">PS Vita</span></span>';
 		if (this.config.use_queue) {
 			if (!dlQueue) {
-				temp += ' <span class="psdle_fancy_but" id="dl_queue">'+this.lang.strings.dlQueue+'</span>';
+				temp += ' <span class="psdle_fancy_but" id="dl_queue">'+this.lang.strings.dlQueue+'</span><br />';
 			} else {
-				temp += ' <span><span class="psdle_fancy_but" id="dl_list">'+this.lang.strings.dlList+'</span></span>';
+				temp += ' <span><span class="psdle_fancy_but" id="dl_list">'+this.lang.strings.dlList+'</span></span><br />';
 			}
 		}
 		if (this.config.deep_search && !dlQueue) {					
@@ -391,10 +393,10 @@ repod.psdle = {
 					'<span id="filter_add_on">'+this.lang.labels.addon+'</span>' +
 					'<span id="filter_application">'+this.lang.labels.app+'</span>' +
 					'<span id="filter_theme">'+this.lang.labels.theme+'</span>' +
-					'<span id="filter_unknown">'+this.lang.labels.unknown+'</span></span>';
+					'<span id="filter_unknown">'+this.lang.labels.unknown+'</span></span><br />';
 		}
-		if (!dlQueue) { temp += "<br /><input type='text' id='psdle_search_text' placeholder='"+this.lang.strings.search+"' />"; }
-		temp += '<br /><span id="table_stats"></span></div>';
+		if (!dlQueue) { temp += "<input type='text' id='psdle_search_text' placeholder='"+this.lang.strings.search+"' /><br />"; }
+		temp += '<span id="table_stats"></span></div>';
 		return temp;
 	},
 	sortGamelist: function(sort_method) {
@@ -461,7 +463,8 @@ repod.psdle = {
 					/* Newbox			*/ "#dlQueueAsk { display:inline-block;width:400px;height:400px;background-color:#FFF;border-radius:20px;overflow:hidden;position:relative;background-size:cover; } #dlQAN { cursor:move;background-color:rgba(33,133,244,0.8);padding:7px 15px;color:#fff;overflow:hidden;white-space:nowrap;text-overflow:ellipsis; } #dlQASys { position:absolute;bottom:0px;padding:7px 0px;color:#FFF;display:table;width:100%;table-layout:fixed; } #dlQASys > div { display:table-cell; } #dlQASys > div > div { cursor:pointer;background-color:rgba(33,133,244,0.8);border-radius:10px;padding:2px;margin:0px 10px; } #dlQAStat { color:#fff;background-color:rgba(33,133,244,0.8);border-bottom-left-radius:20px;padding:0px 10px 0px 15px;font-size:small;float:right; } #dlQARating { color:#fff;background-color:rgba(33,133,244,0.8);border-bottom-right-radius:20px;padding:0px 15px 0px 10px;font-size:small;float:left; } " +
 					/* Newbox Container	*/ "#dlQueue_newbox { z-index:9001;position:fixed;top:0px;left:0px;width:100%;height:100%;display:table;background-color:rgba(0,0,0,0.25); } #dlQueue_newbox > div { display:table-cell;vertical-align:middle;height:inherit;text-align:center; }" +
 					/* PS+ switch		*/ "#slider { vertical-align: bottom;display:inline-block;cursor:pointer;border-radius:100%;width:30px;height:12px;border-radius:10px;border:2px solid #F0F0F0; } .handle_container { text-align:center;width:100%;height:100%; } .handle { width:10px;height:10px;border-radius:100%;margin:0px 2px 6px;border:1px solid #FFF;display:inline-block;background-color:#85C107; }" +
-					/* Tooltips			*/ "#muh_games_container .tooltip-inner { background-color:#2185F4; border: 5px solid #2185F4; } #muh_games_container .tooltip-arrow { border-top-color:#2185F4; } #muh_games_container .tooltip.in { opacity:1; }";
+					/* Tooltips			*/ "#muh_games_container .tooltip-inner { background-color:#2185F4; border: 5px solid #2185F4; } #muh_games_container .tooltip-arrow { border-top-color:#2185F4; } #muh_games_container .tooltip.in { opacity:1; }" +
+					/* Autocomplete		*/ ".ui-autocomplete { z-index: 9002; max-width:590px; max-height:200px; overflow-y:auto; overflow-x:hidden; } .ui-menu { position:fixed; border:2px solid #F0F0F0; border-top: none; background-color:#fff; } .ui-menu > .ui-menu-item * { color:#000; text-decoration:none; white-space: nowrap; text-overflow: ellipsis; cursor:pointer; } .ui-menu > .ui-menu-item:nth-child(even) { background-color:#e6e6e6; } .ui-menu-item .ui-state-focus { display:inline-block; width:100%; color:#000; background-color: rgba(33, 133, 244, 0.7); }";
 		$("head").append("<style type='text/css' id='psdle_css'>"+temp+"</style>");
 	},
 	exportTable: {
@@ -705,6 +708,21 @@ repod.psdle = {
 					$("div[id^=dla_]").off("click"); 
 					$("#dlQueueAsk").off("click");
 					break;
+			}
+		}
+	},
+	autocomplete: {
+		bind: function() {
+			if ($(".ui-autocomplete-input").length) {
+				$("#psdle_search_text").autocomplete("close");
+				$('#psdle_search_text').autocomplete("option", { source: repod.psdle.autocomplete_cache });
+			} else {
+				$("#psdle_search_text").autocomplete({
+				  source:repod.psdle.autocomplete_cache,
+				  position: { my : "center top", at: "center bottom" },
+				  messages: { noResults: '', results: function() {} },
+				  select: function(e,u) { console.log(u); repod.psdle.config.last_search = u.item.value; repod.psdle.table.regen(true); }
+				})
 			}
 		}
 	},
