@@ -18,7 +18,7 @@ $(document).ready(function() {
 	
 	$("#pill_get_us").click(function() { ga('send', 'event', 'pill', 'click', 'get userscript'); blink($("#menu .fa-download").parent()); });
 	$("#pill_get_bookmarklet, .get_bookmarklet").click(function() { ga('send', 'event', ($(this).attr("id")?'pill':'inline'), 'click', 'get bookmarklet'); blink($("#menu .fa-bookmark").parent()); });
-	$("#get_bookmark").on("contextmenu",function() { ga('send', 'event', 'menu', 'rightclick', 'get bookmarklet');});
+	$("#get_bookmark").on("contextmenu",function() { ga('send', 'event', 'menu', 'rightclick', 'get bookmarklet', 1); });
 	$(".get_repo").click(function() { ga('send', 'event', 'inline', 'click', 'get repo'); blink($("#menu .fa-code-fork").parent()); });
 	
 	$("#menu > a").click(function() {
