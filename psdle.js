@@ -180,7 +180,6 @@ repod.psdle = {
 					temp.api_icon = obj.drm_def.image_url;
 					temp.size = obj.drm_def.drmContents[0].contentSize;
 					temp.platform = [];
-					console.log(index, obj.drm_def.drmContents[0].platformIds);
 					$.each({"1":KamajiPlatformFlags.PS3,"3": KamajiPlatformFlags.PSP,"8":KamajiPlatformFlags.VITA}, function (t,u) {
 						0 !== (obj.drm_def.drmContents[0].platformIds >>> 1 & u >>> 1) && temp.platform.push(KamajiPlatforms[Number(t)]);
 					});
@@ -201,7 +200,6 @@ repod.psdle = {
 				if (temp.plus) { repod.psdle.config.has_plus = true; }
 				
 				that.gamelist.push(temp);
-				
 				if (repod.psdle.config.deep_search) { that.game_api.queue(temp.index,temp.pid); }	
 			}
 		});
@@ -236,8 +234,8 @@ repod.psdle = {
 			$("#muh_games_container").css({"position":"absolute"});
 			$("#sub_container").html(repod.psdle.genSearchOptions()).append("<table id='muh_table' style='display:inline-block;text-align:left'><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+repod.psdle.lang.columns.platform+"</th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table><br />"+repod.psdle.config.tag_line);
 			this.regen(); this.bindSearch();
-			console.log("PSDLE | Table generated. sorting table");
-			//repod.psdle.sortGamelist("#sort_date");
+			console.log("PSDLE | Table generated.");
+			repod.psdle.sortGamelist("#sort_date");
 			$("#muh_games_container").slideDown('slow').promise().done(function() { that.margin(); });
 		},
 		regen: function(a) {
@@ -418,8 +416,8 @@ repod.psdle = {
 			default:
 			case "sort_date":
 				this.gamelist_cur.sort(function (a, b) {
-					if (a.date > b.date) { return 1; }
-					if (a.date < b.date) { return -1; }
+					if (a.date > b.date) { return -1; }
+					if (a.date < b.date) { return 1; }
 					return 0;
 				});
 				break;

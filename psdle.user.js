@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.004
+// @version		2.005
 // @require		https://code.jquery.com/jquery-1.11.1.min.js
 // @include		https://store.sonyentertainmentnetwork.com/*
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -120,6 +120,7 @@ repod.psdle = {
 		try { if (GM_info) this.config.tag_line += " - <span class='psdle_tiny_link'>Userscript: "+GM_info.script.version+"</span>"; } catch (e) { };
 		this.determineLanguage(this.config.language,true);
 		this.injectCSS();
+		SonyChi_SessionManagerSingleton.getUserDevices()
 		$(document).on('change', "#sub_container > select#lang_select", function() { that.config.language = $(this).val(); that.determineLanguage($(this).val(),true); that.genDisplay(); });
 		this.genStartup();
 	},
@@ -167,10 +168,10 @@ repod.psdle = {
 	},
 	generateList: function() {
 		console.log("PSDLE | Generating download list.");
-		var entitlements = gEntitlementManager.getAllEntitlements().reverse(), that = this;
+		var entitlements = gEntitlementManager.getAllEntitlements(), that = this;
 
 		$.each(entitlements, function(index,obj) {
-			if (!obj.VUData && (obj.entitlement_attributes || obj.drm_def)) { /* Determine if game content. */
+			if (that.isValidContent(obj)) { /* Determine if game content. */
 				var temp = {};
 				
 				//Constants/pre-determined.
@@ -204,7 +205,8 @@ repod.psdle = {
 				temp.size_f = formatFileSizeDisplayStr(temp.size);
 				temp.icon = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.pid)+"&w=31&h=31";
 				temp.api_icon = temp.api_icon+"&w=31&h=31";
-				temp.date = convertToNumericDateSlashes(convertStrToDateObj(obj.active_date));
+				temp.date = obj.active_date;
+				temp.pdate = convertToNumericDateSlashes(convertStrToDateObj(temp.date));
 				temp.url = repod.psdle.config.game_page+temp.pid;
 				temp.platform_og = temp.platform.slice(0);
 				
@@ -214,7 +216,6 @@ repod.psdle = {
 				if (temp.plus) { repod.psdle.config.has_plus = true; }
 				
 				that.gamelist.push(temp);
-				
 				if (repod.psdle.config.deep_search) { that.game_api.queue(temp.index,temp.pid); }	
 			}
 		});
@@ -224,6 +225,12 @@ repod.psdle = {
 		} else {
 			this.table.gen();
 		}
+	},
+	isValidContent: function(obj) {
+		if (obj.VUData) { return !1; }
+		else if (obj.drm_def && obj.drm_def.contentType == "TV") { return !1; }
+		else if (obj.drm_def || obj.entitlement_attributes) { return !0; }
+		else { return !1; }
 	},
 	table: {
 		bindSearch: function() {
@@ -425,8 +432,8 @@ repod.psdle = {
 			default:
 			case "sort_date":
 				this.gamelist_cur.sort(function (a, b) {
-					if (a.index > b.index) { return 1; }
-					if (a.index < b.index) { return -1; }
+					if (a.date > b.date) { return -1; }
+					if (a.date < b.date) { return 1; }
 					return 0;
 				});
 				break;
@@ -501,7 +508,7 @@ repod.psdle = {
 			var trs = $("tr").filter(":gt(0)");
 			trs.each(function() {
 				var index = $(this).attr("id").split("_").pop(), b = repod.psdle.gamelist[index];
-				t += b.name+sep+repod.psdle.safeGuessSystem(b.platform)+sep+b.size_f+sep+b.date+"\n";
+				t += b.name+sep+repod.psdle.safeGuessSystem(b.platform)+sep+b.size_f+sep+b.pdate+"\n";
 			});
 			return t;
 		}
@@ -679,7 +686,7 @@ repod.psdle = {
 				if (dlQueue) {
 					temp += "<td>"+sys+"</td><td>"+dlQueue.to_sys.toUpperCase().replace("VITA","PS Vita")+"</td><td>"+val.size_f+"</td><td>"+convertToNumericDateSlashes(convertStrToDateObj(dlQueue.createdTime))+"</td>"
 				} else {
-					temp += "<td>"+sys+"</td><td>"+val.size_f+"</td><td>"+val.date+"</td>";
+					temp += "<td>"+sys+"</td><td>"+val.size_f+"</td><td>"+val.pdate+"</td>";
 				}
 				temp += "</tr>";
 				return temp;
@@ -708,7 +715,7 @@ repod.psdle = {
 			}
 			var star = '<div class="star-rating rater-0 ratingStarGeneric star-rating-applied star-rating-readonly star-rating-on" style="display:inline-block !important;float:none !important;vertical-align:text-top"><a title="1">1</a></div>';
 			try { if (!isNaN(game.rating)) { dialog.append("<div id='dlQARating'>"+star+" "+game.rating+" / 5</div>"); } } catch (e) { }
-			dialog.append("<div id='dlQAStat'>"+repod.psdle.safeGuessSystem(game.platform)+" | "+game.size_f+" | "+game.date+"</div>");
+			dialog.append("<div id='dlQAStat'>"+repod.psdle.safeGuessSystem(game.platform)+" | "+game.size_f+" | "+game.pdate+"</div>");
 			return dialog;
 		},
 		bind: function(e) {
