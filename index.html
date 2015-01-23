@@ -14,15 +14,15 @@
 		<link href="js/jquery-ui-1.11.2.custom/jquery-ui.min.css" rel="stylesheet">
 		<link rel="stylesheet" href="font-awesome-4.2.0/css/font-awesome.min.css">
 		<link rel="stylesheet" href="site.css">
+		<!-- OpenGraph -->
+		<meta property="og:title" content="PSDLE" />
+		<meta property="og:description" content="Improving everyone's favorite online download list, one loop at a time." />
+		<meta property="og:url" content="//repod.github.io/psdle/" />
+		<meta property="og:image" content="//repod.github.io/psdle/logo/6_psdle_64px.png" />
+		<!-- GA -->
 		<script>
-		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-		  ga('create', 'UA-58660703-1', 'auto');
-		  ga('send', 'pageview');
-
+			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+			ga('create', 'UA-58660703-1', 'auto'); ga('send', 'pageview');
 		</script>
 	</head>
 	<body>
@@ -139,18 +139,31 @@
 							If/when I get pull requests I'll let them sit and look through them while allowing the "community" to as well.<br />
 							<br />
 							If authentication details were left around openly on the download list page I would take my concerns elsewhere.
-						</span><br />
-						<br />
+						</span>
+						<br /><br />
 						<strong>Can it go any faster?</strong> <br />
-						<span>Disabling "Catalog" during startup will significantly decrease the time between startup and the list at the cost of less features.</span><br />
-						<br />
+						<span>Disabling "Catalog" during startup will significantly decrease the time between startup and the list at the cost of less features.</span>
+						<br /><br />
 						<strong>Does the search box support <a href="//wikipedia.org/wiki/Regular_expression" target="_blank">regex</a>?</strong><br />
 						<span>
 							Yes! Simply wrap the regex in /, like usual.<br />
 							PSDLE supports the /i modifier and a custom /d modifier which <strong>excludes</strong> matches.<br />
-							For more information about Javascript Regex, <a href="//developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions" target="_blank">click here</a>.<br />
+							For more information about Javascript Regex, <a href="//developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions" target="_blank">click here</a>.
 						</span>
-						<br />
+						<br /><br />
+						<strong>Does this differentiate between Vita and PS/Vita TV games?</strong><br />
+						<span>
+							No, <span style='font-style:italic'>not yet</span>. I have a few ideas to accomplish this but the tools currently available do not allow it <span style='font-style:italic'>easily</span>.
+						</span>
+						<br /><br />
+						<strong>Am I free to copy, modify, redistribute, etc. PSDLE's source code?</strong><br />
+						<span>
+							Yes, per the rules of <a href='//github.com/RePod/psdle/blob/master/LICENSE'>the license</a>.<br />
+							Please do not imply that your version is supported by, endorsed by, or associated with the official one.<br />
+							<br />
+							If you have ideas, suggestions, or code additions/improvements, send them my way!
+						</span>
+						<br /><br />
 						More soon(tm).
 					</div>
 				</div>
