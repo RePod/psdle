@@ -137,7 +137,7 @@ repod.psdle = {
 				a += "<br /><br />"+that.lang.startup.apis+"<br /><br /><span class='psdle_fancy_bar'>";
 				$.each(that.lang.apis, function(key,con) { a += "<span id='"+con.internal_id+"' title='"+con.desc+"'>"+con.name+"</span>"; });
 				a += "</span><br /><br /><span id='psdle_go' class='psdle_btn'>"+that.lang.startup.start+"</span><br />"+that.generateLangBox()+that.config.tag_line;
-				a += "<br /><span id='inject_lang' class='psdle_tiny_link'>Inject Language</span> - <a class='psdle_btn' target='_blank' href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation#translation-submission-template'>Language Template</a> - <span id='gen_fake' class='psdle_tiny_link'>Generate Fake List</span>";
+				a += "<br /><span id='inject_lang' class='psdle_tiny_link'>Inject Language</span> - <a class='psdle_tiny_link' target='_blank' href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation#translation-submission-template'>Language Template</a> - <span id='gen_fake' class='psdle_tiny_link'>Generate Fake List</span>";
 				a +="</div>";
 				$(document).on('click','[id^=api_]',function() { if ($(this).attr("id") !== "api_entitle") { $(this).toggleClass('toggled_off'); } });
 				$(document).on('click',"#inject_lang",function() { that.debug.inject_lang(); });
