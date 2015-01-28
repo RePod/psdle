@@ -170,7 +170,6 @@ repod.psdle = {
 				temp.deep_type = "unknown";
 				temp.pid = obj.product_id;
 				temp.id = obj.id;
-				temp.index = that.gamelist.length+1;
 
 				if (obj.entitlement_attributes) {
 					/* PS4 */
@@ -208,9 +207,11 @@ repod.psdle = {
 				if (temp.plus) { repod.psdle.config.has_plus = true; }
 				
 				that.gamelist.push(temp);
-				if (repod.psdle.config.deep_search) { that.game_api.queue(temp.index,temp.pid); }	
 			}
 		});
+		this.gamelist.sort(function(a,b) { return (a.date > b.date)?-1:(a.date < b.date)?1:0 });
+		$.each(this.gamelist,function(a,b) { that.gamelist[a].index = a+1; if (that.config.deep_search) { that.game_api.queue(a+1,b.pid); }	});
+		
 		console.log("PSDLE | Finished generating download list.");
 		this.postList();
 	},
@@ -426,28 +427,15 @@ repod.psdle = {
 		switch (sort_method) {
 			default:
 			case "sort_date":
-				this.gamelist_cur.sort(function (a, b) {
-					if (a.date > b.date) { return -1; }
-					if (a.date < b.date) { return 1; }
-					return 0;
-				});
+				this.gamelist_cur.sort(function (a, b) { return (a.date > b.date)?-1:(a.date < b.date)?1:0 });
 				break;
 			case "sort_name":
-				this.gamelist_cur.sort(function (a, b) {
-					if (a.name.toLocaleLowerCase() > b.name.toLocaleLowerCase()) { return 1; }
-					if (a.name.toLocaleLowerCase() < b.name.toLocaleLowerCase()) { return -1; }
-					return 0;
-				});	
+				this.gamelist_cur.sort(function (a, b) { return (a.name.toLocaleLowerCase() > b.name.toLocaleLowerCase())?1:(a.name.toLocaleLowerCase() < b.name.toLocaleLowerCase())?-1:0 });
 				break;
 			case "sort_size":
-				this.gamelist_cur.sort(function (a, b) {
-					if (a.size > b.size) { return 1; }
-					if (a.size < b.size) { return -1; }
-				return 0;
-			});
+				this.gamelist_cur.sort(function (a, b) { return (a.size > b.size)?1:(a.size < b.size)?-1:0 });
 				break;
 		}
-		
 		if (sort_method == this.config.lastsort) {
 			if (!this.config.lastsort_r) {
 				this.gamelist_cur.reverse();
