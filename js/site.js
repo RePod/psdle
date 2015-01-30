@@ -16,8 +16,15 @@ $(document).ready(function() {
 		});
 	});
 	
-	$("#pill_get_us").click(function() { ga('send', 'event', 'pill', 'click', 'get userscript'); blink($("#menu .fa-download").parent()); });
-	$("#pill_get_bookmarklet, .get_bookmarklet").click(function() { ga('send', 'event', ($(this).attr("id")?'pill':'inline'), 'click', 'get bookmarklet'); blink($("#menu .fa-bookmark").parent()); });
+	//Pills here.
+	$("#pill_direct").click(function() { method("#method_direct"); });
+	$("#pill_get_us").click(function() { method("#method_userscript"); });
+	$("#pill_get_bookmarklet").click(function() { method("#method_bookmarklet"); });
+	
+	//Fake inline URLs.
+	$(".get_userscript.fake_url").click(function() { ga('send', 'event', 'inline', 'click', 'get userscript'); blink($("#menu .fa-download").parent()); });
+	$(".get_bookmarklet.fake_url").click(function() { ga('send', 'event', ($(this).attr("id")?'pill':'inline'), 'click', 'get bookmarklet'); blink($("#menu .fa-bookmark").parent()); });
+	
 	$("#get_bookmark").on("contextmenu",function() { ga('send', 'event', 'menu', 'rightclick', 'get bookmarklet', 1); });
 	$(".get_repo").click(function() { ga('send', 'event', 'inline', 'click', 'get repo'); blink($("#menu .fa-code-fork").parent()); });
 	
@@ -40,6 +47,7 @@ $(document).ready(function() {
 		$(e).tooltip("open");
 		setTimeout(function() { $(e).tooltip("close") },3000);
 	}
+	function method(e) { ga('send', 'event', 'check method', 'click', e.split("_").pop()); $("[id^=method_]").not(e).slideUp(); $(e).slideDown(); }
 	
 	var d = 200;
 	$("#menu a").tooltip({

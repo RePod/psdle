@@ -100,23 +100,42 @@
 						<h3 tabindex="0"><i class="fa fa-check-square-o fa-fw"></i> Getting Started <i class="module_toggle fa fa-caret-up"></i></h3>
 					</a>
 					<div>
-						<span class='psdle_fancy_bar'><span id='pill_get_us' tabindex="0">Userscript</span><a href="//wikipedia.org/wiki/Greasemonkey" target="_blank"><span>?</span></a></span>
+						Select a method: <span class='psdle_fancy_bar'><span id='pill_direct' tabindex="0">Direct</span></span> <span class='psdle_fancy_bar'><span id='pill_get_us' tabindex="0">Userscript</span><a href="//wikipedia.org/wiki/Greasemonkey" target="_blank"><span>?</span></a></span>
 						<span class='psdle_fancy_bar'><span id='pill_get_bookmarklet' class='get_bookmarklet' tabindex="0">Bookmarklet</span><a href="//wikipedia.org/wiki/Bookmarklet" target="_blank"><span>?</span></a></span><br />
 						<br />
-						<strong>Direct:</strong><br />
-						<ol>
-							<li>Copy the <span class='get_bookmarklet fake_url' tabindex="0">bookmarklet's link</span>.</li>
-							<li>Navigate to the the online store.</li>
-							<li>Paste into your browser's address bar.</li>
-							<li>Prepend <strong>javascript:</strong> to the start if it's not already there.</li>
-							<li>Submit.</li>
-							<li>Click the PSDLE logo in the bottom-left corner.</li>
-						</ol>
-						<small>The latest and (hopefully) greatest versions of PSDLE can be found  <span class='get_repo fake_url' tabindex="0">in the repository</span>.<br />
-						However, they may contain more bugs, be unstable, or have features disabled. <small>(Sounds like non-repository versions)</small><br />
-						Use repository versions at your own risk.</small><br /><br />
-						
-						<small>Legacy versions are available <a href='https://github.com/RePod/psdle/tree/da72902be7847ec93ae85555ab6f0e3b2f8948c4'>here</a>. Bug reports will not be accepted and support will not be given for these.</small>
+						<div id='method_direct'>
+							<strong>Direct</strong><br />
+							<ol>
+								<li>Copy the <span class='get_bookmarklet fake_url' tabindex="0">bookmarklet's link</span>.</li>
+								<li>Navigate to the the online store.</li>
+								<li>Paste into your browser's address bar.</li>
+								<li>Ensure the pasted line begins with <strong>javascript:</strong> If not, add it.</li>
+								<li>Submit.</li>
+								<li>PSDLE should activate.</li>
+							</ol>
+						</div>
+						<div id='method_userscript' style='display:none'>
+							<strong>Userscript</strong><br />
+							<ol>
+								<li>Install <a href="https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/" target="_blank">Greasemonkey</a> <small>(Firefox)</small>, <a href="https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en" target="_blank">Tampermonkey</a> <small>(Chrome)</small>, or your browser's equivalent.</li>
+								<li>Install the <span class='get_userscript fake_url' tabindex="0">PSDLE userscript</span></li>
+								<li>Navigate to the the online store.</li>
+								<li>PSDLE should activate automatically.</li>							
+							</ol>
+						</div>
+						<div id='method_bookmarklet' style='display:none'>
+							<strong>Bookmarklet</strong> <small>(Recommended for mobile)</small><br />
+							<ol>
+								<li><span class='get_bookmarklet fake_url' tabindex="0">Get the bookmark.</span></li>
+								<li>Navigate to the the online store.</li>
+								<li>Select the bookmark from your bookmarks.</li>
+								<li>PSDLE should activate.</li>								
+							</ol>
+						</div>
+						After successful activation the PSDLE logo will appear in the bottom-left corner, click it to start.<br />
+						<br />
+						<small>The latest and (hopefully) greatest versions of PSDLE can be found  <span class='get_repo fake_url' tabindex="0">in the repository</span>. Use repository versions at your own risk.<br />
+						Legacy versions are available <a href='https://github.com/RePod/psdle/tree/da72902be7847ec93ae85555ab6f0e3b2f8948c4'>here</a>. Bug reports will not be accepted and support will not be given for these.</small>
 					</div>
 				</div>
 				<!-- <div class='module'>
