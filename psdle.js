@@ -521,7 +521,7 @@ repod.psdle = {
 				.success(function(data) { that.process(a.index,data); })
 				.fail(function() { that.run(); });
 			} else {
-				if (!$("#muh_table").length) { repod.psdle.table.gen(); }
+				repod.psdle.table.gen();
 			}
 		},
 		process: function(index,data) {
@@ -770,7 +770,7 @@ repod.psdle = {
 					that.run();
 				});
 			} else {
-				repod.psdle.table.gen();
+				if (!repod.psdle.config.deep_search) { repod.psdle.table.gen(); }
 			}
 		},
 		parse: function(url,a) {
