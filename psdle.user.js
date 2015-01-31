@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.011
+// @version		2.012
 // @require		https://code.jquery.com/jquery-1.11.1.min.js
 // @include		https://store.sonyentertainmentnetwork.com/*
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -537,7 +537,7 @@ repod.psdle = {
 				.success(function(data) { that.process(a.index,data); })
 				.fail(function() { that.run(); });
 			} else {
-				if (!$("#muh_table").length) { repod.psdle.table.gen(); }
+				repod.psdle.table.gen();
 			}
 		},
 		process: function(index,data) {
@@ -786,7 +786,7 @@ repod.psdle = {
 					that.run();
 				});
 			} else {
-				repod.psdle.table.gen();
+				if (!repod.psdle.config.deep_search) { repod.psdle.table.gen(); }
 			}
 		},
 		parse: function(url,a) {
