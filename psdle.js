@@ -30,7 +30,7 @@ repod.psdle = {
 	lang_cache: {
 		"en": {
 			"def": "us",
-			"us":{"local":"English","startup":{"apis":"Select which APIs you would like to use, hover for more details.<br />Certain APIs may not be disabled.","wait":"Please wait.","start":"Start"},"columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"export_view":"Export View","games":"Games","avatar":"Avatars","demo":"Demos","unlock":"Unlocks","pass":"Passes","pack":"Packs","theme":"Themes","addon":"Add-ons","app":"Applications","unknown":"Unknown","page":"Page"},"strings":{"delimiter":"Enter delimiter:","stringify_error":"Error: Browser does not have JSON.stringify.","yes":"Yes","no":"No","search":"Search by game title","dlQueue":"Queue","dlList":"List","plus":"Toggle visibility of PS+ titles.","queue_all":"All","queue_to":"Download to $SYS$"},"apis":[{"internal_id":"api_entitle","name":"Entitlements","desc":"Cannot be disabled. Accesses purchase information used to create the download list, determine PS+ status, and other things."},{"internal_id":"api_game","name":"Catalog","desc":"Accesses additional game information to determine proper console, fix broken images, and more."},{"internal_id":"api_queue","name":"Download Queue","desc":"Allows adding and removing items from the download queue. Reads download queue information and the amount of activated consoles on the account."}]}
+			"us":{"local":"English","startup":{"apis":"Select which APIs you would like to use, hover for more details.<br />Certain APIs may not be disabled.","wait":"Please wait.","start":"Start"},"columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"export_view":"Export View","games":"Games","avatar":"Avatars","demo":"Demos","unlock":"Unlocks","pass":"Passes","pack":"Packs","theme":"Themes","addon":"Add-ons","app":"Applications","unknown":"Unknown","page":"Page"},"strings":{"delimiter":"Enter delimiter:","stringify_error":"Error: Browser does not have JSON.stringify.","yes":"Yes","no":"No","search":"Search by game title","dlQueue":"Queue","dlList":"List","plus":"Toggle visibility of PS+ titles.","queue_all":"All","queue_to":"Download to $SYS$"},"apis":[{"internal_id":"api_entitle","name":"Entitlements","desc":"Cannot be disabled. Accesses purchase information used to create the download list, determine PS+ status, and other things."},{"internal_id":"api_game","name":"Catalog","desc":"Accesses additional game information to determine proper console, fix broken images, and more."},{"internal_id":"api_queue","name":"Download Queue","desc":"Allows adding and removing items from the download queue. Reads download queue information and the amount of activated consoles on the account."},{"internal_id":"api_pstv","name":"PS TV","desc":"Detect PS TV compatible titles. Only supported on \"en-us\" web store (not PSDLE language).","disabled":true}]}
 		},
 		"es": {
 			"def": "mx",
@@ -137,8 +137,13 @@ repod.psdle = {
 				a += "<br /><div id='psdle_progressbar'><div id='psdle_bar'>&nbsp;</div></div><br /><span id='psdle_status'>"+that.lang.startup.wait+"</span>";
 			} else {
 				a += "<br /><br />"+that.lang.startup.apis+"<br /><br /><span class='psdle_fancy_bar'>";
-				$.each(that.lang.apis, function(key,con) { a += "<span id='"+con.internal_id+"' title='"+con.desc+"'>"+con.name+"</span>"; });
-				a += "<span id='api_pstv' class='toggled_off' title='Detect PS TV compatible titles. Currently only for en-us.'>PS TV</span>";
+				$.each(that.lang.apis, function(key,con) {
+					if (con.internal_id == "api_pstv") {
+						a += (chihiro.getCultureCode() == "en-us")?"<span id='"+con.internal_id+"' class='"+((con.disabled)?"toggled_off":"")+"' title='"+con.desc+"'>"+con.name+"</span>":"";
+					} else {
+						a += "<span id='"+con.internal_id+"' title='"+con.desc+"'>"+con.name+"</span>";
+					}
+				});
 				a += "</span><br /><br /><span id='psdle_go' class='psdle_btn'>"+that.lang.startup.start+"</span><br />"+that.generateLangBox()+that.config.tag_line;
 				a += "<br /><span id='inject_lang' class='psdle_tiny_link'>Inject Language</span> - <a class='psdle_tiny_link' target='_blank' href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation#translation-submission-template'>Language Template</a> - <span id='gen_fake' class='psdle_tiny_link'>Generate Fake List</span>";
 				a +="</div>";
@@ -221,12 +226,10 @@ repod.psdle = {
 		this.postList();
 	},
 	postList: function() {
-		if (repod.psdle.config.check_tv) { repod.psdle.tv.init(); }
-		if (repod.psdle.config.deep_search) {
-			this.game_api.run(); this.game_api.run(); this.game_api.run(); this.game_api.run();
-		} else {
-			this.table.gen();
-		}
+		var safe = !0;
+		if (repod.psdle.config.check_tv) { safe = !1; repod.psdle.tv.init(); }
+		if (repod.psdle.config.deep_search) { safe = !1; this.game_api.run(); this.game_api.run(); this.game_api.run(); this.game_api.run(); }
+		if (safe) { this.table.gen(); }
 	},
 	isValidContent: function(obj) {
 		if (obj.VUData) { return !1; }
@@ -518,7 +521,7 @@ repod.psdle = {
 				.success(function(data) { that.process(a.index,data); })
 				.fail(function() { that.run(); });
 			} else {
-				//if (!$("#muh_table").length) { repod.psdle.table.gen(); }
+				if (!$("#muh_table").length) { repod.psdle.table.gen(); }
 			}
 		},
 		process: function(index,data) {
