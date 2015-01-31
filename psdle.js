@@ -26,7 +26,7 @@ SOFTWARE.
 
 var repod = {};
 repod.psdle = {
-	gamelist: [], gamelist_cur: [], autocomplete_cache: [], lang: {},
+	gamelist: [], gamelist_cur: [], autocomplete_cache: [], lang: {}, id_cache: {},
 	lang_cache: {
 		"en": {
 			"def": "us",
@@ -99,7 +99,9 @@ repod.psdle = {
 			use_queue: 0, active_consoles: {},
 			tag_line: "<br /><a class='psdle_tiny_link' href='//repod.github.io/psdle' target='_blank'>Website</a> - <a class='psdle_tiny_link' href='//github.com/RePod/psdle' target='_blank'>Repository</a> - <a class='psdle_tiny_link' href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation' target='_blank'>Submit Bug/Translation</a>",
 			switch_align: "center", switch_color: "#85C107",
-			has_plus: false
+			has_plus: false,
+			check_tv: false,
+			tv_url: atob("aHR0cHM6Ly9zdG9yZS5zb255ZW50ZXJ0YWlubWVudG5ldHdvcmsuY29tL3N0b3JlL2FwaS9jaGloaXJvLzAwXzA5XzAwMC9jb250YWluZXIvVVMvZW4vMTkvU1RPUkUtTVNGNzcwMDgtUFNUVlZJVEFHQU1FUz9zaXplPTMw")
 		}; 
 		try { if (GM_info) this.config.tag_line += " - <span class='psdle_tiny_link'>Userscript: "+GM_info.script.version+"</span>"; } catch (e) { };
 		this.determineLanguage(this.config.language,true);
@@ -136,6 +138,7 @@ repod.psdle = {
 			} else {
 				a += "<br /><br />"+that.lang.startup.apis+"<br /><br /><span class='psdle_fancy_bar'>";
 				$.each(that.lang.apis, function(key,con) { a += "<span id='"+con.internal_id+"' title='"+con.desc+"'>"+con.name+"</span>"; });
+				a += "<span id='api_pstv' class='toggled_off' title='Detect PS TV compatible titles. Currently only for en-us.'>PS TV</span>";
 				a += "</span><br /><br /><span id='psdle_go' class='psdle_btn'>"+that.lang.startup.start+"</span><br />"+that.generateLangBox()+that.config.tag_line;
 				a += "<br /><span id='inject_lang' class='psdle_tiny_link'>Inject Language</span> - <a class='psdle_tiny_link' target='_blank' href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation#translation-submission-template'>Language Template</a> - <span id='gen_fake' class='psdle_tiny_link'>Generate Fake List</span>";
 				a +="</div>";
@@ -144,11 +147,13 @@ repod.psdle = {
 				$(document).one('click',"#gen_fake",function() {
 					that.config.deep_search = !$("#api_game").hasClass("toggled_off");
 					that.config.use_queue = !$("#api_queue").hasClass("toggled_off");
+					that.config.check_tv = !$("#api_pstv").hasClass("toggled_off");
 					that.genDisplay("progress",true);
 				});
 				$(document).one('click',"#psdle_go",function () {
 					that.config.deep_search = !$("#api_game").hasClass("toggled_off");
 					that.config.use_queue = !$("#api_queue").hasClass("toggled_off");
+					that.config.check_tv = !$("#api_pstv").hasClass("toggled_off");
 					that.genDisplay("progress");
 				});
 			}
@@ -216,11 +221,12 @@ repod.psdle = {
 		this.postList();
 	},
 	postList: function() {
+		if (repod.psdle.config.check_tv) { repod.psdle.tv.init(); }
 		if (repod.psdle.config.deep_search) {
-				this.game_api.run(); this.game_api.run(); this.game_api.run(); this.game_api.run();
-			} else {
-				this.table.gen();
-			}
+			this.game_api.run(); this.game_api.run(); this.game_api.run(); this.game_api.run();
+		} else {
+			this.table.gen();
+		}
 	},
 	isValidContent: function(obj) {
 		if (obj.VUData) { return !1; }
@@ -463,8 +469,8 @@ repod.psdle = {
 	},
 	injectCSS: function() {
 		var temp =	/* Startup			*/ "#muh_games_container { display:none;position:fixed;top:0px;right:0px;left:0px;color:#000;z-index:9001;text-align:center } #sub_container { padding:20px;background-color:#fff; } #psdle_progressbar { overflow:hidden;display:inline-block;width:400px;height:16px;border:1px solid #999;margin:10px;border-radius:10px; } #psdle_bar { background-color:#2185f4;width:0%;height:100%;border-radius:10px; } .psdle_btn { cursor:pointer;border-radius:13px;background-color:#2185f4;color:#fff;padding:1px 15px;display:inline-block;margin:5px auto; } .psdle_tiny_link { line-height:0px;cursor:pointer;color:#7F6D75 !important; font-size:x-small; } .psdle_tiny_link:hover { color:#000 !important; text-decoration:underline; } " +
-					/* Search options	*/ "#search_options { position:fixed;left:0px;top:0px;width:100%;padding:15px 0px;background-color:rgba(255,255,255,0.8); }" +
-					/* Table			*/ "th[id^=sort] { cursor:pointer; } table {} th {padding:5px;background-color:#2185F4;color:#fff;} tr:hover { background-color:rgba(33,133,244,0.7) !important; } td a.psdle_game_link {display:block;width:100%;height:100%;color:#000 !important;padding:8px;} .is_plus{background-color:#FFD10D;} tr:nth-child(2n) {background-color:#EEE;}  th:nth-child(n+3):nth-child(-n+7), td:nth-child(n+3):nth-child(-n+7) {text-align:center;padding:0px 5px;} td:first-child { text-align:center; }" +
+					/* Search options	*/ "#search_options { position:fixed;left:0px;top:0px;width:100%;padding:15px 0px;background-color:rgba(255,255,255,0.8);z-index:9001; }" +
+					/* Table			*/ "th[id^=sort] { cursor:pointer; } table {} th {padding:5px;background-color:#2185F4;color:#fff;} tr:hover { background-color:rgba(33,133,244,0.7) !important; } td a.psdle_game_link {display:block;width:100%;height:100%;color:#000 !important;padding:8px;} .is_plus{background-color:#FFD10D;} tr:nth-child(2n) {background-color:#EEE;}  th:nth-child(n+3):nth-child(-n+7), td:nth-child(n+3):nth-child(-n+7) {text-align:center;padding:0px 5px;position:relative;} td:first-child { text-align:center;position:relative; }" +
 					/* Search buttons	*/ "#psdle_search_text { margin:5px auto;padding:5px 10px;font-size:large;max-width:600px;width:100%;border-style:solid;border-color:#F0F0F0;border-radius:90px; } .negate_regex { background-color:#FF8080;color:#fff; } span[id^=system_], span[id^=filter_], span#export_view, span[id^=dl_], .psdle_fancy_bar > span { font-weight:bold; text-transform:uppercase;font-size:small;color:#fff;background-color:#2185f4;display:inline-block;margin-right:2px;margin-bottom:5px;padding:1px 15px;cursor:pointer; } .psdle_fancy_but { border-radius:12px; } .psdle_fancy_bar > span:first-of-type { border-top-left-radius:12px; border-bottom-left-radius:12px; } .psdle_fancy_bar span:last-of-type { border-top-right-radius:12px; border-bottom-right-radius:12px; } .toggled_off { opacity:0.4; }" +
 					/* Content icons	*/ ".psdle_game_icon { max-width:100%;vertical-align:middle;padding:3px;min-width:42px;min-height:42px; }" +
 					/* Sorting			*/ ".psdle_sort_asc { float:right; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom:5px solid #fff; } .psdle_sort_desc { float:right; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid #fff; }" +
@@ -472,7 +478,8 @@ repod.psdle = {
 					/* Newbox Container	*/ "#dlQueue_newbox { z-index:9001;position:fixed;top:0px;left:0px;width:100%;height:100%;display:table;background-color:rgba(0,0,0,0.25); } #dlQueue_newbox > div { display:table-cell;vertical-align:middle;height:inherit;text-align:center; }" +
 					/* PS+ switch		*/ "#slider { vertical-align: bottom;display:inline-block;cursor:pointer;border-radius:100%;width:30px;height:12px;border-radius:10px;border:2px solid #F0F0F0; } .handle_container { text-align:center;width:100%;height:100%; } .handle { width:10px;height:10px;border-radius:100%;margin:0px 2px 6px;border:1px solid #FFF;display:inline-block;background-color:#85C107; }" +
 					/* Tooltips			*/ ".tooltip-inner { background-color:#2185F4 !important; border: 5px solid #2185F4 !important; } .tooltip-arrow { border-top-color:#2185F4 !important; } .tooltip.in { opacity:1 !important; }" +
-					/* Autocomplete		*/ ".ui-autocomplete { z-index: 9002; max-width:590px; max-height:200px; overflow-y:auto; overflow-x:hidden; } .ui-menu { position:fixed; border:2px solid #F0F0F0; border-top: none; background-color:#fff; } .ui-menu > .ui-menu-item * { color:#000; text-decoration:none; white-space: nowrap; text-overflow: ellipsis; cursor:pointer; } .ui-menu > .ui-menu-item:nth-child(even) { background-color:#e6e6e6; } .ui-menu-item .ui-state-focus { display:inline-block; width:100%; color:#000; background-color: rgba(33, 133, 244, 0.7); }";
+					/* Autocomplete		*/ ".ui-autocomplete { z-index: 9002; max-width:590px; max-height:200px; overflow-y:auto; overflow-x:hidden; } .ui-menu { position:fixed; border:2px solid #F0F0F0; border-top: none; background-color:#fff; } .ui-menu > .ui-menu-item * { color:#000; text-decoration:none; white-space: nowrap; text-overflow: ellipsis; cursor:pointer; } .ui-menu > .ui-menu-item:nth-child(even) { background-color:#e6e6e6; } .ui-menu-item .ui-state-focus { display:inline-block; width:100%; color:#000; background-color: rgba(33, 133, 244, 0.7); }" +
+					/* PS TV			*/ ".psdletv { font-style: italic;font-weight: bold;font-size: 0.6em;vertical-align: text-top;position: absolute;top: 4px; }"; 
 		$("head").append("<style type='text/css' id='psdle_css'>"+temp+"</style>");
 	},
 	exportTable: {
@@ -511,7 +518,7 @@ repod.psdle = {
 				.success(function(data) { that.process(a.index,data); })
 				.fail(function() { that.run(); });
 			} else {
-				if (!$("#muh_table").length) { repod.psdle.table.gen(); }
+				//if (!$("#muh_table").length) { repod.psdle.table.gen(); }
 			}
 		},
 		process: function(index,data) {
@@ -665,11 +672,11 @@ repod.psdle = {
 				icon = (val.safe_icon) ? val.icon : "",
 				is_plus = (val.plus) ? "is_plus" : "",
 				sys = repod.psdle.safeGuessSystem(val.platform),
-				temp = "<tr id='psdle_index_"+(val.index -1)+"'><td style='max-width:31px;max-height:31px;'><a target='_blank' href='"+val.url+"'><img title='"+repod.psdle.lang.labels.page+" #"+Math.ceil(val.index/pg)+"' src='"+icon+"' class='psdle_game_icon "+is_plus+"' /></a></td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+val.name+"</a></td>";
+				temp = "<tr id='psdle_index_"+(val.index -1)+"'><td style='max-width:31px;max-height:31px;'><a target='_blank' href='"+val.url+"'><img title='"+repod.psdle.lang.labels.page+" #"+Math.ceil(val.index/pg)+"' src='"+icon+"' class='psdle_game_icon "+is_plus+"' /></a>"+"</td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+val.name+"</a></td>";
 				if (dlQueue) {
 					temp += "<td>"+sys+"</td><td>"+dlQueue.to_sys.toUpperCase().replace("VITA","PS Vita")+"</td><td>"+val.size_f+"</td><td>"+convertToNumericDateSlashes(convertStrToDateObj(dlQueue.createdTime))+"</td>"
 				} else {
-					temp += "<td>"+sys+"</td><td>"+val.size_f+"</td><td>"+val.pdate+"</td>";
+					temp += "<td>"+sys+((repod.psdle.config.check_tv && repod.psdle.id_cache[val.pid].tvcompat && sys == "PS Vita")?"<span class='psdletv'>TV</span>":"")+"</td><td>"+val.size_f+"</td><td>"+val.pdate+"</td>";
 				}
 				temp += "</tr>";
 				return temp;
@@ -732,6 +739,46 @@ repod.psdle = {
 				  select: function(e,u) { console.log(u); repod.psdle.config.last_search = u.item.value; repod.psdle.table.regen(true); }
 				})
 			}
+		}
+	},
+	tv: {
+		url_cache: [],
+		init: function() {
+			$.each(repod.psdle.gamelist, function(index,val) { repod.psdle.id_cache[val.pid] = {"tvcompat": false}; });
+			this.fetchList();
+		},
+		fetchList: function() {
+			var that = this;
+			$.getJSON(repod.psdle.config.tv_url,function(a) {
+				$.each(a.links,function(c,b) {
+					that.url_cache.push(b.url+"?size=30&start=0");
+					if (c = a.links.length) { that.run(); }
+				});
+			});
+		},
+		run: function() {
+			var that = this, url = this.url_cache.pop();
+			if (url) {
+				$.getJSON(url)
+				.success(function(a) {
+					that.parse(url,a);
+				})
+				.fail(function() {
+					that.run();
+				});
+			} else {
+				repod.psdle.table.gen();
+			}
+		},
+		parse: function(url,a) {
+			var next = url.replace(/start=\d+/,"start="+(Number(url.match(/start=(\d+)/).pop()) + Number(url.match(/size=(\d+)/).pop())))
+			if (a.total_results && a.start + a.size < a.total_results) { this.url_cache.push(next); }
+			$.each(a.links, function(index,val) {
+				if (repod.psdle.id_cache[val.id]) {
+					repod.psdle.id_cache[val.id].tvcompat = true;
+				}
+			});
+			this.run();
 		}
 	},
 	debug: {
