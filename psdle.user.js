@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.012
+// @version		2.013
 // @require		https://code.jquery.com/jquery-1.11.1.min.js
 // @include		https://store.sonyentertainmentnetwork.com/*
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -480,9 +480,9 @@ repod.psdle = {
 		return temp;
 	},
 	safeGuessSystem: function(sys_in) {
-		//Quick, dirty, and easy.
-		var sys = (typeof(sys_in) == "object") ? sys_in.join(" ").replace("™","") : sys_in;
-		if (sys == "PS3 PSP PS Vita" || sys == "PS3 PSP") { sys = "PSP"; }
+		//Quick, dirty, and easy. Rewrite.
+		var sys = (typeof(sys_in) == "object") ? sys_in.join(" ") : sys_in; sys = sys.replace(/[^\w\d ]/g,"");
+		if (sys == "PS3 PSP PS Vita" || sys == "PS3 PSP" || sys == "PS Vita PSP" || sys.indexOf("PSP") > -1) { sys = "PSP"; }
 		if (sys == "PS3 PS Vita") { sys = "PS Vita"; }
 		return sys;
 	},
@@ -557,7 +557,10 @@ repod.psdle = {
 							if (!!data.metadata.secondary_classification.values[0].match(r)) { sys = data.metadata.secondary_classification.values[0].match(r).pop(); }
 							else if (!!data.metadata.game_subtype.values[0].match(r)) { sys = data.metadata.game_subtype.values[0].match(r).pop(); }
 							else if (!!data.metadata.primary_classification.values[0].match(r)) { sys = data.metadata.secondary_classification.values[0].match(r).pop(); }
-						} else if (!!data.metadata.playable_platform) { sys = data.metadata.playable_platform.values; }
+						} else if (!!data.metadata.playable_platform) {
+							sys = [];
+							$.each(data.metadata.playable_platform.values,function(index,val) { sys.push(val.replace(/[^\w\d ]/g,"")) });
+						}
 					}
 					if (sys) { repod.psdle.gamelist[index].platform = sys; }
 				}
