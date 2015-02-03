@@ -1,0 +1,7 @@
+chrome/*
+*.pem
+*.crx
+!chrome/chrome.crx
+
+firefox/*
+*.xpi
