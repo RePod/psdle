@@ -40,6 +40,10 @@ repod.psdle = {
 			"def": "de",
 			"de":{"local":"Deutsch","startup":{"wait":"Seite wird geladen, bitte warten."},"columns":{"icon":"Symbol","name":"Name","platform":"Plattform","size":"Größe","date":"Datum"},"labels":{"export_view":"Exportiere Ansicht","games":"Spiele","avatar":"Spielerbilder","demo":"Demos","unlock":"Freischaltbares","pass":"Pässe","pack":"Bündel","theme":"Themen","addon":"Erweiterungen","app":"Anwendungen","unknown":"Unbekannt","page":"Seite"},"strings":{"delimiter":"Geben sie ein Trennzeichen ein","stringify_error":"Fehler: Browser fehlt \"JSON.stringify\".","yes":"Ja","no":"Nein","search":"Spiele titel eingeben für direkte suche"}} // Provided by /u/_MrBubbles
 		},
+		"fr": {
+			"def": "fr",
+			"fr":{"local":"Français","startup":{"wait":"Merci d'attendre le chargement de la page."},"columns":{"icon":"Icône","name":"Nom","platform":"Plate-forme","size":"Taille","date":"Date"},"labels":{"export_view":"Exporter la vue","games":"Jeux","avatar":"Avatars","demo":"Démos","unlock":"Déverrouillage","pass":"Pass","pack":"Packs","theme":"Thèmes","addon":"DLCs","app":"Applications","unknown":"Inconnu","page":"Page"},"strings":{"delimiter":"Entrer le délimiteur","stringify_error":"Erreur: Votre navigateur ne supporte pas \"JSON.stringify\".","yes":"Oui","no":"Non","search":"Rechercher par titre de jeu"}} // Provided by @cramoisan
+		},
 		"ru": {
 			"def":"ru",
 			"ru":{"local":"Русский","startup":{"wait":"Ожидание загрузки страниц..."},"columns":{"icon":"Иконка","name":"Название","platform":"Платформа","size":"Размер","date":"Дата"},"labels":{"export_view":"Export View","games":"Игры","avatar":"Аватары","demo":"Демо-версии","unlock":"Разблокировки","pass":"Сезонные пропуски ","pack":"Набор","theme":"Темы","addon":"Дополенния","app":"Приложения","unknown":"Неизвестно","page":"Страница"},"strings":{"delimiter":"Введите разделитель:","stringify_error":"Ошибка: в браузере отсутствует JSON.stringify.","yes":"Да","no":"Нет","search":"Поиск по названию игры"}} //Provided by MorbertDou (issue #2)
