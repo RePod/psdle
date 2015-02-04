@@ -1,7 +1,13 @@
+# Chrome Extension
 chrome/*
+!chrome/psdle/
+chrome/psdle/*
+!chrome/psdle/_locales
 *.pem
 *.crx
 !chrome/chrome.crx
+!chrome/psdle.crx
 
+# Firefox Add-on
 firefox/*
 *.xpi

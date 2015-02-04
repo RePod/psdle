@@ -1,0 +1,18 @@
+{
+	"appName": {
+		"message": "PSDLE",
+		"description": "PSDLE, simple."
+	},
+	"appDesc": {
+		"message": "Improving everyone's favorite online download list, one loop at a time.", 
+		"description":"Product description."
+	},
+	"website": {
+		"message": "Website",
+		"description": "Website link text in the popup."
+	},
+	"repo": {
+		"message": "Repository",
+		"description": "Repository link text in the popup."
+	}
+}
