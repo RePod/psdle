@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.014
+// @version		2.015
 // @require		https://code.jquery.com/jquery-1.11.1.min.js
 // @include		https://store.sonyentertainmentnetwork.com/*
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -42,7 +42,7 @@ SOFTWARE.
 
 var repod = {};
 repod.psdle = {
-	gamelist: [], gamelist_cur: [], autocomplete_cache: [], lang: {}, id_cache: {},
+	gamelist: [], gamelist_cur: [], autocomplete_cache: [], lang: {}, id_cache: {}, type_cache: {},
 	lang_cache: {
 		"en": {
 			"def": "us",
@@ -440,14 +440,13 @@ repod.psdle = {
 		}
 		temp += "<br />";
 		if (this.config.deep_search && !dlQueue) {					
-		temp +=		'<span class="psdle_fancy_bar">' +
-					'<span id="filter_downloadable_game">'+this.lang.labels.games+'</span>' +
-					'<span id="filter_avatar">'+this.lang.labels.avatar+'</span>' +
-					'<span id="filter_demo">'+this.lang.labels.demo+'</span>'+
-					'<span id="filter_add_on">'+this.lang.labels.addon+'</span>' +
-					'<span id="filter_application">'+this.lang.labels.app+'</span>' +
-					'<span id="filter_theme">'+this.lang.labels.theme+'</span>' +
-					'<span id="filter_unknown">'+this.lang.labels.unknown+'</span></span><br />';
+			temp +=	'<span class="psdle_fancy_bar">';
+			var cats = this.lang.labels; delete cats.export_view; delete cats.page;
+			$.each(cats, function(key,val) {
+				key = key.replace("games","downloadable_game").replace("app","application").replace("addon","add_on");
+				if (that.type_cache[key]) { temp += '<span id="filter_'+key+'">'+val+'</span>' }
+			});
+			temp += '</span><br />';
 		}
 		if (!dlQueue) { temp += "<input type='text' id='psdle_search_text' placeholder='"+this.lang.strings.search+"' />"; }
 		temp += "<br />";
@@ -544,7 +543,7 @@ repod.psdle = {
 				var a = this.batch.pop();
 				$.getJSON(repod.psdle.config.game_api+a.pid)
 				.success(function(data) { that.process(a.index,data); })
-				.fail(function() { that.run(); });
+				.fail(function() { repod.psdle.type_cache.unknown = true; that.run(); });
 			} else {
 				repod.psdle.table.gen();
 			}
@@ -583,6 +582,7 @@ repod.psdle = {
 			} else {
 				type = (data.top_category) ? data.top_category : "unknown";
 			}
+			repod.psdle.type_cache[type] = true;
 			repod.psdle.gamelist[index].deep_type = type;
 			
 			this.run()
