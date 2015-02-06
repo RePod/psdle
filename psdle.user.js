@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.013
+// @version		2.014
 // @require		https://code.jquery.com/jquery-1.11.1.min.js
 // @include		https://store.sonyentertainmentnetwork.com/*
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -56,6 +56,10 @@ repod.psdle = {
 			"def": "de",
 			"de":{"local":"Deutsch","startup":{"wait":"Seite wird geladen, bitte warten."},"columns":{"icon":"Symbol","name":"Name","platform":"Plattform","size":"Größe","date":"Datum"},"labels":{"export_view":"Exportiere Ansicht","games":"Spiele","avatar":"Spielerbilder","demo":"Demos","unlock":"Freischaltbares","pass":"Pässe","pack":"Bündel","theme":"Themen","addon":"Erweiterungen","app":"Anwendungen","unknown":"Unbekannt","page":"Seite"},"strings":{"delimiter":"Geben sie ein Trennzeichen ein","stringify_error":"Fehler: Browser fehlt \"JSON.stringify\".","yes":"Ja","no":"Nein","search":"Spiele titel eingeben für direkte suche"}} // Provided by /u/_MrBubbles
 		},
+		"fr": {
+			"def": "fr",
+			"fr":{"local":"Français","startup":{"apis":"Sélectionner l'API à utiliser; Survoler pour plus de détails.<br />Certaines APIs ne peuvent pas être désactivées.","wait":"Merci de patienter.","start":"Commencer"},"columns":{"icon":"Icône","name":"Nom","platform":"Plate-forme","size":"Taille","date":"Date"},"labels":{"export_view":"Exporter la vue","games":"Jeux","avatar":"Avatars","demo":"Démos","unlock":"Codes de déverouillage","pass":"Pass","pack":"Packs","theme":"Thèmes","addon":"DLCs","app":"Applications","unknown":"Inconnu","page":"Page"},"strings":{"delimiter":"Entrer le délimiteur:","stringify_error":"Erreur: votre navigateur ne supporte pas JSON.stringify.","yes":"Oui","no":"Non","search":"Rechercher par titre de jeu","dlQueue":"Queue","dlList":"Liste","plus":"Afficher/cacher les titres PS+.","queue_all":"Tous","queue_to":"Télécharger sur $SYS$"},"apis":[{"internal_id":"api_entitle","name":"Droits","desc":"Ne peut pas être désactivée. Accède aux informations d'achat afin de créer la liste de téléchargement, et déterminer le statut PS+, ainsi que d'autres choses."},{"internal_id":"api_game","name":"Catalogue","desc":"Accède aux informations supplémentaires des jeux pour déterminer la plate-forme, corriger les liens d'images cassés, et plus."},{"internal_id":"api_queue","name":"Liste de téléchargement","desc":"Permet d'ajouter ou de retirer des articles de la liste de téléchargement. Lit les informations de la liste de téléchargement et le nombre de consoles activées sur le compte."},{"internal_id":"api_pstv","name":"PS TV","desc":"Détecte les titres compatibles PS TV. Ne marche que sur le store \"en-us\" (différent de la langue choisie pour PSDLE).","disabled":true}] } // Provided by @cramoisan
+		},
 		"ru": {
 			"def":"ru",
 			"ru":{"local":"Русский","startup":{"wait":"Ожидание загрузки страниц..."},"columns":{"icon":"Иконка","name":"Название","platform":"Платформа","size":"Размер","date":"Дата"},"labels":{"export_view":"Export View","games":"Игры","avatar":"Аватары","demo":"Демо-версии","unlock":"Разблокировки","pass":"Сезонные пропуски ","pack":"Набор","theme":"Темы","addon":"Дополенния","app":"Приложения","unknown":"Неизвестно","page":"Страница"},"strings":{"delimiter":"Введите разделитель:","stringify_error":"Ошибка: в браузере отсутствует JSON.stringify.","yes":"Да","no":"Нет","search":"Поиск по названию игры"}} //Provided by MorbertDou (issue #2)
@@ -72,16 +76,21 @@ repod.psdle = {
 		if (f === true) { this.lang = {}; this.lang = this.lang_cache.en.us; }
 		if (e[0] in this.lang_cache) {
 			if (e[1] in this.lang_cache[e[0]]) {
-				if (f === true) { $.extend(true,this.lang,this.lang_cache[e[0]][e[1]]); }
+				if (f === true) { $.extend(true,this.lang,this.lang_cache[e[0]][e[1]]); this.sanitizeLanguage(); }
 				e = e[0]+"-"+e[1];
 			} else {
-				if (f === true) { $.extend(true,this.lang,this.lang_cache[e[0]][this.lang_cache[e[0]].def]); }
+				if (f === true) { $.extend(true,this.lang,this.lang_cache[e[0]][this.lang_cache[e[0]].def]); this.sanitizeLanguage(); }
 				e = e[0]+"-"+this.lang_cache[e[0]].def;
 			}
 		} else {
 			e = "en-us";
 		}
 		return e;
+	},
+	sanitizeLanguage: function() {
+		//Send help.
+		var a = JSON.stringify(this.lang, function(key, value) { if(typeof value === "string") { return value.replace(/'/g, "&apos;"); } return value; });
+		this.lang = JSON.parse(a);		
 	},
 	generateLangBox: function(e) {
 		var temp = "<select id='lang_select'>";
@@ -138,7 +147,7 @@ repod.psdle = {
 	genDisplay:function(mode,fake_list) {
 		var that = this;
 		if (!$("#muh_games_container").length) { $("body").append("<div id='muh_games_container' />"); }
-		$(document).off("click",".psdle_btn"); $(document).off("click", "#inject_lang"); $(document).off("click", "#gen_fake");
+		$(document).off("click",".psdle_btn"); $(document).off("click", "#inject_lang"); $(document).off("click", "#gen_fake"); $(document).off('click',"#psdle_go");
 		$("#muh_games_container").slideUp('slow', function() {
 			var a = "<div id='sub_container'><a href='//repod.github.io/psdle/' target='_blank'><img src='"+repod.psdle.config.logoBase64+"' style='display:inline-block;font-size:200%;font-weight:bold' alt='psdle' /></a></span>";
 			
@@ -155,9 +164,9 @@ repod.psdle = {
 				a += "<br /><br />"+that.lang.startup.apis+"<br /><br /><span class='psdle_fancy_bar'>";
 				$.each(that.lang.apis, function(key,con) {
 					if (con.internal_id == "api_pstv") {
-						a += (chihiro.getCultureCode() == "en-us")?"<span id='"+con.internal_id+"' class='"+((con.disabled)?"toggled_off":"")+"' title='"+con.desc+"'>"+con.name+"</span>":"";
+						a += (chihiro.getCultureCode() == "en-us")?"<span id='"+con.internal_id+"' class='"+((con.disabled)?"toggled_off":"")+"' title='"+con.desc.replace(/'/g, "&apos;")+"'>"+con.name+"</span>":"";
 					} else {
-						a += "<span id='"+con.internal_id+"' title='"+con.desc+"'>"+con.name+"</span>";
+						a += "<span id='"+con.internal_id+"' title='"+con.desc.replace(/'/g, "&apos;")+"'>"+con.name.replace(/'/g, "&apos;")+"</span>";
 					}
 				});
 				a += "</span><br /><br /><span id='psdle_go' class='psdle_btn'>"+that.lang.startup.start+"</span><br />"+that.generateLangBox()+that.config.tag_line;
@@ -180,7 +189,7 @@ repod.psdle = {
 			}
 			$("#muh_games_container").html(a).slideDown('slow',function() {
 				if (mode == "progress") { if (fake_list) { that.debug.fake_list() } else { that.generateList(); } }
-				else { $("[id^=api_]").tooltip({position: {my: "center top", at: "center bottom"}}) }
+				else { $("[id^=api_]").tooltip("destroy").tooltip({position: {my: "center top", at: "center bottom"}}) }
 			});
 		});
 	},
