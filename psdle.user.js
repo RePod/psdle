@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.018
+// @version		2.019
 // @require		https://code.jquery.com/jquery-1.11.1.min.js
 // @include		https://store.sonyentertainmentnetwork.com/*
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -440,12 +440,12 @@ repod.psdle = {
 		temp += "<br />";
 		if (this.config.deep_search && !dlQueue) {
 			temp +=	'<span class="psdle_fancy_bar">';
-			var order = ["downloadable_game","demo","add_on","avatar","application","theme","unknown"]
+			var order = ["downloadable_game","demo","add_on","avatar","application","theme","unknown"], out = []; out[order.length +1] = "";
 			$.each(this.type_cache, function(key) {
 				var line = '<span id="filter_'+key+'">'+((that.lang.categories[key]) ? that.lang.categories[key] : key)+'</span>';
-				if ($.inArray(key,order) >= 0) { order[$.inArray(key,order)] = line} else { order.push(line); }
+				if ($.inArray(key,order) >= 0) { out[$.inArray(key,order)] = line} else { out.push(line); }
 			});
-			temp += order.join("")+'</span><br />';
+			temp += out.join("")+'</span><br />';
 		}
 		if (!dlQueue) { temp += "<input type='text' id='psdle_search_text' placeholder='"+this.lang.strings.search+"' />"; }
 		temp += "<br />";
