@@ -424,7 +424,9 @@ repod.psdle = {
 		temp += "<br />";
 		if (this.config.deep_search && !dlQueue) {
 			temp +=	'<span class="psdle_fancy_bar">';
-			$.each(this.lang.categories, function(key,val) { if (that.type_cache[key]) { temp += '<span id="filter_'+key+'">'+val+'</span>' } });
+			$.each(this.type_cache, function(key) {
+				temp += '<span id="filter_'+key+'">'+((that.lang.categories[key]) ? that.lang.categories[key] : key)+'</span>'
+			});
 			temp += '</span><br />';
 		}
 		if (!dlQueue) { temp += "<input type='text' id='psdle_search_text' placeholder='"+this.lang.strings.search+"' />"; }

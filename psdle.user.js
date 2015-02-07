@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.016
+// @version		2.017
 // @require		https://code.jquery.com/jquery-1.11.1.min.js
 // @include		https://store.sonyentertainmentnetwork.com/*
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -440,7 +440,9 @@ repod.psdle = {
 		temp += "<br />";
 		if (this.config.deep_search && !dlQueue) {
 			temp +=	'<span class="psdle_fancy_bar">';
-			$.each(this.lang.categories, function(key,val) { if (that.type_cache[key]) { temp += '<span id="filter_'+key+'">'+val+'</span>' } });
+			$.each(this.type_cache, function(key) {
+				temp += '<span id="filter_'+key+'">'+((that.lang.categories[key]) ? that.lang.categories[key] : key)+'</span>'
+			});
 			temp += '</span><br />';
 		}
 		if (!dlQueue) { temp += "<input type='text' id='psdle_search_text' placeholder='"+this.lang.strings.search+"' />"; }
