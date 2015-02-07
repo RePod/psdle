@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.020
+// @version		2.021
 // @require		https://code.jquery.com/jquery-1.11.1.min.js
 // @include		https://store.sonyentertainmentnetwork.com/*
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -561,11 +561,10 @@ repod.psdle = {
 				if (!!repod.psdle.gamelist[index]) {
 					var sys, type = "unknown", r = /^(PS(?:1|2)).+Classic$/i;
 					if (data.metadata) {
-						if (!!data.metadata.game_subtype) {
-							if (!!data.metadata.secondary_classification.values[0].match(r)) { sys = data.metadata.secondary_classification.values[0].match(r).pop(); }
-							else if (!!data.metadata.game_subtype.values[0].match(r)) { sys = data.metadata.game_subtype.values[0].match(r).pop(); }
-							else if (!!data.metadata.primary_classification.values[0].match(r)) { sys = data.metadata.secondary_classification.values[0].match(r).pop(); }
-						} else if (!!data.metadata.playable_platform) {
+						if (!!data.metadata.secondary_classification.values[0].match(r)) { sys = data.metadata.secondary_classification.values[0].match(r).pop(); }
+						//else if (!!data.metadata.game_subtype.values[0].match(r)) { sys = data.metadata.game_subtype.values[0].match(r).pop(); }
+						else if (!!data.metadata.primary_classification.values[0].match(r)) { sys = data.metadata.secondary_classification.values[0].match(r).pop(); }
+						else if (!!data.metadata.playable_platform) {
 							sys = [];
 							$.each(data.metadata.playable_platform.values,function(index,val) { sys.push(val.replace(/[^\w\d ]/g,"")) });
 						}
