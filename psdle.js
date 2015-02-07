@@ -424,10 +424,12 @@ repod.psdle = {
 		temp += "<br />";
 		if (this.config.deep_search && !dlQueue) {
 			temp +=	'<span class="psdle_fancy_bar">';
+			var order = ["downloadable_game","demo","add_on","avatar","application","theme","unknown"]
 			$.each(this.type_cache, function(key) {
-				temp += '<span id="filter_'+key+'">'+((that.lang.categories[key]) ? that.lang.categories[key] : key)+'</span>'
+				var line = '<span id="filter_'+key+'">'+((that.lang.categories[key]) ? that.lang.categories[key] : key)+'</span>';
+				if ($.inArray(key,order) >= 0) { order[$.inArray(key,order)] = line} else { order.push(line); }
 			});
-			temp += '</span><br />';
+			temp += order.join("")+'</span><br />';
 		}
 		if (!dlQueue) { temp += "<input type='text' id='psdle_search_text' placeholder='"+this.lang.strings.search+"' />"; }
 		temp += "<br />";
