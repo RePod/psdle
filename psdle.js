@@ -255,7 +255,7 @@ repod.psdle = {
 			$("span[id=export_view]").off("click").on("click", function() { repod.psdle.exportTable.display(); });
 			$("#psdle_search_text").off("blur").on("blur", function() { repod.psdle.table.regen(); });
 			$("#dl_queue").one("click", function() { repod.psdle.dlQueue.generate.display(); });
-			$(document).off("click", "#muh_table > tbody > tr").on("click", "#muh_table > tbody > tr", function(e) { e.preventDefault(); repod.psdle.dlQueue.batch.add.ask(this); });
+			$(document).off("click", "[id^=psdle_index_]").on("click", "[id^=psdle_index_]", function(e) { e.preventDefault(); repod.psdle.dlQueue.batch.add.ask(this); });
 		},
 		gen: function() {
 			repod.psdle.config.lastsort = ""; repod.psdle.config.lastsort_r = false; var that = this;
@@ -505,11 +505,12 @@ repod.psdle = {
 		delimited: function(e) {
 			var that = this, sep = (e) ? e : "	";
 			var t = repod.psdle.lang.columns.name+sep+repod.psdle.lang.columns.platform+sep+repod.psdle.lang.columns.size+sep+repod.psdle.lang.columns.date+"\n";
-			var trs = $("tr").filter(":gt(0)");
+			var trs = $("[id^=psdle_index_]");
 			trs.each(function() {
 				var index = $(this).attr("id").split("_").pop(), b = repod.psdle.gamelist[index];
 				t += b.name+sep+repod.psdle.safeGuessSystem(b.platform)+sep+b.size_f+sep+b.pdate+"\n";
 			});
+			t += sep+sep+$("#psdle_totals").children().eq(3).text()+sep+"\n";
 			return t;
 		}
 	},
@@ -697,7 +698,7 @@ repod.psdle = {
 			},
 			totals: function() {
 				var a = 0; $.each(repod.psdle.gamelist_cur, function(b,c) { a += c.size; });
-				return "<tr><td /><td /><td /><td>"+formatFileSizeDisplayStr(a)+"</td><td /></tr>";
+				return "<tr id='psdle_totals'><td /><td /><td /><td>"+formatFileSizeDisplayStr(a)+"</td><td /></tr>";
 			}
 		}
 	},
