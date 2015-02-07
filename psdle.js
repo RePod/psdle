@@ -289,6 +289,7 @@ repod.psdle = {
 					temp += repod.psdle.table_utils.gen.row(val);					
 				}
 			});
+			temp += repod.psdle.table_utils.gen.totals();
 			var psswitch = (repod.psdle.config.has_plus) ? " (<div id='slider' title='"+repod.psdle.lang.strings.plus+"'><div class='handle_container' style='text-align:"+repod.psdle.config.switch_align+"'><div class='handle' style='background-color:"+repod.psdle.config.switch_color+"'/></div></div> <div id='psdleplus' style='display:inline-block' /> "+plus+")" : "";
 			$("#table_stats").html(count+psswitch+" / "+repod.psdle.gamelist.length);
 			if ($("#slider").length > 0) { $("#slider").tooltip().one("click",function() { that.plus_switch(); }); }
@@ -689,6 +690,10 @@ repod.psdle = {
 				}
 				temp += "</tr>";
 				return temp;
+			},
+			totals: function() {
+				var a = 0; $.each(repod.psdle.gamelist_cur, function(b,c) { a += c.size; });
+				return "<tr><td /><td /><td /><td>"+formatFileSizeDisplayStr(a)+"</td><td /></tr>";
 			}
 		}
 	},
