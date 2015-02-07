@@ -4,14 +4,14 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.014
+// @version		2.021
 // @require		https://code.jquery.com/jquery-1.11.1.min.js
 // @include		https://store.sonyentertainmentnetwork.com/*
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
 // @downloadURL	https://repod.github.io/psdle/psdle.user.js
 // @icon		https://repod.github.io/psdle/logo/6_psdle_64px.png
-// @require		http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js
-// @require		http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js
+// @require		https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js
+// @require		https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js
 // ==/UserScript==
 
 /*
@@ -42,33 +42,31 @@ SOFTWARE.
 
 var repod = {};
 repod.psdle = {
-	gamelist: [], gamelist_cur: [], autocomplete_cache: [], lang: {}, id_cache: {},
+	gamelist: [], gamelist_cur: [], autocomplete_cache: [], lang: {}, id_cache: {}, type_cache: {},
 	lang_cache: {
 		"en": {
 			"def": "us",
-			"us":{"local":"English","startup":{"apis":"Select which APIs you would like to use, hover for more details.<br />Certain APIs may not be disabled.","wait":"Please wait.","start":"Start"},"columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"export_view":"Export View","games":"Games","avatar":"Avatars","demo":"Demos","unlock":"Unlocks","pass":"Passes","pack":"Packs","theme":"Themes","addon":"Add-ons","app":"Applications","unknown":"Unknown","page":"Page"},"strings":{"delimiter":"Enter delimiter:","stringify_error":"Error: Browser does not have JSON.stringify.","yes":"Yes","no":"No","search":"Search by game title","dlQueue":"Queue","dlList":"List","plus":"Toggle visibility of PS+ titles.","queue_all":"All","queue_to":"Download to $SYS$"},"apis":[{"internal_id":"api_entitle","name":"Entitlements","desc":"Cannot be disabled. Accesses purchase information used to create the download list, determine PS+ status, and other things."},{"internal_id":"api_game","name":"Catalog","desc":"Accesses additional game information to determine proper console, fix broken images, and more."},{"internal_id":"api_queue","name":"Download Queue","desc":"Allows adding and removing items from the download queue. Reads download queue information and the amount of activated consoles on the account."},{"internal_id":"api_pstv","name":"PS TV","desc":"Detect PS TV compatible titles. Only supported on \"en-us\" web store (not PSDLE language).","disabled":true}]}
+			"us":{"local":"English","startup":{"apis":"Select which APIs you would like to use, hover for more details.<br />Certain APIs may not be disabled.","wait":"Please wait.","start":"Start"},"columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"export_view":"Export View","page":"Page"},"categories":{"downloadable_game":"Games","demo":"Demos","add_on":"Add-ons","unlock":"Unlocks","unlock_key":"Unlock Keys","avatar":"Avatars","theme":"Themes","other":"other","other_game_related":"other_game_related","game_content":"game_content","tumbler_index":"tumbler_index","home":"home","ungrouped_game":"ungrouped_game","promo_content":"promo_content","beta":"Betas","application":"Applications","extras":"Extras","unknown":"Unknown"},"strings":{"delimiter":"Enter delimiter:","stringify_error":"Error: Browser does not have JSON.stringify.","yes":"Yes","no":"No","search":"Search by game title","dlQueue":"Queue","dlList":"List","plus":"Toggle visibility of PS+ titles.","queue_all":"All","queue_to":"Download to $SYS$"},"apis":[{"internal_id":"api_entitle","name":"Entitlements","desc":"Cannot be disabled. Accesses purchase information used to create the download list, determine PS+ status, and other things."},{"internal_id":"api_game","name":"Catalog","desc":"Accesses additional game information to determine proper console, fix broken images, and more."},{"internal_id":"api_queue","name":"Download Queue","desc":"Allows adding and removing items from the download queue. Reads download queue information and the amount of activated consoles on the account."},{"internal_id":"api_pstv","name":"PS TV","desc":"Detect PS TV compatible titles. Only supported on \"en-us\" web store (not PSDLE language).","disabled":true}]}
 		},
 		"es": {
 			"def": "mx",
-			"mx":{"local":"Español","startup":{"wait":"Esperando en la página se cargue."},"columns":{"icon":"Icono","name":"Nombre","platform":"Plataforma","size":"Tamaño","date":"Fecha"},"labels":{"export_view":"Exportar vista","games":"juegos","avatar":"avatares","demo":"población","unlock":"descubrir","pass":"adelantar","pack":"paquete","theme":"Temas","addon":"Complementos","app":"Aplicaciones","unknown":"Desconocido","page":"paje"},"strings":{"delimiter":"Ingrese delimitador:","stringify_error":"Error: Navegador no tiene JSON.stringify.","yes":"Sí","no":"No","search":"Búsqueda por título del juego"}} // Caaz, somebody.
+			"mx":{"local":"Español","startup":{"wait":"Esperando en la página se cargue."},"columns":{"icon":"Icono","name":"Nombre","platform":"Plataforma","size":"Tamaño","date":"Fecha"},"labels":{"export_view":"Exportar vista","page":"Paje"},"categories":{"downloadable_game":"Juegos","demo":"Población","avatar":"avatares","add_on":"Complementos","unlock":"Descubrir","theme":"Temas","application":"Aplicaciones","unknown":"Desconocido",},"strings":{"delimiter":"Ingrese delimitador:","stringify_error":"Error: Navegador no tiene JSON.stringify.","yes":"Sí","no":"No","search":"Búsqueda por título del juego"}} // Caaz, somebody.
 		},
 		"de": {
 			"def": "de",
-			"de":{"local":"Deutsch","startup":{"wait":"Seite wird geladen, bitte warten."},"columns":{"icon":"Symbol","name":"Name","platform":"Plattform","size":"Größe","date":"Datum"},"labels":{"export_view":"Exportiere Ansicht","games":"Spiele","avatar":"Spielerbilder","demo":"Demos","unlock":"Freischaltbares","pass":"Pässe","pack":"Bündel","theme":"Themen","addon":"Erweiterungen","app":"Anwendungen","unknown":"Unbekannt","page":"Seite"},"strings":{"delimiter":"Geben sie ein Trennzeichen ein","stringify_error":"Fehler: Browser fehlt \"JSON.stringify\".","yes":"Ja","no":"Nein","search":"Spiele titel eingeben für direkte suche"}} // Provided by /u/_MrBubbles
+			"de":{"local":"Deutsch","startup":{"wait":"Seite wird geladen, bitte warten."},"columns":{"icon":"Symbol","name":"Name","platform":"Plattform","size":"Größe","date":"Datum"},"labels":{"export_view":"Exportiere Ansicht","page":"Seite"},"categories":{"downloadable_game":"Spiele","demo":"Demos","add_on":"Erweiterungen","unlock":"Freischaltbares","avatar":"Spielerbilder","theme":"Themen","application":"Anwendungen","unknown":"Unbekannt",},"strings":{"delimiter":"Geben sie ein Trennzeichen ein","stringify_error":"Fehler: Browser fehlt \"JSON.stringify\".","yes":"Ja","no":"Nein","search":"Spiele titel eingeben für direkte suche"}} // Provided by /u/_MrBubbles
 		},
 		"fr": {
 			"def": "fr",
-			"fr":{"local":"Français","startup":{"apis":"Sélectionner l'API à utiliser; Survoler pour plus de détails.<br />Certaines APIs ne peuvent pas être désactivées.","wait":"Merci de patienter.","start":"Commencer"},"columns":{"icon":"Icône","name":"Nom","platform":"Plate-forme","size":"Taille","date":"Date"},"labels":{"export_view":"Exporter la vue","games":"Jeux","avatar":"Avatars","demo":"Démos","unlock":"Codes de déverouillage","pass":"Pass","pack":"Packs","theme":"Thèmes","addon":"DLCs","app":"Applications","unknown":"Inconnu","page":"Page"},"strings":{"delimiter":"Entrer le délimiteur:","stringify_error":"Erreur: votre navigateur ne supporte pas JSON.stringify.","yes":"Oui","no":"Non","search":"Rechercher par titre de jeu","dlQueue":"Queue","dlList":"Liste","plus":"Afficher/cacher les titres PS+.","queue_all":"Tous","queue_to":"Télécharger sur $SYS$"},"apis":[{"internal_id":"api_entitle","name":"Droits","desc":"Ne peut pas être désactivée. Accède aux informations d'achat afin de créer la liste de téléchargement, et déterminer le statut PS+, ainsi que d'autres choses."},{"internal_id":"api_game","name":"Catalogue","desc":"Accède aux informations supplémentaires des jeux pour déterminer la plate-forme, corriger les liens d'images cassés, et plus."},{"internal_id":"api_queue","name":"Liste de téléchargement","desc":"Permet d'ajouter ou de retirer des articles de la liste de téléchargement. Lit les informations de la liste de téléchargement et le nombre de consoles activées sur le compte."},{"internal_id":"api_pstv","name":"PS TV","desc":"Détecte les titres compatibles PS TV. Ne marche que sur le store \"en-us\" (différent de la langue choisie pour PSDLE).","disabled":true}] } // Provided by @cramoisan
+			"fr":{"local":"Français","startup":{"apis":"Sélectionner l'API à utiliser; Survoler pour plus de détails.<br />Certaines APIs ne peuvent pas être désactivées.","wait":"Merci de patienter.","start":"Commencer"},"columns":{"icon":"Icône","name":"Nom","platform":"Plate-forme","size":"Taille","date":"Date"},"labels":{"export_view":"Exporter la vue","page":"Page"},"categories":{"downloadable_game":"Jeux","demo":"Démos","add_on":"DLCs","unlock":"Codes de déverouillage","avatar":"Avatars","theme":"Thèmes","application":"Applications","unknown":"Inconnu"},"strings":{"delimiter":"Entrer le délimiteur:","stringify_error":"Erreur: votre navigateur ne supporte pas JSON.stringify.","yes":"Oui","no":"Non","search":"Rechercher par titre de jeu","dlQueue":"Queue","dlList":"Liste","plus":"Afficher/cacher les titres PS+.","queue_all":"Tous","queue_to":"Télécharger sur $SYS$"},"apis":[{"internal_id":"api_entitle","name":"Droits","desc":"Ne peut pas être désactivée. Accède aux informations d'achat afin de créer la liste de téléchargement, et déterminer le statut PS+, ainsi que d'autres choses."},{"internal_id":"api_game","name":"Catalogue","desc":"Accède aux informations supplémentaires des jeux pour déterminer la plate-forme, corriger les liens d'images cassés, et plus."},{"internal_id":"api_queue","name":"Liste de téléchargement","desc":"Permet d'ajouter ou de retirer des articles de la liste de téléchargement. Lit les informations de la liste de téléchargement et le nombre de consoles activées sur le compte."},{"internal_id":"api_pstv","name":"PS TV","desc":"Détecte les titres compatibles PS TV. Ne marche que sur le store \"en-us\" (différent de la langue choisie pour PSDLE).","disabled":true}]} // Provided by @cramoisan
 		},
 		"ru": {
 			"def":"ru",
-			"ru":{"local":"Русский","startup":{"wait":"Ожидание загрузки страниц..."},"columns":{"icon":"Иконка","name":"Название","platform":"Платформа","size":"Размер","date":"Дата"},"labels":{"export_view":"Export View","games":"Игры","avatar":"Аватары","demo":"Демо-версии","unlock":"Разблокировки","pass":"Сезонные пропуски ","pack":"Набор","theme":"Темы","addon":"Дополенния","app":"Приложения","unknown":"Неизвестно","page":"Страница"},"strings":{"delimiter":"Введите разделитель:","stringify_error":"Ошибка: в браузере отсутствует JSON.stringify.","yes":"Да","no":"Нет","search":"Поиск по названию игры"}} //Provided by MorbertDou (issue #2)
+			"ru":{"local":"Русский","startup":{"wait":"Ожидание загрузки страниц..."},"columns":{"icon":"Иконка","name":"Название","platform":"Платформа","size":"Размер","date":"Дата"},"labels":{"export_view":"Export View","page":"Страница"},"categories":{"downloadable_game":"Игры","demo":"Демо-версии","add_on":"Дополенния","unlock":"Разблокировки","avatar":"Аватары","theme":"Темы","application":"Приложения","unknown":"Неизвестно"},"strings":{"delimiter":"Введите разделитель:","stringify_error":"Ошибка: в браузере отсутствует JSON.stringify.","yes":"Да","no":"Нет","search":"Поиск по названию игры"}} //Provided by MorbertDou (issue #2)
 		},
 		"ps": {
-			"def": "pi",
-			"pi":{"local":"Pirate","startup":{"wait":"Ye be waitin."},"columns":{"icon":"Doubloon","name":"Title","platform":"Ship","size":"Boat","date":"Date"},"labels":{"export_view":"Compass","games":"Booty","avatar":"Shipmates","demo":"Plans","unlock":"Keys","pass":"Sails","pack":"Treasure Hoard","theme":"Paint","addon":"Cannons","app":"Galley","unknown":"Davey Jones' Locker","page":"Map"},"strings":{"delimiter":"Enter delimiter:","stringify_error":"The sea don't have a JSON.stringify.","yes":"Yargh","no":"Nay","search":"Set a course for booty"}}, //Arcon
-			"dz":{"local":"Dovahzul","startup":{"wait":"Saraan fah deykel wah genun."},"columns":{"icon":"Andiir","name":"For","platform":"Palaar","size":"Raaz","date":"Zahtiid"},"labels":{"export_view":"Sav Fahzon","games":"Kred","avatar":"Rahnunahst","demo":"Gor","unlock":"Bex","pass":"Rahn","pack":"Edrah","theme":"Niin","addon":"Malur","app":"Mii","unknown":"Vomindok","page":"Deykel"},"strings":{"delimiter":"Haav krenok:","stringify_error":"Tozein Hi dreh ni lost JSON.stringify","yes":"Geh","no":"Nid","search":"Tovit naal kred tet "}}, // Caaz
-			"ha":{"local":"H4k3r","startup":{"apis":"import.APIs (hover: man)","wait":"G4th3ring rez0urc3s.","start":"make"},"columns":{"icon":"1con","name":"H4ndle","platform":"P|a+f0rm","size":"S1z3","date":"D4te"},"labels":{"export_view":"D0x","games":"W4rez","avatar":"4va+ar","demo":"Freeware","unlock":"H4x","pass":"Pa55e5","pack":"Pax","theme":"R1cez","addon":"Add-0ns","app":"S0f+w4r3","unknown":"?","page":"P4g3"},"strings":{"delimiter":"5pli+ by:","stringify_error":"3rr0r: No JSON.stringify.","yes":"Y","no":"N","search":"grep"}} //Caaz
+			"def": "ha",
+			"ha":{"local":"H4ker","startup":{"apis":"import.APIs (hover: man)","wait":"...","start":"make"},"columns":{"icon":"1con","name":"H4ndle","platform":"P|a+f0rm","size":"S1z3","date":"D4t3"},"labels":{"export_view":"D0x","page":"P4g3"},"categories":{"downloadable_game":"W4rez","demo":"Freeware","add_on":"Add-0ns","unlock":"Cracks","avatar":"4va+ar","theme":"Themes","other":"other","beta":"Betas","application":"S0f+w4r3","unknown":"?"},"strings":{"delimiter":"5pli+ by:","yes":"Y","no":"N","search":"grep","queue_all":"wget all","queue_to":"wget $SYS$"}} //Caaz
 		}
 	},
 	determineLanguage: function(e,f) {
@@ -273,7 +271,7 @@ repod.psdle = {
 			$("span[id=export_view]").off("click").on("click", function() { repod.psdle.exportTable.display(); });
 			$("#psdle_search_text").off("blur").on("blur", function() { repod.psdle.table.regen(); });
 			$("#dl_queue").one("click", function() { repod.psdle.dlQueue.generate.display(); });
-			$(document).off("click", "#muh_table > tbody > tr").on("click", "#muh_table > tbody > tr", function(e) { e.preventDefault(); repod.psdle.dlQueue.batch.add.ask(this); });
+			$(document).off("click", "[id^=psdle_index_]").on("click", "[id^=psdle_index_]", function(e) { e.preventDefault(); repod.psdle.dlQueue.batch.add.ask(this); });
 		},
 		gen: function() {
 			repod.psdle.config.lastsort = ""; repod.psdle.config.lastsort_r = false; var that = this;
@@ -307,6 +305,7 @@ repod.psdle = {
 					temp += repod.psdle.table_utils.gen.row(val);					
 				}
 			});
+			temp += repod.psdle.table_utils.gen.totals();
 			var psswitch = (repod.psdle.config.has_plus) ? " (<div id='slider' title='"+repod.psdle.lang.strings.plus+"'><div class='handle_container' style='text-align:"+repod.psdle.config.switch_align+"'><div class='handle' style='background-color:"+repod.psdle.config.switch_color+"'/></div></div> <div id='psdleplus' style='display:inline-block' /> "+plus+")" : "";
 			$("#table_stats").html(count+psswitch+" / "+repod.psdle.gamelist.length);
 			if ($("#slider").length > 0) { $("#slider").tooltip().one("click",function() { that.plus_switch(); }); }
@@ -439,15 +438,14 @@ repod.psdle = {
 			}
 		}
 		temp += "<br />";
-		if (this.config.deep_search && !dlQueue) {					
-		temp +=		'<span class="psdle_fancy_bar">' +
-					'<span id="filter_downloadable_game">'+this.lang.labels.games+'</span>' +
-					'<span id="filter_avatar">'+this.lang.labels.avatar+'</span>' +
-					'<span id="filter_demo">'+this.lang.labels.demo+'</span>'+
-					'<span id="filter_add_on">'+this.lang.labels.addon+'</span>' +
-					'<span id="filter_application">'+this.lang.labels.app+'</span>' +
-					'<span id="filter_theme">'+this.lang.labels.theme+'</span>' +
-					'<span id="filter_unknown">'+this.lang.labels.unknown+'</span></span><br />';
+		if (this.config.deep_search && !dlQueue) {
+			temp +=	'<span class="psdle_fancy_bar">';
+			var order = ["downloadable_game","demo","add_on","avatar","application","theme","unknown"], out = []; out[order.length +1] = "";
+			$.each(this.type_cache, function(key) {
+				var line = '<span id="filter_'+key+'">'+((that.lang.categories[key]) ? that.lang.categories[key] : key)+'</span>';
+				if ($.inArray(key,order) >= 0) { out[$.inArray(key,order)] = line} else { out.push(line); }
+			});
+			temp += out.join("")+'</span><br />';
 		}
 		if (!dlQueue) { temp += "<input type='text' id='psdle_search_text' placeholder='"+this.lang.strings.search+"' />"; }
 		temp += "<br />";
@@ -523,11 +521,12 @@ repod.psdle = {
 		delimited: function(e) {
 			var that = this, sep = (e) ? e : "	";
 			var t = repod.psdle.lang.columns.name+sep+repod.psdle.lang.columns.platform+sep+repod.psdle.lang.columns.size+sep+repod.psdle.lang.columns.date+"\n";
-			var trs = $("tr").filter(":gt(0)");
+			var trs = $("[id^=psdle_index_]");
 			trs.each(function() {
 				var index = $(this).attr("id").split("_").pop(), b = repod.psdle.gamelist[index];
 				t += b.name+sep+repod.psdle.safeGuessSystem(b.platform)+sep+b.size_f+sep+b.pdate+"\n";
 			});
+			t += sep+sep+$("#psdle_totals").children().eq(3).text()+sep+"\n";
 			return t;
 		}
 	},
@@ -544,7 +543,7 @@ repod.psdle = {
 				var a = this.batch.pop();
 				$.getJSON(repod.psdle.config.game_api+a.pid)
 				.success(function(data) { that.process(a.index,data); })
-				.fail(function() { that.run(); });
+				.fail(function() { repod.psdle.type_cache.unknown = true; that.run(); });
 			} else {
 				repod.psdle.table.gen();
 			}
@@ -562,11 +561,10 @@ repod.psdle = {
 				if (!!repod.psdle.gamelist[index]) {
 					var sys, type = "unknown", r = /^(PS(?:1|2)).+Classic$/i;
 					if (data.metadata) {
-						if (!!data.metadata.game_subtype) {
-							if (!!data.metadata.secondary_classification.values[0].match(r)) { sys = data.metadata.secondary_classification.values[0].match(r).pop(); }
-							else if (!!data.metadata.game_subtype.values[0].match(r)) { sys = data.metadata.game_subtype.values[0].match(r).pop(); }
-							else if (!!data.metadata.primary_classification.values[0].match(r)) { sys = data.metadata.secondary_classification.values[0].match(r).pop(); }
-						} else if (!!data.metadata.playable_platform) {
+						if (!!data.metadata.secondary_classification.values[0].match(r)) { sys = data.metadata.secondary_classification.values[0].match(r).pop(); }
+						//else if (!!data.metadata.game_subtype.values[0].match(r)) { sys = data.metadata.game_subtype.values[0].match(r).pop(); }
+						else if (!!data.metadata.primary_classification.values[0].match(r)) { sys = data.metadata.secondary_classification.values[0].match(r).pop(); }
+						else if (!!data.metadata.playable_platform) {
 							sys = [];
 							$.each(data.metadata.playable_platform.values,function(index,val) { sys.push(val.replace(/[^\w\d ]/g,"")) });
 						}
@@ -583,6 +581,7 @@ repod.psdle = {
 			} else {
 				type = (data.top_category) ? data.top_category : "unknown";
 			}
+			repod.psdle.type_cache[type] = true;
 			repod.psdle.gamelist[index].deep_type = type;
 			
 			this.run()
@@ -711,6 +710,10 @@ repod.psdle = {
 				}
 				temp += "</tr>";
 				return temp;
+			},
+			totals: function() {
+				var a = 0; $.each(repod.psdle.gamelist_cur, function(b,c) { a += c.size; });
+				return "<tr id='psdle_totals'><td /><td /><td /><td>"+formatFileSizeDisplayStr(a)+"</td><td /></tr>";
 			}
 		}
 	},
