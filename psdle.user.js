@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.022
+// @version		2.023
 // @require		https://code.jquery.com/jquery-1.11.1.min.js
 // @include		https://store.sonyentertainmentnetwork.com/*
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -187,7 +187,11 @@ repod.psdle = {
 			}
 			$("#muh_games_container").html(a).slideDown('slow',function() {
 				if (mode == "progress") { if (fake_list) { that.debug.fake_list() } else { that.generateList(); } }
-				else { $("[id^=api_]").tooltip("destroy").tooltip({position: {my: "center top", at: "center bottom"}}) }
+				else {
+					$("[id^=api_]").promise().done(function() {
+						$("[id^=api_]").tooltip({position: {my: "center top", at: "center bottom"}})
+					});
+				}
 			});
 		});
 	},
@@ -505,6 +509,7 @@ repod.psdle = {
 					/* Newbox Container	*/ "#dlQueue_newbox { z-index:9001;position:fixed;top:0px;left:0px;width:100%;height:100%;display:table;background-color:rgba(0,0,0,0.25); } #dlQueue_newbox > div { display:table-cell;vertical-align:middle;height:inherit;text-align:center; }" +
 					/* PS+ switch		*/ "#slider { vertical-align: bottom;display:inline-block;cursor:pointer;border-radius:100%;width:30px;height:12px;border-radius:10px;border:2px solid #F0F0F0; } .handle_container { text-align:center;width:100%;height:100%; } .handle { width:10px;height:10px;border-radius:100%;margin:0px 2px 6px;border:1px solid #FFF;display:inline-block;background-color:#85C107; }" +
 					/* Tooltips			*/ ".tooltip-inner { background-color:#2185F4 !important; border: 5px solid #2185F4 !important; } .tooltip-arrow { border-top-color:#2185F4 !important; } .tooltip.in { opacity:1 !important; }" +
+					/* Tooltips 2		*/ ".ui-tooltip { background-color:#2185F4; max-width: 234px; z-index: 9002; background-color: #2185F4; font-size: 11px; text-align: center; line-height: 1.4em; padding: 12px; border-radius: 4px; }" +
 					/* Autocomplete		*/ ".ui-autocomplete { z-index: 9002; max-width:590px; max-height:200px; overflow-y:auto; overflow-x:hidden; } .ui-menu { position:fixed; border:2px solid #F0F0F0; border-top: none; background-color:#fff; } .ui-menu > .ui-menu-item * { color:#000; text-decoration:none; white-space: nowrap; text-overflow: ellipsis; cursor:pointer; } .ui-menu > .ui-menu-item:nth-child(even) { background-color:#e6e6e6; } .ui-menu-item .ui-state-focus { display:inline-block; width:100%; color:#000; background-color: rgba(33, 133, 244, 0.7); }" +
 					/* PS TV			*/ ".psdletv { font-style: italic;font-weight: bold;font-size: 0.6em;vertical-align: text-top;position: absolute;top: 4px; }"; 
 		$("head").append("<style type='text/css' id='psdle_css'>"+temp+"</style>");
