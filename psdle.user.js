@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.023
+// @version		2.024
 // @require		https://code.jquery.com/jquery-1.11.1.min.js
 // @include		https://store.sonyentertainmentnetwork.com/*
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -748,7 +748,7 @@ repod.psdle = {
 	newbox: {
 		generate: function(e) {
 			var plus = "", i = (isNaN(e)) ? Number($(e).attr("id").split("_").pop()) : Number(e), game = repod.psdle.gamelist[i], id = (game.index -1);
-			var dialog = $("<div id='dlQueueAsk' style='background-image:url(\""+game.icon.replace(/(w|h)=\d+/g,"=400")+"\");'/>");
+			var dialog = $("<div id='dlQueueAsk' style='background-image:url(\""+game.icon.replace(/(w|h)=\d+/g,"$1=400")+"\");'/>");
 			try { if (game.plus) { plus = $("#psdleplus").clone()[0].outerHTML+" "; } } catch(e) {}
 			dialog.append("<div id='dlQAN'>"+plus+game.name+"</div>");
 			if (repod.psdle.config.use_queue) {

@@ -732,7 +732,7 @@ repod.psdle = {
 	newbox: {
 		generate: function(e) {
 			var plus = "", i = (isNaN(e)) ? Number($(e).attr("id").split("_").pop()) : Number(e), game = repod.psdle.gamelist[i], id = (game.index -1);
-			var dialog = $("<div id='dlQueueAsk' style='background-image:url(\""+game.icon.replace(/(w|h)=\d+/g,"=400")+"\");'/>");
+			var dialog = $("<div id='dlQueueAsk' style='background-image:url(\""+game.icon.replace(/(w|h)=\d+/g,"$1=400")+"\");'/>");
 			try { if (game.plus) { plus = $("#psdleplus").clone()[0].outerHTML+" "; } } catch(e) {}
 			dialog.append("<div id='dlQAN'>"+plus+game.name+"</div>");
 			if (repod.psdle.config.use_queue) {
