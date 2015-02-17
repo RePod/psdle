@@ -625,6 +625,7 @@ repod.psdle = {
 					data: JSON.stringify([dat]),
 					complete: completeCb,
 					error: function(d) {
+						alert("PSDLE | Download Queue | Error\n"+d.responseJSON.header.status_code+" - "+d.responseJSON.header.message_key+" ("+sys+" / "+id+")");
 						console.error("PSDLE | Download Queue | "+d.responseJSON.header.status_code+" "+d.responseJSON.header.message_key+" ("+sys+" / "+id+")");
 						errorCb(d);
 					}

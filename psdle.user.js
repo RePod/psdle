@@ -4,8 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.024
-// @require		https://code.jquery.com/jquery-1.11.1.min.js
+// @version		2.025
 // @include		https://store.sonyentertainmentnetwork.com/*
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
 // @downloadURL	https://repod.github.io/psdle/psdle.user.js
@@ -13,6 +12,14 @@
 // @require		https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js
 // @require		https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js
 // ==/UserScript==
+
+/*
+To keep this from updating remove the @updateURL (for automatic updates) and @downloadURL (for manual updates) above.
+Alternatively, reconfigure the updating settings in your Userscript manager.
+
+@require lines are recommended for Chrome but may not be needed for Firefox, however these use Google's public API mirrors.
+Userscript managers should already cache @requires locally and not request them again.
+*/
 
 /*
 The MIT License (MIT)
@@ -641,6 +648,7 @@ repod.psdle = {
 					data: JSON.stringify([dat]),
 					complete: completeCb,
 					error: function(d) {
+						alert("PSDLE | Download Queue | Error\n"+d.responseJSON.header.status_code+" - "+d.responseJSON.header.message_key+" ("+sys+" / "+id+")");
 						console.error("PSDLE | Download Queue | "+d.responseJSON.header.status_code+" "+d.responseJSON.header.message_key+" ("+sys+" / "+id+")");
 						errorCb(d);
 					}
