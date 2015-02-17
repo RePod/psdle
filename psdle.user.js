@@ -4,8 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.024
-// @require		https://code.jquery.com/jquery-1.11.1.min.js
+// @version		2.026
 // @include		https://store.sonyentertainmentnetwork.com/*
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
 // @downloadURL	https://repod.github.io/psdle/psdle.user.js
@@ -13,6 +12,14 @@
 // @require		https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js
 // @require		https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js
 // ==/UserScript==
+
+/*
+To keep this from updating remove the @updateURL (for automatic updates) and @downloadURL (for manual updates) above.
+Alternatively, reconfigure the updating settings in your Userscript manager.
+
+@require lines are recommended for Chrome but may not be needed for Firefox, however these use Google's public API mirrors.
+Userscript managers should already cache @requires locally and not request them again.
+*/
 
 /*
 The MIT License (MIT)
@@ -42,7 +49,7 @@ SOFTWARE.
 
 var repod = {};
 repod.psdle = {
-	gamelist: [], gamelist_cur: [], autocomplete_cache: [], lang: {}, id_cache: {}, type_cache: {},
+	gamelist: [], gamelist_cur: [], autocomplete_cache: [], lang: {}, id_cache: {}, type_cache: {}, sys_cache: {},
 	lang_cache: {
 		"en": {
 			"def": "us",
@@ -256,7 +263,7 @@ repod.psdle = {
 		var safe = !0;
 		if (repod.psdle.config.check_tv) { safe = !1; repod.psdle.tv.init(); }
 		if (repod.psdle.config.deep_search) { safe = !1; this.game_api.run(); this.game_api.run(); this.game_api.run(); this.game_api.run(); }
-		if (safe) { this.table.gen(); }
+		if (safe) { this.genSysCache(); this.table.gen(); }
 	},
 	isValidContent: function(obj) {
 		if (obj.VUData) { return !1; }
@@ -264,6 +271,7 @@ repod.psdle = {
 		else if (obj.drm_def || obj.entitlement_attributes) { return !0; }
 		else { return !1; }
 	},
+	genSysCache: function() { var that = this; $.each(this.gamelist,function (i,v) { var name = that.safeGuessSystem(v.platform), key = name.toLowerCase().replace("ps ",""); that.sys_cache[key] = name; }) },
 	table: {
 		bindSearch: function() {
 			//Unbind for safety.
@@ -341,9 +349,7 @@ repod.psdle = {
 			$("#slider").tooltip();
 			this.regen();
 		},
-		margin: function() {
-			$("#muh_table").animate({"margin-top":$("#search_options").outerHeight() - $("#sub_container").css("padding-top").replace("px","")+"px"});
-		},
+		margin: function() { $("#muh_table").animate({"margin-top":$("#search_options").outerHeight() - $("#sub_container").css("padding-top").replace("px","")+"px"}); },
 		icons: {
 			select: function(type) {
 				type = (type) ? type : "smart";
@@ -430,11 +436,11 @@ repod.psdle = {
 		var temp = '<div id="search_options">';
 		if (!dlQueue) { temp += '<span><span class="psdle_fancy_bar"><span id="export_view">'+this.lang.labels.export_view+'</span><span id="export_csv">CSV</span></span> '; }
 		temp +=		'<span class="psdle_fancy_bar">';
-		if (this.config.deep_search && !dlQueue) { temp += '<span id="system_ps1">PS1</span><span id="system_ps2">PS2</span>'; }
-		temp +=		'<span id="system_ps3">PS3</span>' +
-					'<span id="system_ps4">PS4</span>';
-		if (!dlQueue) { temp += '<span id="system_psp">PSP</span>'; }
-		temp +=		'<span id="system_psv">PS Vita</span></span>';
+		
+		var order = ["ps1","ps2","ps3","ps4","psp","vita"], out = []; out[order.length +1] = "";
+		$.each(this.sys_cache, function(i,v) { if ($.inArray(i,order) >= 0) { out[$.inArray(i,order)] = '<span id="system_'+i+'">'+v+'</span>'; }});
+		temp += out.join("")+'</span>';
+		
 		if (this.config.use_queue) {
 			if (!dlQueue) {
 				temp += ' <span class="psdle_fancy_but" id="dl_queue">'+this.lang.strings.dlQueue+'</span>';
@@ -573,6 +579,7 @@ repod.psdle = {
 				.success(function(data) { that.process(a.index,data); })
 				.fail(function() { repod.psdle.type_cache.unknown = true; that.run(); });
 			} else {
+				repod.psdle.genSysCache();
 				repod.psdle.table.gen();
 			}
 		},
@@ -641,6 +648,7 @@ repod.psdle = {
 					data: JSON.stringify([dat]),
 					complete: completeCb,
 					error: function(d) {
+						alert("PSDLE | Download Queue | Error\n"+d.responseJSON.header.status_code+" - "+d.responseJSON.header.message_key+" ("+sys+" / "+id+")");
 						console.error("PSDLE | Download Queue | "+d.responseJSON.header.status_code+" "+d.responseJSON.header.message_key+" ("+sys+" / "+id+")");
 						errorCb(d);
 					}
