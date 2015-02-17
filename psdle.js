@@ -619,7 +619,19 @@ repod.psdle = {
 			extend.deep_type = type;
 			
 			if (data.star_rating && data.star_rating.score) { extend.rating = data.star_rating.score }
-			if (data.promomedia && data.promomedia[0]) { extend.images = []; $.each(data.promomedia[0].materials, function(i,v) { if (v.urls && v.urls[0]) { extend.images.push(v.urls[0].url) } }); }
+			if (data.promomedia && data.promomedia[0]) {
+				extend.images = [], extend.videos = [];
+				$.each(data.promomedia[0].materials, function(i,v) {
+					if (v.urls && v.urls[0]) {
+						var a = v.urls[0].url;
+						if (/\.(png|jpg)$/ig.test(a)) {
+							extend.images.push(a);
+						} else if (/\.mp4$/ig.test(a)) {
+							extend.videos.push(a);
+						}
+					}
+				});
+			}
 			if (data.metadata) { extend.metadata = data.metadata; }
 			if (data.long_desc) { extend.long_desc = data.long_desc; }
 			
