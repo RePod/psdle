@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.030
+// @version		2.031
 // @include		https://store.sonyentertainmentnetwork.com/*
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
 // @downloadURL	https://repod.github.io/psdle/psdle.user.js
@@ -558,13 +558,10 @@ repod.psdle = {
 			return csv;
 		},
 		csv_handle: function() {
-			if (!$("#psdle_csv").length) { $("body").append("<a id='psdle_csv' />"); }
-			var rinku = $("#psdle_csv");
-			rinku.attr({
+			$("<a>",{
 			  "download":"psdle_"+(new Date().toISOString())+".csv",
 			  "href":"data:text/csv;charset=utf-8,"+encodeURIComponent(repod.psdle.exportTable.csv())
-			});
-			$("#psdle_csv")[0].dispatchEvent(new MouseEvent("click"));
+			})[0].dispatchEvent(new MouseEvent("click"));
 		},
 		formatRow: function(sep,index) {
 			if (index >= 0) {
@@ -580,7 +577,7 @@ repod.psdle = {
 	game_api: {
 		batch: [],
 		queue: function(index,pid) {
-			var that = this, a = {pid:pid,index,index}
+			var that = this, a = {pid:pid,index:index};
 			/* Do some queue/delay magic here. */
 			if (index == "pid_cache") { this.batch.push(a) } else { this.batch.unshift(a); }
 		},
