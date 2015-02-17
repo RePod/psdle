@@ -26,7 +26,7 @@ SOFTWARE.
 
 var repod = {};
 repod.psdle = {
-	gamelist: [], gamelist_cur: [], autocomplete_cache: [], lang: {}, id_cache: {}, type_cache: {}, sys_cache: {},
+	gamelist: [], gamelist_cur: [], autocomplete_cache: [], lang: {}, id_cache: {}, type_cache: {}, sys_cache: {}, pid_cache:{},
 	lang_cache: {
 		"en": {
 			"def": "us",
@@ -190,6 +190,7 @@ repod.psdle = {
 				//Constants/pre-determined.
 				temp.deep_type = "unknown";
 				temp.pid = obj.product_id;
+				if (!that.pid_cache[temp.pid]) { that.pid_cache[temp.pid] = 1; } else { that.pid_cache[temp.pid]++; }
 				temp.id = obj.id;
 
 				if (obj.entitlement_attributes) {
@@ -197,7 +198,7 @@ repod.psdle = {
 					if (obj.game_meta) {
 						temp.name = obj.game_meta.name;
 						temp.api_icon = obj.game_meta.icon_url;
-						temp.id
+						//temp.id 
 						//temp.icon = obj.game_meta.icon_url;
 					}
 					temp.size = obj.entitlement_attributes[0].package_file_size;
@@ -231,7 +232,8 @@ repod.psdle = {
 			}
 		});
 		this.gamelist.sort(function(a,b) { return (a.date > b.date)?-1:(a.date < b.date)?1:0 });
-		$.each(this.gamelist,function(a,b) { that.gamelist[a].index = a+1; if (that.config.deep_search) { that.game_api.queue(a+1,b.pid); }	});
+		$.each(this.pid_cache, function(i,v) { if (v > 1) { that.game_api.queue("pid_cache",i) }});
+		$.each(this.gamelist,function(a,b) { that.gamelist[a].index = a+1; if (that.config.deep_search) { that.game_api.queue(a+1,((that.pid_cache[b.pid] > 1)?b.id:b.pid)); } });
 		
 		console.log("PSDLE | Finished generating download list.");
 		this.postList();
@@ -335,12 +337,22 @@ repod.psdle = {
 				if (type == "batch") this.batch(0,true);
 			},
 			validate: function(source) {
-				var me = source, index = me.split("_").pop();
-				if (!repod.psdle.gamelist[index].safe_icon) { 
-					$.get(repod.psdle.gamelist[index].icon)
-					.done(function() { repod.psdle.gamelist[index].safe_icon = true; $("#"+me+" .psdle_game_icon").attr("src", repod.psdle.gamelist[index].icon); })
-					.fail(function() { repod.psdle.gamelist[index].safe_icon = true; repod.psdle.gamelist[index].icon = repod.psdle.gamelist[index].api_icon; $("#"+me+" .psdle_game_icon").attr("src", repod.psdle.gamelist[index].icon); });
+				var that = this, index = source.split("_").pop(), temp = repod.psdle.gamelist[index], url = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.id)+"&w=31&h=31"
+				if (!temp.safe_icon) {
+					$.get(url)
+					.success(function() { that.setIcon(index,url) })
+					.fail(function() {
+						url = url.replace(temp.id,temp.pid);
+						$.get(url)
+						.success(function() { that.setIcon(index,url) })
+						.fail(function() { that.setIcon(index,temp.api_icon); })
+					})
 				}
+			},
+			setIcon: function(index,url) {
+				/* Hnnng. */
+				$("#psdle_index_"+index+" .psdle_game_icon").attr("src",url);
+				$.extend(repod.psdle.gamelist[index],{safe_icon: true, icon: url});
 			},
 			smartScroll: function() {
 				/*
@@ -478,7 +490,7 @@ repod.psdle = {
 		//Quick, dirty, and easy. Rewrite.
 		var sys = (typeof(sys_in) == "object") ? sys_in.join(" ") : sys_in; sys = sys.replace(/[^\w\d ]/g,"");
 		if (sys == "PS3 PSP PS Vita" || sys == "PS3 PSP" || sys == "PS Vita PSP" || sys.indexOf("PSP") > -1) { sys = "PSP"; }
-		if (sys == "PS3 PS Vita") { sys = "PS Vita"; }
+		if (sys == "PS3 PS Vita" || sys.indexOf("PS Vita") > -1) { sys = "PS Vita"; }
 		return sys;
 	},
 	injectCSS: function() {
@@ -545,9 +557,9 @@ repod.psdle = {
 	game_api: {
 		batch: [],
 		queue: function(index,pid) {
-			var that = this;
+			var that = this, a = {pid:pid,index,index}
 			/* Do some queue/delay magic here. */
-			this.batch.push({pid:pid,index:index});
+			if (index == "pid_cache") { this.batch.push(a) } else { this.batch.unshift(a); }
 		},
 		run: function() {
 			var that = this;
@@ -555,7 +567,20 @@ repod.psdle = {
 				var a = this.batch.pop();
 				$.getJSON(repod.psdle.config.game_api+a.pid)
 				.success(function(data) { that.process(a.index,data); })
-				.fail(function() { repod.psdle.type_cache.unknown = true; that.run(); });
+				.fail(function() {
+					if (a.index !== "pid_cache") {
+						if (repod.psdle.gamelist[a.index]) {
+							var pid = repod.psdle.gamelist[a.index].pid;
+							if (repod.psdle.pid_cache[pid] && pid !== a.pid) {
+								$.extend(repod.psdle.gamelist[a.index], repod.psdle.pid_cache[pid]);
+							} else {
+								repod.psdle.type_cache.unknown = true; 
+							}
+							repod.psdle.type_cache.unknown = true;
+						}
+					}
+					that.run();
+				});
 			} else {
 				repod.psdle.genSysCache();
 				repod.psdle.table.gen();
@@ -569,22 +594,20 @@ repod.psdle = {
 			this.parse(index,data);
 		},
 		parse: function(index,data) {
-			index--;
 			var extend = {};
+			if (index !== "pid_cache") { index--;}
 			if (data.default_sku && data.default_sku.entitlements.length == 1) {
-				if (!!repod.psdle.gamelist[index]) {
-					var sys, type = "unknown", r = /^(PS(?:1|2)).+Classic$/i;
-					if (data.metadata) {
-						if (!!data.metadata.secondary_classification.values[0].match(r)) { sys = data.metadata.secondary_classification.values[0].match(r).pop(); }
-						//else if (!!data.metadata.game_subtype.values[0].match(r)) { sys = data.metadata.game_subtype.values[0].match(r).pop(); }
-						else if (!!data.metadata.primary_classification.values[0].match(r)) { sys = data.metadata.secondary_classification.values[0].match(r).pop(); }
-						else if (!!data.metadata.playable_platform) {
-							sys = [];
-							$.each(data.metadata.playable_platform.values,function(index,val) { sys.push(val.replace(/[^\w\d ]/g,"")) });
-						}
+				var sys, type = "unknown", r = /^(PS(?:1|2)).+Classic$/i;
+				if (data.metadata) {
+					if (!!data.metadata.secondary_classification.values[0].match(r)) { sys = data.metadata.secondary_classification.values[0].match(r).pop(); }
+					//else if (!!data.metadata.game_subtype.values[0].match(r)) { sys = data.metadata.game_subtype.values[0].match(r).pop(); }
+					else if (!!data.metadata.primary_classification.values[0].match(r)) { sys = data.metadata.secondary_classification.values[0].match(r).pop(); }
+					else if (!!data.metadata.playable_platform) {
+						sys = [];
+						$.each(data.metadata.playable_platform.values,function(i,val) { sys.push(val.replace(/[^\w\d ]/g,"")) });
 					}
-					if (sys) { extend.sys = sys; }
 				}
+				if (index !== "pid_cache" && sys) { extend.platform = sys; }
 			}
 				
 			if (data.top_category == "tumbler_index") {
@@ -596,13 +619,15 @@ repod.psdle = {
 			extend.deep_type = type;
 			
 			if (data.star_rating && data.star_rating.score) { extend.rating = data.star_rating.score }
-			if (data.promomedia && data.promomedia[0]) { extend.images =  []; $.each(data.promomedia[0].materials, function(i,v) { if (v.urls && v.urls[0]) { extend.images.push(v.urls[0].url) } }); }
+			if (data.promomedia && data.promomedia[0]) { extend.images = []; $.each(data.promomedia[0].materials, function(i,v) { if (v.urls && v.urls[0]) { extend.images.push(v.urls[0].url) } }); }
 			if (data.metadata) { extend.metadata = data.metadata; }
 			if (data.long_desc) { extend.long_desc = data.long_desc; }
 			
 			repod.psdle.type_cache[type] = true;
-			$.extend(repod.psdle.gamelist[index],extend);
-			
+			if (index == "pid_cache") { repod.psdle.pid_cache[data.id] = extend; }
+			else {
+				$.extend(repod.psdle.gamelist[index],extend);
+			}
 			this.run()
 		}
 	},
