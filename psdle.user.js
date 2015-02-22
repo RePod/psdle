@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.032
+// @version		2.033
 // @include		/https://store.(sonyentertainmentnetwork|playstation).com/*/
 // @exclude		/https://store.(sonyentertainmentnetwork|playstation).com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -590,7 +590,9 @@ repod.psdle = {
 						if (repod.psdle.gamelist[a.index]) {
 							var pid = repod.psdle.gamelist[a.index].pid;
 							if (repod.psdle.pid_cache[pid] && pid !== a.pid) {
-								$.extend(repod.psdle.gamelist[a.index], repod.psdle.pid_cache[pid]);
+								var temp = $.extend({}, repod.psdle.pid_cache[pid]);
+								$.extend(temp, repod.psdle.gamelist[a.index]);
+								repod.psdle.gamelist[a.index] = temp;
 							} else {
 								repod.psdle.type_cache.unknown = true; 
 							}
@@ -925,7 +927,7 @@ repod.psdle = {
 					temp.id = temp.pid;
 					temp.index = repod.psdle.gamelist.length + 1;
 					temp.name = $(this).find(".cellTitle").text();
-					temp.platform = $(this).find(".pforms").text().split("|");
+					temp.platform = [ $(this).find(".pforms").text().split("|").pop() ];
 					
 					/* Random values */
 					temp.size = Math.floor(Math.random() * (20000000000 - 6000)); //Size, in bytes.
