@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.033
+// @version		2.034
 // @include		/https://store.(sonyentertainmentnetwork|playstation).com/*/
 // @exclude		/https://store.(sonyentertainmentnetwork|playstation).com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -177,17 +177,11 @@ repod.psdle = {
 				a +="</div>";
 				$(document).on('click','[id^=api_]',function() { if ($(this).attr("id") !== "api_entitle") { $(this).toggleClass('toggled_off'); } });
 				$(document).on('click',"#inject_lang",function() { that.debug.inject_lang(); });
-				$(document).one('click',"#gen_fake",function() {
+				$(document).one('click',"#psdle_go, #gen_fake",function () {
 					that.config.deep_search = !$("#api_game").hasClass("toggled_off");
 					that.config.use_queue = !$("#api_queue").hasClass("toggled_off");
-					that.config.check_tv = !$("#api_pstv").hasClass("toggled_off");
-					that.genDisplay("progress",true);
-				});
-				$(document).one('click',"#psdle_go",function () {
-					that.config.deep_search = !$("#api_game").hasClass("toggled_off");
-					that.config.use_queue = !$("#api_queue").hasClass("toggled_off");
-					that.config.check_tv = !$("#api_pstv").hasClass("toggled_off");
-					that.genDisplay("progress");
+					that.config.check_tv = ($("#api_pstv").length) ? !$("#api_pstv").hasClass("toggled_off") : false;
+					that.genDisplay("progress",($(this).attr("id") == "gen_fake")?true:false);
 				});
 			}
 			$("#muh_games_container").html(a).slideDown('slow',function() {
@@ -262,8 +256,8 @@ repod.psdle = {
 	postList: function() {
 		var safe = !0;
 		if (repod.psdle.config.check_tv) { safe = !1; repod.psdle.tv.init(); }
-		if (repod.psdle.config.deep_search) { safe = !1; this.game_api.run(); this.game_api.run(); this.game_api.run(); this.game_api.run(); }
-		if (safe) { this.genSysCache(); this.table.gen(); }
+		if (repod.psdle.config.deep_search) { safe = !1; this.game_api.run(); }
+		if (safe) { this.table.gen(); }
 	},
 	isValidContent: function(obj) {
 		if (obj.VUData) { return !1; }
@@ -271,7 +265,7 @@ repod.psdle = {
 		else if (obj.drm_def || obj.entitlement_attributes) { return !0; }
 		else { return !1; }
 	},
-	genSysCache: function() { var that = this; $.each(this.gamelist,function (i,v) { var name = that.safeGuessSystem(v.platform), key = name.toLowerCase().replace("ps ",""); that.sys_cache[key] = name; }) },
+	genSysCache: function() { var that = this; $.each(this.gamelist,function (i,v) { var name = that.safeGuessSystem(v.platform), key = name.toLowerCase().replace("ps ",""); that.sys_cache[key] = name; }); },
 	table: {
 		bindSearch: function() {
 			//Unbind for safety.
@@ -287,6 +281,7 @@ repod.psdle = {
 			$(document).off("click", "[id^=psdle_index_]").on("click", "[id^=psdle_index_]", function(e) { e.preventDefault(); repod.psdle.dlQueue.batch.add.ask(this); });
 		},
 		gen: function() {
+			repod.psdle.genSysCache();
 			repod.psdle.config.lastsort = ""; repod.psdle.config.lastsort_r = false; var that = this;
 			$("#muh_games_container").css({"position":"absolute"});
 			$("#sub_container").html(repod.psdle.genSearchOptions()).append("<table id='muh_table' style='display:inline-block;text-align:left'><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+repod.psdle.lang.columns.platform+"</th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table><br />"+repod.psdle.config.tag_line);
@@ -602,7 +597,6 @@ repod.psdle = {
 					that.run();
 				});
 			} else {
-				repod.psdle.genSysCache();
 				repod.psdle.table.gen();
 			}
 		},
