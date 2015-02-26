@@ -1,0 +1,35 @@
+/* Caro */
+#caro {
+	background-color:#e6e6e6;
+	border-radius:20px;
+	width:800px; height:320px;
+	max-width:800px; max-height:320px;
+	overflow:hidden; white-space:nowrap;
+	padding: 0px; 
+	border:3px solid #f0f0f0;
+	cursor:pointer;
+}
+#caro_slides { position:relative; font-size:0; }
+#caro_slides > * {
+	font-size:initial;
+	display:inline-block; vertical-align:text-bottom;
+	min-width:800px; min-height:320px;
+	max-width:800px; max-height:320px;
+	text-decoration:none;
+	position:relative;
+}
+
+.cell-info.top { top:0px;left:0px;right:0px;padding:5px; }
+.cell-info.bottom {
+	bottom:0px !important;
+	text-align:left;
+	padding:5px;
+	border-top-right-radius:10px;
+}
+.cell-info.bottomfull {
+	bottom:0px; left:0px; right:0px; text-align:center;
+	padding:5px;
+}
+.grid-cell .bottom .fa { width:16px; }
+
+.cell-info { color:#fff; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; position:absolute; text-align:center; padding:2px 8px; background-color:rgba(0,0,0,0.5); }

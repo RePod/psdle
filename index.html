@@ -1,19 +1,20 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
 	<head>
 		<title>PSDLE</title>
-		<meta name="description" content="PSDLE - Improving everyone's favorite online download list, one loop at a time.">
-		<meta http-equiv="content-type" content="text/html; charset=UTF-8"> 
 		<link rel="SHORTCUT ICON" href="favicon.png">
-		<!-- Externals and jQuery/UI stuff -->
-		<script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta charset="utf-8" />
+		<link rel="stylesheet" href="bootstrap-3.3.2-dist/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="font-awesome-4.2.0/css/font-awesome.min.css" />
+		<link rel="stylesheet" href="bootstrap.css" />
+		<link rel="stylesheet" href="psdle_carousel.css" />
+		<script src="js/jquery-1.11.2.min.js"></script>
 		<script type="text/javascript" src="js/plugins/jquery-color.js"></script>
 		<script type="text/javascript" src="js/jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
-		<script type="text/javascript" src="js/site.js"></script>
-		<script type="text/javascript" src="js/carousel.js"></script>
-		<link href="js/jquery-ui-1.11.2.custom/jquery-ui.min.css" rel="stylesheet">
-		<link rel="stylesheet" href="font-awesome-4.2.0/css/font-awesome.min.css">
-		<link rel="stylesheet" href="site.css">
+		<script src="bootstrap-3.3.2-dist/js/bootstrap.min.js"></script>
+		<script src="js/site.js"></script>
+		<script src="js/carousel.js"></script>
 		<!-- OpenGraph -->
 		<meta property="og:title" content="PSDLE" />
 		<meta property="og:description" content="Improving everyone's favorite online download list, one loop at a time." />
@@ -25,31 +26,43 @@
 			ga('create', 'UA-58660703-1', 'auto'); ga('send', 'pageview');
 		</script>
 	</head>
-	<body>
-		<div id='container'>
-			<div id='header' class='psdle_blue'>
-				<a href='//repod.github.io/psdle'><img id='psdle_logo' src='logo/3_psdle_mini.png' alt='psdle' /></a>
-				<div id='menu'>
-					<a href='#' title="Back to top" id="btt" class='start_hidden'><i class="fa fa-arrow-up fa-fw"></i></a>
-					<a href='#features' title="Features"><i class="fa fa-star fa-fw"></i></a>
-					<a href='#getting_started' title="Getting Started"><i class="fa fa-check-square-o fa-fw"></i></a>
-					<a href='#paq' title="P.A.Q."><i class="fa fa-question fa-fw"></i></a>
-					<a href='#privacy' title="Privacy Policy"><i class="fa fa-eye fa-fw"></i></a>
-					<div class='vline'></div>
-					<a id='get_userscript' href='./psdle.user.js' title="Download the Userscript.<br />Activates automatically!"><i class="fa fa-download fa-fw"></i></a>
-					<a id='get_bookmark' href='javascript:$.getScript("//repod.github.io/psdle/psdle.js");void(0);' title="Bookmark or copy this!<br />Access bookmark from the store."><span style='display:none'>Run PSDLE</span><i class="fa fa-bookmark fa-fw"></i></a>
-					<div class='vline'></div>
-					<a href='//repod.github.io/psdle' title="Home"><i class="fa fa-home fa-fw"></i></a>
-					<a href='//github.com/RePod/psdle/' title="Repository"><i class="fa fa-code-fork fa-fw"></i></a>
-					<a href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation'><i class="fa fa-exclamation-circle fa-fw"></i></a>
+	<body>	
+		<nav class="navbar navbar-default navbar-fixed-top">
+			<div class="container">
+				<div class="navbar-header">
+					  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#psdle_nav">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					  </button>
+					<a href="https://repod.github.io/psdle" class="navbar-brand"><img src="logo/3_psdle_mini.png" alt="PSDLE" /></a>
+				</div>
+				<div class="collapse navbar-collapse" id="psdle_nav">
+					<ul class="nav navbar-nav navbar-right">
+						<!--
+						<li role="presentation" class="dropdown">
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+						  Navigation <span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu" role="menu">
+						-->
+						 <li><a href="#features"><i class="fa fa-star fa-fw"></i> Features</a></li>
+						<li><a href="#getting_started"><i class="fa fa-check-square-o fa-fw"></i> Getting Started</a></li>
+						<li><a href="#paq"><i class="fa fa-question fa-fw"></i> Potentially Asked Questions</a></li>
+						<li><a href="#privacy"><i class="fa fa-eye fa-fw"></i> Privacy Policy</a></li>
+						<!-- </ul></li> -->
+					</ul>
 				</div>
 			</div>
-			<div id='content'>
-				<div id='tagline' class='psdle_blue'>
-					Improving everyone's favorite online download list, one loop at a time.
-				</div>
-				<div class='module' style='text-align:center'>
-					<div id='caro' style='display:inline-block;text-align:center'>
+		</nav>
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12" style='text-align:center'>
+					<div class="hidden-md hidden-lg">
+						<a id="imgur_album" href="//imgur.com/a/GD3Eb" target="_blank"><button class="btn btn-primary btn-block"><i class="fa fa-image fa-fw"></i> View screenshots on Imgur!</button></a>
+					</div>
+					<div id='caro' class="hidden-xs hidden-sm" style='display:inline-block;text-align:center'>
 						<div id='caro_slides'>
 							<div style='background-image:url("//i.imgur.com/nQShH6n.jpg")'><div class='cell-info top'>Sample Screenshots - Slide to navigate.</div><div class='cell-info bottomfull'>PSDLE startup options</div></div>
 							<div id='view' style='background-image:url("//i.imgur.com/1VmScOO.jpg")'><div class='cell-info bottomfull'>Default list view!</div></div>
@@ -65,53 +78,48 @@
 							<div id='export' style='background-image:url("//i.imgur.com/SSxMHhq.jpg")'><div class='cell-info bottomfull'>Export what you see in a CSV format!</div></div>
 						</div>
 					</div>
+					<br /><small>Screenshots may not reflect current features or design.</small>
 				</div>
-				<div class='module'>
-					<a name="features">
-						<h3 tabindex="0"><i class="fa fa-star fa-fw"></i> Features <small style='font-size:12px !important;'>(<i class="fa fa-search fa-fw" style='font-size:12px !important;'></i>: View screenshot)</small> <i class="module_toggle fa fa-caret-up"></i></h3>
-					</a>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="page-header">
+						<h3 id="features"><i class="fa fa-star fa-fw"></i> Features <small class='hidden-xs hidden-sm'>(<i class="fa fa-search fa-fw"></i>: View screenshot)</small></h3>
+					</div>
 					<div>
 						<dl>
 							<dt>One convenient list of all your content!</dt>
-							<span>
-								<dt id='goto_view'><i class="fa fa-search fa-fw"></i> View, sort, and filter your download list as you desire!</dt>
-							</span>
-							<span>
-								<dt id='goto_pstv'><i class="fa fa-search fa-fw"></i> Determine what is compatible with PS TV! (en-us only)</dt>
-							</span>
-							<span>
-								<dt id='goto_plus_start'><i class="fa fa-search fa-fw"></i> PS+ Support</dt>
-								<dd>See what is and isn't tied to your subscription.</dd>
-							</span>
-							<span>
-								<dt id='goto_newbox_start'><i class="fa fa-search fa-fw"></i> Download Queue support</dt>
-								<dd>Easily send items where you want them to go.</dd>
-							</span>
-							<span>
-								<dt id='goto_export'><i class="fa fa-search fa-fw"></i> Export your list</dt>
-								<dd>CSV format for spreadsheets.</dd>
-							</span>
+							<dt id='goto_view'><i class="fa fa-search fa-fw hidden-xs hidden-sm"></i> View, sort, and filter your download list as you desire!</dt>
+							<dt id='goto_pstv'><i class="fa fa-search fa-fw hidden-xs hidden-sm"></i> Determine what is compatible with PS TV! (en-us only)</dt>
+							<dt id='goto_plus_start'><i class="fa fa-search fa-fw hidden-xs hidden-sm"></i> PS+ Support</dt>
+							<dd>See what is and isn't tied to your subscription.</dd>
+							<dt id='goto_newbox_start'><i class="fa fa-search fa-fw hidden-xs hidden-sm"></i> Download Queue support</dt>
+							<dd>Easily send items where you want them to go.</dd>
+							<dt id='goto_export'><i class="fa fa-search fa-fw hidden-xs hidden-sm"></i> Export your list</dt>
+							<dd>CSV format for spreedsheets.</dd>
 							<dt>Mobile</dt>
 								<dd>Even on-the-go, don't settle for a featureless download list!</dd>
-								<dd>Desktop version (bottom of mobile store page) is highly recommended, however mobile should be supported.</dd>
 							<dt>Lightweight, portable, consistent.</dt>
 								<dd>Computer or mobile, always the same experience.</dd>
 							<dt>Open source!</dt>
 						</dl> 
 					</div>
 				</div>
-				<div class='module'>
-					<a name="getting_started">
-						<h3 tabindex="0"><i class="fa fa-check-square-o fa-fw"></i> Getting Started <i class="module_toggle fa fa-caret-up"></i></h3>
-					</a>
-					<div>
-						Select a method: <span class='psdle_fancy_bar'><span id='pill_direct' tabindex="0">Direct</span></span> <span class='psdle_fancy_bar'><span id='pill_get_us' tabindex="0">Userscript</span><a href="//wikipedia.org/wiki/Greasemonkey" target="_blank"><span>?</span></a></span>
-						<span class='psdle_fancy_bar'><span id='pill_get_bookmarklet' class='get_bookmarklet' tabindex="0">Bookmarklet</span><a href="//wikipedia.org/wiki/Bookmarklet" target="_blank"><span>?</span></a></span><br />
-						<br />
-						<div id='method_direct'>
-							<strong>Direct</strong><br />
+				<div class="col-sm-6">
+					<div class="page-header">
+						<h3 id="getting_started"><i class="fa fa-check-square-o fa-fw"></i> Getting Started</h3>
+					</div>
+					<div id='method_select' class="btn-group input-group btn-group-justified xs-" data-toggle="buttons">
+						<label class="btn btn-primary active btn-block" data-target="#method_direct"><input type="radio"/>Direct</label>
+						<label class="btn btn-primary btn-block" data-target="#method_userscript"><input type="radio"/>Userscript</label>
+						<label class="btn btn-primary btn-block" data-target="#method_bookmarklet"><input type="radio"/><!--<i class="fa fa-mobile fa-fw"></i>-->Bookmarklet</label>
+					</div><br />
+					<div id="method_holder" class="accordion-group">
+						<div id='method_direct' class="collapse in">
 							<ol>
-								<li>Copy the <span class='get_bookmarklet fake_url' tabindex="0">bookmarklet's link</span>.</li>
+								<li>Copy the following to your clipboard:</li>
+								<!--<kbd>javascript:$.getScript("//repod.github.io/psdle/psdle.js");void(0);</kbd><br /><br />-->
+								<span id='inline_code' class="panel panel-default"><span class="panel-body" style="word-break:break-all">javascript:$.getScript("//repod.github.io/psdle/psdle.js");void(0);</span></span>
 								<li>Navigate to the the online store.</li>
 								<li>Paste into your browser's address bar.</li>
 								<li>Ensure the pasted line begins with <strong>javascript:</strong> If not, add it.</li>
@@ -119,54 +127,44 @@
 								<li>PSDLE should activate.</li>
 							</ol>
 						</div>
-						<div id='method_userscript' style='display:none'>
-							<strong>Userscript</strong><br />
+						<div id='method_userscript' class="collapse">
 							<ol>
-								<li>Install <a href="https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/" target="_blank">Greasemonkey</a> <small>(Firefox)</small>, <a href="https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en" target="_blank">Tampermonkey</a> <small>(Chrome)</small>, or your browser's equivalent.</li>
-								<li>Install the <span class='get_userscript fake_url' tabindex="0">PSDLE userscript</span></li>
+								<li>Install <a class="" href="https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/" target="_blank">Greasemonkey</a> <small>(Firefox)</small>, <a class="" href="https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en" target="_blank">Tampermonkey</a> <small>(Chrome)</small>, or equivalent.</li>
+								<li>Install the <a id="inline_userscript" href="psdle.user.js">PSDLE userscript</a>.</li>
 								<li>Navigate to the the online store.</li>
 								<li>PSDLE should activate automatically.</li>							
 							</ol>
 						</div>
-						<div id='method_bookmarklet' style='display:none'>
-							<strong>Bookmarklet</strong> <small>(Recommended for mobile)</small><br />
+						<div id='method_bookmarklet' class="collapse">
+							<i class="fa fa-mobile"></i> Recommend for mobile and tablets.
 							<ol>
-								<li><span class='get_bookmarklet fake_url' tabindex="0">Get the bookmark.</span></li>
+								<li>Bookmark this link: <a id="inline_bookmarklet" href="javascript:$.getScript('//repod.github.io/psdle/psdle.js');void(0);">Run PSDLE</a>
 								<li>Navigate to the the online store.</li>
 								<li>Select the bookmark from your bookmarks.</li>
 								<li>PSDLE should activate.</li>								
 							</ol>
 						</div>
-						After successful activation the PSDLE logo will appear in the bottom-left corner, click it to start.<br />
-						<br />
-						<small>The latest and (hopefully) greatest versions of PSDLE can be found  <span class='get_repo fake_url' tabindex="0">in the repository</span>. Use repository versions at your own risk.<br />
-						Legacy versions are available <a href='https://github.com/RePod/psdle/tree/da72902be7847ec93ae85555ab6f0e3b2f8948c4'>here</a>. Bug reports will not be accepted and support will not be given for these.</small>
 					</div>
+					After successful activation the PSDLE logo will appear in the bottom-left corner, click it to start.<br />
 				</div>
-				<div class='module'>
-					<a name="paq">
-						<h3 tabindex="0"><i class="fa fa-question fa-fw"></i> P.A.Q. (Potentially Asked Questions) <i class="module_toggle fa fa-caret-down"></i></h3>
-					</a>
-					<div class='start_hidden'>
-						<strong>Is PSDLE meant to compete with or replace the Download List?</strong> <br />
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="page-header">
+						<h3 id="paq">Potentially Asked Questions (P.A.Q.)</h3>
+					</div>
+					<strong>Is this safe or a ploy to phish account details?</strong> <br />
 						<span>
-							It may appear to be a competitor or replacement due to its features. However, I see it as more of a supplement.<br />
-							<br />
-							While the Download List may have shortcomings, I'm sure those who can officially provide a solution know and do not need to be reminded, told they "do not care", or told how their current product doesn't live up to PSDLE.
-							Thank them for their awesome work instead, they do it for a living!<br />
-							<br />
-							The Download List is a great thing to have, PSDLE simply makes it better!
-						</span>
-						<br /><br />
-						<strong>Is this safe or a ploy to phish account details?</strong> <br />
-						<span>
-							Yes it is safe, no it is not for phishing account details.<br />
-							I put it on GitHub for a reason, feel free to view the horribly effective code yourself and decide.<br />
-							If/when I get pull requests I'll let them sit and look through them while allowing the "community" to as well.<br />
+							Yes it is safe, no it is not for phishing account details. I put it on GitHub for a reason, feel free to view the horribly effective code yourself and decide.<br />
 							<br />
 							If authentication details were left around openly on the download list page I would take my concerns elsewhere.
 						</span>
 						<br /><br />
+					<div id="paq_container" class="collapse">
+						<strong>Is PSDLE meant to compete with or replace the Download List?</strong>
+						It may appear to be a competitor or replacement due to its features. However, I see it as more of a supplement.<br /><br />
+						While the Download List may have shortcomings, I'm sure those who can officially provide a solution know and do not need to be reminded, told they "do not care", or told how their current product doesn't live up to PSDLE. Thank them for their awesome work instead, they do it for a living!<br /><br />
+						The Download List is a great thing to have, PSDLE simply makes it better! 
 						<strong>Can it go any faster?</strong> <br />
 						<span>Disabling "Catalog" during startup will significantly decrease the time between startup and the list at the cost of less features.</span>
 						<br /><br />
@@ -188,7 +186,7 @@
 						<br /><br />
 						<strong>What does PSDLE stand for?</strong><br />
 						<span>
-							<span style='background-color:#000;color:#000;width:420px;height:1.2em;display:inline-block;cursor:text' title="It's a secret."></span>
+							<span style='background-color:#000;color:#000;width:100%;max-width:420px;height:1.2em;display:inline-block;cursor:text'></span>
 						</span>
 						<br /><br />
 						<strong>Am I free to copy, modify, redistribute, etc. PSDLE's source code?</strong><br />
@@ -199,61 +197,60 @@
 							If you have ideas, suggestions, or code additions/improvements, send them my way!
 						</span>
 						<br /><br />
-						More soon(tm).
 					</div>
-				</div>
-				<div class='module'>
-					<a name="privacy">
-						<h3 tabindex="0"><i class="fa fa-eye fa-fw"></i> Privacy Policy <i class="module_toggle fa fa-caret-down"></i></h3>
-					</a>
-					<div class='start_hidden'>
-						<small>This policy is only in regards to this website's use of Google Analytics, not PSDLE itself which does not transmit information.</small><br />
-						<br />
-						<p>
-							This website uses <a href="//www.google.com/analytics/">Google Analytics</a> to collect various non-identifiable information about you, the visitor, including but not limited to:<br />
-							<ul>
-								<li>How you reached this website <small>(another website, a search engine, etc.)</small></li>
-								<li>General browser and OS information <small>(Chrome/Firefox, Windows/OSX, screen resolution, mobile device, etc.)</small></li>
-								<li>How you interact with this site <small>(Such as expanding this Privacy Policy section!)</small></li>
-								<li>And a lot more. <a href="//support.google.com/analytics/topic/2919631?hl=en&ref_topic=1008008">Click here</a> to see Google's documentation about Analytics.</li>
-							</ul>
-							To repeat, all information collected through Google Analytics is non-identifiable, or <strong>anonymous</strong>.
-						</p>
-						<strong>How and why I use the data collected:</strong>
-						<p>
-						By analyzing the data I receive I can make educated decisions about my website design such as how users interact with features and prioritize functionality.
-						For instance, based on interactions with the image carousel I can gauge interest of it and expand its features or simplify it.
-						Basically, it's beneficial for everyone involved. The users get a better experience and I get the data that enables me to do just that.
-						</p>
-						<strong>Opting Out:</strong>
-						<p>
-						If this policy is not to your liking, but wish continue to use this page (not PSDLE) you may do so with <a href="//tools.google.com/dlpage/gaoptout">this add-on provided by Google.</a><br />
-						If the opt-out procedure is not to your liking I would advise ceasing use of this webpage completely.
-						</p>
-					</div>
+					<button id="paq_more" class="btn btn-primary" data-target="#paq_container" data-toggle="collapse" style="cursor:pointer">More...</button>
 				</div>
 			</div>
-			<div id='footer' class='psdle_blue'>
-				<span>
-					<a href='#'><i class="fa fa-arrow-up fa-fw" style='font-size:16px;'></i> Back to top</a><br />
-					<a href='//fortawesome.github.io/Font-Awesome/'><i class="fa fa-flag fa-fw" style='font-size:16px;'></i> Font Awesome</a><br />
-					<a href='//jquery.com'><i class="fa fa-external-link fa-fw" style='font-size:16px;'></i> jQuery</a><br />
-					<a href='//jqueryui.com'><i class="fa fa-external-link fa-fw" style='font-size:16px;'></i> jQuery UI</a><br />
-					<a href='//github.com/jquery/jquery-color/'><i class="fa fa-external-link fa-fw" style='font-size:16px;'></i> jQuery Color</a><br />
-				</span>
-				<span>
-					<a href='//repod.github.io/psdle'><i class="fa fa-home fa-fw"></i> Home</a><br />
-					<a href='//github.com/RePod/psdle/'><i class="fa fa-code-fork fa-fw"></i> Repository</a><br />
-					<a href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation'><i class="fa fa-exclamation-circle fa-fw"></i> Submit an Issue</a><br />
-					<a href='//github.com/RePod/psdle/blob/master/LICENSE'><i class="fa fa-file-text fa-fw"></i> PSDLE License</a><br />
-					<a href='//github.com/RePod'><i class="fa fa-plus fa-fw"></i> More</a><br />
-				</span><br /><br />
-				<span class='text'>
-					PSDLE is not sponsored, endorsed, or created by Sony, SNEI, SCEA, SCEE, SCEI, or affiliates.<br />
-					Third-party content (icons, names) re-rendered by PSDLE is provided from the Entitlements API.<br />
-					Screenshots are for educational and informative purposes and are not hosted on this domain.
-				</span>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="page-header">
+						<h3 id="privacy">Privacy policy</h3>
+					</div>
+					<small>This policy is only in regards to this website's use of Google Analytics, not PSDLE itself which does not transmit information.</small><br />
+					<br />
+					This website uses <a href="//www.google.com/analytics/">Google Analytics</a> to collect various non-indentifiable information about you, the visitor, including but not limited to:<br />
+					<ul>
+						<li>How you reached this website <small>(another website, a search engine, etc.)</small></li>
+						<li>General browser and OS information <small>(Chrome/Firefox, Windows/OSX, screen resolution, mobile device, etc.)</small></li>
+						<li>How you interact with this site <small>(Such as expanding the P.A.Q.)</small></li>
+						<li>And a lot more. <a href="//support.google.com/analytics/topic/2919631?hl=en&amp;ref_topic=1008008">Click here</a> to see Google's documentation about Analytics.</li>
+					</ul>
+					To repeat, all information collected through Google Analytics is non-indentifiable, or <strong>anonymous</strong>.<br /><br />
+					<strong>How and why I use the data collected:</strong>
+					<p>
+					By analyzing the data I receive I can make educated decisions about my website design such as how users interact with features and prioritize functionality.<br /><br />
+					For instance, I noticed a significant portion of the site traffic is from mobile devices thus I have remade the website in <a href="http://getbootstrap.com/" target="_blank">Bootstrap</a> to accomodate.
+					</p>
+					<strong>Opting Out:</strong>
+					<p>
+					If this policy is not to your liking, but wish continue to use this page (not PSDLE) you may do so with <a href="//tools.google.com/dlpage/gaoptout">this add-on provided by Google.</a><br />
+					If the opt-out procedure is not to your liking I would advise ceasing use of this webpage completely.
+					</p>
+				</div>
 			</div>
+		</div>
+		
+		<div id="footer">
+			<span>
+				<a href='#'><i class="fa fa-arrow-up fa-fw" style='font-size:16px;'></i> Back to top</a><br />
+				<a href='http://http://getbootstrap.com/'><i class="fa fa-external-link fa-fw" style='font-size:16px;'></i> Bootstrap</a><br />
+				<a href='//fortawesome.github.io/Font-Awesome/'><i class="fa fa-flag fa-fw" style='font-size:16px;'></i> Font Awesome</a><br />
+				<a href='//jquery.com'><i class="fa fa-external-link fa-fw" style='font-size:16px;'></i> jQuery</a><br />
+				<a href='//jqueryui.com'><i class="fa fa-external-link fa-fw" style='font-size:16px;'></i> jQuery UI</a><br />
+				<a href='#yo'><i class="fa fa-asterisk fa-fw" style='font-size:16px;'></i>And the Sheep</a><br />
+			</span>
+			<span>
+				<a href='//repod.github.io/psdle'><i class="fa fa-home fa-fw"></i> Home</a><br />
+				<a href='//github.com/RePod/psdle/'><i class="fa fa-code-fork fa-fw"></i> Repository</a><br />
+				<a href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation'><i class="fa fa-exclamation-circle fa-fw"></i> Submit an Issue</a><br />
+				<a href='//github.com/RePod/psdle/blob/master/LICENSE'><i class="fa fa-file-text fa-fw"></i> PSDLE License</a><br />
+				<a href='//github.com/RePod'><i class="fa fa-plus fa-fw"></i> More</a><br />
+			</span><br /><br />
+			<span class='text'>
+				PSDLE is not sponsored, endorsed, or created by Sony, SNEI, SCEA, SCEE, SCEI, or affiliates.<br />
+				Third-party content (icons, names) re-rendered by PSDLE is provided from the Entitlements API.<br />
+				Screenshots are for educational and informative purposes and are not hosted on this domain.
+			</span>
 		</div>
 	</body>
 </html>

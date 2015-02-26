@@ -1,4 +1,4 @@
-/*
+		/*
 	Home-grown. Not intended to be amazing.
 */
 
@@ -8,9 +8,9 @@ repod.grid = {
 	config: {},
 	init: function() {
 		var that = this;
-		$("dl > span").click(function() {
-			ga('send', 'event', 'features', 'click', $(this).find("dt").text());
-			that.caro.goto_slide("#"+$(this).find("dt").attr("id").split("goto_").pop());
+		$("dl > dt").click(function() {
+			ga('send', 'event', 'features', 'click', $(this).text().trim());
+			that.caro.goto_slide("#"+$(this).attr("id").split("goto_").pop());
 		});
 		this.caro.bind();
 		this.caro.start();
