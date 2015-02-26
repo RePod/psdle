@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.038
+// @version		2.039
 // @include		/https://store.(sonyentertainmentnetwork|playstation).com/*/
 // @exclude		/https://store.(sonyentertainmentnetwork|playstation).com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -272,11 +272,11 @@ repod.psdle = {
 			//Unbind for safety.
 			$(document).off("click","#muh_table > tbody > tr, span[id^=system_], span[id^=filter_], span[id^=dl_], th[id^=sort_], #export_view, #export_csv").off("blur","#psdle_search_text");
 			//Bind.
-			$(document).keypress(function(e) { if (e.which == 13 && $("#psdle_search_text").is(":focus")) { repod.psdle.table.regen(); } });
+			$(document).keypress(function(e) { if (e.which == 13 && $("#psdle_search_text").is(":focus")) { repod.psdle.table.regen(true); } });
 			$("span[id^=system_], span[id^=filter_]").off("click").on("click", function() { $(this).toggleClass("toggled_off"); repod.psdle.table.regen(true); });
 			$("th[id^=sort_]").off("click").on("click", function() { repod.psdle.sortGamelist($(this)); });
 			$("#export_view").off("click").on("click", function() { repod.psdle.exportList.configure(); });
-			$("#psdle_search_text").off("blur").on("blur", function() { repod.psdle.table.regen(); });
+			$("#psdle_search_text").off("blur").on("blur", function() { repod.psdle.table.regen(true); });
 			$("#dl_queue").one("click", function() { repod.psdle.dlQueue.generate.display(); });
 			$(document).off("click", "[id^=psdle_index_]").on("click", "[id^=psdle_index_]", function(e) { e.preventDefault(); repod.psdle.dlQueue.batch.add.ask(this); });
 		},
