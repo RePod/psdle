@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.034
+// @version		2.035
 // @include		/https://store.(sonyentertainmentnetwork|playstation).com/*/
 // @exclude		/https://store.(sonyentertainmentnetwork|playstation).com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -613,9 +613,9 @@ repod.psdle = {
 			if (data.default_sku && data.default_sku.entitlements.length == 1) {
 				var sys, type = "unknown", r = /^(PS(?:1|2)).+Classic$/i;
 				if (data.metadata) {
-					if (!!data.metadata.secondary_classification.values[0].match(r)) { sys = data.metadata.secondary_classification.values[0].match(r).pop(); }
+					if (data.metadata.secondary_classification && !!data.metadata.secondary_classification.values[0].match(r)) { sys = data.metadata.secondary_classification.values[0].match(r).pop(); }
 					//else if (!!data.metadata.game_subtype.values[0].match(r)) { sys = data.metadata.game_subtype.values[0].match(r).pop(); }
-					else if (!!data.metadata.primary_classification.values[0].match(r)) { sys = data.metadata.secondary_classification.values[0].match(r).pop(); }
+					else if (data.metadata.primary_classification && !!data.metadata.primary_classification.values[0].match(r)) { sys = data.metadata.primary_classification.values[0].match(r).pop(); }
 					else if (!!data.metadata.playable_platform) {
 						sys = [];
 						$.each(data.metadata.playable_platform.values,function(i,val) { sys.push(val.replace(/[^\w\d ]/g,"")) });
@@ -626,7 +626,7 @@ repod.psdle = {
 				
 			if (data.top_category == "tumbler_index") {
 				//We must go deeper.
-				if (data.metadata.secondary_classification.values[0] == "ADD-ON") { type = "add_on"; }
+				if (data.metadata.secondary_classification && data.metadata.secondary_classification.values[0] == "ADD-ON") { type = "add_on"; }
 			} else {
 				type = (data.top_category) ? data.top_category : "unknown";
 			}
