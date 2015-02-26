@@ -506,6 +506,8 @@ repod.psdle = {
 			//Bind
 			$("#sel_export_view").off("click").on("click", function () { that.saveConfig(); that.delimited.handle(); $("#export_configure").remove(); });
 			$("#sel_export_csv").off("click").on("click", function () { that.saveConfig(); that.csv.handle(); $("#export_configure").remove(); });
+			$("#export_configure").off("click").one("click", function() { $(this).remove(); repod.psdle.newbox.bind("off"); });
+			$("#export_select").off("click").on("click", function(event) { event.stopPropagation(); });
 		},
 		saveConfig: function() {
 			var that = this;
