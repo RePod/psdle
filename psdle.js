@@ -232,7 +232,7 @@ repod.psdle = {
 	postList: function() {
 		var safe = !0;
 		if (repod.psdle.config.check_tv) { safe = !1; repod.psdle.tv.init(); }
-		if (repod.psdle.config.deep_search) { safe = !1; this.game_api.run(); }
+		if (repod.psdle.config.deep_search) { safe = !1; this.game_api.run(); this.game_api.run(); this.game_api.run(); this.game_api.run(); }
 		if (safe) { this.table.gen(); }
 	},
 	isValidContent: function(obj) {
@@ -577,17 +577,20 @@ repod.psdle = {
 			}
 		},
 		process: function(index,data) {
-			var l = Math.abs(repod.psdle.gamelist.length - this.batch.length), r = repod.psdle.gamelist.length,
+			var parse = this.parse(data),
+				l = Math.abs(repod.psdle.gamelist.length - this.batch.length), r = repod.psdle.gamelist.length,
 				w = $('#psdle_bar').width(), pW = $('#psdle_bar').parent().width(), p = Math.round(100*w/pW), q = Math.round(100*l/r);
 			if (q > p) { $("#psdle_progressbar > #psdle_bar").stop().animate({"width":q+"%"}); }
 			$("#psdle_status").text(l+" / "+r);
-			this.parse(index,data);
+			
+			repod.psdle.type_cache[parse.deep_type] = true;
+			if (index == "pid_cache") { repod.psdle.pid_cache[data.id] = parse;	}
+			else { index--; $.extend(repod.psdle.gamelist[index],parse); }
+			this.run();
 		},
-		parse: function(index,data) {
-			var extend = {};
-			if (index !== "pid_cache") { index--;}
+		parse: function(data) {
+			var extend = {}, sys, type = "unknown", r = /^(PS(?:1|2)).+Classic$/i;
 			if (data.default_sku && data.default_sku.entitlements.length == 1) {
-				var sys, type = "unknown", r = /^(PS(?:1|2)).+Classic$/i;
 				if (data.metadata) {
 					if (data.metadata.secondary_classification && !!data.metadata.secondary_classification.values[0].match(r)) { sys = data.metadata.secondary_classification.values[0].match(r).pop(); }
 					//else if (!!data.metadata.game_subtype.values[0].match(r)) { sys = data.metadata.game_subtype.values[0].match(r).pop(); }
@@ -597,7 +600,7 @@ repod.psdle = {
 						$.each(data.metadata.playable_platform.values,function(i,val) { sys.push(val.replace(/[^\w\d ]/g,"")) });
 					}
 				}
-				if (index !== "pid_cache" && sys) { extend.platform = sys; }
+				if (sys) { extend.platform = sys; }
 			}
 				
 			if (data.top_category == "tumbler_index") {
@@ -614,23 +617,15 @@ repod.psdle = {
 				$.each(data.promomedia[0].materials, function(i,v) {
 					if (v.urls && v.urls[0]) {
 						var a = v.urls[0].url;
-						if (/\.(png|jpg)$/ig.test(a)) {
-							extend.images.push(a);
-						} else if (/\.mp4$/ig.test(a.split("?")[0])) {
-							extend.videos.push(a);
-						}
+						if (/\.(png|jpg)$/ig.test(a)) { extend.images.push(a); }
+						else if (/\.mp4$/ig.test(a.split("?")[0])) { extend.videos.push(a); }
 					}
 				});
 			}
 			if (data.metadata) { extend.metadata = data.metadata; }
 			if (data.long_desc) { extend.long_desc = data.long_desc; }
 			
-			repod.psdle.type_cache[type] = true;
-			if (index == "pid_cache") { repod.psdle.pid_cache[data.id] = extend; }
-			else {
-				$.extend(repod.psdle.gamelist[index],extend);
-			}
-			this.run()
+			return extend;
 		}
 	},
 	dlQueue: {
@@ -659,9 +654,8 @@ repod.psdle = {
 					data: JSON.stringify([dat]),
 					complete: completeCb,
 					error: function(d) {
-						alert("PSDLE | Download Queue | Error\n"+d.responseJSON.header.status_code+" - "+d.responseJSON.header.message_key+" ("+sys+" / "+id+")");
-						console.error("PSDLE | Download Queue | "+d.responseJSON.header.status_code+" "+d.responseJSON.header.message_key+" ("+sys+" / "+id+")");
-						errorCb(d);
+						var m = "PSDLE | Download Queue | Error\n"+d.responseJSON.header.status_code+" - "+d.responseJSON.header.message_key+" ("+sys+" / "+id+")";
+						alert(m); console.error(m); errorCb(d);
 					}
 				});
 			},
@@ -919,6 +913,12 @@ repod.psdle = {
 			} else {
 				alert("Not on a valid page.");
 			}
+		},
+		checkParse: function(pid) {
+			pid = (pid) ? pid : prompt("Enter (product) ID:");
+			$.getJSON(repod.psdle.config.game_api+pid)
+			.success(function(data) { console.log(repod.psdle.game_api.parse(data)); })
+			.fail(function(data) { console.log(data); });
 		}
 	}
 };
