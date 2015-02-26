@@ -556,7 +556,7 @@ repod.psdle = {
 							case "size": out += b.size_f; break;
 							case "date": out += b.pdate; break;
 							case "plus": out += (b.plus)?"Yes":""; break;
-							case "tv": out += ""; break;
+							case "tv": out += (repod.psdle.config.check_tv && repod.psdle.id_cache[b.pid].tvcompat && repod.psdle.safeGuessSystem(b.platform) == "PS Vita")?"Yes":""; break;
 						}
 						out += sep;
 					}
