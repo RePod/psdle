@@ -145,7 +145,8 @@ repod.psdle = {
 					if (con.internal_id == "api_pstv") {
 						a += (chihiro.getCultureCode() == "en-us")?"<span id='"+con.internal_id+"' class='"+((con.disabled)?"toggled_off":"")+"' title='"+con.desc.replace(/'/g, "&apos;")+"'>"+con.name+"</span>":"";
 					} else {
-						a += "<span id='"+con.internal_id+"' title='"+con.desc.replace(/'/g, "&apos;")+"'>"+con.name.replace(/'/g, "&apos;")+"</span>";
+						var off = (con.internal_id == "api_game") ? 'toggled_off' : "";
+						a += "<span id='"+con.internal_id+"' title='"+con.desc.replace(/'/g, "&apos;")+"' class='"+off+"'>"+con.name.replace(/'/g, "&apos;")+"</span>";
 					}
 				});
 				a += "</span><br /><br /><span id='psdle_go' class='psdle_btn'>"+that.lang.startup.start+"</span><br />"+that.generateLangBox()+that.config.tag_line;
