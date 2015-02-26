@@ -23,11 +23,11 @@ $(document).ready(function() {
 	$("nav li").click(function() { ga('send', 'event', 'Navbar', 'click', $(this).text().trim()); });
 	
 	// Conversions
-	$("#inline_code").on("contextmenu",function() { ga('send', 'event', 'Method', 'Direct', 'contextmenu', 1); });
-	$("#inline_userscript").on("click",function() { ga('send', 'event', 'Method', 'Userscript', 'click', 1); });
-	$("#inline_userscript").on("contextmenu",function() { ga('send', 'event', 'Method', 'Userscript', 'contextmenu', 1); });
-	$("#inline_bookmarklet").on("click",function() { ga('send', 'event', 'Method', 'Bookmarklet', 'click', 1); });
-	$("#inline_bookmarklet").on("contextmenu",function() { ga('send', 'event', 'Method', 'Bookmarklet', 'contextmenu', 1); });
+	$("#inline_code").on("contextmenu",function() { ga('send', 'event', 'Method', 'contextmenu', 'Direct', 1); });
+	$("#inline_userscript").on("click",function() { ga('send', 'event', 'Method', 'click', 'Userscript', 1); });
+	$("#inline_userscript").on("contextmenu",function() { ga('send', 'event', 'Method', 'contextmenu', 'Userscript', 1); });
+	$("#inline_bookmarklet").on("click",function() { ga('send', 'event', 'Method', 'click', 'Bookmarklet', 1); });
+	$("#inline_bookmarklet").on("contextmenu",function() { ga('send', 'event', 'Method', 'contextmenu', 'Bookmarklet', 1); });
 	
 });
 
