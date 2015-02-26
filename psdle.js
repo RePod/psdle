@@ -145,7 +145,8 @@ repod.psdle = {
 					if (con.internal_id == "api_pstv") {
 						a += (chihiro.getCultureCode() == "en-us")?"<span id='"+con.internal_id+"' class='"+((con.disabled)?"toggled_off":"")+"' title='"+con.desc.replace(/'/g, "&apos;")+"'>"+con.name+"</span>":"";
 					} else {
-						a += "<span id='"+con.internal_id+"' title='"+con.desc.replace(/'/g, "&apos;")+"'>"+con.name.replace(/'/g, "&apos;")+"</span>";
+						var off = (con.internal_id == "api_game") ? 'toggled_off' : "";
+						a += "<span id='"+con.internal_id+"' title='"+con.desc.replace(/'/g, "&apos;")+"' class='"+off+"'>"+con.name.replace(/'/g, "&apos;")+"</span>";
 					}
 				});
 				a += "</span><br /><br /><span id='psdle_go' class='psdle_btn'>"+that.lang.startup.start+"</span><br />"+that.generateLangBox()+that.config.tag_line;
@@ -248,7 +249,7 @@ repod.psdle = {
 			$(document).off("click","#muh_table > tbody > tr, span[id^=system_], span[id^=filter_], span[id^=dl_], th[id^=sort_], #export_view, #export_csv").off("blur","#psdle_search_text");
 			//Bind.
 			$(document).keypress(function(e) { if (e.which == 13 && $("#psdle_search_text").is(":focus")) { repod.psdle.table.regen(); } });
-			$("span[id^=system_], span[id^=filter_]").off("click").on("click", function() { $(this).toggleClass("toggled_off"); repod.psdle.table.regen(); });
+			$("span[id^=system_], span[id^=filter_]").off("click").on("click", function() { $(this).toggleClass("toggled_off"); repod.psdle.table.regen(true); });
 			$("th[id^=sort_]").off("click").on("click", function() { repod.psdle.sortGamelist($(this)); });
 			$("#export_view").off("click").on("click", function() { repod.psdle.exportList.configure(); });
 			$("#psdle_search_text").off("blur").on("blur", function() { repod.psdle.table.regen(); });
@@ -260,30 +261,33 @@ repod.psdle = {
 			repod.psdle.config.lastsort = ""; repod.psdle.config.lastsort_r = false; var that = this;
 			$("#muh_games_container").css({"position":"absolute"});
 			$("#sub_container").html(repod.psdle.genSearchOptions()).append("<table id='muh_table' style='display:inline-block;text-align:left'><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+repod.psdle.lang.columns.platform+"</th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table><br />"+repod.psdle.config.tag_line);
-			this.regen(); this.bindSearch();
+			this.regen(true); this.bindSearch();
 			console.log("PSDLE | Table generated.");
-			repod.psdle.sortGamelist("#sort_date");
 			$("#muh_games_container").slideDown('slow').promise().done(function() { that.margin(); });
 		},
-		regen: function() {
-			repod.psdle.determineGames();
-			repod.psdle.autocomplete.bind();
-			var that = this, temp = "", plus = 0;
-			$.each(repod.psdle.gamelist_cur,function (a,val) {
-				if (val.plus) { plus++; }
-				temp += repod.psdle.table_utils.gen.row(val);
-			});
-			temp += repod.psdle.table_utils.gen.totals();
-			var psswitch = (repod.psdle.config.has_plus) ? " (<div id='slider' title='"+repod.psdle.lang.strings.plus+"'><div class='handle_container' style='text-align:"+repod.psdle.config.switch_align+"'><div class='handle' style='background-color:"+repod.psdle.config.switch_color+"'/></div></div> <div id='psdleplus' style='display:inline-block' /> "+plus+")" : "";
-			$("#table_stats").html(repod.psdle.gamelist_cur.length+psswitch+" / "+repod.psdle.gamelist.length);
-			if ($("#slider").length > 0) { $("#slider").tooltip().one("click",function() { that.plus_switch(); }); }
-			if (chihiro.isMobile()) {
-				$("#psdleplus").html('<img class="psPlusIcon" src="mobile/img/furniture/psplusicon-small.a2ec8f23.png">');
+		regen: function(a) {
+			if (a == true) {
+				repod.psdle.determineGames();
 			} else {
-				$("#psdleplus").css($(".headerUserInfo.cart").css(["background-image","background-repeat"])).css({"height":"14px","width":"14px","background-position":"left -5px"});
+				repod.psdle.exportList.delimited.destroy();
+				repod.psdle.autocomplete.bind();
+				var that = this, temp = "", plus = 0;
+				$.each(repod.psdle.gamelist_cur,function (a,val) {
+					if (val.plus) { plus++; }
+					temp += repod.psdle.table_utils.gen.row(val);
+				});
+				temp += repod.psdle.table_utils.gen.totals();
+				var psswitch = (repod.psdle.config.has_plus) ? " (<div id='slider' title='"+repod.psdle.lang.strings.plus+"'><div class='handle_container' style='text-align:"+repod.psdle.config.switch_align+"'><div class='handle' style='background-color:"+repod.psdle.config.switch_color+"'/></div></div> <div id='psdleplus' style='display:inline-block' /> "+plus+")" : "";
+				$("#table_stats").html(repod.psdle.gamelist_cur.length+psswitch+" / "+repod.psdle.gamelist.length);
+				if ($("#slider").length > 0) { $("#slider").tooltip().one("click",function() { that.plus_switch(); }); }
+				if (chihiro.isMobile()) {
+					$("#psdleplus").html('<img class="psPlusIcon" src="mobile/img/furniture/psplusicon-small.a2ec8f23.png">');
+				} else {
+					$("#psdleplus").css($(".headerUserInfo.cart").css(["background-image","background-repeat"])).css({"height":"14px","width":"14px","background-position":"left -5px"});
+				}
+				$("#muh_table > tbody").html(temp);
+				this.icons.select();
 			}
-			$("#muh_table > tbody").html(temp);
-			this.icons.select();
 		},
 		plus_switch: function() {
 			var a, b;
@@ -295,7 +299,7 @@ repod.psdle = {
 			repod.psdle.config.switch_align = a;
 			repod.psdle.config.switch_color = b;
 			$("#slider").tooltip();
-			this.regen();
+			this.regen(true);
 		},
 		margin: function() { $("#muh_table").animate({"margin-top":$("#search_options").outerHeight() - $("#sub_container").css("padding-top").replace("px","")+"px"}); },
 		icons: {
@@ -361,7 +365,7 @@ repod.psdle = {
 		this.gamelist_cur = []; this.autocomplete_cache = [];
 		var that = this, temp = "", safesys = this.safeSystemCheck();
 		var search = (!!$("#psdle_search_text")) ? $("#psdle_search_text").val() : this.config.last_search;
-		//$("[id^=filter_]").filter(function() { return !$(this).hasClass("toggled_off"); })
+		
 		/* Determine filters. */ var filters = {}; $.each($("[id^=filter_]"), function() {var n = $(this).attr("id").split("_").splice(1).join("_");filters[n] = $(this).hasClass("toggled_off");});
 		$("#psdle_search_text").removeClass("negate_regex");
 		
@@ -391,6 +395,7 @@ repod.psdle = {
 			}
 		});
 		that.config.last_search = search;
+		this.sortGamelist("noreverse");
 	},
 	genSearchOptions: function(dlQueue) {
 		//TO-DO: Not this. Make scalable.
@@ -428,9 +433,12 @@ repod.psdle = {
 		return temp;
 	},
 	sortGamelist: function(sort_method) {
-		this.determineGames();
-		var that = this;
-		sort_method = $(sort_method).attr("id");
+		var that = this, rev = true;
+		if (sort_method == "noreverse") {
+			rev = false; sort_method = (this.config.lastsort) ? this.config.lastsort : "sort_date"
+		} else {
+			sort_method = (sort_method) ? $(sort_method).attr("id") : (this.config.lastsort) ? this.config.lastsort : "sort_date";
+		}
 		switch (sort_method) {
 			default:
 			case "sort_date":
@@ -443,13 +451,17 @@ repod.psdle = {
 				this.gamelist_cur.sort(function (a, b) { return (a.size > b.size)?1:(a.size < b.size)?-1:0 });
 				break;
 		}
-		if (sort_method == this.config.lastsort) {
-			if (!this.config.lastsort_r) {
-				this.gamelist_cur.reverse();
+		if (rev == true) {
+			if (sort_method == this.config.lastsort) {
+				if (!this.config.lastsort_r) {
+					this.gamelist_cur.reverse();
+				}
+				this.config.lastsort_r = !this.config.lastsort_r;
+			} else {
+				this.config.lastsort_r = false;
 			}
-			this.config.lastsort_r = !this.config.lastsort_r;
 		} else {
-			this.config.lastsort_r = false;
+			if (this.config.lastsort_r) { this.gamelist_cur.reverse(); }
 		}
 		$("#psdle_sort_display").remove();
 		$("#"+sort_method).append("<span id='psdle_sort_display' class='psdle_sort_"+((this.config.lastsort_r)?"asc":"desc")+"' />");
@@ -506,6 +518,8 @@ repod.psdle = {
 			//Bind
 			$("#sel_export_view").off("click").on("click", function () { that.saveConfig(); that.delimited.handle(); $("#export_configure").remove(); });
 			$("#sel_export_csv").off("click").on("click", function () { that.saveConfig(); that.csv.handle(); $("#export_configure").remove(); });
+			$("#export_configure").off("click").one("click", function() { $(this).remove(); repod.psdle.newbox.bind("off"); });
+			$("#export_select").off("click").on("click", function(event) { event.stopPropagation(); });
 		},
 		saveConfig: function() {
 			var that = this;
