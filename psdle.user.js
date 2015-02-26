@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.036
+// @version		2.037
 // @include		/https://store.(sonyentertainmentnetwork|playstation).com/*/
 // @exclude		/https://store.(sonyentertainmentnetwork|playstation).com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -580,7 +580,7 @@ repod.psdle = {
 							case "size": out += b.size_f; break;
 							case "date": out += b.pdate; break;
 							case "plus": out += (b.plus)?"Yes":""; break;
-							case "tv": out += ""; break;
+							case "tv": out += (repod.psdle.config.check_tv && repod.psdle.id_cache[b.pid].tvcompat && repod.psdle.safeGuessSystem(b.platform) == "PS Vita")?"Yes":""; break;
 						}
 						out += sep;
 					}
