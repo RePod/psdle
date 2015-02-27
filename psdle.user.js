@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.039
+// @version		2.040
 // @include		/https://store.(sonyentertainmentnetwork|playstation).com/*/
 // @exclude		/https://store.(sonyentertainmentnetwork|playstation).com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -583,7 +583,7 @@ repod.psdle = {
 		},
 		formatRow: function(sep,index) {
 			//Use this.config{} and this.tl{}.
-			var out = "", that = this, sep = ","
+			var out = "", that = this, sep = (sep)?sep:",";
 			if (index >= 0) {
 				var b = repod.psdle.gamelist_cur[index];
 				$.each(this.config, function(key,val) {
