@@ -559,7 +559,7 @@ repod.psdle = {
 		},
 		formatRow: function(sep,index) {
 			//Use this.config{} and this.tl{}.
-			var out = "", that = this, sep = ","
+			var out = "", that = this, sep = (sep)?sep:",";
 			if (index >= 0) {
 				var b = repod.psdle.gamelist_cur[index];
 				$.each(this.config, function(key,val) {
