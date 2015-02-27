@@ -11,3 +11,7 @@ chrome/psdle/*
 # Firefox Add-on
 firefox/*
 *.xpi
+
+# Etc.
+Thumbs.db
+images/*
