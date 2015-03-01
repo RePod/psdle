@@ -965,6 +965,22 @@ repod.psdle = {
 			.success(function(data) { console.log(repod.psdle.game_api.parse(data)); })
 			.fail(function(data) { console.log(data); });
 		}
+	},
+	grid: {
+		generate: {
+			cell: function(index) {
+				var item = repod.psdle.gamelist[index],
+				out = $("<div>",{class:"cell"})
+				.append($("<img>",{class:"cell_icon",src:item.icon.replace(/(w|h)=\d+/g,"$1=124")}))
+				.append($("<div>",{class:"title psdle_blue",text:item.name}))
+				.append($("<div>",{class:"top"}).append(
+					$("<div>",{class:"psdle_blue",text:repod.psdle.safeGuessSystem(item.platform)+" | "+item.size_f})
+				))
+				.append($("<div>",{class:"date psdle_blue",text:item.pdate}))
+				
+				return out[0].outerHTML;
+			}
+		}
 	}
 };
 
