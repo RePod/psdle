@@ -565,7 +565,7 @@ repod.psdle = {
 				$.each(this.config, function(key,val) {
 					if (val) {
 						switch (key) {
-							case "name": a = b.name; out += (a.indexOf(","))?"\""+a+"\"":a; break;
+							case "name": out += (b.name.indexOf(","))?"\""+b.name+"\"":b.name; break;
 							case "platform": out += repod.psdle.safeGuessSystem(b.platform); break;
 							case "size": out += b.size_f; break;
 							case "date": out += b.pdate; break;
