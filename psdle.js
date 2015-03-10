@@ -197,7 +197,7 @@ repod.psdle = {
 					temp.platform = ["PS4"];
 				} else if (obj.drm_def) {
 					/* PS3, PSP, or Vita */
-					temp.name = obj.drm_def.contentName;
+					temp.name = (obj.drm_def.contentName) ? obj.drm_def.contentName : (obj.drm_def.drmContents[0].titleName) ? obj.drm_def.drmContents[0].titleName : "Unknown! - Submit a bug report!";
 					temp.api_icon = obj.drm_def.image_url;
 					temp.size = obj.drm_def.drmContents[0].contentSize;
 					temp.platform = [];
