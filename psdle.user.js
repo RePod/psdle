@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.040
+// @version		2.041
 // @include		/https://store.(sonyentertainmentnetwork|playstation).com/*/
 // @exclude		/https://store.(sonyentertainmentnetwork|playstation).com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -20,6 +20,30 @@ Alternatively, reconfigure the updating settings in your Userscript manager.
 
 @require lines are recommended for Chrome but may not be needed for Firefox, however these use Google's public API mirrors.
 Userscript managers should already cache @requires locally and not request them again.
+*/
+
+/*
+The MIT License (MIT)
+
+Copyright (c) 2014 RePod
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 */
 
 /*
@@ -221,7 +245,7 @@ repod.psdle = {
 					temp.platform = ["PS4"];
 				} else if (obj.drm_def) {
 					/* PS3, PSP, or Vita */
-					temp.name = obj.drm_def.contentName;
+					temp.name = (obj.drm_def.contentName) ? obj.drm_def.contentName : (obj.drm_def.drmContents[0].titleName) ? obj.drm_def.drmContents[0].titleName : "Unknown! - Submit a bug report!";
 					temp.api_icon = obj.drm_def.image_url;
 					temp.size = obj.drm_def.drmContents[0].contentSize;
 					temp.platform = [];
@@ -589,7 +613,7 @@ repod.psdle = {
 				$.each(this.config, function(key,val) {
 					if (val) {
 						switch (key) {
-							case "name": a = b.name; out += (a.indexOf(","))?"\""+a+"\"":a; break;
+							case "name": out += (b.name.indexOf(","))?"\""+b.name+"\"":b.name; break;
 							case "platform": out += repod.psdle.safeGuessSystem(b.platform); break;
 							case "size": out += b.size_f; break;
 							case "date": out += b.pdate; break;
@@ -988,6 +1012,22 @@ repod.psdle = {
 			$.getJSON(repod.psdle.config.game_api+pid)
 			.success(function(data) { console.log(repod.psdle.game_api.parse(data)); })
 			.fail(function(data) { console.log(data); });
+		}
+	},
+	grid: {
+		generate: {
+			cell: function(index) {
+				var item = repod.psdle.gamelist[index],
+				out = $("<div>",{class:"cell"})
+				.append($("<img>",{class:"cell_icon",src:item.icon.replace(/(w|h)=\d+/g,"$1=124")}))
+				.append($("<div>",{class:"title psdle_blue",text:item.name}))
+				.append($("<div>",{class:"top"}).append(
+					$("<div>",{class:"psdle_blue",text:repod.psdle.safeGuessSystem(item.platform)+" | "+item.size_f})
+				))
+				.append($("<div>",{class:"date psdle_blue",text:item.pdate}))
+				
+				return out[0].outerHTML;
+			}
 		}
 	}
 };

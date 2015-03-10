@@ -197,7 +197,7 @@ repod.psdle = {
 					temp.platform = ["PS4"];
 				} else if (obj.drm_def) {
 					/* PS3, PSP, or Vita */
-					temp.name = obj.drm_def.contentName;
+					temp.name = (obj.drm_def.contentName) ? obj.drm_def.contentName : (obj.drm_def.drmContents[0].titleName) ? obj.drm_def.drmContents[0].titleName : "Unknown! - Submit a bug report!";
 					temp.api_icon = obj.drm_def.image_url;
 					temp.size = obj.drm_def.drmContents[0].contentSize;
 					temp.platform = [];
@@ -565,7 +565,7 @@ repod.psdle = {
 				$.each(this.config, function(key,val) {
 					if (val) {
 						switch (key) {
-							case "name": a = b.name; out += (a.indexOf(","))?"\""+a+"\"":a; break;
+							case "name": out += (b.name.indexOf(","))?"\""+b.name+"\"":b.name; break;
 							case "platform": out += repod.psdle.safeGuessSystem(b.platform); break;
 							case "size": out += b.size_f; break;
 							case "date": out += b.pdate; break;
@@ -964,6 +964,22 @@ repod.psdle = {
 			$.getJSON(repod.psdle.config.game_api+pid)
 			.success(function(data) { console.log(repod.psdle.game_api.parse(data)); })
 			.fail(function(data) { console.log(data); });
+		}
+	},
+	grid: {
+		generate: {
+			cell: function(index) {
+				var item = repod.psdle.gamelist[index],
+				out = $("<div>",{class:"cell"})
+				.append($("<img>",{class:"cell_icon",src:item.icon.replace(/(w|h)=\d+/g,"$1=124")}))
+				.append($("<div>",{class:"title psdle_blue",text:item.name}))
+				.append($("<div>",{class:"top"}).append(
+					$("<div>",{class:"psdle_blue",text:repod.psdle.safeGuessSystem(item.platform)+" | "+item.size_f})
+				))
+				.append($("<div>",{class:"date psdle_blue",text:item.pdate}))
+				
+				return out[0].outerHTML;
+			}
 		}
 	}
 };
