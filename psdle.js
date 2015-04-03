@@ -90,14 +90,14 @@ repod.psdle = {
 	},
 	init: function() {
 		console.log("PSDLE | Init.");
-		var that = this;
+		var that = this, l = chihiro.getUrlCultureCode().toString().toLowerCase();
 		this.config = {
 			logoBase64: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAAAfCAYAAAEO89r4AAABaUlEQVRoge2XS27CQAyGPSVSUVErdqzpMqveiRvALnu67Gl6D+gFuAKIPgQrs0o1TJSJJ7aJBvnbRXE8f357XoCIGyTiEBFf33+BwgMpyg/eVRNSsENEpAQWMa27agL1e7JWcmCSVSG+tF6jp1D4o/qkqN8un+Bl7JpJUxP5vH38XT2T655CtEf6olKoaFLq3ElK2heRlgq//U/KKVj4rcrvs+Y+h7Z1ow2Vv9eg6A5p53MxhnI2an0vWSmW0HI2EhUTI5vSN4T2Xem0ycZRh4h7AJgOLaQLlf1ega2br3/IQlMW6TA2dYEPc2XToyZUGtbOdMs1lyX0lqeubEpvQqVp9GhsghxPOpvY8yPA1yo+MRtCh7iWfJ/j49rOpEE2QnM55h1U7/Wcox0nb+y9lqY6dzYtmgtmqDBmqDBmqDCDGcq5Ew5xCqViHSqMGSqMGSqMGSpMp6H3unloYR0qjBkqjBkqjBkqzAUtBKxj5lT3GAAAAABJRU5ErkJggg==",
-			game_page: chihiro.getBaseUrl()+"#!/"+chihiro.getCultureCode()+"/cid=",
+			game_page: chihiro.getBaseUrl()+"#!/"+l+"/cid=",
 			game_api: SonyChi_SessionManagerSingleton.getBaseCatalogURL()+"/",
 			lastsort: "",
 			lastsort_r: false,
-			language: chihiro.getCultureCode(),
+			language: l,
 			deep_search: false,
 			deep_waiting: 0,
 			deep_current: 0,
@@ -109,7 +109,8 @@ repod.psdle = {
 			has_plus: false,
 			check_tv: false,
 			tv_url: atob("aHR0cHM6Ly9zdG9yZS5zb255ZW50ZXJ0YWlubWVudG5ldHdvcmsuY29tL3N0b3JlL2FwaS9jaGloaXJvLzAwXzA5XzAwMC9jb250YWluZXIvVVMvZW4vMTkvU1RPUkUtTVNGNzcwMDgtUFNUVlZJVEFHQU1FUz9zaXplPTMw")
-		}; 
+		};
+		console.log("PSDLE | Config set.");
 		try { if (GM_info) this.config.tag_line += " - <span class='psdle_tiny_link'>Userscript: "+GM_info.script.version+"</span>"; } catch (e) { };
 		this.determineLanguage(this.config.language,true);
 		this.injectCSS();
@@ -143,7 +144,7 @@ repod.psdle = {
 				a += "<br /><br />"+that.lang.startup.apis+"<br /><br /><span class='psdle_fancy_bar'>";
 				$.each(that.lang.apis, function(key,con) {
 					if (con.internal_id == "api_pstv") {
-						a += (chihiro.getCultureCode() == "en-us")?"<span id='"+con.internal_id+"' class='"+((con.disabled)?"toggled_off":"")+"' title='"+con.desc.replace(/'/g, "&apos;")+"'>"+con.name+"</span>":"";
+						a += (chihiro.getUrlCultureCode().toString().toLowerCase() == "en-us")?"<span id='"+con.internal_id+"' class='"+((con.disabled)?"toggled_off":"")+"' title='"+con.desc.replace(/'/g, "&apos;")+"'>"+con.name+"</span>":"";
 					} else {
 						var off = (con.internal_id == "api_game") ? 'toggled_off' : "";
 						a += "<span id='"+con.internal_id+"' title='"+con.desc.replace(/'/g, "&apos;")+"' class='"+off+"'>"+con.name.replace(/'/g, "&apos;")+"</span>";
