@@ -18,5 +18,9 @@
 	"pageActionRun": {
 		"message": "Run PSDLE",
 		"description": "Text for the page action's tooltip indicating to run (start/execute/launch) PSDLE."
+	},
+	"psdleRunning": {
+		"message": "PSDLE is already running on the current page!\nIt should be available in the bottom-left corner.\n\nTo stop using or restart PSDLE, please reload the page.",
+		"description": "Message to alert the user when they attempt to run PSDLE again. Provides the status, how to proceed, and other options."
 	}
 }
