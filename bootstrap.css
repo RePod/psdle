@@ -79,3 +79,5 @@ ol > span, ol > span > span { display:inline-block; }
     background-color: #0000ee;
   }
 }
+
+.btn { padding: 6px 2% !important; }
