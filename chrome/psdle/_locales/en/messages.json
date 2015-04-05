@@ -14,5 +14,9 @@
 	"repo": {
 		"message": "Repository",
 		"description": "Repository link text in the popup."
+	},
+	"pageActionRun": {
+		"message": "Run PSDLE",
+		"description": "Text for the page action's tooltip indicating to run (start/execute/launch) PSDLE."
 	}
 }
