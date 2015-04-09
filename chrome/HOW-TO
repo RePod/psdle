@@ -1,0 +1,9 @@
+Place "psdle.js" in "psdle/js" then load into Chrome:
+
+More tools -> Extensions
+chrome://extensions/
+
+Enable Developer mode, click "Load unpacked extension...", navigate to this folder and select the "psdle" folder and submit.
+
+To pack, from Extensions: click "Pack extension...", navigate to this folder and select the "psdle" folder and submit.
+Private keys are not provided, and are not required. The packed extension should appear in this directory as "psdle.crx"

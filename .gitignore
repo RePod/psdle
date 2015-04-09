@@ -1,11 +1,7 @@
 # Chrome Extension
-chrome/*
-!chrome/psdle/
-chrome/psdle/*
-!chrome/psdle/_locales
+chrome/psdle/js/psdle.js
 *.pem
 *.crx
-!chrome/chrome.crx
 !chrome/psdle.crx
 
 # Firefox Add-on
@@ -14,4 +10,6 @@ firefox/*
 
 # Etc.
 Thumbs.db
+.DS_Store
 images/*
+*.zip
