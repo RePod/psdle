@@ -241,24 +241,23 @@
 					</p>
 					<br>
 					<h4>PSDLE:</h4>
+					PSDLE is very powerful and provides a lot of functionality but requires various information, some of which may be personal.<br>
+					<br>
+					PSDLE accesses the following information when used:
+					<ul>
+						<li>Purchase information for generating the list. <small>(PS+ status, time of purchase, etc.)</small></li>
+						<li>Console activation information. <small>(only if Queue is enabled)</small></li>
+						<li>Download Queue information. <small>(only if Queue is enabled)</small></li>
+						<li>Store language. <small>(for determining language-specific things)</small></li>
+					</ul>
+					Remaining PSDLE functionality is user-selectable (e.g. Catalog) and does not require personal information.<br>
+					<br>
+					Information collected during PSDLE's runtime <strong>is not permanently stored by PSDLE, and never will be.</strong> This means anything generated or requested by PSDLE is gone in the e-wind after the resource it was attached to is terminated (e.g. tab). A minor exception to this is the Chrome extension which runs a background task to determine if the store is active or not.
 					
-						PSDLE is very powerful and provides a lot of functionality but requires various information, some of which may be personal.<br>
-						<br>
-						PSDLE accesses the following information when used:
-						<ul>
-							<li>Purchase information for generating the list. <small>(PS+ status, time of purchase, etc.)</small></li>
-							<li>Console activation information. <small>(only if Queue is enabled)</small></li>
-							<li>Download Queue information. <small>(only if Queue is enabled)</small></li>
-							<li>Store language. <small>(for determining language-specific things)</small></li>
-						</ul>
-						Remaining PSDLE functionality is user-selectable (e.g. Catalog) and does not require personal information.<br>
-						<br>
-						Information collected during PSDLE's runtime <strong>is not permanently stored by PSDLE, and never will be.</strong> This means anything generated or requested by PSDLE is gone in the e-wind after the resource it was attached to is terminated (e.g. tab). A minor exception to this is the Chrome extension which runs a background task to determine if the store is active or not.
-						
-						If you would like to keep a permanent list please use the "Export View" function.<br>
-						<br>
-						PSDLE <strong>does not transmit any information to an external location</strong>. All resources requested or sent (Queue) are in the executed page's context and domain, which is typically the store.
-						Other products or services may interfere with, tamper with, modify, or intercept information PSDLE obtains. This should not be a concern as this information is publicly available in the page context, PSDLE just caches it.
+					If you would like to keep a permanent list please use the "Export View" function.<br>
+					<br>
+					PSDLE <strong>does not transmit any information to an external location</strong>. All resources requested or sent (Queue) are in the executed page's context and domain, which is typically the store.
+					Other products or services may interfere with, tamper with, modify, or intercept information PSDLE obtains. This should not be a concern as a majority of the information is publicly available in the page context, PSDLE just caches it.
 				</div>
 			</div>
 			<div class="row">
