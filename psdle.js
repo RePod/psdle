@@ -807,32 +807,46 @@ repod.psdle = {
 	},
 	newbox: {
 		generate: function(e) {
-			var plus = "", i = (isNaN(e)) ? Number($(e).attr("id").split("_").pop()) : Number(e), game = repod.psdle.gamelist[i], id = (game.index -1);
-			var dialog = $("<div id='dlQueueAsk' style='background-image:url(\""+game.icon.replace(/(w|h)=\d+/g,"$1=400")+"\");'/>");
+			var	plus 	= "",
+				i		= (isNaN(e)) ? Number($(e).attr("id").split("_").pop()) : Number(e),
+				game	= repod.psdle.gamelist[i],	
+				id		= (game.index -1);
+				
+			var dialog = $("<div>", {id:'dlQueueAsk',style:'background-image:url("'+game.icon.replace(/(w|h)=\d+/g,"$1=400")+'");'} );
+			
 			try { if (game.plus) { plus = $("#psdleplus").clone()[0].outerHTML+" "; } } catch(e) {}
-			dialog.append("<div id='dlQAN'>"+plus+game.name+"</div>");
+			dialog.append($("<div>", {id:'dlQAN'} ).append(plus+game.name));
+			
 			if (repod.psdle.config.use_queue) {
-				var t = "<div><div id='dla_all_"+id+"'>"+repod.psdle.lang.strings.queue_all+"</div></div>";
-				var temp = game.platform_og.slice(0), i = $.inArray("PSP", temp); if(i != -1) { temp.splice(i, 1); } /* Make sure we don't have PSP */
+				var temp	= game.platform_og.slice(0),
+					i		= $.inArray("PSP", temp),
+					t		= $("<div>", {id:"dlQASys"} );
+				
+				if (i != -1) { temp.splice(i, 1); } /* Make sure we don't have PSP */
+								
 				if (temp.length > 1) {
+					t.append($("<div>").append($("<div>", {id:"dla_all_"+id,text:repod.psdle.lang.strings.queue_all} )));
+					
 					$.each(temp,function(a,b) {
 						var c = b.replace(/ps /i,"").toLowerCase(), d = (repod.psdle.config.active_consoles.hasOwnProperty(c)) ? "" : "toggled_off";
-						t += "<div><div id='dla_"+c+"_"+id+"' class='"+d+"'>"+b+"</div></div>";
+						t.append($("<div>").append($("<div>", {id:"dla_"+c+"_"+id,class:d,text:b} )))
 					});
 				} else {
 					var c = temp[0].slice(0).replace(/ps /i,"").toLowerCase(), d = (repod.psdle.config.active_consoles.hasOwnProperty(c)) ? "" : "toggled_off";
-					t = "<div><div id='dla_"+c+"_"+id+"' class='"+d+"'>"+repod.psdle.lang.strings.queue_to.replace("$SYS$",game.platform_og[0].slice(0))+"</div></div>";
+					t.html($("<div>").append($("<div>",{id:"dla_"+c+"_"+id,class:d,text:repod.psdle.lang.strings.queue_to.replace("$SYS$",game.platform_og[0].slice(0))})))
 				}
-				dialog.append("<div id='dlQASys'>"+t+"</div>");
+				dialog.append(t);
 			}
-			var star = '<div class="star-rating rater-0 ratingStarGeneric star-rating-applied star-rating-readonly star-rating-on" style="display:inline-block !important;float:none !important;vertical-align:text-top"><a title="1">1</a></div>';
-			try { if (!isNaN(game.rating)) { dialog.append("<div id='dlQARating'>"+star+" "+game.rating+" / 5</div>"); } } catch (e) { }
-			dialog.append("<div id='dlQAStat'>"+repod.psdle.safeGuessSystem(game.platform)+" | "+game.size_f+" | "+game.pdate+"</div>");
-			dialog = $("<div id='dlQueue_newbox' class='cover'><div>"+dialog[0].outerHTML+"</div></div>");
+
+			try { if (game.rating) { var star =	$("<div>", {class:"star-rating rater-0 ratingStarGeneric star-rating-applied star-rating-readonly star-rating-on",style:"display:inline-block !important;float:none !important;vertical-align:text-top"} ).append($("<a>",{text:""}))[0].outerHTML; dialog.append($("<div>", {id:"dlQARating"} ).append(star+" "+game.rating+" / 5")); } } catch (e) { }
+			
+			dialog.append($("<div>", {id:"dlQAStat",text:repod.psdle.safeGuessSystem(game.platform)+" | "+game.size_f+" | "+game.pdate} ));
+			
+			dialog =	$("<div>", {id:"dlQueue_newbox",class:"cover"} ).append($("<div>").append(dialog[0].outerHTML));
+
 			if (game.images && game.images.length > 0) { $(dialog).css("background-image","url('"+game.images[Math.floor(Math.random() * game.images.length)]+"')"); }
-			/*else if (!chihiro.isMobile() && game.videos && game.videos.length > 0) {
-				$(dialog).prepend('<div style="z-index:-1;position:absolute;top:0px;left:0px;right:0px;bottom:0px;"><video style="min-width:100%;min-height:100%;" autoplay loop muted><source src="'+game.videos[0]+'" type="video/mp4"></video></div>');
-			}*/
+			//else if (!chihiro.isMobile() && game.videos && game.videos.length > 0) {$(dialog).prepend('<div style="z-index:-1;position:absolute;top:0px;left:0px;right:0px;bottom:0px;"><video style="min-width:100%;min-height:100%;" autoplay loop muted><source src="'+game.videos[0]+'" type="video/mp4"></video></div>'); }
+
 			return dialog[0].outerHTML;
 		},
 		bind: function(e) {
@@ -857,7 +871,7 @@ repod.psdle = {
 		bind: function() {
 			if ($(".ui-autocomplete-input").length) {
 				$("#psdle_search_text").autocomplete("close");
-				$('#psdle_search_text').autocomplete("option", { source: repod.psdle.autocomplete_cache });
+				$("#psdle_search_text").autocomplete("option", { source: repod.psdle.autocomplete_cache });
 			} else {
 				$("#psdle_search_text").autocomplete({
 				  source:repod.psdle.autocomplete_cache,
