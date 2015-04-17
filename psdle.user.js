@@ -4,9 +4,9 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.042
-// @include		/https://store.(sonyentertainmentnetwork|playstation).com/*/
-// @exclude		/https://store.(sonyentertainmentnetwork|playstation).com/(cam|liquid)/*/
+// @version		2.043
+// @include		/https://store.playstation.com/*/
+// @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
 // @downloadURL	https://repod.github.io/psdle/psdle.user.js
 // @icon		https://repod.github.io/psdle/logo/6_psdle_64px.png
@@ -17,9 +17,6 @@
 /*
 To keep this from updating remove the @updateURL (for automatic updates) and @downloadURL (for manual updates) above.
 Alternatively, reconfigure the updating settings in your Userscript manager.
-
-@require lines are recommended for Chrome but may not be needed for Firefox, however these use Google's public API mirrors.
-Userscript managers should already cache @requires locally and not request them again.
 */
 
 /*
@@ -132,7 +129,7 @@ repod.psdle = {
 			switch_align: "center", switch_color: "#85C107",
 			has_plus: false,
 			check_tv: false,
-			tv_url: atob("aHR0cHM6Ly9zdG9yZS5zb255ZW50ZXJ0YWlubWVudG5ldHdvcmsuY29tL3N0b3JlL2FwaS9jaGloaXJvLzAwXzA5XzAwMC9jb250YWluZXIvVVMvZW4vMTkvU1RPUkUtTVNGNzcwMDgtUFNUVlZJVEFHQU1FUz9zaXplPTMw")
+			tv_url: atob("L3N0b3JlL2FwaS9jaGloaXJvLzAwXzA5XzAwMC9jb250YWluZXIvVVMvZW4vMTkvU1RPUkUtTVNGNzcwMDgtUFNUVlZJVEFHQU1FUz9zaXplPTMw")
 		};
 		console.log("PSDLE | Config set.");
 		try { if (GM_info) this.config.tag_line += " - <span class='psdle_tiny_link'>Userscript: "+GM_info.script.version+"</span>"; } catch (e) { };

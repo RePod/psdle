@@ -108,7 +108,7 @@ repod.psdle = {
 			switch_align: "center", switch_color: "#85C107",
 			has_plus: false,
 			check_tv: false,
-			tv_url: atob("aHR0cHM6Ly9zdG9yZS5zb255ZW50ZXJ0YWlubWVudG5ldHdvcmsuY29tL3N0b3JlL2FwaS9jaGloaXJvLzAwXzA5XzAwMC9jb250YWluZXIvVVMvZW4vMTkvU1RPUkUtTVNGNzcwMDgtUFNUVlZJVEFHQU1FUz9zaXplPTMw")
+			tv_url: atob("L3N0b3JlL2FwaS9jaGloaXJvLzAwXzA5XzAwMC9jb250YWluZXIvVVMvZW4vMTkvU1RPUkUtTVNGNzcwMDgtUFNUVlZJVEFHQU1FUz9zaXplPTMw")
 		};
 		console.log("PSDLE | Config set.");
 		try { if (GM_info) this.config.tag_line += " - <span class='psdle_tiny_link'>Userscript: "+GM_info.script.version+"</span>"; } catch (e) { };
