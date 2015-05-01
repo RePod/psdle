@@ -108,7 +108,8 @@ repod.psdle = {
 			switch_align: "center", switch_color: "#85C107",
 			has_plus: false,
 			check_tv: false,
-			tv_url: atob("L3N0b3JlL2FwaS9jaGloaXJvLzAwXzA5XzAwMC9jb250YWluZXIvVVMvZW4vMTkvU1RPUkUtTVNGNzcwMDgtUFNUVlZJVEFHQU1FUz9zaXplPTMw")
+			tv_url: atob("L3N0b3JlL2FwaS9jaGloaXJvLzAwXzA5XzAwMC9jb250YWluZXIvVVMvZW4vMTkvU1RPUkUtTVNGNzcwMDgtUFNUVlZJVEFHQU1FUz9zaXplPTMw"),
+			iconSize: 42
 		};
 		console.log("PSDLE | Config set.");
 		try { if (GM_info) this.config.tag_line += " - <span class='psdle_tiny_link'>Userscript: "+GM_info.script.version+"</span>"; } catch (e) { };
@@ -209,8 +210,9 @@ repod.psdle = {
 
 				//Post-processing.
 				temp.size_f = formatFileSizeDisplayStr(temp.size);
-				temp.icon = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.pid)+"&w=31&h=31";
-				temp.api_icon = temp.api_icon+"&w=31&h=31";
+				var i = repod.psdle.config.iconSize + "px"; i = "&w="+i+"&h="+i;
+				temp.icon = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.pid)+i;
+				temp.api_icon = temp.api_icon+i;
 				temp.date = obj.active_date;
 				temp.pdate = convertToNumericDateSlashes(convertStrToDateObj(temp.date));
 				temp.url = repod.psdle.config.game_page+temp.pid;
@@ -311,7 +313,7 @@ repod.psdle = {
 				if (type == "batch") this.batch(0,true);
 			},
 			validate: function(source) {
-				var that = this, index = source.split("_").pop(), temp = repod.psdle.gamelist[index], url = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.id)+"&w=31&h=31"
+				var that = this, index = source.split("_").pop(), temp = repod.psdle.gamelist[index], i = repod.psdle.config.iconSize, url = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.id)+"&w="+i+"&h="+i;
 				if (!temp.safe_icon) {
 					$.get(url)
 					.success(function() { that.setIcon(index,url) })
@@ -790,7 +792,8 @@ repod.psdle = {
 				is_plus = (val.plus) ? "is_plus" : "",
 				sys = repod.psdle.safeGuessSystem(val.platform),
 				//style='background-image:url(\""+bg+"\")' bg = (val.images && val.images.length > 0) ? val.images[0] : "",
-				temp = "<tr id='psdle_index_"+(val.index -1)+"'><td style='max-width:31px;max-height:31px;'><a target='_blank' href='"+val.url+"'><img title='"+repod.psdle.lang.labels.page+" #"+Math.ceil(val.index/pg)+"' src='"+icon+"' class='psdle_game_icon "+is_plus+"' /></a>"+"</td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+val.name+"</a></td>";
+				iS = repod.psdle.config.iconSize+"px",
+				temp = "<tr id='psdle_index_"+(val.index -1)+"'><td style='max-width:"+iS+";max-height:"+iS+";'><a target='_blank' href='"+val.url+"'><img title='"+repod.psdle.lang.labels.page+" #"+Math.ceil(val.index/pg)+"' src='"+icon+"' class='psdle_game_icon "+is_plus+"' /></a>"+"</td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+val.name+"</a></td>";
 				if (dlQueue) {
 					temp += "<td>"+sys+"</td><td>"+dlQueue.to_sys.toUpperCase().replace("VITA","PS Vita")+"</td><td>"+val.size_f+"</td><td>"+convertToNumericDateSlashes(convertStrToDateObj(dlQueue.createdTime))+"</td>"
 				} else {
@@ -959,7 +962,7 @@ repod.psdle = {
 					if (temp.plus) { repod.psdle.config.has_plus = true; } //PS+
 					min = new Date(); min.setDate(min.getDate() - 365*4); min = min.getTime(); temp.date = new Date(min + Math.random() * (Date.now() - min)).toISOString(); //Date
 
-					temp.icon = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.pid)+"&w=31&h=31";
+					temp.icon = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.pid)+"&w=42&h=42";
 
 					temp.size_f = formatFileSizeDisplayStr(temp.size);
 					temp.url = repod.psdle.config.game_page+temp.pid
