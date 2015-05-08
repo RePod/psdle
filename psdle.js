@@ -957,7 +957,7 @@ repod.psdle = {
 					temp.platform = [ $(this).find(".pforms").text().split("|").pop() ];
 
 					/* Random values */
-					temp.size = Math.floor(Math.random() * (20000000000 - 6000)); //Size, in bytes.
+					temp.size = Math.floor(Math.random() * 19999994000); //Size, in bytes.
 					temp.plus = (Math.random() < 0.5);
 					if (temp.plus) { repod.psdle.config.has_plus = true; } //PS+
 					min = new Date(); min.setDate(min.getDate() - 365*4); min = min.getTime(); temp.date = new Date(min + Math.random() * (Date.now() - min)).toISOString(); //Date
