@@ -307,13 +307,19 @@ repod.psdle = {
 		margin: function() { $("#muh_table").animate({"margin-top":$("#search_options").outerHeight() - $("#sub_container").css("padding-top").replace("px","")+"px"}); },
 		icons: {
 			select: function(type) {
-				type = (type) ? type : "smart";
 				var that = this;
-				if (type == "smart") $(document).off("scroll").on("scroll",function() { that.smartScroll(); }); this.smartScroll();
-				if (type == "batch") this.batch(0,true);
+				$(document).off("scroll").on("scroll",function() {
+					that.smartScroll();
+				});
+				this.smartScroll();
 			},
 			validate: function(source) {
-				var that = this, index = source.split("_").pop(), temp = repod.psdle.gamelist[index], i = repod.psdle.config.iconSize, url = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.id)+"&w="+i+"&h="+i;
+				var that = this,
+					index = source.split("_").pop(),
+					temp = repod.psdle.gamelist[index],
+					i = repod.psdle.config.iconSize,
+					url = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.id) + "&w=" + i + "&h=" + i;
+
 				if (!temp.safe_icon) {
 					$.get(url)
 					.success(function() { that.setIcon(index,url) })
@@ -326,40 +332,19 @@ repod.psdle = {
 				}
 			},
 			setIcon: function(index,url) {
-				/* Hnnng. */
 				$("#psdle_index_"+index+" .psdle_game_icon").attr("src",url);
 				$.extend(repod.psdle.gamelist[index],{safe_icon: true, icon: url});
 			},
 			smartScroll: function() {
-				/*
-					Get icons currently in view, and a few nearby.
-					TO-DO:
-						Probably slowly work through other icons when using this.
-				*/
-				var padding = 5, low = window.scrollY, high = low+window.innerHeight, that = this,
-				t = $("[id^=psdle_index_]").filter(function(a) { var pos = $(this).offset().top; if (pos >= low && pos <= high) { return 1; } }).filter(":first, :last"),
-				first = ($(t[0]).index()-padding <= 0) ? 0 : $(t[0]).index()-padding,
-				last = $(t[1]).index()+padding;
+				var	padding = 5,
+					low = window.scrollY,
+					high = low + window.innerHeight, 
+					that = this,
+					t = $("[id^=psdle_index_]").filter(function(a) { var pos = $(this).offset().top; if (pos >= low && pos <= high) { return 1; } }).filter(":first, :last"),
+					first = ($(t[0]).index()-padding <= 0) ? 0 : $(t[0]).index()-padding,
+					last = $(t[1]).index()+padding;
+
 				$("[id^=psdle_index_]").slice(first,last).not(".go_icon").each(function(a) { $(this).addClass("go_icon"); var b = this; setTimeout(function() { that.validate($(b).attr("id")); },a*50); });
-			},
-			batch: function(start,all) {
-				start = (start) ? start : 0;
-				var batch = (all) ? repod.psdle.gamelist.length : (chihiro.isMobile()) ? 50 : 24;
-				if ($(".psdle_game_icon").filter(function() { return !$(this).attr("src"); }).length > 0) {
-					this.runBatch(start,(start+batch));
-				}
-			},
-			runBatch: function(start,end) {
-				// Batches icon requests to avoid flooding the server at once. Batch size is determined in this.batch().
-				var that = this;
-				$(".psdle_game_icon").slice(start,end).each(function(a) {
-					var me = $(this).parent().parent().parent().attr("id"), index = me.split("_").pop();
-					setTimeout(function() {
-						$.get(repod.psdle.gamelist[index].icon)
-						.done(function() { if (a == end-start-1) { setTimeout(that.batch(end),200); } repod.psdle.gamelist[index].safe_icon = true; $("#"+me+" .psdle_game_icon").attr("src", repod.psdle.gamelist[index].icon); })
-						.fail(function() { if (a == end-start-1) { setTimeout(that.batch(end),200); } repod.psdle.gamelist[index].safe_icon = true; repod.psdle.gamelist[index].icon = repod.psdle.gamelist[index].api_icon; $("#"+me+" .psdle_game_icon").attr("src", repod.psdle.gamelist[index].icon); });
-					},(a*20));
-				});
 			}
 		}
 	},
