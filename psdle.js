@@ -100,7 +100,7 @@ repod.psdle = {
         console.log("PSDLE | Init.");
 
         var that = this,
-            l = chihiro.getUrlCultureCode().toString().toLowerCase();
+            l    = chihiro.getUrlCultureCode().toString().toLowerCase();
 
         this.config = {
             logoBase64      : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAAAfCAYAAAEO89r4AAABaUlEQVRoge2XS27CQAyGPSVSUVErdqzpMqveiRvALnu67Gl6D+gFuAKIPgQrs0o1TJSJJ7aJBvnbRXE8f357XoCIGyTiEBFf33+BwgMpyg/eVRNSsENEpAQWMa27agL1e7JWcmCSVSG+tF6jp1D4o/qkqN8un+Bl7JpJUxP5vH38XT2T655CtEf6olKoaFLq3ElK2heRlgq//U/KKVj4rcrvs+Y+h7Z1ow2Vv9eg6A5p53MxhnI2an0vWSmW0HI2EhUTI5vSN4T2Xem0ycZRh4h7AJgOLaQLlf1ega2br3/IQlMW6TA2dYEPc2XToyZUGtbOdMs1lyX0lqeubEpvQqVp9GhsghxPOpvY8yPA1yo+MRtCh7iWfJ/j49rOpEE2QnM55h1U7/Wcox0nb+y9lqY6dzYtmgtmqDBmqDBmqDCDGcq5Ew5xCqViHSqMGSqMGSqMGSpMp6H3unloYR0qjBkqjBkqjBkqzAUtBKxj5lT3GAAAAABJRU5ErkJggg==",
@@ -217,7 +217,7 @@ repod.psdle = {
     generateList: function() {
         console.log("PSDLE | Generating download list.");
 
-        var that = this,
+        var that         = this,
             entitlements = gEntitlementManager.getAllEntitlements();
 
         $.each(entitlements, function(index,obj) {
@@ -225,16 +225,17 @@ repod.psdle = {
                 var temp = {};
 
                 //Constants/pre-determined.
-                temp.deep_type    = "unknown";
-                temp.pid        = obj.product_id;
+                temp.deep_type = "unknown";
+                temp.pid       = obj.product_id;
+                temp.id        = obj.id;
                 if (!that.pid_cache[temp.pid]) { that.pid_cache[temp.pid] = 1; } else { that.pid_cache[temp.pid]++; }
-                temp.id            = obj.id;
+                
 
                 if (obj.entitlement_attributes) {
                     /* PS4 */
                     if (obj.game_meta) {
-                        temp.name        = obj.game_meta.name;
-                        temp.api_icon    = obj.game_meta.icon_url;
+                        temp.name     = obj.game_meta.name;
+                        temp.api_icon = obj.game_meta.icon_url;
                         //temp.id
                         //temp.icon = obj.game_meta.icon_url;
                     }
@@ -258,24 +259,36 @@ repod.psdle = {
                 var i = repod.psdle.config.iconSize + "px";
                 i = "&w=" + i + "&h=" + i;
 
-                temp.icon            = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.pid) + i;
-                temp.api_icon        = temp.api_icon + i;
-                temp.date            = obj.active_date;
-                temp.pdate            = convertToNumericDateSlashes(convertStrToDateObj(temp.date));
+                temp.icon           = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.pid) + i;
+                temp.api_icon       = temp.api_icon + i;
+                temp.date           = obj.active_date;
+                temp.pdate          = convertToNumericDateSlashes(convertStrToDateObj(temp.date));
                 temp.url            = repod.psdle.config.game_page + temp.pid;
                 temp.platform_og    = temp.platform.slice(0);
 
                 //Get Plus status
-                if (!obj.drm_def && !!obj.inactive_date) { temp.plus = true; } //PS4, Vita, PSP
-                if (obj.license && obj.license.expiration) { temp.plus = true; } //PS3
-                if (temp.plus) { repod.psdle.config.has_plus = true; }
+                if (!obj.drm_def && !!obj.inactive_date)    { temp.plus = true; } //PS4, Vita, PSP
+                if (obj.license && obj.license.expiration)  { temp.plus = true; } //PS3
+                if (temp.plus)                              { repod.psdle.config.has_plus = true; }
 
                 that.gamelist.push(temp);
             }
         });
         this.gamelist.sort(function(a,b) { return (a.date > b.date)?-1:(a.date < b.date)?1:0 });
-        $.each(this.pid_cache, function(i,v) { if (v > 1) { that.game_api.queue("pid_cache",i) }});
-        $.each(this.gamelist,function(a,b) { that.gamelist[a].index = a+1; if (that.config.deep_search) { that.game_api.queue(a+1,((that.pid_cache[b.pid] > 1)?b.id:b.pid)); } });
+        
+        $.each(this.pid_cache, function(i,v) {
+            if (v > 1) {
+                that.game_api.queue("pid_cache",i)
+            }
+        });
+        
+        $.each(this.gamelist,function(a,b) {
+            that.gamelist[a].index = a+1;
+            
+            if (that.config.deep_search) {
+                that.game_api.queue(a+1,((that.pid_cache[b.pid] > 1)?b.id:b.pid));
+            }
+        });
 
         console.log("PSDLE | Finished generating download list.");
         this.postList();
@@ -283,22 +296,22 @@ repod.psdle = {
     postList: function() {
         var safe = !0;
 
-        if (repod.psdle.config.check_tv) { safe = !1; repod.psdle.tv.init(); }
+        if (repod.psdle.config.check_tv)    { safe = !1; repod.psdle.tv.init(); }
         if (repod.psdle.config.deep_search) { safe = !1; this.game_api.run(); this.game_api.run(); this.game_api.run(); this.game_api.run(); }
-        if (safe) { this.table.gen(); }
+        if (safe)                           { this.table.gen(); }
     },
     isValidContent: function(obj) {
-        if (obj.VUData) { return !1; }
+        if      (obj.VUData)                                     { return !1; }
         else if (obj.drm_def && obj.drm_def.contentType == "TV") { return !1; }
-        else if (obj.drm_def || obj.entitlement_attributes) { return !0; }
-        else { return !1; }
+        else if (obj.drm_def || obj.entitlement_attributes)      { return !0; }
+        else                                                     { return !1; }
     },
     genSysCache: function() {
         var that = this;
 
         $.each(this.gamelist,function (i,v) {
             var name = that.safeGuessSystem(v.platform),
-                key = name.toLowerCase().replace("ps ","");
+                key  = name.toLowerCase().replace("ps ","");
 
             that.sys_cache[key] = name;
         });
@@ -398,11 +411,11 @@ repod.psdle = {
                 this.smartScroll();
             },
             validate: function(source) {
-                var that = this,
+                var that  = this,
                     index = source.split("_").pop(),
-                    temp = repod.psdle.gamelist[index],
-                    i = repod.psdle.config.iconSize,
-                    url = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.id) + "&w=" + i + "&h=" + i;
+                    temp  = repod.psdle.gamelist[index],
+                    i     = repod.psdle.config.iconSize,
+                    url   = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.id) + "&w=" + i + "&h=" + i;
 
                 if (!temp.safe_icon) {
                     $.get(url)
@@ -420,13 +433,13 @@ repod.psdle = {
                 $.extend(repod.psdle.gamelist[index],{safe_icon: true, icon: url});
             },
             smartScroll: function() {
-                var    padding = 5,
-                    low = window.scrollY,
-                    high = low + window.innerHeight,
-                    that = this,
-                    t = $("[id^=psdle_index_]").filter(function(a) { var pos = $(this).offset().top; if (pos >= low && pos <= high) { return 1; } }).filter(":first, :last"),
-                    first = ($(t[0]).index()-padding <= 0) ? 0 : $(t[0]).index()-padding,
-                    last = $(t[1]).index()+padding;
+                var padding = 5,
+                    low     = window.scrollY,
+                    high    = low + window.innerHeight,
+                    that    = this,
+                    t       = $("[id^=psdle_index_]").filter(function(a) { var pos = $(this).offset().top; if (pos >= low && pos <= high) { return 1; } }).filter(":first, :last"),
+                    first   = ($(t[0]).index() - padding <= 0) ? 0 : $(t[0]).index() - padding,
+                    last    = $(t[1]).index() + padding;
 
                 $("[id^=psdle_index_]").slice(first,last).not(".go_icon").each(function(a) { $(this).addClass("go_icon"); var b = this; setTimeout(function() { that.validate($(b).attr("id")); },a*50); });
             }
@@ -437,10 +450,10 @@ repod.psdle = {
         this.gamelist_cur = [];
         this.autocomplete_cache = [];
 
-        var that = this,
-            temp = "",
+        var that    = this,
+            temp    = "",
             safesys = this.safeSystemCheck(),
-            search = (!!$("#psdle_search_text")) ? $("#psdle_search_text").val() : this.config.last_search;
+            search  = (!!$("#psdle_search_text")) ? $("#psdle_search_text").val() : this.config.last_search;
 
         /* Determine filters. */
         var filters = {};
@@ -454,8 +467,8 @@ repod.psdle = {
 
         $.each(this.gamelist,function(index,val) {
             var sys = that.safeGuessSystem(val.platform),
-                a = true,
-                t = val.name;
+                a   = true,
+                t   = val.name;
 
             if ($.inArray(sys,safesys) > -1) {
                 if (that.config.deep_search) {
@@ -537,7 +550,7 @@ repod.psdle = {
     },
     sortGamelist: function(sort_method) {
         var that = this,
-            rev = true;
+            rev  = true;
 
         if (sort_method == "noreverse") {
             rev = false; sort_method = (this.config.lastsort) ? this.config.lastsort : "sort_date"
@@ -634,7 +647,7 @@ repod.psdle = {
         delimited: {
             gen: function(sep) {
                 var sep = (sep) ? sep : "    ",
-                    t = repod.psdle.exportList.formatRow(sep);
+                    t   = repod.psdle.exportList.formatRow(sep);
 
                 $(repod.psdle.gamelist_cur).each(function(i) { t += repod.psdle.exportList.formatRow(sep,i); });
                 t += repod.psdle.exportList.formatRow(sep,-1);
@@ -651,9 +664,9 @@ repod.psdle = {
         },
         csv: {
             gen: function(sep) {
-                var sep = (sep)?sep:",",
-                    csv = repod.psdle.exportList.formatRow(sep),
-                    that = this;
+                var that = this,
+                    sep  = (sep) ? sep : ",",
+                    csv  = repod.psdle.exportList.formatRow(sep);
 
                 $.each(repod.psdle.gamelist_cur,function(i) {
                     csv += repod.psdle.exportList.formatRow(sep,i);
@@ -673,9 +686,9 @@ repod.psdle = {
         },
         formatRow: function(sep,index) {
             //Use this.config{} and this.tl{}.
-            var out = "",
-                that = this,
-                sep = (sep)?sep:",";
+            var that = this,
+                out  = "",
+                sep  = (sep) ? sep : ",";
 
             if (index >= 0) {
                 var b = repod.psdle.gamelist_cur[index];
@@ -709,7 +722,7 @@ repod.psdle = {
         batch: [],
         queue: function(index,pid) {
             var that = this,
-                a = {pid:pid,index:index};
+                a    = {pid:pid,index:index};
 
             /* Do some queue/delay magic here. */
             if (index == "pid_cache") { this.batch.push(a) } else { this.batch.unshift(a); }
@@ -742,8 +755,8 @@ repod.psdle = {
         },
         process: function(index,data) {
             var parse = this.parse(data),
-                l = Math.abs(repod.psdle.gamelist.length - this.batch.length), r = repod.psdle.gamelist.length,
-                w = $('#psdle_bar').width(), pW = $('#psdle_bar').parent().width(), p = Math.round(100*w/pW), q = Math.round(100*l/r);
+                l     = Math.abs(repod.psdle.gamelist.length - this.batch.length), r = repod.psdle.gamelist.length,
+                w     = $('#psdle_bar').width(), pW = $('#psdle_bar').parent().width(), p = Math.round(100*w/pW), q = Math.round(100*l/r);
 
             if (q > p) { $("#psdle_progressbar > #psdle_bar").stop().animate({"width":q+"%"}); }
             $("#psdle_status").text(l+" / "+r);
@@ -761,9 +774,9 @@ repod.psdle = {
         },
         parse: function(data) {
             var extend = {},
+                type   = "unknown",
                 sys,
-                type = "unknown",
-                r = /^(PS(?:1|2)).+Classic$/i;
+                r      = /^(PS(?:1|2)).+Classic$/i;
 
             if (data.default_sku && data.default_sku.entitlements.length == 1) {
                 if (data.metadata) {
@@ -1071,7 +1084,7 @@ repod.psdle = {
         },
         run: function() {
             var that = this,
-                url = this.url_cache.pop();
+                url  = this.url_cache.pop();
 
             if (url) {
                 $.getJSON(url)
@@ -1172,7 +1185,7 @@ repod.psdle = {
         generate: {
             cell: function(index) {
                 var item = repod.psdle.gamelist[index],
-                    out = $("<div>",{class:"cell"})
+                    out  = $("<div>",{class:"cell"})
 
                 .append($("<img>",{class:"cell_icon",src:item.icon.replace(/(w|h)=\d+/g,"$1=124")}))
                 .append($("<div>",{class:"title psdle_blue",text:item.name}))
