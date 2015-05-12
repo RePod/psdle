@@ -480,7 +480,7 @@ repod.psdle = {
                     a = (!!regex && !!regex[2] && regex[2].toLowerCase().indexOf("d") >= 0) ? true : false;
 
                     if (a) {
-                        $("#3").addClass("negate_regex"); regex[2] = regex[2].replace("d","");
+                        $("#psdle_search_text").addClass("negate_regex"); regex[2] = regex[2].replace("d","");
                     }
                     if (!!regex) {
                         if (RegExp((regex[1])?regex[1]:search,(regex[2])?regex[2]:"").test(t)) { a = !a; }
