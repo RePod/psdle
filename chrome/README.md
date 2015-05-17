@@ -7,7 +7,7 @@ Requisites
 
 Accessing Extensions
 ----
-- Main menu ➤ More tools ➤ Extensions
+- ![Main menu](hotdog.png?raw=true) ➤ More tools ➤ Extensions
 - chrome://extensions/
 
 Loading the unpacked Extension
