@@ -13,21 +13,22 @@ Accessing Extensions
 Loading the unpacked Extension
 ----
 1. Place "*psdle.js*" (from the parent folder) in "*psdle/js*".
-2. Enable "*Developer mode*", if not already enabled. (upper-right corner)
-3. Click "*Load unpacked extension...*"
-4. Navigate to this folder.
-5. Select the "*psdle*" folder.
+2. [Access Extensions.](#accessing-extensions)
+3. Enable "*Developer mode*", if not already enabled. (upper-right corner)
+4. Click "*Load unpacked extension...*"
+5. Navigate to this folder.
+6. Select the "*psdle*" folder.
 7. Submit.
 
+Packing the Extension
 ----
 
-To pack, from Extensions:
-
-1. Enable "*Developer mode*", if not already enabled. (upper-right corner)
-2. "*Pack extension...*"
-3. Navigate to this folder.
-4. Select the "*psdle*" folder.
-5. Submit.
+1. [Access Extensions.](#accessing-extensions)
+2. Enable "*Developer mode*", if not already enabled. (upper-right corner)
+3. "*Pack extension...*"
+4. Navigate to this folder.
+5. Select the "*psdle*" folder.
+6. Submit.
 
 Private keys are not provided, and are not required.
 
