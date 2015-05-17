@@ -1,4 +1,4 @@
-*All instances of folder structure are in perspective to this README.*
+*All instances of file/folder structure are relative to this README.*
 
 Requisites
 ----
