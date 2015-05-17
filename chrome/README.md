@@ -32,4 +32,4 @@ Packing the Extension
 
 Private keys are not provided, and are not required.
 
-**The CRX is no longer be provided**, as it is irrelevant to testing.
+**The CRX is no longer provided**, as it is irrelevant to testing.
