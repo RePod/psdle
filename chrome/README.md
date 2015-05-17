@@ -19,7 +19,7 @@ Place "*psdle.js*" in "*psdle/js*" then load into Chrome:
 
 ----
 
-To pack, from Extensions: click "Pack extension...", navigate to this folder and select the "psdle" folder and submit.
+To pack, from Extensions: click "*Pack extension...*", navigate to this folder and select the "*psdle*" folder and submit.
 Private keys are not provided, and are not required.
 
 **The CRX is no longer be provided**, as it is irrelevant to testing.
