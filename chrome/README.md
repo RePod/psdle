@@ -1,3 +1,8 @@
+Looking for the official Chrome Extension? [It's on the webstore!](https://chrome.google.com/webstore/detail/psdle/jdjhhapoddhnimgdemnpbfagndcnmhii)
+
+
+----
+
 *All instances of file/folder structure are relative to this README.*
 
 Requisites
