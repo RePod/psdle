@@ -648,7 +648,7 @@ repod.psdle = {
         json: function() { return (!!JSON.stringify) ? JSON.stringify(repod.psdle.gamelist_cur) : repod.psdle.lang.strings.stringify_error; },
         delimited: {
             gen: function(sep) {
-                var sep = (sep) ? sep : "    ",
+                var sep = (sep) ? sep : "\t",
                     t   = repod.psdle.exportList.formatRow(sep);
 
                 $(repod.psdle.gamelist_cur).each(function(i) { t += repod.psdle.exportList.formatRow(sep,i); });
@@ -659,7 +659,7 @@ repod.psdle = {
                 this.destroy();
                 var w = 600;
                 $("#search_options").append("<span id='sotextarea' style='display:none'><br /><textarea></textarea></span>");
-                $("#sotextarea > textarea").css({"width":w,"max-width":w}).text(this.gen(prompt(repod.psdle.lang.strings.delimiter,"    "))).select().parent().delay(500).slideDown();
+                $("#sotextarea > textarea").css({"width":w,"max-width":w}).text(this.gen(prompt(repod.psdle.lang.strings.delimiter,"\t"))).select().parent().delay(500).slideDown();
                 repod.psdle.table.margin();
             },
             destroy: function () { $("#sotextarea").remove(); repod.psdle.table.margin(); }
