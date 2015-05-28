@@ -256,11 +256,11 @@ repod.psdle = {
                 }
 
                 //Post-processing.
-                temp.size_f = formatFileSizeDisplayStr(temp.size);
-
-                var i = repod.psdle.config.iconSize + "px";
+                
+                var i = repod.psdle.config.iconSize;// + "px";
                 i = "&w=" + i + "&h=" + i;
-
+                
+                temp.size_f         = formatFileSizeDisplayStr(temp.size);
                 temp.icon           = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.pid) + i;
                 temp.api_icon       = temp.api_icon + i;
                 temp.date           = obj.active_date;
