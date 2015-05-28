@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.046
+// @version		2.047
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -272,13 +272,13 @@ repod.psdle = {
                 }
 
                 //Post-processing.
-                temp.size_f = formatFileSizeDisplayStr(temp.size);
-
+                
                 var i = repod.psdle.config.iconSize + "px";
                 i = "&w=" + i + "&h=" + i;
-
+                
+                temp.size_f         = formatFileSizeDisplayStr(temp.size);
                 temp.icon           = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.pid) + i;
-                temp.api_icon       = temp.api_icon + i;
+                //temp.api_icon     = temp.api_icon + i;
                 temp.date           = obj.active_date;
                 temp.pdate          = convertToNumericDateSlashes(convertStrToDateObj(temp.date));
                 temp.url            = repod.psdle.config.game_page + temp.pid;
