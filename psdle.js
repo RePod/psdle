@@ -1181,6 +1181,12 @@ repod.psdle = {
             .fail(function(data) {
                 console.log(data);
             });
+        },
+        difference: function(regen) {
+            repod.psdle.gamelist_cur = $.grep(repod.psdle.gamelist,function(x) {return $.inArray(x, repod.psdle.gamelist_cur) < 0});
+            if (regen) {
+                repod.psdle.table.regen();
+            }
         }
     },
     grid: {
