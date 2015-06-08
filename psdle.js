@@ -1195,8 +1195,45 @@ repod.psdle = {
                 repod.psdle.table.regen();
             }
         },
-        entitlement: function(type,input) {
+        entitlement: function(input,type) {
+            //Probably want to have this store results in an array and return that instead, eventually.
+            
+            input = (input) ? input : prompt("Search for:");
+            input = input.toLowerCase()
+            type = (type) ? type : "name";
+            
+            $.each(gEntitlementManager.getAllEntitlements(),function(index,obj) {
+                if (repod.psdle.isValidContent(obj)) {
+                    var match = false;
 
+                    switch (type) {
+                        case "id":
+                        default:
+                            match = !!~obj.id.toLowerCase().indexOf(input);
+                            break;
+                        case "name":
+                            var name = (obj.drm_def) ? obj.drm_def.contentName : obj.game_meta.name;
+                            match = !!~name.toLowerCase().indexOf(input);
+                            break;
+                    }
+                    
+                    if (match) {
+                        var platform,
+                            pids = 0;
+                        
+                        if (obj.game_meta) {
+                            platform = ["PS4"]
+                        } else { 
+                            pids = obj.drm_def.drmContents[0].platformIds;
+                            platform = repod.psdle.determineSystem(pids);
+                        }
+                        
+                        //Remove personal information (such as dates) and extraneous URLs.
+                        var safe = JSON.stringify(obj, function(k,v) { if(/[\d\-]+T.+Z$/.test(v) || /^http/.test(v)) { return "~" } return v; });
+                        console.log(index,platform,pids,safe)
+                    }
+                }
+            });
         }
     },
     grid: {
