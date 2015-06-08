@@ -250,9 +250,7 @@ repod.psdle = {
                     temp.size        = obj.drm_def.drmContents[0].contentSize;
                     temp.platform    = [];
 
-                    $.each({"1":KamajiPlatformFlags.PS3,"3": KamajiPlatformFlags.PSP,"8":KamajiPlatformFlags.VITA}, function (t,u) {
-                        0 !== (obj.drm_def.drmContents[0].platformIds >>> 1 & u >>> 1) && temp.platform.push(KamajiPlatforms[Number(t)]);
-                    });
+                    temp.platform = that.determineSystem(obj.drm_def.drmContents[0].platformIds);
                 }
 
                 //Post-processing.
@@ -294,6 +292,15 @@ repod.psdle = {
 
         console.log("PSDLE | Finished generating download list.");
         this.postList();
+    },
+    determineSystem: function(HASH) {
+        var sys = [];
+        
+        $.each({"1":KamajiPlatformFlags.PS3,"3": KamajiPlatformFlags.PSP,"8":KamajiPlatformFlags.VITA}, function (t,u) {
+            0 !== (HASH >>> 1 & u >>> 1) && sys.push(KamajiPlatforms[Number(t)]);
+        });
+        
+        return sys;
     },
     postList: function() {
         var safe = !0;
@@ -1187,6 +1194,9 @@ repod.psdle = {
             if (regen) {
                 repod.psdle.table.regen();
             }
+        },
+        entitlement: function(type,input) {
+
         }
     },
     grid: {
