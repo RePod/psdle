@@ -1199,7 +1199,7 @@ repod.psdle = {
             //Probably want to have this store results in an array and return that instead, eventually.
             
             input = (input) ? input : prompt("Search for:");
-            input = input.toLowerCase()
+            input = input.toLowerCase();
             type = (type) ? type : "name";
             
             $.each(gEntitlementManager.getAllEntitlements(),function(index,obj) {
@@ -1208,10 +1208,10 @@ repod.psdle = {
 
                     switch (type) {
                         case "id":
-                        default:
                             match = !!~obj.id.toLowerCase().indexOf(input);
                             break;
                         case "name":
+                        default:
                             var name = (obj.drm_def) ? obj.drm_def.contentName : obj.game_meta.name;
                             match = !!~name.toLowerCase().indexOf(input);
                             break;
