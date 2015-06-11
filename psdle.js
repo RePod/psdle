@@ -602,9 +602,12 @@ repod.psdle = {
     },
     safeGuessSystem: function(sys_in) {
         //Quick, dirty, and easy. Rewrite.
-        var sys = (typeof(sys_in) == "object") ? sys_in.join(" ") : sys_in; sys = sys.replace(/[^\w\d ]/g,"");
+        var sys = (typeof(sys_in) == "object") ? sys_in.join(" ") : sys_in;
+        sys = sys.replace(/[^\w\d ]/g,"");
+        
         if (sys == "PS3 PSP PS Vita" || sys == "PS3 PSP" || sys == "PS Vita PSP" || sys.indexOf("PSP") > -1) { sys = "PSP"; }
         if (sys == "PS3 PS Vita" || sys.indexOf("PS Vita") > -1) { sys = "PS Vita"; }
+        
         return sys;
     },
     injectCSS: function() {
@@ -1237,7 +1240,7 @@ repod.psdle = {
         },
         findBad: function() {
             //Optimize eventually.
-            /*var bad = [];
+            var bad = [];
             
             $.each(repod.psdle.gamelist, function(index,obj) {
                 if (!obj.pid || obj.pid.length == 0
@@ -1245,12 +1248,11 @@ repod.psdle = {
                     || !obj.name || obj.name.length == 0
                     || !obj.size || obj.size.length == 0
                     || !obj.platform || obj.platform.length == 0
-                    || !obj.platform_og || obj.platform_og.length =n= 0
+                    || !obj.platform_og || obj.platform_og.length == 0
                     || !obj.date) {
                         bad.push(index);
                     }
             });
-            */
             
             return bad;
         },
