@@ -29,6 +29,7 @@ repod.psdle = {
     autocomplete_cache  : [],
     gamelist            : [],
     gamelist_cur        : [],
+    e_inject_cache      : [],
     id_cache            : {},
     lang                : {},
     pid_cache           : {},
@@ -220,7 +221,7 @@ repod.psdle = {
         console.log("PSDLE | Generating download list.");
 
         var that         = this,
-            entitlements = gEntitlementManager.getAllEntitlements();
+            entitlements = gEntitlementManager.getAllEntitlements().concat(this.e_inject_cache);
 
         $.each(entitlements, function(index,obj) {
             if (that.isValidContent(obj)) { /* Determine if game content. */
@@ -1265,6 +1266,22 @@ repod.psdle = {
                 
                 delete o[victim[num]];
             });
+        },
+        injectEntitlement: function(ENTITLEMENT) {
+            //ENTITLEMENT should be valid Entitlement data or an array containing multiple.
+            //This should be called before generating the list as it is appended to the end of the original Entitlements list.
+            
+            ENTITLEMENT = ENTITLEMENT || prompt("Enter valid Entitlement data:");
+            
+            if (typeof ENTITLEMENT == "array") {
+                $.each(ENTITLEMENT, function(index,value) {
+                    repod.psdle.e_inject_cache.push(JSON.parse(value));
+                });
+            } else {
+                repod.psdle.e_inject_cache.push(JSON.parse(ENTITLEMENT));
+            }
+            
+            return repod.psdle.e_inject_cache.length;
         }
     },
     grid: {
