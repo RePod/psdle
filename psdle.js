@@ -1168,7 +1168,7 @@ repod.psdle = {
 
                     temp.icon = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.pid)+"&w=42&h=42";
 
-                    temp.size_f = formatFileSizeDisplayStr(temp.size);
+                    temp.size_f = (temp.size === 0) ? "N/A" : formatFileSizeDisplayStr(temp.size);
                     temp.url = repod.psdle.config.game_page+temp.pid
                     temp.platform_og = temp.platform.slice(0);
                     temp.pdate = convertToNumericDateSlashes(convertStrToDateObj(temp.date));
