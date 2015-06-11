@@ -1237,7 +1237,7 @@ repod.psdle = {
         },
         findBad: function() {
             //Optimize eventually.
-            var bad = [];
+            /*var bad = [];
             
             $.each(repod.psdle.gamelist, function(index,obj) {
                 if (!obj.pid || obj.pid.length == 0
@@ -1250,6 +1250,7 @@ repod.psdle = {
                         bad.push(index);
                     }
             });
+            */
             
             return bad;
         },
