@@ -1277,7 +1277,7 @@ repod.psdle = {
             
             if (typeof ENTITLEMENT == "object") {
                 $.each(ENTITLEMENT, function(index,value) {
-                    repod.psdle.e_inject_cache.push(JSON.parse(value));
+                    repod.psdle.e_inject_cache.push(value);
                 });
             } else {
                 repod.psdle.e_inject_cache.push(JSON.parse(ENTITLEMENT));
