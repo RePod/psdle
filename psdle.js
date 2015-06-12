@@ -219,6 +219,8 @@ repod.psdle = {
     },
     generateList: function() {
         console.log("PSDLE | Generating download list.");
+        
+        this.gamelist = [];
 
         var that         = this,
             entitlements = gEntitlementManager.getAllEntitlements().concat(this.e_inject_cache);
