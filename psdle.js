@@ -1269,19 +1269,21 @@ repod.psdle = {
                 delete o[victim[num]];
             });
         },
-        injectEntitlement: function(ENTITLEMENT) {
+        injectEntitlement: function(ENTITLEMENT,quiet) {
             //ENTITLEMENT should be valid Entitlement data or an array containing multiple.
             //This should be called before generating the list as it is appended to the end of the original Entitlements list.
             
             ENTITLEMENT = ENTITLEMENT || prompt("Enter valid Entitlement data:");
             
-            if (typeof ENTITLEMENT == "array") {
+            if (typeof ENTITLEMENT == "object") {
                 $.each(ENTITLEMENT, function(index,value) {
                     repod.psdle.e_inject_cache.push(JSON.parse(value));
                 });
             } else {
                 repod.psdle.e_inject_cache.push(JSON.parse(ENTITLEMENT));
             }
+            
+            //if (ENTITLEMENT !== null && typeof ENTITLEMENT !== "array") { this.injectEntitlement(); }
             
             return repod.psdle.e_inject_cache.length;
         }
