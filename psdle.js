@@ -219,7 +219,7 @@ repod.psdle = {
     },
     generateList: function() {
         console.log("PSDLE | Generating download list.");
-        
+
         this.gamelist = [];
 
         var that         = this,
@@ -257,10 +257,10 @@ repod.psdle = {
                 }
 
                 //Post-processing.
-                
+
                 var i = repod.psdle.config.iconSize;// + "px";
                 i = "&w=" + i + "&h=" + i;
-                
+
                 temp.size_f         = (temp.size === 0) ? "N/A" : formatFileSizeDisplayStr(temp.size)
                 temp.icon           = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.pid) + i;
                 temp.api_icon       = temp.api_icon + i;
@@ -298,11 +298,11 @@ repod.psdle = {
     },
     determineSystem: function(HASH) {
         var sys = [];
-        
+
         $.each({"1":KamajiPlatformFlags.PS3,"3": KamajiPlatformFlags.PSP,"8":KamajiPlatformFlags.VITA}, function (t,u) {
             0 !== (HASH >>> 1 & u >>> 1) && sys.push(KamajiPlatforms[Number(t)]);
         });
-        
+
         return sys;
     },
     postList: function() {
@@ -607,10 +607,10 @@ repod.psdle = {
         //Quick, dirty, and easy. Rewrite.
         var sys = (typeof(sys_in) == "object") ? sys_in.join(" ") : sys_in;
         sys = sys.replace(/[^\w\d ]/g,"");
-        
+
         if (sys == "PS3 PSP PS Vita" || sys == "PS3 PSP" || sys == "PS Vita PSP" || sys.indexOf("PSP") > -1) { sys = "PSP"; }
         if (sys == "PS3 PS Vita" || sys.indexOf("PS Vita") > -1) { sys = "PS Vita"; }
-        
+
         return sys;
     },
     injectCSS: function() {
@@ -693,7 +693,7 @@ repod.psdle = {
             },
             handle: function() {
                 var that = this;
-                
+
                 $("<a>",{
                   "download" : "psdle_"+(new Date().toISOString())+".csv",
                   "href" : "data:text/csv;charset=utf-8,"+encodeURIComponent(this.gen())
@@ -708,7 +708,7 @@ repod.psdle = {
 
             if (index >= 0) {
                 var b = repod.psdle.gamelist_cur[index];
-                
+
                 $.each(this.config, function(key,val) {
                     if (val) {
                         switch (key) {
@@ -722,7 +722,7 @@ repod.psdle = {
                         out += sep;
                     }
                 });
-                
+
                 out += "\n";
             } else if (index == -1) {
                 //To-do: Reimplement totals based on selected columns.
@@ -731,10 +731,10 @@ repod.psdle = {
                 $.each(this.config, function(key,val) {
                     if (val) { out += that.tl[key]+sep; }
                 });
-                
+
                 out += "\n";
             }
-            
+
             return out;
         }
     },
@@ -753,7 +753,7 @@ repod.psdle = {
         },
         run: function() {
             var that = this;
-            
+
             if (this.batch.length > 0) {
                 var a = this.batch.pop();
                 $.getJSON(repod.psdle.config.game_api+a.pid)
@@ -774,7 +774,7 @@ repod.psdle = {
                             repod.psdle.type_cache.unknown = true;
                         }
                     }
-                    
+
                     that.run();
                 });
             } else {
@@ -817,13 +817,13 @@ repod.psdle = {
                     }
                     else if (!!data.metadata.playable_platform) {
                         sys = [];
-                        
+
                         $.each(data.metadata.playable_platform.values,function(i,val) {
                             sys.push(val.replace(/[^\w\d ]/g,""))
                         });
                     }
                 }
-                
+
                 if (sys) {
                     extend.platform = sys;
                 }
@@ -835,7 +835,7 @@ repod.psdle = {
             } else {
                 type = (data.top_category) ? data.top_category : "unknown";
             }
-            
+
             extend.deep_type = type;
 
             if (data.star_rating && data.star_rating.score) { extend.rating = data.star_rating.score }
@@ -895,7 +895,7 @@ repod.psdle = {
                 if (cancel) {
                     dat.status = "usercancelled";
                 }
-                
+
                 $.ajax({
                     type:'POST', url: base_url,
                     contentType: 'application/json; charset=utf-8', dataType: 'json',
@@ -958,10 +958,10 @@ repod.psdle = {
             },
             table: function() {
                 var temp = "";
-                
+
                 $("#muh_table").remove();
                 $("#sub_container").append("<table id='muh_table' style='display:inline-block;text-align:left'><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th>"+repod.psdle.lang.columns.platform+"</th><th> > </th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table>");
-                
+
                 $.each(repod.psdle.dlQueue.batch.cache, function(key,value) {
                     if (value.length) {
                         $.each(value, function(index,val) {
@@ -974,7 +974,7 @@ repod.psdle = {
                         });
                     }
                 });
-                
+
                 $("#muh_table > tbody").html(temp);
                 repod.psdle.table.margin();
             },
@@ -1246,11 +1246,11 @@ repod.psdle = {
         },
         entitlement: function(input,type) {
             //Probably want to have this store results in an array and return that instead, eventually.
-            
+
             input = (input) ? input : prompt("Search for:");
             input = input.toLowerCase();
             type = (type) ? type : "name";
-            
+
             $.each(gEntitlementManager.getAllEntitlements(),function(index,obj) {
                 if (repod.psdle.isValidContent(obj)) {
                     var match = false;
@@ -1265,18 +1265,18 @@ repod.psdle = {
                             match = !!~name.toLowerCase().indexOf(input);
                             break;
                     }
-                    
+
                     if (match) {
                         var platform,
                             pids = 0;
-                        
+
                         if (obj.game_meta) {
                             platform = ["PS4"]
-                        } else { 
+                        } else {
                             pids = obj.drm_def.drmContents[0].platformIds;
                             platform = repod.psdle.determineSystem(pids);
                         }
-                        
+
                         //Remove personal information (such as dates) and extraneous URLs.
                         var safe = JSON.stringify(obj, function(k,v) { if(/[\d\-]+T.+Z$/.test(v) || /^http/.test(v)) { return "~" } return v; });
                         console.log(index,platform,pids,safe)
@@ -1287,7 +1287,7 @@ repod.psdle = {
         findBad: function() {
             //Optimize eventually.
             var bad = [];
-            
+
             $.each(repod.psdle.gamelist, function(index,obj) {
                 if (!obj.pid || obj.pid.length == 0
                     || !obj.id || obj.id.length == 0
@@ -1299,25 +1299,25 @@ repod.psdle = {
                         bad.push(index);
                     }
             });
-            
+
             return bad;
         },
         makeBad: function() {
             //Totally safe.
-            
+
             $.each(repod.psdle.gamelist, function(i,o) {
                 var num = Math.ceil(Math.random() * 10),
                     victim = ["pid", "id", "name", "platform", "platform_og", "date", "size", "", "", ""];
-                
+
                 delete o[victim[num]];
             });
         },
         injectEntitlement: function(ENTITLEMENT,quiet) {
             //ENTITLEMENT should be valid Entitlement data or an array containing multiple.
             //This should be called before generating the list as it is appended to the end of the original Entitlements list.
-            
+
             ENTITLEMENT = ENTITLEMENT || prompt("Enter valid Entitlement data:");
-            
+
             if (typeof ENTITLEMENT == "object") {
                 $.each(ENTITLEMENT, function(index,value) {
                     repod.psdle.e_inject_cache.push(value);
@@ -1325,9 +1325,9 @@ repod.psdle = {
             } else {
                 repod.psdle.e_inject_cache.push(JSON.parse(ENTITLEMENT));
             }
-            
+
             //if (ENTITLEMENT !== null && typeof ENTITLEMENT !== "array") { this.injectEntitlement(); }
-            
+
             return repod.psdle.e_inject_cache.length;
         }
     },
