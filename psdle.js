@@ -693,9 +693,10 @@ repod.psdle = {
             },
             handle: function() {
                 var that = this;
+                
                 $("<a>",{
-                  "download":"psdle_"+(new Date().toISOString())+".csv",
-                  "href":"data:text/csv;charset=utf-8,"+encodeURIComponent(this.gen())
+                  "download" : "psdle_"+(new Date().toISOString())+".csv",
+                  "href" : "data:text/csv;charset=utf-8,"+encodeURIComponent(this.gen())
                 })[0].dispatchEvent(new MouseEvent("click"));
             }
         },
@@ -707,6 +708,7 @@ repod.psdle = {
 
             if (index >= 0) {
                 var b = repod.psdle.gamelist_cur[index];
+                
                 $.each(this.config, function(key,val) {
                     if (val) {
                         switch (key) {
@@ -720,6 +722,7 @@ repod.psdle = {
                         out += sep;
                     }
                 });
+                
                 out += "\n";
             } else if (index == -1) {
                 //To-do: Reimplement totals based on selected columns.
@@ -728,8 +731,10 @@ repod.psdle = {
                 $.each(this.config, function(key,val) {
                     if (val) { out += that.tl[key]+sep; }
                 });
+                
                 out += "\n";
             }
+            
             return out;
         }
     },
@@ -740,14 +745,21 @@ repod.psdle = {
                 a    = {pid:pid,index:index};
 
             /* Do some queue/delay magic here. */
-            if (index == "pid_cache") { this.batch.push(a) } else { this.batch.unshift(a); }
+            if (index == "pid_cache") {
+                this.batch.push(a)
+            } else {
+                this.batch.unshift(a);
+            }
         },
         run: function() {
             var that = this;
+            
             if (this.batch.length > 0) {
                 var a = this.batch.pop();
                 $.getJSON(repod.psdle.config.game_api+a.pid)
-                .success(function(data) { that.process(a.index,data); })
+                .success(function(data) {
+                    that.process(a.index,data);
+                })
                 .fail(function() {
                     if (a.index !== "pid_cache") {
                         if (repod.psdle.gamelist[a.index]) {
@@ -762,6 +774,7 @@ repod.psdle = {
                             repod.psdle.type_cache.unknown = true;
                         }
                     }
+                    
                     that.run();
                 });
             } else {
@@ -795,15 +808,25 @@ repod.psdle = {
 
             if (data.default_sku && data.default_sku.entitlements.length == 1) {
                 if (data.metadata) {
-                    if (data.metadata.secondary_classification && !!data.metadata.secondary_classification.values[0].match(r)) { sys = data.metadata.secondary_classification.values[0].match(r).pop(); }
+                    if (data.metadata.secondary_classification && !!data.metadata.secondary_classification.values[0].match(r)) {
+                        sys = data.metadata.secondary_classification.values[0].match(r).pop();
+                    }
                     //else if (!!data.metadata.game_subtype.values[0].match(r)) { sys = data.metadata.game_subtype.values[0].match(r).pop(); }
-                    else if (data.metadata.primary_classification && !!data.metadata.primary_classification.values[0].match(r)) { sys = data.metadata.primary_classification.values[0].match(r).pop(); }
+                    else if (data.metadata.primary_classification && !!data.metadata.primary_classification.values[0].match(r)) {
+                        sys = data.metadata.primary_classification.values[0].match(r).pop();
+                    }
                     else if (!!data.metadata.playable_platform) {
                         sys = [];
-                        $.each(data.metadata.playable_platform.values,function(i,val) { sys.push(val.replace(/[^\w\d ]/g,"")) });
+                        
+                        $.each(data.metadata.playable_platform.values,function(i,val) {
+                            sys.push(val.replace(/[^\w\d ]/g,""))
+                        });
                     }
                 }
-                if (sys) { extend.platform = sys; }
+                
+                if (sys) {
+                    extend.platform = sys;
+                }
             }
 
             if (data.top_category == "tumbler_index") {
@@ -812,6 +835,7 @@ repod.psdle = {
             } else {
                 type = (data.top_category) ? data.top_category : "unknown";
             }
+            
             extend.deep_type = type;
 
             if (data.star_rating && data.star_rating.score) { extend.rating = data.star_rating.score }
@@ -842,16 +866,24 @@ repod.psdle = {
                     base_url = repod.psdle.config.dlQueue.status+"/?status=notstarted&status=stopped&status=waitfordownload&platformString=$$1&size=100",
                     consoles = [];
 
-                for (var i in repod.psdle.config.active_consoles) { consoles.push(i) }
+                for (var i in repod.psdle.config.active_consoles) {
+                    consoles.push(i)
+                }
 
                 var index = $.inArray(prev_sys,consoles) + 1,
                     n = consoles[index];
 
                 if (n) {
                     $.getJSON(base_url.replace("$$1",n))
-                    .fail(function() { console.error("PSDLE | DL Queue parse error for \""+n+"\". Is it activated on the account?"); })
-                    .success(function(data) { that.cache[n] = data.data.notifications; })
-                    .complete(function() { that.get(n); });
+                    .fail(function() {
+                        console.error("PSDLE | DL Queue parse error for \""+n+"\". Is it activated on the account?");
+                    })
+                    .success(function(data) {
+                        that.cache[n] = data.data.notifications;
+                    })
+                    .complete(function() {
+                        that.get(n);
+                    });
                 } else {
                     repod.psdle.dlQueue.generate.table();
                 }
@@ -860,7 +892,10 @@ repod.psdle = {
                 var dat = {"platformString":sys,"contentId":id},
                     base_url = (cancel) ? repod.psdle.config.dlQueue.status : repod.psdle.config.dlQueue.base;
 
-                if (cancel) { dat.status = "usercancelled"; }
+                if (cancel) {
+                    dat.status = "usercancelled";
+                }
+                
                 $.ajax({
                     type:'POST', url: base_url,
                     contentType: 'application/json; charset=utf-8', dataType: 'json',
@@ -922,9 +957,11 @@ repod.psdle = {
                 $(document).off("click","[id^=psdle_index_]").on("click","[id^=psdle_index_]", function(e) { e.preventDefault(); repod.psdle.dlQueue.batch.remove.parse(this); });
             },
             table: function() {
+                var temp = "";
+                
                 $("#muh_table").remove();
                 $("#sub_container").append("<table id='muh_table' style='display:inline-block;text-align:left'><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th>"+repod.psdle.lang.columns.platform+"</th><th> > </th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table>");
-                var temp = "";
+                
                 $.each(repod.psdle.dlQueue.batch.cache, function(key,value) {
                     if (value.length) {
                         $.each(value, function(index,val) {
@@ -937,6 +974,7 @@ repod.psdle = {
                         });
                     }
                 });
+                
                 $("#muh_table > tbody").html(temp);
                 repod.psdle.table.margin();
             },
@@ -984,20 +1022,22 @@ repod.psdle = {
     },
     newbox: {
         generate: function(e) {
-            var    plus     = "",
-                i        = (isNaN(e)) ? Number($(e).attr("id").split("_").pop()) : Number(e),
-                game    = repod.psdle.gamelist[i],
-                id        = (game.index -1);
-
-            var dialog = $("<div>", {id:'dlQueueAsk',style:'background-image:url("'+game.icon.replace(/(w|h)=\d+/g,"$1=400")+'");'} );
+            var plus = "",
+                i    = (isNaN(e)) ? Number($(e).attr("id").split("_").pop()) : Number(e),
+                game = repod.psdle.gamelist[i],
+                id   = (game.index -1),
+                dialog = $("<div>", {
+                            id:'dlQueueAsk',
+                            style:'background-image:url("'+game.icon.replace(/(w|h)=\d+/g,"$1=400")+'");'
+                         });
 
             try { if (game.plus) { plus = $("#psdleplus").clone()[0].outerHTML+" "; } } catch(e) {}
             dialog.append($("<div>", {id:'dlQAN'} ).append(plus+game.name));
 
             if (repod.psdle.config.use_queue) {
-                var temp    = game.platform_og.slice(0),
-                    i        = $.inArray("PSP", temp),
-                    t        = $("<div>", {id:"dlQASys"} );
+                var temp = game.platform_og.slice(0),
+                    i    = $.inArray("PSP", temp),
+                    t    = $("<div>", {id:"dlQASys"} );
 
                 if (i != -1) { temp.splice(i, 1); } /* Make sure we don't have PSP */
 
