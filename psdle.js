@@ -989,6 +989,12 @@ repod.psdle = {
         }
     },
     table_utils: {
+        random: function(index) {
+            index = (index) ? Number(index) : Math.floor((Math.random() * repod.psdle.gamelist_cur.length));
+            index = repod.psdle.gamelist_cur[index].index - 1;
+
+            repod.psdle.dlQueue.batch.add.ask(index);
+        },
         gen: {
             row: function(val,dlQueue) {
                 var u = repod.psdle.config.game_page+val.id,
