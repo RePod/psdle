@@ -26,16 +26,16 @@ SOFTWARE.
 
 var repod = {};
 repod.psdle = {
-    autocomplete_cache  : [],
-    gamelist            : [],
-    gamelist_cur        : [],
-    e_inject_cache      : [],
-    id_cache            : {},
-    lang                : {},
-    pid_cache           : {},
-    sys_cache           : {},
-    type_cache          : {},
-    lang_cache          :
+    autocomplete_cache : [],
+    gamelist           : [],
+    gamelist_cur       : [],
+    e_inject_cache     : [],
+    id_cache           : {},
+    lang               : {},
+    pid_cache          : {},
+    sys_cache          : {},
+    type_cache         : {},
+    lang_cache         :
     {
         "en": {
             "def": "us",
@@ -1058,7 +1058,7 @@ repod.psdle = {
                 dialog.append(t);
             }
 
-            try { if (game.rating) { var star =    $("<div>", {class:"star-rating rater-0 ratingStarGeneric star-rating-applied star-rating-readonly star-rating-on",style:"display:inline-block !important;float:none !important;vertical-align:text-top"} ).append($("<a>",{text:""}))[0].outerHTML; dialog.append($("<div>", {id:"dlQARating"} ).append(star+" "+game.rating+" / 5")); } } catch (e) { }
+            try { if (game.rating) { var star = $("<div>", {class:"star-rating rater-0 ratingStarGeneric star-rating-applied star-rating-readonly star-rating-on",style:"display:inline-block !important;float:none !important;vertical-align:text-top"} ).append($("<a>",{text:""}))[0].outerHTML; dialog.append($("<div>", {id:"dlQARating"} ).append(star+" "+game.rating+" / 5")); } } catch (e) { }
 
             dialog.append($("<div>", {id:"dlQAStat",text:repod.psdle.safeGuessSystem(game.platform)+" | "+game.size_f+" | "+game.pdate} ));
 
@@ -1312,7 +1312,7 @@ repod.psdle = {
                 delete o[victim[num]];
             });
         },
-        injectEntitlement: function(ENTITLEMENT,quiet) {
+        injectEntitlement: function(ENTITLEMENT) {
             //ENTITLEMENT should be valid Entitlement data or an array containing multiple.
             //This should be called before generating the list as it is appended to the end of the original Entitlements list.
 
