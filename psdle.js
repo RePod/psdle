@@ -1035,11 +1035,8 @@ repod.psdle = {
             dialog.append($("<div>", {id:'dlQAN'} ).append(plus+game.name));
 
             if (repod.psdle.config.use_queue) {
-                var temp = game.platform_og.slice(0),
-                    i    = $.inArray("PSP", temp),
+                var temp = $.grep(game.platform_og.slice(0), function(V) { return V !== "PSP" }), /* Make sure we don't have PSP */
                     t    = $("<div>", {id:"dlQASys"} );
-
-                if (i != -1) { temp.splice(i, 1); } /* Make sure we don't have PSP */
 
                 if (temp.length > 1) {
                     t.append($("<div>").append($("<div>", {id:"dla_all_"+id,text:repod.psdle.lang.strings.queue_all} )));
