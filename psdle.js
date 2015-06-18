@@ -26,15 +26,16 @@ SOFTWARE.
 
 var repod = {};
 repod.psdle = {
-    autocomplete_cache  : [],
-    gamelist            : [],
-    gamelist_cur        : [],
-    id_cache            : {},
-    lang                : {},
-    pid_cache           : {},
-    sys_cache           : {},
-    type_cache          : {},
-    lang_cache          :
+    autocomplete_cache : [],
+    gamelist           : [],
+    gamelist_cur       : [],
+    e_inject_cache     : [],
+    id_cache           : {},
+    lang               : {},
+    pid_cache          : {},
+    sys_cache          : {},
+    type_cache         : {},
+    lang_cache         :
     {
         "en": {
             "def": "us",
@@ -219,8 +220,10 @@ repod.psdle = {
     generateList: function() {
         console.log("PSDLE | Generating download list.");
 
+        this.gamelist = [];
+
         var that         = this,
-            entitlements = gEntitlementManager.getAllEntitlements();
+            entitlements = gEntitlementManager.getAllEntitlements().concat(this.e_inject_cache);
 
         $.each(entitlements, function(index,obj) {
             if (that.isValidContent(obj)) { /* Determine if game content. */
@@ -250,17 +253,15 @@ repod.psdle = {
                     temp.size        = obj.drm_def.drmContents[0].contentSize;
                     temp.platform    = [];
 
-                    $.each({"1":KamajiPlatformFlags.PS3,"3": KamajiPlatformFlags.PSP,"8":KamajiPlatformFlags.VITA}, function (t,u) {
-                        0 !== (obj.drm_def.drmContents[0].platformIds >>> 1 & u >>> 1) && temp.platform.push(KamajiPlatforms[Number(t)]);
-                    });
+                    temp.platform = that.determineSystem(obj.drm_def.drmContents[0].platformIds);
                 }
 
                 //Post-processing.
-                
+
                 var i = repod.psdle.config.iconSize;// + "px";
                 i = "&w=" + i + "&h=" + i;
-                
-                temp.size_f         = formatFileSizeDisplayStr(temp.size);
+
+                temp.size_f         = (temp.size === 0) ? "N/A" : formatFileSizeDisplayStr(temp.size)
                 temp.icon           = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.pid) + i;
                 temp.api_icon       = temp.api_icon + i;
                 temp.date           = obj.active_date;
@@ -294,6 +295,15 @@ repod.psdle = {
 
         console.log("PSDLE | Finished generating download list.");
         this.postList();
+    },
+    determineSystem: function(HASH) {
+        var sys = [];
+
+        $.each({"1":KamajiPlatformFlags.PS3,"3": KamajiPlatformFlags.PSP,"8":KamajiPlatformFlags.VITA}, function (t,u) {
+            0 !== (HASH >>> 1 & u >>> 1) && sys.push(KamajiPlatforms[Number(t)]);
+        });
+
+        return sys;
     },
     postList: function() {
         var safe = !0;
@@ -595,9 +605,12 @@ repod.psdle = {
     },
     safeGuessSystem: function(sys_in) {
         //Quick, dirty, and easy. Rewrite.
-        var sys = (typeof(sys_in) == "object") ? sys_in.join(" ") : sys_in; sys = sys.replace(/[^\w\d ]/g,"");
+        var sys = (typeof(sys_in) == "object") ? sys_in.join(" ") : sys_in;
+        sys = sys.replace(/[^\w\d ]/g,"");
+
         if (sys == "PS3 PSP PS Vita" || sys == "PS3 PSP" || sys == "PS Vita PSP" || sys.indexOf("PSP") > -1) { sys = "PSP"; }
         if (sys == "PS3 PS Vita" || sys.indexOf("PS Vita") > -1) { sys = "PS Vita"; }
+
         return sys;
     },
     injectCSS: function() {
@@ -680,9 +693,10 @@ repod.psdle = {
             },
             handle: function() {
                 var that = this;
+
                 $("<a>",{
-                  "download":"psdle_"+(new Date().toISOString())+".csv",
-                  "href":"data:text/csv;charset=utf-8,"+encodeURIComponent(this.gen())
+                  "download" : "psdle_"+(new Date().toISOString())+".csv",
+                  "href" : "data:text/csv;charset=utf-8,"+encodeURIComponent(this.gen())
                 })[0].dispatchEvent(new MouseEvent("click"));
             }
         },
@@ -694,6 +708,7 @@ repod.psdle = {
 
             if (index >= 0) {
                 var b = repod.psdle.gamelist_cur[index];
+
                 $.each(this.config, function(key,val) {
                     if (val) {
                         switch (key) {
@@ -707,6 +722,7 @@ repod.psdle = {
                         out += sep;
                     }
                 });
+
                 out += "\n";
             } else if (index == -1) {
                 //To-do: Reimplement totals based on selected columns.
@@ -715,8 +731,10 @@ repod.psdle = {
                 $.each(this.config, function(key,val) {
                     if (val) { out += that.tl[key]+sep; }
                 });
+
                 out += "\n";
             }
+
             return out;
         }
     },
@@ -727,14 +745,21 @@ repod.psdle = {
                 a    = {pid:pid,index:index};
 
             /* Do some queue/delay magic here. */
-            if (index == "pid_cache") { this.batch.push(a) } else { this.batch.unshift(a); }
+            if (index == "pid_cache") {
+                this.batch.push(a)
+            } else {
+                this.batch.unshift(a);
+            }
         },
         run: function() {
             var that = this;
+
             if (this.batch.length > 0) {
                 var a = this.batch.pop();
                 $.getJSON(repod.psdle.config.game_api+a.pid)
-                .success(function(data) { that.process(a.index,data); })
+                .success(function(data) {
+                    that.process(a.index,data);
+                })
                 .fail(function() {
                     if (a.index !== "pid_cache") {
                         if (repod.psdle.gamelist[a.index]) {
@@ -749,6 +774,7 @@ repod.psdle = {
                             repod.psdle.type_cache.unknown = true;
                         }
                     }
+
                     that.run();
                 });
             } else {
@@ -782,15 +808,25 @@ repod.psdle = {
 
             if (data.default_sku && data.default_sku.entitlements.length == 1) {
                 if (data.metadata) {
-                    if (data.metadata.secondary_classification && !!data.metadata.secondary_classification.values[0].match(r)) { sys = data.metadata.secondary_classification.values[0].match(r).pop(); }
+                    if (data.metadata.secondary_classification && !!data.metadata.secondary_classification.values[0].match(r)) {
+                        sys = data.metadata.secondary_classification.values[0].match(r).pop();
+                    }
                     //else if (!!data.metadata.game_subtype.values[0].match(r)) { sys = data.metadata.game_subtype.values[0].match(r).pop(); }
-                    else if (data.metadata.primary_classification && !!data.metadata.primary_classification.values[0].match(r)) { sys = data.metadata.primary_classification.values[0].match(r).pop(); }
+                    else if (data.metadata.primary_classification && !!data.metadata.primary_classification.values[0].match(r)) {
+                        sys = data.metadata.primary_classification.values[0].match(r).pop();
+                    }
                     else if (!!data.metadata.playable_platform) {
                         sys = [];
-                        $.each(data.metadata.playable_platform.values,function(i,val) { sys.push(val.replace(/[^\w\d ]/g,"")) });
+
+                        $.each(data.metadata.playable_platform.values,function(i,val) {
+                            sys.push(val.replace(/[^\w\d ]/g,""))
+                        });
                     }
                 }
-                if (sys) { extend.platform = sys; }
+
+                if (sys) {
+                    extend.platform = sys;
+                }
             }
 
             if (data.top_category == "tumbler_index") {
@@ -799,6 +835,7 @@ repod.psdle = {
             } else {
                 type = (data.top_category) ? data.top_category : "unknown";
             }
+
             extend.deep_type = type;
 
             if (data.star_rating && data.star_rating.score) { extend.rating = data.star_rating.score }
@@ -829,16 +866,24 @@ repod.psdle = {
                     base_url = repod.psdle.config.dlQueue.status+"/?status=notstarted&status=stopped&status=waitfordownload&platformString=$$1&size=100",
                     consoles = [];
 
-                for (var i in repod.psdle.config.active_consoles) { consoles.push(i) }
+                for (var i in repod.psdle.config.active_consoles) {
+                    consoles.push(i)
+                }
 
                 var index = $.inArray(prev_sys,consoles) + 1,
                     n = consoles[index];
 
                 if (n) {
                     $.getJSON(base_url.replace("$$1",n))
-                    .fail(function() { console.error("PSDLE | DL Queue parse error for \""+n+"\". Is it activated on the account?"); })
-                    .success(function(data) { that.cache[n] = data.data.notifications; })
-                    .complete(function() { that.get(n); });
+                    .fail(function() {
+                        console.error("PSDLE | DL Queue parse error for \""+n+"\". Is it activated on the account?");
+                    })
+                    .success(function(data) {
+                        that.cache[n] = data.data.notifications;
+                    })
+                    .complete(function() {
+                        that.get(n);
+                    });
                 } else {
                     repod.psdle.dlQueue.generate.table();
                 }
@@ -847,7 +892,10 @@ repod.psdle = {
                 var dat = {"platformString":sys,"contentId":id},
                     base_url = (cancel) ? repod.psdle.config.dlQueue.status : repod.psdle.config.dlQueue.base;
 
-                if (cancel) { dat.status = "usercancelled"; }
+                if (cancel) {
+                    dat.status = "usercancelled";
+                }
+
                 $.ajax({
                     type:'POST', url: base_url,
                     contentType: 'application/json; charset=utf-8', dataType: 'json',
@@ -909,9 +957,11 @@ repod.psdle = {
                 $(document).off("click","[id^=psdle_index_]").on("click","[id^=psdle_index_]", function(e) { e.preventDefault(); repod.psdle.dlQueue.batch.remove.parse(this); });
             },
             table: function() {
+                var temp = "";
+
                 $("#muh_table").remove();
                 $("#sub_container").append("<table id='muh_table' style='display:inline-block;text-align:left'><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th>"+repod.psdle.lang.columns.platform+"</th><th> > </th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table>");
-                var temp = "";
+
                 $.each(repod.psdle.dlQueue.batch.cache, function(key,value) {
                     if (value.length) {
                         $.each(value, function(index,val) {
@@ -924,6 +974,7 @@ repod.psdle = {
                         });
                     }
                 });
+
                 $("#muh_table > tbody").html(temp);
                 repod.psdle.table.margin();
             },
@@ -938,6 +989,12 @@ repod.psdle = {
         }
     },
     table_utils: {
+        random: function(index) {
+            index = (index) ? Number(index) : Math.floor((Math.random() * repod.psdle.gamelist_cur.length));
+            index = repod.psdle.gamelist_cur[index].index - 1;
+
+            repod.psdle.dlQueue.batch.add.ask(index);
+        },
         gen: {
             row: function(val,dlQueue) {
                 var u = repod.psdle.config.game_page+val.id,
@@ -971,22 +1028,21 @@ repod.psdle = {
     },
     newbox: {
         generate: function(e) {
-            var    plus     = "",
-                i        = (isNaN(e)) ? Number($(e).attr("id").split("_").pop()) : Number(e),
-                game    = repod.psdle.gamelist[i],
-                id        = (game.index -1);
-
-            var dialog = $("<div>", {id:'dlQueueAsk',style:'background-image:url("'+game.icon.replace(/(w|h)=\d+/g,"$1=400")+'");'} );
+            var plus = "",
+                i    = (isNaN(e)) ? Number($(e).attr("id").split("_").pop()) : Number(e),
+                game = repod.psdle.gamelist[i],
+                id   = (game.index -1),
+                dialog = $("<div>", {
+                            id:'dlQueueAsk',
+                            style:'background-image:url("'+game.icon.replace(/(w|h)=\d+/g,"$1=400")+'");'
+                         });
 
             try { if (game.plus) { plus = $("#psdleplus").clone()[0].outerHTML+" "; } } catch(e) {}
             dialog.append($("<div>", {id:'dlQAN'} ).append(plus+game.name));
 
             if (repod.psdle.config.use_queue) {
-                var temp    = game.platform_og.slice(0),
-                    i        = $.inArray("PSP", temp),
-                    t        = $("<div>", {id:"dlQASys"} );
-
-                if (i != -1) { temp.splice(i, 1); } /* Make sure we don't have PSP */
+                var temp = $.grep(game.platform_og.slice(0), function(V) { return V !== "PSP" }), /* Make sure we don't have PSP */
+                    t    = $("<div>", {id:"dlQASys"} );
 
                 if (temp.length > 1) {
                     t.append($("<div>").append($("<div>", {id:"dla_all_"+id,text:repod.psdle.lang.strings.queue_all} )));
@@ -1002,7 +1058,7 @@ repod.psdle = {
                 dialog.append(t);
             }
 
-            try { if (game.rating) { var star =    $("<div>", {class:"star-rating rater-0 ratingStarGeneric star-rating-applied star-rating-readonly star-rating-on",style:"display:inline-block !important;float:none !important;vertical-align:text-top"} ).append($("<a>",{text:""}))[0].outerHTML; dialog.append($("<div>", {id:"dlQARating"} ).append(star+" "+game.rating+" / 5")); } } catch (e) { }
+            try { if (game.rating) { var star = $("<div>", {class:"star-rating rater-0 ratingStarGeneric star-rating-applied star-rating-readonly star-rating-on",style:"display:inline-block !important;float:none !important;vertical-align:text-top"} ).append($("<a>",{text:""}))[0].outerHTML; dialog.append($("<div>", {id:"dlQARating"} ).append(star+" "+game.rating+" / 5")); } } catch (e) { }
 
             dialog.append($("<div>", {id:"dlQAStat",text:repod.psdle.safeGuessSystem(game.platform)+" | "+game.size_f+" | "+game.pdate} ));
 
@@ -1181,6 +1237,98 @@ repod.psdle = {
             .fail(function(data) {
                 console.log(data);
             });
+        },
+        difference: function(regen) {
+            repod.psdle.gamelist_cur = $.grep(repod.psdle.gamelist,function(x) {return $.inArray(x, repod.psdle.gamelist_cur) < 0});
+            if (regen) {
+                repod.psdle.table.regen();
+            }
+        },
+        entitlement: function(input,type) {
+            //Probably want to have this store results in an array and return that instead, eventually.
+
+            input = (input) ? input : prompt("Search for:");
+            input = input.toLowerCase();
+            type = (type) ? type : "name";
+
+            $.each(gEntitlementManager.getAllEntitlements(),function(index,obj) {
+                if (repod.psdle.isValidContent(obj)) {
+                    var match = false;
+
+                    switch (type) {
+                        case "id":
+                            match = !!~obj.id.toLowerCase().indexOf(input);
+                            break;
+                        case "name":
+                        default:
+                            var name = (obj.drm_def) ? obj.drm_def.contentName : obj.game_meta.name;
+                            match = !!~name.toLowerCase().indexOf(input);
+                            break;
+                    }
+
+                    if (match) {
+                        var platform,
+                            pids = 0;
+
+                        if (obj.game_meta) {
+                            platform = ["PS4"]
+                        } else {
+                            pids = obj.drm_def.drmContents[0].platformIds;
+                            platform = repod.psdle.determineSystem(pids);
+                        }
+
+                        //Remove personal information (such as dates) and extraneous URLs.
+                        var safe = JSON.stringify(obj, function(k,v) { if(/[\d\-]+T.+Z$/.test(v) || /^http/.test(v)) { return "~" } return v; });
+                        console.log(index,platform,pids,safe)
+                    }
+                }
+            });
+        },
+        findBad: function() {
+            //Optimize eventually.
+            var bad = [];
+
+            $.each(repod.psdle.gamelist, function(index,obj) {
+                if (!obj.pid || obj.pid.length == 0
+                    || !obj.id || obj.id.length == 0
+                    || !obj.name || obj.name.length == 0
+                    || !obj.size || obj.size.length == 0
+                    || !obj.platform || obj.platform.length == 0
+                    || !obj.platform_og || obj.platform_og.length == 0
+                    || !obj.date) {
+                        bad.push(index);
+                    }
+            });
+
+            return bad;
+        },
+        makeBad: function() {
+            //Totally safe.
+
+            $.each(repod.psdle.gamelist, function(i,o) {
+                var num = Math.ceil(Math.random() * 10),
+                    victim = ["pid", "id", "name", "platform", "platform_og", "date", "size", "", "", ""];
+
+                delete o[victim[num]];
+            });
+        },
+        injectEntitlement: function(ENTITLEMENT) {
+            //ENTITLEMENT should be valid Entitlement data or an array containing multiple.
+            //This should be called before generating the list as it is appended to the end of the original Entitlements list.
+
+            ENTITLEMENT = ENTITLEMENT || prompt("Enter valid Entitlement data:");
+
+            if (typeof ENTITLEMENT == "object") {
+                $.each(ENTITLEMENT, function(index,value) {
+                    repod.psdle.e_inject_cache.push(value);
+                });
+            } else {
+                repod.psdle.e_inject_cache.push(JSON.parse(ENTITLEMENT));
+            }
+
+            //if (ENTITLEMENT !== null && typeof ENTITLEMENT !== "array") { this.injectEntitlement(); }
+
+            return repod.psdle.e_inject_cache.length;
         }
     },
     grid: {
