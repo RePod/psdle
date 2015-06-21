@@ -1,3 +1,9 @@
+.method_info {
+    display:block;
+    padding:7px;
+    margin-bottom:1em;
+}
+
 .jumbotron { background-color:#2185f4; color:#fff; padding-top:24px; padding-bottom:24px; }
 .jumbotron p { margin-bottom:0px; }
 
