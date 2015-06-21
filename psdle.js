@@ -313,10 +313,14 @@ repod.psdle = {
         if (safe)                           { this.table.gen(); }
     },
     isValidContent: function(obj) {
-        if      (obj.VUData)                                     { return !1; }
-        else if (obj.drm_def && obj.drm_def.contentType == "TV") { return !1; }
-        else if (obj.drm_def || obj.entitlement_attributes)      { return !0; }
-        else                                                     { return !1; }
+        var exp = (obj.license) ? obj.license.expiration : obj.inactive_date,
+            inf = (obj.license) ? obj.license.infinite_duration : false;
+        
+        if (new Date(exp) < new Date() && inf) { return 0; }
+        else if (obj.VUData) { return 0; }
+        else if (obj.drm_def && obj.drm_def.contentType == "TV") { return 1; }
+        else if (obj.drm_def || obj.entitlement_attributes) { return 1; }
+        else { return 0; }
     },
     genSysCache: function() {
         var that = this;
