@@ -637,10 +637,22 @@ repod.psdle = {
         $("head").append("<style type='text/css' id='psdle_css'>"+temp+"</style>");
     },
     exportList: {
-        config: { name: true, platform: true, size: true, date: true, plus: false, tv: false },
-        tl: { name: "Name", platform: "Platform", size: "Size", date: "Date", plus: "PS+", tv: "PS TV" },
+        config: { name: true, platform: true, can_vita: true, size: true, date: true, plus: false },
+        tl: {},
         configure: function() {
-            var that = this;
+            var that = this,
+                temp = {
+                    name: repod.psdle.lang.columns.name,
+                    platform: repod.psdle.lang.columns.platform,
+                    can_vita: "Vita?",
+                    size: repod.psdle.lang.columns.size,
+                    date: repod.psdle.lang.columns.date,
+                    plus: "PS+",
+                }
+                
+            if (repod.psdle.config.check_tv) { this.config.tv = false; temp.tv = "PS TV"; }
+            
+            this.tl = temp;
 
             /* Gen input    */
             var w = "<div id='export_select'><div style='text-align:left'>";
@@ -721,7 +733,8 @@ repod.psdle = {
                             case "platform": out += repod.psdle.safeGuessSystem(b.platform); break;
                             case "size": out += b.size_f; break;
                             case "date": out += b.pdate; break;
-                            case "plus": out += (b.plus)?"Yes":""; break;
+                            case "plus": out += (b.plus) ? repod.psdle.lang.strings.yes : ""; break;
+                            case "can_vita": out += ($.inArray("PS Vita",b.platform_og) > -1) ? repod.psdle.lang.strings.yes : ""; break;
                             case "tv": out += (repod.psdle.config.check_tv && repod.psdle.id_cache[b.pid].tvcompat && repod.psdle.safeGuessSystem(b.platform) == "PS Vita")?"Yes":""; break;
                         }
                         out += sep;
