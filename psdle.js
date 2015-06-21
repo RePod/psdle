@@ -313,10 +313,13 @@ repod.psdle = {
         if (safe)                           { this.table.gen(); }
     },
     isValidContent: function(obj) {
-        if      (obj.VUData)                                     { return !1; }
-        else if (obj.drm_def && obj.drm_def.contentType == "TV") { return !1; }
-        else if (obj.drm_def || obj.entitlement_attributes)      { return !0; }
-        else                                                     { return !1; }
+        var exp = (obj.license) ? obj.license.expiration : obj.inactive_date,
+            inf = (obj.license) ? obj.license.infinite_duration : false;
+        
+        if (obj.VUData || (obj.drm_def && obj.drm_def.contentType == "TV")) { return 0; }
+        else if (new Date(exp) < new Date() && inf) { return 0; }
+        else if (obj.drm_def || obj.entitlement_attributes) { return 1; }
+        else { return 0; }
     },
     genSysCache: function() {
         var that = this;
@@ -614,28 +617,41 @@ repod.psdle = {
         return sys;
     },
     injectCSS: function() {
-        var temp =    /* Startup            */ "#muh_games_container { display:none;position:fixed;top:0px;right:0px;left:0px;color:#000;z-index:9001;text-align:center } #sub_container { padding:20px;background-color:#fff; } #psdle_progressbar { overflow:hidden;display:inline-block;width:400px;height:16px;border:1px solid #999;margin:10px;border-radius:10px; } #psdle_bar { background-color:#2185f4;width:0%;height:100%;border-radius:10px; } .psdle_btn { cursor:pointer;border-radius:13px;background-color:#2185f4;color:#fff;padding:1px 15px;display:inline-block;margin:5px auto; } .psdle_tiny_link { line-height:0px;cursor:pointer;color:#7F6D75 !important; font-size:x-small; } .psdle_tiny_link:hover { color:#000 !important; text-decoration:underline; } " +
-                    /* Search options    */ "#search_options { position:fixed;left:0px;top:0px;width:100%;padding:15px 0px;background-color:rgba(255,255,255,0.8);z-index:9001; }" +
-                    /* Table            */ "th[id^=sort] { cursor:pointer; } table {} th {padding:5px;background-color:#2185F4;color:#fff;} tr:hover { background-color:rgba(33,133,244,0.7) !important; } td a.psdle_game_link {display:block;width:100%;height:100%;color:#000 !important;padding:8px;} .is_plus{background-color:#FFD10D;} tr:nth-child(2n) {background-color:#EEE;}  th:nth-child(n+3):nth-child(-n+7), td:nth-child(n+3):nth-child(-n+7) {text-align:center;padding:0px 5px;position:relative;} td:first-child { text-align:center;position:relative; }" +
-                    /* Search buttons    */ "#psdle_search_text { margin:5px auto;padding:5px 10px;font-size:large;max-width:600px;width:100%;border-style:solid;border-color:#F0F0F0;border-radius:90px; } .negate_regex { background-color:#FF8080;color:#fff; } span[id^=system_], span[id^=filter_], span#export_view, span[id^=dl_], .psdle_fancy_bar > span { font-weight:bold; text-transform:uppercase;font-size:small;color:#fff;background-color:#2185f4;display:inline-block;margin-right:2px;margin-bottom:5px;padding:1px 15px;cursor:pointer; } .psdle_fancy_but { border-radius:12px; } .psdle_fancy_bar > span:first-of-type { border-top-left-radius:12px; border-bottom-left-radius:12px; } .psdle_fancy_bar span:last-of-type { border-top-right-radius:12px; border-bottom-right-radius:12px; } .toggled_off { opacity:0.4; }" +
-                    /* Content icons    */ ".psdle_game_icon { max-width:100%;vertical-align:middle;padding:3px;min-width:42px;min-height:42px; }" +
-                    /* Sorting            */ ".psdle_sort_asc { float:right; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom:5px solid #fff; } .psdle_sort_desc { float:right; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid #fff; }" +
-                    /* Newbox            */ "#dlQueueAsk { width:400px;height:400px; } #dlQAN { cursor:move;background-color:rgba(33,133,244,0.8);padding:7px 15px;color:#fff;overflow:hidden;white-space:nowrap;text-overflow:ellipsis; } #dlQASys { position:absolute;bottom:0px;padding:7px 0px;color:#FFF;display:table;width:100%;table-layout:fixed; } #dlQASys > div { display:table-cell; } #dlQASys > div > div { cursor:pointer;background-color:rgba(33,133,244,0.8);border-radius:10px;padding:2px;margin:0px 10px; } #dlQAStat { color:#fff;background-color:rgba(33,133,244,0.8);border-bottom-left-radius:20px;padding:0px 10px 0px 15px;font-size:small;float:right; } #dlQARating { color:#fff;background-color:rgba(33,133,244,0.8);border-bottom-right-radius:20px;padding:0px 15px 0px 10px;font-size:small;float:left; } " +
-                    /* Newbox Extended    */ "#dlQueueExt { overflow: hidden; position: absolute; left: 10px; right: 10px; bottom: 40px; font-size: 0.8em; background-color: rgba(33, 133, 244, 0.8); padding: 10px; border-radius: 9px; top: 66px; text-align: left; }" +
-                    /* Overlays            */ ".cover { z-index:9001;position:fixed;top:0px;left:0px;width:100%;height:100%;display:table;background-color:rgba(0,0,0,0.25);background-size:cover;background-position:center; } .cover > div { display:table-cell;vertical-align:middle;height:inherit;text-align:center; } .cover > div > div { box-shadow: 0px 0px 30px #000;display:inline-block;#background-color:#FFF;border-radius:20px;overflow:hidden;position:relative;background-size:cover; }" +
-                    /* Export            */ "#export_select { padding:10px;width:250px;background-color:#fff;color:#000; }"+
-                    /* PS+ switch        */ "#slider { vertical-align: bottom;display:inline-block;cursor:pointer;border-radius:100%;width:30px;height:12px;border-radius:10px;border:2px solid #F0F0F0; } .handle_container { text-align:center;width:100%;height:100%; } .handle { width:10px;height:10px;border-radius:100%;margin:0px 2px 6px;border:1px solid #FFF;display:inline-block;background-color:#85C107; }" +
-                    /* Tooltips            */ ".tooltip-inner { background-color:#2185F4 !important; border: 5px solid #2185F4 !important; } .tooltip-arrow { border-top-color:#2185F4 !important; } .tooltip.in { opacity:1 !important; }" +
-                    /* Tooltips 2        */ ".ui-tooltip { background-color:#2185F4; max-width: 234px; z-index: 9002; background-color: #2185F4; font-size: 11px; text-align: center; line-height: 1.4em; padding: 12px; border-radius: 4px; }" +
-                    /* Autocomplete        */ ".ui-autocomplete { z-index: 9002; max-width:590px; max-height:200px; overflow-y:auto; overflow-x:hidden; } .ui-menu { position:fixed; border:2px solid #F0F0F0; border-top: none; background-color:#fff; } .ui-menu > .ui-menu-item * { color:#000; text-decoration:none; white-space: nowrap; text-overflow: ellipsis; cursor:pointer; } .ui-menu > .ui-menu-item:nth-child(even) { background-color:#e6e6e6; } .ui-menu-item .ui-state-focus { display:inline-block; width:100%; color:#000; background-color: rgba(33, 133, 244, 0.7); }" +
-                    /* PS TV            */ ".psdletv { font-style: italic;font-weight: bold;font-size: 0.6em;vertical-align: text-top;position: absolute;top: 4px; }";
+        var temp =  /* Startup         */ "#muh_games_container { display:none;position:fixed;top:0px;right:0px;left:0px;color:#000;z-index:9001;text-align:center } #sub_container { padding:20px;background-color:#fff; } #psdle_progressbar { overflow:hidden;display:inline-block;width:400px;height:16px;border:1px solid #999;margin:10px;border-radius:10px; } #psdle_bar { background-color:#2185f4;width:0%;height:100%;border-radius:10px; } .psdle_btn { cursor:pointer;border-radius:13px;background-color:#2185f4;color:#fff;padding:1px 15px;display:inline-block;margin:5px auto; } .psdle_tiny_link { line-height:0px;cursor:pointer;color:#7F6D75 !important; font-size:x-small; } .psdle_tiny_link:hover { color:#000 !important; text-decoration:underline; } " +
+                    /* Search options  */ "#search_options { position:fixed;left:0px;top:0px;width:100%;padding:15px 0px;background-color:rgba(255,255,255,0.8);z-index:9001; }" +
+                    /* Table           */ "th[id^=sort] { cursor:pointer; } table {} th {padding:5px;background-color:#2185F4;color:#fff;} tr:hover { background-color:rgba(33,133,244,0.7) !important; } td a.psdle_game_link {display:block;width:100%;height:100%;color:#000 !important;padding:8px;} .is_plus{background-color:#FFD10D;} tr:nth-child(2n) {background-color:#EEE;}  th:nth-child(n+3):nth-child(-n+7), td:nth-child(n+3):nth-child(-n+7) {text-align:center;padding:0px 5px;position:relative;} td:first-child { text-align:center;position:relative; }" +
+                    /* Search buttons  */ "#psdle_search_text { margin:5px auto;padding:5px 10px;font-size:large;max-width:600px;width:100%;border-style:solid;border-color:#F0F0F0;border-radius:90px; } .negate_regex { background-color:#FF8080;color:#fff; } span[id^=system_], span[id^=filter_], span#export_view, span[id^=dl_], .psdle_fancy_bar > span { font-weight:bold; text-transform:uppercase;font-size:small;color:#fff;background-color:#2185f4;display:inline-block;margin-right:2px;margin-bottom:5px;padding:1px 15px;cursor:pointer; } .psdle_fancy_but { border-radius:12px; } .psdle_fancy_bar > span:first-of-type { border-top-left-radius:12px; border-bottom-left-radius:12px; } .psdle_fancy_bar span:last-of-type { border-top-right-radius:12px; border-bottom-right-radius:12px; } .toggled_off { opacity:0.4; }" +
+                    /* Content icons   */ ".psdle_game_icon { max-width:100%;vertical-align:middle;padding:3px;min-width:42px;min-height:42px; }" +
+                    /* Sorting         */ ".psdle_sort_asc { float:right; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom:5px solid #fff; } .psdle_sort_desc { float:right; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid #fff; }" +
+                    /* Newbox          */ "#dlQueueAsk { width:400px;height:400px; } #dlQAN { cursor:move;background-color:rgba(33,133,244,0.8);padding:7px 15px;color:#fff;overflow:hidden;white-space:nowrap;text-overflow:ellipsis; } #dlQASys { position:absolute;bottom:0px;padding:7px 0px;color:#FFF;display:table;width:100%;table-layout:fixed; } #dlQASys > div { display:table-cell; } #dlQASys > div > div { cursor:pointer;background-color:rgba(33,133,244,0.8);border-radius:10px;padding:2px;margin:0px 10px; } #dlQAStat { color:#fff;background-color:rgba(33,133,244,0.8);border-bottom-left-radius:20px;padding:0px 10px 0px 15px;font-size:small;float:right; } #dlQARating { color:#fff;background-color:rgba(33,133,244,0.8);border-bottom-right-radius:20px;padding:0px 15px 0px 10px;font-size:small;float:left; } " +
+                    /* Newbox Extended */ "#dlQueueExt { overflow: hidden; position: absolute; left: 10px; right: 10px; bottom: 40px; font-size: 0.8em; background-color: rgba(33, 133, 244, 0.8); padding: 10px; border-radius: 9px; top: 66px; text-align: left; }" +
+                    /* Overlays        */ ".cover { z-index:9001;position:fixed;top:0px;left:0px;width:100%;height:100%;display:table;background-color:rgba(0,0,0,0.25);background-size:cover;background-position:center; } .cover > div { display:table-cell;vertical-align:middle;height:inherit;text-align:center; } .cover > div > div { box-shadow: 0px 0px 30px #000;display:inline-block;#background-color:#FFF;border-radius:20px;overflow:hidden;position:relative;background-size:cover; }" +
+                    /* Export          */ "#export_select { padding:10px;width:250px;background-color:#fff;color:#000; }"+
+                    /* PS+ switch      */ "#slider { vertical-align: bottom;display:inline-block;cursor:pointer;border-radius:100%;width:30px;height:12px;border-radius:10px;border:2px solid #F0F0F0; } .handle_container { text-align:center;width:100%;height:100%; } .handle { width:10px;height:10px;border-radius:100%;margin:0px 2px 6px;border:1px solid #FFF;display:inline-block;background-color:#85C107; }" +
+                    /* Tooltips        */ ".tooltip-inner { background-color:#2185F4 !important; border: 5px solid #2185F4 !important; } .tooltip-arrow { border-top-color:#2185F4 !important; } .tooltip.in { opacity:1 !important; }" +
+                    /* Tooltips 2      */ ".ui-tooltip { background-color:#2185F4; max-width: 234px; z-index: 9002; background-color: #2185F4; font-size: 11px; text-align: center; line-height: 1.4em; padding: 12px; border-radius: 4px; }" +
+                    /* Autocomplete    */ ".ui-autocomplete { z-index: 9002; max-width:590px; max-height:200px; overflow-y:auto; overflow-x:hidden; } .ui-menu { position:fixed; border:2px solid #F0F0F0; border-top: none; background-color:#fff; } .ui-menu > .ui-menu-item * { color:#000; text-decoration:none; white-space: nowrap; text-overflow: ellipsis; cursor:pointer; } .ui-menu > .ui-menu-item:nth-child(even) { background-color:#e6e6e6; } .ui-menu-item .ui-state-focus { display:inline-block; width:100%; color:#000; background-color: rgba(33, 133, 244, 0.7); }" +
+                    /* PS TV           */ ".psdletv { font-style: italic;font-weight: bold;font-size: 0.6em;vertical-align: text-top;position: absolute;top: 4px; }" +
+                    /* PSP2            */ ".psp3 { border-left: 2px solid #2185F4; border-right: 2px solid #2185F4; } .psp2 { background-color:rgba(33,133,244,0.15) !important; }";
         $("head").append("<style type='text/css' id='psdle_css'>"+temp+"</style>");
     },
     exportList: {
-        config: { name: true, platform: true, size: true, date: true, plus: false, tv: false },
-        tl: { name: "Name", platform: "Platform", size: "Size", date: "Date", plus: "PS+", tv: "PS TV" },
+        config: { name: true, platform: true, can_vita: true, size: true, date: true, plus: false },
+        tl: {},
         configure: function() {
-            var that = this;
+            var that = this,
+                temp = {
+                    name: repod.psdle.lang.columns.name,
+                    platform: repod.psdle.lang.columns.platform,
+                    can_vita: "Vita?",
+                    size: repod.psdle.lang.columns.size,
+                    date: repod.psdle.lang.columns.date,
+                    plus: "PS+",
+                }
+                
+            if (repod.psdle.config.check_tv) { this.config.tv = false; temp.tv = "PS TV"; }
+            
+            this.tl = temp;
 
             /* Gen input    */
             var w = "<div id='export_select'><div style='text-align:left'>";
@@ -716,7 +732,8 @@ repod.psdle = {
                             case "platform": out += repod.psdle.safeGuessSystem(b.platform); break;
                             case "size": out += b.size_f; break;
                             case "date": out += b.pdate; break;
-                            case "plus": out += (b.plus)?"Yes":""; break;
+                            case "plus": out += (b.plus) ? repod.psdle.lang.strings.yes : ""; break;
+                            case "can_vita": out += ($.inArray("PS Vita",b.platform_og) > -1) ? repod.psdle.lang.strings.yes : ""; break;
                             case "tv": out += (repod.psdle.config.check_tv && repod.psdle.id_cache[b.pid].tvcompat && repod.psdle.safeGuessSystem(b.platform) == "PS Vita")?"Yes":""; break;
                         }
                         out += sep;
@@ -1005,11 +1022,14 @@ repod.psdle = {
                     //style='background-image:url(\""+bg+"\")' bg = (val.images && val.images.length > 0) ? val.images[0] : "",
                     iS = repod.psdle.config.iconSize+"px",
                     temp = "<tr id='psdle_index_"+(val.index -1)+"'><td style='max-width:"+iS+";max-height:"+iS+";'><a target='_blank' href='"+val.url+"'><img title='"+repod.psdle.lang.labels.page+" #"+Math.ceil(val.index/pg)+"' src='"+icon+"' class='psdle_game_icon "+is_plus+"' /></a>"+"</td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+val.name+"</a></td>";
+                    
+                var can_vita = (sys == "PS Vita") ? false : ($.inArray("PS Vita",val.platform_og) > -1) ? true : false;
+                can_vita = (can_vita) ? "class='psp2'" : "";
 
                 if (dlQueue) {
                     temp += "<td>"+sys+"</td><td>"+dlQueue.to_sys.toUpperCase().replace("VITA","PS Vita")+"</td><td>"+val.size_f+"</td><td>"+convertToNumericDateSlashes(convertStrToDateObj(dlQueue.createdTime))+"</td>"
                 } else {
-                    temp += "<td>"+sys+((repod.psdle.config.check_tv && repod.psdle.id_cache[val.pid].tvcompat && sys == "PS Vita")?"<span class='psdletv'>TV</span>":"")+"</td><td>"+val.size_f+"</td><td>"+val.pdate+"</td>";
+                    temp += "<td "+can_vita+">"+sys+((repod.psdle.config.check_tv && repod.psdle.id_cache[val.pid].tvcompat && sys == "PS Vita")?"<span class='psdletv'>TV</span>":"")+"</td><td>"+val.size_f+"</td><td>"+val.pdate+"</td>";
                 }
                 temp += "</tr>";
 
