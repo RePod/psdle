@@ -1154,7 +1154,7 @@ repod.psdle = {
                 $.each(a.links,function(c,b) {
                     that.url_cache.push(b.url + "?size=30&start=0");
 
-                    if (c = a.links.length) {
+                    if (c == a.links.length) {
                         that.run();
                     }
                 });
