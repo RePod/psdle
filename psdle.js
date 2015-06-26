@@ -609,6 +609,7 @@ repod.psdle = {
     safeGuessSystem: function(sys_in) {
         //Quick, dirty, and easy. Rewrite.
         var sys = (typeof(sys_in) == "object") ? sys_in.join(" ") : sys_in;
+        
         sys = sys.replace(/[^\w\d ]/g,"");
 
         if (sys == "PS3 PSP PS Vita" || sys == "PS3 PSP" || sys == "PS Vita PSP" || sys.indexOf("PSP") > -1) { sys = "PSP"; }
