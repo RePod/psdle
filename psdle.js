@@ -1119,7 +1119,7 @@ repod.psdle = {
             }
         },
         open: function(e) {
-            repod.psdle.table.icons.validate(e);
+            repod.psdle.table.icons.validate($(e).attr("id"));
             
             if ($("#dlQueue_newbox").length) this.close();
             
