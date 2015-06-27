@@ -426,21 +426,22 @@ repod.psdle = {
                 this.smartScroll();
             },
             validate: function(source) {
-                var that  = this,
-                    index = source.split("_").pop(),
-                    temp  = repod.psdle.gamelist[index],
-                    i     = repod.psdle.config.iconSize,
-                    url   = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.id) + "&w=" + i + "&h=" + i;
+                var index = (typeof source == "number") ? source : source.split("_").pop(),
+                    temp  = repod.psdle.gamelist[index];
 
                 if (!temp.safe_icon) {
+                    var that = this,
+                        i = repod.psdle.config.iconSize,
+                        url = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.id) + "&w=" + i + "&h=" + i;
+
                     $.get(url)
-                    .success(function() { that.setIcon(index,url) })
+                    .success(function() { that.setIcon(index,url); return 1; })
                     .fail(function() {
                         url = url.replace(temp.id,temp.pid);
                         $.get(url)
-                        .success(function() { that.setIcon(index,url) })
-                        .fail(function() { that.setIcon(index,temp.api_icon); })
-                    })
+                        .success(function() { that.setIcon(index,url); return 1; })
+                        .fail(function() { that.setIcon(index,temp.api_icon); return 1; })
+                    });
                 }
             },
             setIcon: function(index,url) {
@@ -1052,9 +1053,10 @@ repod.psdle = {
                 i    = (isNaN(e)) ? Number($(e).attr("id").split("_").pop()) : Number(e),
                 game = repod.psdle.gamelist[i],
                 id   = (game.index -1),
+                icon = (game.safe_icon) ? game.icon : game.api_icon;
                 dialog = $("<div>", {
                             id:'dlQueueAsk',
-                            style:'background-image:url("'+game.icon.replace(/(w|h)=\d+/g,"$1=400")+'");'
+                            style:'background-image:url("'+icon.replace(/(w|h)=\d+/g,"$1=400")+'");'
                          });
 
             try { if (game.plus) { plus = $("#psdleplus").clone()[0].outerHTML+" "; } } catch(e) {}
@@ -1117,6 +1119,8 @@ repod.psdle = {
             }
         },
         open: function(e) {
+            repod.psdle.table.icons.validate(e);
+            
             if ($("#dlQueue_newbox").length) this.close();
             
             $("body").append(this.generate(e)).promise().done(function() { repod.psdle.newbox.bind(); });
