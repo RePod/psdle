@@ -1007,11 +1007,10 @@ repod.psdle = {
         }
     },
     table_utils: {
-        random: function(index) {
-            index = (index) ? Number(index) : Math.floor((Math.random() * repod.psdle.gamelist_cur.length));
-            index = repod.psdle.gamelist_cur[index].index - 1;
+        random: function() {
+            var r = repod.psdle.gamelist_cur[Math.floor((Math.random() * repod.psdle.gamelist_cur.length))].index - 1;
 
-            repod.psdle.newbox.open(index);
+            repod.psdle.newbox.open(r);
         },
         gen: {
             row: function(val,dlQueue) {
