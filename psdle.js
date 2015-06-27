@@ -945,7 +945,7 @@ repod.psdle = {
                 ask: function(e) {
                     //Ask which system to queue for. (cannot validate outside of this.go() response, if we care)
                     //See notes for determining active consoles, probably the way to go.
-                    $("body").append(repod.psdle.newbox.generate(e)).promise().done(function() { repod.psdle.newbox.bind(); });
+                    repod.psdle.newbox.open(e);
                 },
                 go: function(sys,id) {
                     //Add game to batch.
@@ -1011,7 +1011,7 @@ repod.psdle = {
             index = (index) ? Number(index) : Math.floor((Math.random() * repod.psdle.gamelist_cur.length));
             index = repod.psdle.gamelist_cur[index].index - 1;
 
-            repod.psdle.dlQueue.batch.add.ask(index);
+            repod.psdle.newbox.open(index);
         },
         gen: {
             row: function(val,dlQueue) {
@@ -1091,21 +1091,40 @@ repod.psdle = {
             return dialog[0].outerHTML;
         },
         bind: function(e) {
+            var that = this;
+            
             switch (e) {
                 case "on":
                 default:
                     $("#dlQueueAsk").draggable({handle:"#dlQAN",containment:"parent"});
-                    $("#dlQueue_newbox").one("click", function() { $(this).remove(); repod.psdle.newbox.bind("off"); });
-                    $("#dlQueueAsk").on("click", function(event) {    event.stopPropagation(); });
+                    
+                    $("#dlQueue_newbox").one("click", function() {
+                        that.close();
+                    });
+                    
+                    $("#dlQueueAsk").on("click", function(event) {
+                        event.stopPropagation();
+                    });
+                    
                     $("div[id^=dla_]:not('.toggled_off')").on("click", function() {
                         repod.psdle.dlQueue.batch.add.parse($(this).attr("id").split("_")[2],$(this).attr("id").split("_")[1]);
                     });
                     break;
+                    
                 case "off":
                     $("div[id^=dla_]").off("click");
                     $("#dlQueueAsk").off("click");
                     break;
             }
+        },
+        open: function(e) {
+            if ($("#dlQueue_newbox").length) this.close();
+            
+            $("body").append(this.generate(e)).promise().done(function() { repod.psdle.newbox.bind(); });
+        },
+        close: function() {
+            $("#dlQueue_newbox").remove();
+            this.bind("off");
         }
     },
     autocomplete: {
