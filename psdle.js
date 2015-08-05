@@ -209,10 +209,10 @@ repod.psdle = {
                     $(document).on("click","#ask_switches", function() {
                         var input = prompt("Enter advanced switches here, seperated by spaces:");
                         input = input.split(" ");
-                        
+
                         if ($.inArray("showexpired",input)) repod.psdle.config.showExpired = true;
                         if ($.inArray("forcetv",input)) repod.psdle.config.check_tv = true;
-                        
+
                         prompt("Switches processed.");
                     });
                 }
@@ -325,7 +325,7 @@ repod.psdle = {
     isValidContent: function(obj) {
         var exp = (obj.license) ? obj.license.expiration : obj.inactive_date,
             inf = (obj.license) ? obj.license.infinite_duration : (this.config.showExpired) ? true : false;
-        
+
         if (obj.VUData || (obj.drm_def && obj.drm_def.contentType == "TV")) { return 0; }
         else if (new Date(exp) < new Date() && !inf) { return 0; }
         else if (obj.drm_def || obj.entitlement_attributes) { return 1; }
@@ -620,7 +620,7 @@ repod.psdle = {
     safeGuessSystem: function(sys_in) {
         //Quick, dirty, and easy. Rewrite.
         var sys = (typeof(sys_in) == "object") ? sys_in.join(" ") : sys_in;
-        
+
         sys = sys.replace(/[^\w\d ]/g,"");
 
         if (sys == "PS3 PSP PS Vita" || sys == "PS3 PSP" || sys == "PS Vita PSP" || sys.indexOf("PSP") > -1) { sys = "PSP"; }
@@ -660,9 +660,9 @@ repod.psdle = {
                     date: repod.psdle.lang.columns.date,
                     plus: "PS+",
                 }
-                
+
             if (repod.psdle.config.check_tv) { this.config.tv = false; temp.tv = "PS TV"; }
-            
+
             this.tl = temp;
 
             /* Gen input    */
@@ -1033,7 +1033,7 @@ repod.psdle = {
                     //style='background-image:url(\""+bg+"\")' bg = (val.images && val.images.length > 0) ? val.images[0] : "",
                     iS = repod.psdle.config.iconSize+"px",
                     temp = "<tr id='psdle_index_"+(val.index -1)+"'><td style='max-width:"+iS+";max-height:"+iS+";'><a target='_blank' href='"+val.url+"'><img title='"+repod.psdle.lang.labels.page+" #"+Math.ceil(val.index/pg)+"' src='"+icon+"' class='psdle_game_icon "+is_plus+"' /></a>"+"</td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+val.name+"</a></td>";
-                    
+
                 var can_vita = (sys == "PS Vita") ? false : ($.inArray("PS Vita",val.platform_og) > -1) ? true : false;
                 can_vita = (can_vita) ? "class='psp2'" : "";
 
@@ -1103,25 +1103,25 @@ repod.psdle = {
         },
         bind: function(e) {
             var that = this;
-            
+
             switch (e) {
                 case "on":
                 default:
                     $("#dlQueueAsk").draggable({handle:"#dlQAN",containment:"parent"});
-                    
+
                     $("#dlQueue_newbox").one("click", function() {
                         that.close();
                     });
-                    
+
                     $("#dlQueueAsk").on("click", function(event) {
                         event.stopPropagation();
                     });
-                    
+
                     $("div[id^=dla_]:not('.toggled_off')").on("click", function() {
                         repod.psdle.dlQueue.batch.add.parse($(this).attr("id").split("_")[2],$(this).attr("id").split("_")[1]);
                     });
                     break;
-                    
+
                 case "off":
                     $("div[id^=dla_]").off("click");
                     $("#dlQueueAsk").off("click");
@@ -1130,9 +1130,9 @@ repod.psdle = {
         },
         open: function(e) {
             repod.psdle.table.icons.validate($(e).attr("id"));
-            
+
             if ($("#dlQueue_newbox").length) this.close();
-            
+
             $("body").append(this.generate(e)).promise().done(function() { repod.psdle.newbox.bind(); });
         },
         close: function() {
