@@ -210,8 +210,8 @@ repod.psdle = {
                         var input = prompt("Enter advanced switches here, seperated by spaces:");
                         input = input.split(" ");
 
-                        if ($.inArray("showexpired",input)) repod.psdle.config.showExpired = true;
-                        if ($.inArray("forcetv",input)) repod.psdle.config.check_tv = true;
+                        if ($.inArray("showexpired",input) > -1) repod.psdle.config.showExpired = true;
+                        if ($.inArray("forcetv",input) > -1) repod.psdle.config.check_tv = true;
 
                         alert("Switches processed.");
                     });

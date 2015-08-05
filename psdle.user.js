@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.052
+// @version		2.053
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -233,8 +233,8 @@ repod.psdle = {
                         var input = prompt("Enter advanced switches here, seperated by spaces:");
                         input = input.split(" ");
 
-                        if ($.inArray("showexpired",input)) repod.psdle.config.showExpired = true;
-                        if ($.inArray("forcetv",input)) repod.psdle.config.check_tv = true;
+                        if ($.inArray("showexpired",input) > -1) repod.psdle.config.showExpired = true;
+                        if ($.inArray("forcetv",input) > -1) repod.psdle.config.check_tv = true;
 
                         alert("Switches processed.");
                     });
