@@ -213,7 +213,7 @@ repod.psdle = {
                         if ($.inArray("showexpired",input)) repod.psdle.config.showExpired = true;
                         if ($.inArray("forcetv",input)) repod.psdle.config.check_tv = true;
 
-                        prompt("Switches processed.");
+                        alert("Switches processed.");
                     });
                 }
             }
