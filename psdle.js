@@ -120,7 +120,7 @@ repod.psdle = {
                 status      : SonyChi_SessionManagerSingleton.getDLQueueStatusURL(),
                 status2     : SonyChi_SessionManagerSingleton.getDLQueueStatusURL2()
             },
-            use_queue       : 0,
+            use_queue       : false,
             active_consoles : {},
             tag_line        : "<br /><a class='psdle_tiny_link' href='//repod.github.io/psdle' target='_blank'>Website</a> - <a class='psdle_tiny_link' href='//github.com/RePod/psdle' target='_blank'>Repository</a> - <a class='psdle_tiny_link' href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation' target='_blank'>Submit Bug/Translation</a>",
             switch_align    : "center",
@@ -128,7 +128,8 @@ repod.psdle = {
             has_plus        : false,
             check_tv        : false,
             tv_url          : atob("L3N0b3JlL2FwaS9jaGloaXJvLzAwXzA5XzAwMC9jb250YWluZXIvVVMvZW4vMTkvU1RPUkUtTVNGNzcwMDgtUFNUVlZJVEFHQU1FUz9zaXplPTMw"),
-            iconSize        : 42
+            iconSize        : 42,
+            showExpired     : false
         };
 
         console.log("PSDLE | Config set.");
@@ -194,7 +195,7 @@ repod.psdle = {
                     }
                 });
                 a += "</span><br /><br /><span id='psdle_go' class='psdle_btn'>"+that.lang.startup.start+"</span><br />"+that.generateLangBox()+that.config.tag_line;
-                a += "<br /><span id='inject_lang' class='psdle_tiny_link'>Inject Language</span> - <a class='psdle_tiny_link' target='_blank' href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation#translation-submission-template'>Language Template</a> - <span id='gen_fake' class='psdle_tiny_link'>Generate Fake List</span>";
+                a += "<br /><span id='inject_lang' class='psdle_tiny_link'>Inject Language</span> - <a class='psdle_tiny_link' target='_blank' href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation#translation-submission-template'>Language Template</a> - <span id='gen_fake' class='psdle_tiny_link'>Generate Fake List</span> - <span id='ask_switches' class='psdle_tiny_link'>Switches</span>";
                 a +="</div>";
                 if (mode !== "nobind") {
                     $(document).on("click","[id^=api_]",function() { if ($(this).attr("id") !== "api_entitle") { $(this).toggleClass('toggled_off'); } });
@@ -204,6 +205,15 @@ repod.psdle = {
                         that.config.use_queue = !$("#api_queue").hasClass("toggled_off");
                         that.config.check_tv = ($("#api_pstv").length) ? !$("#api_pstv").hasClass("toggled_off") : false;
                         that.genDisplay("progress",($(this).attr("id") == "gen_fake")?true:false);
+                    });
+                    $(document).on("click","#ask_switches", function() {
+                        var input = prompt("Enter advanced switches here, seperated by spaces:");
+                        input = input.split(" ");
+                        
+                        if ($.inArray("showexpired",input)) repod.psdle.config.showExpired = true;
+                        if ($.inArray("forcetv",input)) repod.psdle.config.check_tv = true;
+                        
+                        prompt("Switches processed.");
                     });
                 }
             }
@@ -314,7 +324,7 @@ repod.psdle = {
     },
     isValidContent: function(obj) {
         var exp = (obj.license) ? obj.license.expiration : obj.inactive_date,
-            inf = (obj.license) ? obj.license.infinite_duration : false;
+            inf = (obj.license) ? obj.license.infinite_duration : (this.config.showExpired) ? true : false;
         
         if (obj.VUData || (obj.drm_def && obj.drm_def.contentType == "TV")) { return 0; }
         else if (new Date(exp) < new Date() && !inf) { return 0; }
