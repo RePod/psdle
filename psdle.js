@@ -324,10 +324,10 @@ repod.psdle = {
     },
     isValidContent: function(obj) {
         var exp = (obj.license) ? obj.license.expiration : obj.inactive_date,
-            inf = (obj.license) ? obj.license.infinite_duration : (this.config.showExpired) ? true : false;
+            inf = (obj.license) ? obj.license.infinite_duration : false;
 
         if (obj.VUData || (obj.drm_def && obj.drm_def.contentType == "TV")) { return 0; }
-        else if (new Date(exp) < new Date() && !inf) { return 0; }
+        else if (!this.config.showExpired && new Date(exp) < new Date() && !inf) { return 0; }
         else if (obj.drm_def || obj.entitlement_attributes) { return 1; }
         else { return 0; }
     },
