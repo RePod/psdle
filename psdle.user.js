@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.053
+// @version		2.054
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -347,10 +347,10 @@ repod.psdle = {
     },
     isValidContent: function(obj) {
         var exp = (obj.license) ? obj.license.expiration : obj.inactive_date,
-            inf = (obj.license) ? obj.license.infinite_duration : (this.config.showExpired) ? true : false;
+            inf = (obj.license) ? obj.license.infinite_duration : false;
 
         if (obj.VUData || (obj.drm_def && obj.drm_def.contentType == "TV")) { return 0; }
-        else if (new Date(exp) < new Date() && !inf) { return 0; }
+        else if (!this.config.showExpired && new Date(exp) < new Date() && !inf) { return 0; }
         else if (obj.drm_def || obj.entitlement_attributes) { return 1; }
         else { return 0; }
     },
