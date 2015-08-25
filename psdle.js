@@ -122,7 +122,7 @@ repod.psdle = {
             },
             use_queue       : false,
             active_consoles : {},
-            tag_line        : "<br /><a class='psdle_tiny_link' href='//repod.github.io/psdle' target='_blank'>Website</a> - <a class='psdle_tiny_link' href='//github.com/RePod/psdle' target='_blank'>Repository</a> - <a class='psdle_tiny_link' href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation' target='_blank'>Submit Bug/Translation</a>",
+            tag_line        : "<br /><a class='psdle_tiny_link' href='//repod.github.io/psdle#support' target='_blank'>Support PSDLE</a> - <a class='psdle_tiny_link' href='//repod.github.io/psdle' target='_blank'>Website</a> - <a class='psdle_tiny_link' href='//github.com/RePod/psdle' target='_blank'>Repository</a> - <a class='psdle_tiny_link' href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation' target='_blank'>Submit Bug/Translation</a>",
             switch_align    : "center",
             switch_color    : "#85C107",
             has_plus        : false,
