@@ -861,21 +861,32 @@ repod.psdle = {
             if (data.top_category == "tumbler_index") {
                 //We must go deeper.
                 if (data.metadata.secondary_classification && data.metadata.secondary_classification.values[0] == "ADD-ON") { type = "add_on"; }
+                else { type = "unknown"; }
             } else {
                 type = (data.top_category) ? data.top_category : "unknown";
             }
 
             extend.deep_type = type;
 
-            if (data.star_rating && data.star_rating.score) { extend.rating = data.star_rating.score }
-            if (data.promomedia && data.promomedia[0]) {
+            if (data.star_rating && data.star_rating.score) { extend.rating = data.star_rating.score; }
+            if (data.promomedia) {
                 extend.images = [], extend.videos = [];
-                $.each(data.promomedia[0].materials, function(i,v) {
-                    if (v.urls && v.urls[0]) {
-                        var a = v.urls[0].url;
+                $.each(data.promomedia, function(i,v) {
+                    if (v.materials) {
+                        $.each(v.materials, function(index, value) {
+                            if (value.urls && value.urls[0]) {
+                                var a = value.urls[0].url;
 
-                        if (/\.(png|jpg)$/ig.test(a)) { extend.images.push(a); }
-                        else if (/\.mp4$/ig.test(a.split("?")[0])) { extend.videos.push(a); }
+                                if (/\.(png|jpg)/ig.test(a)) { extend.images.push(a); }
+                                else if (/\.mp4/ig.test(a.split("?")[0])) { extend.videos.push(a); }
+                            }
+                        });
+                    } else {
+                        //Some promomedia entries don't have a materials section, just a direct URL.
+                        var a = v.url;
+
+                        if (/\.(png|jpg)/ig.test(a)) { extend.images.push(a); }
+                        else if (/\.mp4/ig.test(a.split("?")[0])) { extend.videos.push(a); }
                     }
                 });
             }
