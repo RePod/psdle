@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.056
+// @version		2.057
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -150,7 +150,9 @@ repod.psdle = {
             switch_color    : "#85C107",
             has_plus        : false,
             check_tv        : false,
-            tv_url          : atob("L3N0b3JlL2FwaS9jaGloaXJvLzAwXzA5XzAwMC9jb250YWluZXIvVVMvZW4vMTkvU1RPUkUtTVNGNzcwMDgtUFNUVlZJVEFHQU1FUz9zaXplPTMw"),
+            tv_url          : {
+                "en-us": atob("L2NoaWhpcm8tYXBpL3ZpZXdmaW5kZXIvVVMvZW4vMTkvU1RPUkUtTVNGNzcwMDgtUFNUVlZJVEFHQU1FUz9zaXplPTMwJnN0YXJ0PTA=")
+            },
             iconSize        : 42,
             showExpired     : false
         };
@@ -163,6 +165,10 @@ repod.psdle = {
             }
         }
         catch (e) { };
+
+        if (this.config.tv_url[this.config.language]) {
+            this.config.tv_url = this.config.tv_url[this.config.language];
+        }
 
         this.determineLanguage(this.config.language,true);
         this.injectCSS();
@@ -1219,13 +1225,9 @@ repod.psdle = {
 
             $.getJSON(repod.psdle.config.tv_url,function(a) {
                 $.each(a.links,function(c,b) {
-                    that.url_cache.push(b.url + "?size=30&start=0");
-
-                    if (c == a.links.length) {
-                        that.run();
-                    }
+                    that.url_cache.push(b.url/*+"?size=30&start=0"*/);
                 });
-            });
+            }).done(function() { that.run(); });
         },
         run: function() {
             var that = this,
