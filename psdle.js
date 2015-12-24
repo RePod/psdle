@@ -839,7 +839,7 @@ repod.psdle = {
             var extend = {},
                 type   = "unknown",
                 sys,
-                r      = /^(PS(?:1|2)).+Classic$/i;
+                r      = /^(PS\d+)_\w+\+?$/i;
 
             if (data.default_sku && data.default_sku.entitlements.length == 1) {
                 if (data.metadata) {
