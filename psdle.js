@@ -500,7 +500,23 @@ repod.psdle = {
         $.each(this.gamelist,function(index,val) {
             var sys = that.safeGuessSystem(val.platform),
                 a   = true,
-                t   = val.name;
+                t   = "";
+                
+            switch ($("#psdle_search_select").val()) {
+                default:
+                case 'name':
+                    t = val.name;
+                    break;
+                case 'id':
+                    t = val.id;
+                    break;
+                case 'pid':
+                    t = val.pid;
+                    break;
+                case 'date':
+                    t = t.date
+                    break;
+            }
 
             if ($.inArray(sys,safesys) > -1) {
                 if (that.config.deep_search) {
@@ -510,16 +526,11 @@ repod.psdle = {
                     var regex = search.match(/^\/(.+?)\/([imgdp]+)?$/i);
 
                     a = (!!regex && !!regex[2] && regex[2].toLowerCase().indexOf("d") >= 0) ? true : false;
-                    var p = (!!regex && !!regex[2] && regex[2].toLowerCase().indexOf("p") >= 0) ? true : false;
 
                     if (a) {
                         $("#psdle_search_text").addClass("negate_regex"); regex[2] = regex[2].replace("d","");
                     }
                     if (!!regex) {
-                        if (p) {
-                            regex[2] = regex[2].replace("p","");
-                            t = val.pid;
-                        }
                         if (RegExp((regex[1])?regex[1]:search,(regex[2])?regex[2]:"").test(t)) { a = !a; }
                     }
                     else if (t.toLowerCase().indexOf(search.toLowerCase()) >= 0) {
@@ -579,8 +590,11 @@ repod.psdle = {
             });
             temp += out.join("")+'</span><br />';
         }
-        if (!dlQueue) { temp += "<input type='text' id='psdle_search_text' placeholder='"+this.lang.strings.search+"' />"; }
-        temp += "<br />";
+        if (!dlQueue) {
+            var select = '<select id="psdle_search_select"><option value="name">Name</option><option value="id">ID</option><option value="pid">Product ID</option><option value="date">Date</option></select>';
+            temp += "<div><input type='text' id='psdle_search_text' placeholder='"+this.lang.strings.search+"' />"+select+"</div>";
+        }
+        //temp += "<br />";
         temp += '<span id="table_stats"></span></div>';
 
         return temp;
@@ -643,7 +657,7 @@ repod.psdle = {
         var temp =  /* Startup         */ "#muh_games_container { display:none;position:fixed;top:0px;right:0px;left:0px;color:#000;z-index:9001;text-align:center } #sub_container { padding:20px;background-color:#fff; } #psdle_progressbar { overflow:hidden;display:inline-block;width:400px;height:16px;border:1px solid #999;margin:10px;border-radius:10px; } #psdle_bar { background-color:#2185f4;width:0%;height:100%;border-radius:10px; } .psdle_btn { cursor:pointer;border-radius:13px;background-color:#2185f4;color:#fff;padding:1px 15px;display:inline-block;margin:5px auto; } .psdle_tiny_link { line-height:0px;cursor:pointer;color:#7F6D75 !important; font-size:x-small; } .psdle_tiny_link:hover { color:#000 !important; text-decoration:underline; } " +
                     /* Search options  */ "#search_options { position:fixed;left:0px;top:0px;width:100%;padding:15px 0px;background-color:rgba(255,255,255,0.8);z-index:9001; }" +
                     /* Table           */ "th[id^=sort] { cursor:pointer; } table {} th {padding:5px;background-color:#2185F4;color:#fff;} tr:hover { background-color:rgba(33,133,244,0.7) !important; } td a.psdle_game_link {display:block;width:100%;height:100%;color:#000 !important;padding:8px;} .is_plus{background-color:#FFD10D;} tr:nth-child(2n) {background-color:#EEE;}  th:nth-child(n+3):nth-child(-n+7), td:nth-child(n+3):nth-child(-n+7) {text-align:center;padding:0px 5px;position:relative;} td:first-child { text-align:center;position:relative; }" +
-                    /* Search buttons  */ "#psdle_search_text { margin:5px auto;padding:5px 10px;font-size:large;max-width:600px;width:100%;border-style:solid;border-color:#F0F0F0;border-radius:90px; } .negate_regex { background-color:#FF8080;color:#fff; } span[id^=system_], span[id^=filter_], span#export_view, span[id^=dl_], .psdle_fancy_bar > span { font-weight:bold; text-transform:uppercase;font-size:small;color:#fff;background-color:#2185f4;display:inline-block;margin-right:2px;margin-bottom:5px;padding:1px 15px;cursor:pointer; } .psdle_fancy_but { border-radius:12px; } .psdle_fancy_bar > span:first-of-type { border-top-left-radius:12px; border-bottom-left-radius:12px; } .psdle_fancy_bar span:last-of-type { border-top-right-radius:12px; border-bottom-right-radius:12px; } .toggled_off { opacity:0.4; }" +
+                    /* Search buttons  */ "#psdle_search_text { margin:5px auto;padding:5px 10px;font-size:large;max-width:480px;width:100%;border-style:solid;border-color:#F0F0F0;border-top-left-radius:90px;border-bottom-left-radius:90px; } #psdle_search_select {font-size: large;margin: 5px auto 0px;padding:5px 10px;border:1px solid #F0F0F0;} .negate_regex { background-color:#FF8080;color:#fff; } span[id^=system_], span[id^=filter_], span#export_view, span[id^=dl_], .psdle_fancy_bar > span { font-weight:bold; text-transform:uppercase;font-size:small;color:#fff;background-color:#2185f4;display:inline-block;margin-right:2px;margin-bottom:5px;padding:1px 15px;cursor:pointer; } .psdle_fancy_but { border-radius:12px; } .psdle_fancy_bar > span:first-of-type { border-top-left-radius:12px; border-bottom-left-radius:12px; } .psdle_fancy_bar span:last-of-type { border-top-right-radius:12px; border-bottom-right-radius:12px; } .toggled_off { opacity:0.4; }" +
                     /* Content icons   */ ".psdle_game_icon { max-width:100%;vertical-align:middle;padding:3px;min-width:42px;min-height:42px; }" +
                     /* Sorting         */ ".psdle_sort_asc { float:right; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom:5px solid #fff; } .psdle_sort_desc { float:right; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid #fff; }" +
                     /* Newbox          */ "#dlQueueAsk { width:400px;height:400px; } #dlQAN { cursor:move;background-color:rgba(33,133,244,0.8);padding:7px 15px;color:#fff;overflow:hidden;white-space:nowrap;text-overflow:ellipsis; } #dlQASys { position:absolute;bottom:0px;padding:7px 0px;color:#FFF;display:table;width:100%;table-layout:fixed; } #dlQASys > div { display:table-cell; } #dlQASys > div > div { cursor:pointer;background-color:rgba(33,133,244,0.8);border-radius:10px;padding:2px;margin:0px 10px; } #dlQAStat { color:#fff;background-color:rgba(33,133,244,0.8);border-bottom-left-radius:20px;padding:0px 10px 0px 15px;font-size:small;float:right; } #dlQARating { color:#fff;background-color:rgba(33,133,244,0.8);border-bottom-right-radius:20px;padding:0px 15px 0px 10px;font-size:small;float:left; } " +
