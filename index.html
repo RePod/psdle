@@ -203,7 +203,12 @@
                         
                         <strong>Does the search box support <a href="//wikipedia.org/wiki/Regular_expression" target="_blank">regex</a>?</strong><br>
                         Yes! Simply wrap the regex in /, like usual.<br>
-                        PSDLE supports the /i modifier and a custom /d modifier which <strong>excludes</strong> matches.<br>
+                        PSDLE supports the <strong>/i</strong> modifier and custom modifiers:<br><br>
+                        <ul>
+                            <li>The <strong>/d</strong> modifier which <strong>excludes</strong> matches.</li>
+                            <li>The <strong>/p</strong> modifier which <strong>searches product IDs.</strong></li>
+                        </ul>
+                        They can be used with each other (excluding ones that change the search target like <strong>/p</strong>).<br>
                         For more information about Javascript Regex, <a href="//developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions" target="_blank">click here</a>.
                         <br><br>
                         
