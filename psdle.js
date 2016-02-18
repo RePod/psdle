@@ -507,14 +507,19 @@ repod.psdle = {
                     if (filters[val.deep_type]) { a = false; }
                 }
                 if (a == true && search !== "") {
-                    var regex = search.match(/^\/(.+?)\/([imgd]+)?$/i);
+                    var regex = search.match(/^\/(.+?)\/([imgdp]+)?$/i);
 
                     a = (!!regex && !!regex[2] && regex[2].toLowerCase().indexOf("d") >= 0) ? true : false;
+                    var p = (!!regex && !!regex[2] && regex[2].toLowerCase().indexOf("p") >= 0) ? true : false;
 
                     if (a) {
                         $("#psdle_search_text").addClass("negate_regex"); regex[2] = regex[2].replace("d","");
                     }
                     if (!!regex) {
+                        if (p) {
+                            regex[2] = regex[2].replace("p","");
+                            t = val.pid;
+                        }
                         if (RegExp((regex[1])?regex[1]:search,(regex[2])?regex[2]:"").test(t)) { a = !a; }
                     }
                     else if (t.toLowerCase().indexOf(search.toLowerCase()) >= 0) {
