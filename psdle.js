@@ -501,7 +501,7 @@ repod.psdle = {
             var sys = that.safeGuessSystem(val.platform),
                 a   = true,
                 t   = "";
-                
+
             switch ($("#psdle_search_select").val()) {
                 default:
                 case 'name':
@@ -514,8 +514,20 @@ repod.psdle = {
                     t = val.pid;
                     break;
                 case 'date':
-                    t = t.date
+                    t = t.date;
                     break;
+                //Catalog results
+                case 'desc':
+                    if (!!t.long_desc) {
+                        t = t.long_desc;
+                    } else { a = false; }
+                    break;
+                case 'genre':
+                    if (!!t.metadata && !!t.metadata.genre) {
+                        t = t.metadata.genre.values.join(",");
+                    } else { a = false; }
+                    break;
+
             }
 
             if ($.inArray(sys,safesys) > -1) {
@@ -591,7 +603,13 @@ repod.psdle = {
             temp += out.join("")+'</span><br />';
         }
         if (!dlQueue) {
-            var select = '<select id="psdle_search_select"><option value="name">Name</option><option value="id">ID</option><option value="pid">Product ID</option><option value="date">Date</option></select>';
+            //I did this HTML generation the lazy way.
+            var select = '<select id="psdle_search_select"><option value="name">'+repod.psdle.lang.columns.name+'</option><option value="id">ID</option><option value="pid">Product ID</option>'; //<option value="date">'+repod.psdle.lang.columns.date+'</option>'
+            if (1 == 2 && this.config.deep_search) { //Future Catalog searching.
+                select += '<option value="genre">Genre</option>'; //item.metadata.genre.values
+                select += '<option value="desc">Description</option>'; //item.long_desc
+            }
+            select += "</select>";
             temp += "<div><input type='text' id='psdle_search_text' placeholder='"+this.lang.strings.search+"' />"+select+"</div>";
         }
         //temp += "<br />";
