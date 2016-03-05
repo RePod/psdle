@@ -316,7 +316,7 @@ repod.psdle = {
         var sys = [];
 
         $.each({"1":KamajiPlatformFlags.PS3,"3": KamajiPlatformFlags.PSP,"8":KamajiPlatformFlags.VITA}, function (t,u) {
-            0 !== (HASH >>> 1 & u >>> 1) && sys.push(KamajiPlatforms[Number(t)]);
+            0 !== ((t == "1") ? (HASH >>> 1 & u >>> 1) : (HASH & u)) && sys.push(KamajiPlatforms[Number(t)]);
         });
 
         return sys;
