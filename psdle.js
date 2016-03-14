@@ -117,6 +117,7 @@ repod.psdle = {
             dlQueue         :
             {
                 base        : SonyChi_SessionManagerSingleton.getDLQueueBaseURL(),
+                ps4         : SonyChi_SessionManagerSingleton.getDLQueueURL2(),
                 status      : SonyChi_SessionManagerSingleton.getDLQueueStatusURL(),
                 status2     : SonyChi_SessionManagerSingleton.getDLQueueStatusURL2()
             },
@@ -672,7 +673,7 @@ repod.psdle = {
 
         return sys;
     },
-    
+
 
     injectCSS: function() {
         var temp =  /* Startup         */ "#muh_games_container { display:none;position:fixed;top:0px;right:0px;left:0px;color:#000;z-index:9001;text-align:center } #sub_container { padding:20px;background-color:#fff; } #psdle_progressbar { overflow:hidden;display:inline-block;width:400px;height:16px;border:1px solid #999;margin:10px;border-radius:10px; } #psdle_bar { background-color:#2185f4;width:0%;height:100%;border-radius:10px; } .psdle_btn { cursor:pointer;border-radius:13px;background-color:#2185f4;color:#fff;padding:1px 15px;display:inline-block;margin:5px auto; } .psdle_tiny_link { line-height:0px;cursor:pointer;color:#7F6D75 !important; font-size:x-small; } .psdle_tiny_link:hover { color:#000 !important; text-decoration:underline; } " +
@@ -975,17 +976,24 @@ repod.psdle = {
                 }
             },
             send: function(sys,id,cancel,completeCb,errorCb) {
-                var dat = {"platformString":sys,"contentId":id},
-                    base_url = (cancel) ? repod.psdle.config.dlQueue.status : repod.psdle.config.dlQueue.base;
-
-                if (cancel) {
-                    dat.status = "usercancelled";
+                var dat = {"platformString":sys}; //Build queue JSON.
+                if (cancel) { dat.status = "usercancelled"; }
+                if (sys == 'ps4') {
+                    dat.entitlementId = id; //PS4 doesn't use contentId, and requires? clientId (by default).
+                    dat.clientId = 1;
+                    dat = {"notifications":[dat]};
+                } else {
+                    dat.contentId = id;
+                    dat = [dat];
                 }
+
+                var base = (sys == 'ps4') ? repod.psdle.config.dlQueue.ps4 : repod.psdle.config.dlQueue.base,
+                    base_url = (cancel) ? repod.psdle.config.dlQueue.status : base;
 
                 $.ajax({
                     type:'POST', url: base_url,
                     contentType: 'application/json; charset=utf-8', dataType: 'json',
-                    data: JSON.stringify([dat]),
+                    data: JSON.stringify(dat),
                     complete: completeCb,
                     error: function(d) {
                         var m = "PS4 download queue trouble? Please go here (copy + paste):\nhttps://github.com/RePod/psdle/issues/29\n\n (Download Queue / Error)\n"+d.responseJSON.header.status_code+" - "+d.responseJSON.header.message_key+" ("+sys+" / "+id+")";
