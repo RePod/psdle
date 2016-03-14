@@ -122,7 +122,7 @@ repod.psdle = {
             },
             use_queue       : false,
             active_consoles : {},
-            tag_line        : "<br /><a class='psdle_tiny_link' href='//repod.github.io/psdle#support' target='_blank'>Support PSDLE</a> - <a class='psdle_tiny_link' href='//repod.github.io/psdle' target='_blank'>Website</a> - <a class='psdle_tiny_link' href='//github.com/RePod/psdle' target='_blank'>Repository</a> - <a class='psdle_tiny_link' href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation' target='_blank'>Submit Bug/Translation</a>",
+            tag_line        : "<br><a class='psdle_tiny_link' href='//repod.github.io/psdle#support' target='_blank'>Support PSDLE</a> - <a class='psdle_tiny_link' href='//repod.github.io/psdle' target='_blank'>Website</a> - <a class='psdle_tiny_link' href='//github.com/RePod/psdle' target='_blank'>Repository</a> - <a class='psdle_tiny_link' href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation' target='_blank'>Submit Bug/Translation</a>",
             switch_align    : "center",
             switch_color    : "#85C107",
             has_plus        : false,
@@ -200,7 +200,7 @@ repod.psdle = {
                         a += "<span id='"+con.internal_id+"' title='"+con.desc.replace(/'/g, "&apos;")+"' class='"+off+"'>"+con.name.replace(/'/g, "&apos;")+"</span>";
                     }
                 });
-                a += "</span><br /><br /><span id='psdle_go' class='psdle_btn'>"+that.lang.startup.start+"</span><br />"+that.generateLangBox()+that.config.tag_line;
+                a += "</span><br /><strong><a class='psdle_tiny_link' href='https://github.com/RePod/psdle/issues/29' target='_blank'>PS4 download queue problems? Click here.</a></strong><br /><br /><span id='psdle_go' class='psdle_btn'>"+that.lang.startup.start+"</span><br />"+that.generateLangBox()+that.config.tag_line;
                 a += "<br /><span id='inject_lang' class='psdle_tiny_link'>Inject Language</span> - <a class='psdle_tiny_link' target='_blank' href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation#translation-submission-template'>Language Template</a> - <span id='gen_fake' class='psdle_tiny_link'>Generate Fake List</span> - <span id='ask_switches' class='psdle_tiny_link'>Switches</span>";
                 a +="</div>";
                 if (mode !== "nobind") {
@@ -316,7 +316,7 @@ repod.psdle = {
         var sys = [];
 
         $.each({"1":KamajiPlatformFlags.PS3,"3": KamajiPlatformFlags.PSP,"8":KamajiPlatformFlags.VITA}, function (t,u) {
-            0 !== (HASH >>> 1 & u >>> 1) && sys.push(KamajiPlatforms[Number(t)]);
+            0 !== ((t == "1") ? (HASH >>> 1 & u >>> 1) : (HASH & u)) && sys.push(KamajiPlatforms[Number(t)]);
         });
 
         return sys;
@@ -988,7 +988,7 @@ repod.psdle = {
                     data: JSON.stringify([dat]),
                     complete: completeCb,
                     error: function(d) {
-                        var m = "PSDLE | Download Queue | Error\n"+d.responseJSON.header.status_code+" - "+d.responseJSON.header.message_key+" ("+sys+" / "+id+")";
+                        var m = "PS4 download queue trouble? Please go here (copy + paste):\nhttps://github.com/RePod/psdle/issues/29\n\n (Download Queue / Error)\n"+d.responseJSON.header.status_code+" - "+d.responseJSON.header.message_key+" ("+sys+" / "+id+")";
                         alert(m); console.error(m); errorCb(d);
                     }
                 });
