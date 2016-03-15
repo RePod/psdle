@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.065
+// @version		2.066
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -1017,11 +1017,16 @@ repod.psdle = {
                     type:'POST', url: base_url,
                     contentType: 'application/json; charset=utf-8', dataType: 'json',
                     data: JSON.stringify(dat),
-                    complete: completeCb,
-                    error: function(d) {
-                        var m = "(Download Queue / Error) ("+sys+" / "+id+")\n"+d.responseJSON;
-                        alert(m); console.error(m); errorCb(d);
-                    }
+                    complete: function(d) {
+                        if (d.status == 200) {
+                            $("div[id^=dla_"+sys+"]").animate({"background-color":"green"});
+                        } else {
+                            $("div[id^=dla_"+sys+"]").animate({"background-color":"red"});
+                            var m = "[Download Queue / Error / "+d.status+"] ["+sys+" / "+id+"]\n"+d.responseText;
+                            console.error(m); alert(m);
+                        }
+                    },
+                    error: function() {}
                 });
             },
             add: {
@@ -1048,11 +1053,7 @@ repod.psdle = {
                 },
                 go: function(sys,id) {
                     //Add game to batch.
-                    repod.psdle.dlQueue.batch.send(sys,id,false,function() {
-                        $("div[id^=dla_"+sys+"]").animate({"background-color":"green"});
-                    },function(a) {
-                        $("div[id^=dla_"+sys+"]").stop().animate({"background-color":"red"});
-                    });
+                    repod.psdle.dlQueue.batch.send(sys,id,false);
                 },
             },
             remove: {
