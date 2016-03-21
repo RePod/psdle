@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.066
+// @version		2.067
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -510,7 +510,8 @@ repod.psdle = {
         var that    = this,
             temp    = "",
             safesys = this.safeSystemCheck(),
-            search  = (!!$("#psdle_search_text")) ? $("#psdle_search_text").val() : this.config.last_search;
+            search  = (!!$("#psdle_search_text")) ? $("#psdle_search_text").val() : this.config.last_search,
+            cache   = [];
 
         /* Determine filters. */
         var filters = {};
@@ -582,7 +583,12 @@ repod.psdle = {
 
                 if (a == true) {
                     that.gamelist_cur.push(val);
-                    that.autocomplete_cache.push({"label":t,"value":t});
+
+                    //Prevent duplicates from filling the autocomplete.
+                    if ($.inArray(t,cache) == -1) {
+                        cache.push(t);
+                        that.autocomplete_cache.push({"label":t,"value":t});
+                    }
                 }
             }
         });

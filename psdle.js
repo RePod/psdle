@@ -487,7 +487,8 @@ repod.psdle = {
         var that    = this,
             temp    = "",
             safesys = this.safeSystemCheck(),
-            search  = (!!$("#psdle_search_text")) ? $("#psdle_search_text").val() : this.config.last_search;
+            search  = (!!$("#psdle_search_text")) ? $("#psdle_search_text").val() : this.config.last_search,
+            cache   = [];
 
         /* Determine filters. */
         var filters = {};
@@ -559,7 +560,12 @@ repod.psdle = {
 
                 if (a == true) {
                     that.gamelist_cur.push(val);
-                    that.autocomplete_cache.push({"label":t,"value":t});
+
+                    //Prevent duplicates from filling the autocomplete.
+                    if ($.inArray(t,cache) == -1) {
+                        cache.push(t);
+                        that.autocomplete_cache.push({"label":t,"value":t});
+                    }
                 }
             }
         });
