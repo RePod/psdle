@@ -1168,8 +1168,25 @@ repod.psdle = {
 
             dialog = $("<div>", {id:"dlQueue_newbox",class:"cover"} ).append($("<div>").append(dialog[0].outerHTML));
 
-            if (game.images && game.images.length > 0) { $(dialog).css("background-image","url('"+game.images[Math.floor(Math.random() * game.images.length)]+"')"); }
-            //else if (!chihiro.isMobile() && game.videos && game.videos.length > 0) {$(dialog).prepend('<div style="z-index:-1;position:absolute;top:0px;left:0px;right:0px;bottom:0px;"><video style="min-width:100%;min-height:100%;" autoplay loop muted><source src="'+game.videos[0]+'" type="video/mp4"></video></div>'); }
+            //Combine videos (if not mobile) and images into a single array.
+            var media = [];
+            if (!chihiro.isMobile() && game.videos) { $.each(game.videos, function(a,b) { media.push({'type':'video','url':b}); }); }
+            if (game.images) { $.each(game.images, function(a,b) { media.push({'type':'image','url':b}); }); }
+            if (media.length > 0) {
+                //Pick a random media item and set it as the background.
+                var media = media[Math.floor(Math.random() * media.length)];
+                if (media.type == 'video') {
+                    //Set the video as the background.
+                    $(dialog).prepend('<div style="z-index:-1;position:absolute;top:0px;left:0px;right:0px;bottom:0px;background-color:#000"><video style="min-height:100%;" autoplay loop muted><source src="'+game.videos[0]+'" type="video/mp4"></video></div>');
+                }
+                if (media.type =='image') {
+                    //Set the image as the background
+                    $(dialog).css("background-image","url('"+game.images[Math.floor(Math.random() * game.images.length)]+"')");
+                }
+            } else {
+                //Set the original icon (at maximum possible resolution) as the background.
+                //$(dialog).children("div").css("background","transparent url('"+icon.replace(/(w|h)=\d+/g,"")+"') no-repeat scroll center center / cover");
+            }
 
             return dialog[0].outerHTML;
         },
