@@ -731,8 +731,7 @@ repod.psdle = {
             this.tl = temp;
 
             /* Gen input    */
-            var w = "<div id='export_select'><div style='text-align:left'>";
-            w += this.genTable();
+            var w = "<div id='export_select'><div>" + this.genTable() + "</div>";
 
             /* Gen output    */
             w += '<br><span class="psdle_fancy_bar"><span id="export_row_del">-</span><span id="export_row_add">+</span></span><br><span class="psdle_fancy_bar"><span id="sel_export_view">'+repod.psdle.lang.labels.export_view+'</span><span id="sel_export_csv">CSV</span>'
@@ -765,7 +764,7 @@ repod.psdle = {
                 select2 = select2[0].outerHTML;
                 table += this.genRow(text,select2);
             }
-            table += "</table></div>";
+            table += "</table>";
 
             return table;
         },
