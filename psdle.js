@@ -277,11 +277,11 @@ repod.psdle = {
                 var i = repod.psdle.config.iconSize;// + "px";
                 i = "&w=" + i + "&h=" + i;
 
-                temp.size_pretty    = (temp.size === 0) ? "N/A" : formatFileSizeDisplayStr(temp.size)
+                temp.prettySize    = (temp.size === 0) ? "N/A" : formatFileSizeDisplayStr(temp.size)
                 temp.icon           = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.pid) + i;
                 temp.api_icon       = temp.api_icon + i;
                 temp.date           = obj.active_date;
-                temp.date_pretty    = convertToNumericDateSlashes(convertStrToDateObj(temp.date));
+                temp.prettyDate    = convertToNumericDateSlashes(convertStrToDateObj(temp.date));
                 temp.url            = repod.psdle.config.game_page + temp.pid;
                 temp.platform_og    = temp.platform.slice(0);
 
@@ -532,8 +532,8 @@ repod.psdle = {
                     break;
                 //Catalog results
                 case 'desc':
-                    if (!!t.long_desc) {
-                        t = t.long_desc;
+                    if (!!t.description) {
+                        t = t.description;
                     } else { a = false; }
                     break;
                 case 'genre':
@@ -626,7 +626,7 @@ repod.psdle = {
             var select = '<select id="psdle_search_select"><option value="name">'+repod.psdle.lang.columns.name+'</option><option value="id">Item ID</option><option value="pid">Product ID</option>'; //<option value="date">'+repod.psdle.lang.columns.date+'</option>'
             if (1 == 2 && this.config.deep_search) { //Future Catalog searching.
                 select += '<option value="genre">Genre</option>'; //item.metadata.genre.values
-                select += '<option value="desc">Description</option>'; //item.long_desc
+                select += '<option value="desc">Description</option>'; //item.description
             }
             select += "</select>";
             temp += "<div>"+select+"<input type='text' id='psdle_search_text' placeholder='"+this.lang.strings.search+"' /></div>";
@@ -710,7 +710,7 @@ repod.psdle = {
         $("head").append("<style type='text/css' id='psdle_css'>"+temp+"</style>");
     },
     exportList: {
-        config: [{name:"Name",target:"name"},{name:"Platform",target:"platform"},{name:"Size",target:"size_pretty"},{name:"Date",target:"date_pretty"}], //Default export template.
+        config: [{name:"Name",target:"name"},{name:"Platform",target:"platform"},{name:"Size",target:"prettySize"},{name:"Date",target:"prettyDate"}], //Default export template.
         tl: {},
         configure: function() {
             //TO-DO:
@@ -1004,7 +1004,7 @@ repod.psdle = {
                 });
             }
             if (data.metadata) { extend.metadata = data.metadata; }
-            if (data.long_desc) { extend.long_desc = data.long_desc; }
+            if (data.description) { extend.description = data.description; }
 
             return extend;
         }
@@ -1170,9 +1170,9 @@ repod.psdle = {
                 can_vita = (can_vita) ? "class='psp2'" : "";
 
                 if (dlQueue) {
-                    temp += "<td>"+sys+"</td><td>"+dlQueue.to_sys.toUpperCase().replace("VITA","PS Vita")+"</td><td>"+val.size_pretty+"</td><td>"+convertToNumericDateSlashes(convertStrToDateObj(dlQueue.createdTime))+"</td>"
+                    temp += "<td>"+sys+"</td><td>"+dlQueue.to_sys.toUpperCase().replace("VITA","PS Vita")+"</td><td>"+val.prettySize+"</td><td>"+convertToNumericDateSlashes(convertStrToDateObj(dlQueue.createdTime))+"</td>"
                 } else {
-                    temp += "<td "+can_vita+">"+sys+((repod.psdle.config.check_tv && repod.psdle.id_cache[val.pid].tvcompat && sys == "PS Vita")?"<span class='psdletv'>TV</span>":"")+"</td><td>"+val.size_pretty+"</td><td>"+val.date_pretty+"</td>";
+                    temp += "<td "+can_vita+">"+sys+((repod.psdle.config.check_tv && repod.psdle.id_cache[val.pid].tvcompat && sys == "PS Vita")?"<span class='psdletv'>TV</span>":"")+"</td><td>"+val.prettySize+"</td><td>"+val.prettyDate+"</td>";
                 }
                 temp += "</tr>";
 
@@ -1224,7 +1224,7 @@ repod.psdle = {
 
             try { if (game.rating) { var star = $("<div>", {class:"star-rating rater-0 ratingStarGeneric star-rating-applied star-rating-readonly star-rating-on",style:"display:inline-block !important;float:none !important;vertical-align:text-top"} ).append($("<a>",{text:""}))[0].outerHTML; dialog.append($("<div>", {id:"dlQARating"} ).append(star+" "+game.rating+" / 5")); } } catch (e) { }
 
-            dialog.append($("<div>", {id:"dlQAStat",text:repod.psdle.safeGuessSystem(game.platform)+" | "+game.size_pretty+" | "+game.date_pretty} ));
+            dialog.append($("<div>", {id:"dlQAStat",text:repod.psdle.safeGuessSystem(game.platform)+" | "+game.prettySize+" | "+game.prettyDate} ));
 
             dialog = $("<div>", {id:"dlQueue_newbox",class:"cover"} ).append($("<div>").append(dialog[0].outerHTML));
 
@@ -1412,10 +1412,10 @@ repod.psdle = {
 
                     temp.icon = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.pid)+"&w=42&h=42";
 
-                    temp.size_pretty = formatFileSizeDisplayStr(temp.size);
+                    temp.prettySize = formatFileSizeDisplayStr(temp.size);
                     temp.url = repod.psdle.config.game_page+temp.pid
                     temp.platform_og = temp.platform.slice(0);
-                    temp.date_pretty = convertToNumericDateSlashes(convertStrToDateObj(temp.date));
+                    temp.prettyDate = convertToNumericDateSlashes(convertStrToDateObj(temp.date));
 
                     repod.psdle.gamelist.push(temp);
                     if (repod.psdle.config.deep_search) { repod.psdle.game_api.queue(temp.index,temp.pid); }
@@ -1538,9 +1538,9 @@ repod.psdle = {
                 .append($("<img>",{class:"cell_icon",src:item.icon.replace(/(w|h)=\d+/g,"$1=124")}))
                 .append($("<div>",{class:"title psdle_blue",text:item.name}))
                 .append($("<div>",{class:"top"}).append(
-                    $("<div>",{class:"psdle_blue",text:repod.psdle.safeGuessSystem(item.platform)+" | "+item.size_pretty})
+                    $("<div>",{class:"psdle_blue",text:repod.psdle.safeGuessSystem(item.platform)+" | "+item.prettySize})
                 ))
-                .append($("<div>",{class:"date psdle_blue",text:item.date_pretty}))
+                .append($("<div>",{class:"date psdle_blue",text:item.prettyDate}))
 
                 return out[0].outerHTML;
             }
