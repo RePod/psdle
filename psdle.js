@@ -1229,7 +1229,7 @@ repod.psdle = {
 
             //Combine videos (if not mobile) and images into a single array.
             var media = [];
-            if (!chihiro.isMobile() && game.videos) { $.each(game.videos, function(a,b) { media.push({'type':'video','url':b}); }); }
+            //if (!chihiro.isMobile() && game.videos) { $.each(game.videos, function(a,b) { media.push({'type':'video','url':b}); }); }
             if (game.images) { $.each(game.images, function(a,b) { media.push({'type':'image','url':b}); }); }
             if (media.length > 0) {
                 //Pick a random media item and set it as the background.
