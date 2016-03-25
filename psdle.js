@@ -865,8 +865,10 @@ repod.psdle = {
 
                 out += "\n";
             } else if (index == -1) {
+                //Footer.
                 //To-do: Reimplement totals based on selected columns.
-                //out = sep+sep+$("#psdle_totals").children().eq(3).text()+sep+"\n";
+                //For now we'll just spit out the export settings as JSON.
+                out = "PSDLE_EXPORT_SETTINGS"+sep+JSON.stringify(this.config);
             } else {
                 $.each(this.config, function(index,val) {
                     out += val.name+sep;
