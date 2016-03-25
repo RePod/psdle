@@ -35,6 +35,7 @@ repod.psdle = {
     pid_cache          : {},
     sys_cache          : {},
     type_cache         : {},
+    prop_cache         : [],
     lang_cache         :
     {
         "en": {
@@ -247,7 +248,7 @@ repod.psdle = {
                 var temp = {};
 
                 //Constants/pre-determined.
-                temp.deep_type = "unknown";
+                if (that.config.deep_search) { temp.category = "unknown"; }
                 temp.pid       = obj.product_id;
                 temp.id        = obj.id;
                 if (!that.pid_cache[temp.pid]) { that.pid_cache[temp.pid] = 1; } else { that.pid_cache[temp.pid]++; }
@@ -258,8 +259,6 @@ repod.psdle = {
                     if (obj.game_meta) {
                         temp.name     = obj.game_meta.name;
                         temp.api_icon = obj.game_meta.icon_url;
-                        //temp.id
-                        //temp.icon = obj.game_meta.icon_url;
                     }
                     temp.size        = obj.entitlement_attributes[0].package_file_size;
                     temp.platform    = ["PS4"];
@@ -278,18 +277,18 @@ repod.psdle = {
                 var i = repod.psdle.config.iconSize;// + "px";
                 i = "&w=" + i + "&h=" + i;
 
-                temp.size_f         = (temp.size === 0) ? "N/A" : formatFileSizeDisplayStr(temp.size)
+                temp.size_pretty    = (temp.size === 0) ? "N/A" : formatFileSizeDisplayStr(temp.size)
                 temp.icon           = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.pid) + i;
                 temp.api_icon       = temp.api_icon + i;
                 temp.date           = obj.active_date;
-                temp.pdate          = convertToNumericDateSlashes(convertStrToDateObj(temp.date));
+                temp.date_pretty    = convertToNumericDateSlashes(convertStrToDateObj(temp.date));
                 temp.url            = repod.psdle.config.game_page + temp.pid;
                 temp.platform_og    = temp.platform.slice(0);
 
                 //Get Plus status
                 if (!obj.drm_def && !!obj.inactive_date)    { temp.plus = true; } //PS4, Vita, PSP
                 if (obj.license && obj.license.expiration)  { temp.plus = true; } //PS3
-                if (temp.plus)                              { repod.psdle.config.has_plus = true; }
+                if (temp.plus)                              { that.config.has_plus = true; }
 
                 that.gamelist.push(temp);
             }
@@ -365,6 +364,18 @@ repod.psdle = {
         gen: function() {
             var that = this;
 
+            //Cache the properties to prop_cache to use for exporting.
+            //Potentially move this later and use a single entry (risky?).
+            //Also potentially just continuously extend a cache object then iterate over that.
+            $.each(repod.psdle.gamelist, function(i,c) {
+                $.each(c, function(key) {
+                    if ($.inArray(key,repod.psdle.prop_cache) == -1) {
+                        repod.psdle.prop_cache.push(key);
+                    }
+                });
+            });
+            repod.psdle.prop_cache.sort();
+            
             repod.psdle.genSysCache();
             repod.psdle.config.lastsort = "";
             repod.psdle.config.lastsort_r = false;
@@ -535,7 +546,7 @@ repod.psdle = {
 
             if ($.inArray(sys,safesys) > -1) {
                 if (that.config.deep_search) {
-                    if (filters[val.deep_type]) { a = false; }
+                    if (filters[val.category]) { a = false; }
                 }
                 if (a == true && search !== "") {
                     var regex = search.match(/^\/(.+?)\/([imgdp]+)?$/i);
@@ -679,8 +690,6 @@ repod.psdle = {
 
         return sys;
     },
-
-
     injectCSS: function() {
         var temp =  /* Startup         */ "#muh_games_container { display:none;position:fixed;top:0px;right:0px;left:0px;color:#000;z-index:9001;text-align:center } #sub_container { padding:20px;background-color:#fff; } #psdle_progressbar { overflow:hidden;display:inline-block;width:400px;height:16px;border:1px solid #999;margin:10px;border-radius:10px; } #psdle_bar { background-color:#2185f4;width:0%;height:100%;border-radius:10px; } .psdle_btn { cursor:pointer;border-radius:13px;background-color:#2185f4;color:#fff;padding:1px 15px;display:inline-block;margin:5px auto; } .psdle_tiny_link { line-height:0px;cursor:pointer;color:#7F6D75 !important; font-size:x-small; } .psdle_tiny_link:hover { color:#000 !important; text-decoration:underline; } " +
                     /* Search options  */ "#search_options { position:fixed;left:0px;top:0px;width:100%;padding:15px 0px;background-color:rgba(255,255,255,0.8);z-index:9001; }" +
@@ -701,9 +710,12 @@ repod.psdle = {
         $("head").append("<style type='text/css' id='psdle_css'>"+temp+"</style>");
     },
     exportList: {
-        config: { name: true, platform: true, can_vita: true, size: true, date: true, plus: false },
+        config: [{name:"Name",target:"name"},{name:"Platform",target:"platform"},{name:"Size",target:"size_pretty"},{name:"Date",target:"date_pretty"}], //Default export template.
         tl: {},
         configure: function() {
+            //TO-DO:
+            //window max-height: 80%;
+            //Translate default template
             var that = this,
                 temp = {
                     name: repod.psdle.lang.columns.name,
@@ -720,24 +732,69 @@ repod.psdle = {
 
             /* Gen input    */
             var w = "<div id='export_select'><div style='text-align:left'>";
-            $.each(this.config, function(key,val) { var c = (val)?' checked':''; w += "<input type='checkbox'"+c+" value='"+key+"'> "+that.tl[key]+"<br>" });
-            w += "</div>";
+            w += this.genTable();
 
             /* Gen output    */
-            w += '<br><span class="psdle_fancy_bar"><span id="sel_export_view">'+repod.psdle.lang.labels.export_view+'</span><span id="sel_export_csv">CSV</span>'
+            w += '<br><span class="psdle_fancy_bar"><span id="export_row_del">-</span><span id="export_row_add">+</span></span><br><span class="psdle_fancy_bar"><span id="sel_export_view">'+repod.psdle.lang.labels.export_view+'</span><span id="sel_export_csv">CSV</span>'
 
             //Generate window.
             $("<div />",{id:"export_configure",class:"cover"}).append($("<div />").append(w)).appendTo("body");
 
             //Bind
             $("#sel_export_view").off("click").on("click", function () { that.saveConfig(); that.delimited.handle(); $("#export_configure").remove(); });
+            $("#export_row_add").off("click").on("click", function(event) { $("#export_table tbody").append(that.genRow()); }); //Add row.
+            $("#export_row_del").off("click").on("click", function(event) { $("#export_table tr:gt(1)").last().remove(); }); //Remove row.
             $("#sel_export_csv").off("click").on("click", function () { that.saveConfig(); that.csv.handle(); $("#export_configure").remove(); });
             $("#export_configure").off("click").one("click", function() { $(this).remove(); repod.psdle.newbox.bind("off"); });
             $("#export_select").off("click").on("click", function(event) { event.stopPropagation(); });
         },
+        genTable: function() {
+            var table = "",
+                select = this.genSelect(),
+                max = (this.config.length || 5);
+
+            table += "<table id='export_table'><tr><th>Column Name</th><th>Property</th></tr>";
+            for (i=0; i<max; i++) {
+                var text = (this.config[i]) ? this.config[i].name : "",
+                    select2 = select.clone();
+                    
+                if (this.config[i]) {
+                    select2.find("[value="+this.config[i].target+"]").attr("selected","selected");
+                }
+                
+                select2 = select2[0].outerHTML;
+                table += this.genRow(text,select2);
+            }
+            table += "</table></div>";
+            
+            return table;
+        },
+        genRow: function(text,select) {
+            text = (text) ? text : "";
+            select = (select) ? select : this.genSelect()[0].outerHTML;
+            return "<tr><td><input placeholder='...?' value='"+text+"'></td><td>"+select+"</td></tr>";
+        },
+        genSelect: function() {
+            var select = $("<select />");
+
+            $.each(repod.psdle.prop_cache, function(i, name) {
+                select.append($("<option />", {text: name, value: name}));
+            });
+
+            return select;
+        },
         saveConfig: function() {
-            var that = this;
-            $("#export_select input[type=checkbox]").each(function() { that.config[$(this).attr("value")] = $(this).prop("checked"); });
+            var table = $("#export_select").find("table"),
+                columns = [];
+
+            table.find("tr:gt(0)").each(function() {
+                columns.push({
+                    name: $(this).find("input").val(),
+                    target: $(this).find("select option:selected").val(),
+                });
+            });
+            
+            this.config = columns;
         },
         json: function() { return (!!JSON.stringify) ? JSON.stringify(repod.psdle.gamelist_cur) : repod.psdle.lang.strings.stringify_error; },
         delimited: {
@@ -792,14 +849,16 @@ repod.psdle = {
 
                 $.each(this.config, function(key,val) {
                     if (val) {
-                        switch (key) {
+                        switch (val.target) {
+                            //Exceptions.
                             case "name": out += (b.name.indexOf(","))?"\""+b.name+"\"":b.name; break;
                             case "platform": out += repod.psdle.safeGuessSystem(b.platform); break;
-                            case "size": out += b.size_f; break;
-                            case "date": out += b.pdate; break;
-                            case "plus": out += (b.plus) ? repod.psdle.lang.strings.yes : ""; break;
+                            case "plus": out += (b.plus) ? repod.psdle.lang.strings.yes : repod.psdle.lang.strings.no; break;
                             case "can_vita": out += ($.inArray("PS Vita",b.platform_og) > -1) ? repod.psdle.lang.strings.yes : ""; break;
                             case "tv": out += (repod.psdle.config.check_tv && repod.psdle.id_cache[b.pid].tvcompat && repod.psdle.safeGuessSystem(b.platform) == "PS Vita")?"Yes":""; break;
+                            default: //Generics
+                                out += b[val.target]; break;
+                                break;
                         }
                         out += sep;
                     }
@@ -810,8 +869,8 @@ repod.psdle = {
                 //To-do: Reimplement totals based on selected columns.
                 //out = sep+sep+$("#psdle_totals").children().eq(3).text()+sep+"\n";
             } else {
-                $.each(this.config, function(key,val) {
-                    if (val) { out += that.tl[key]+sep; }
+                $.each(this.config, function(index,val) {
+                    out += val.name+sep;
                 });
 
                 out += "\n";
@@ -871,7 +930,7 @@ repod.psdle = {
             if (q > p) { $("#psdle_progressbar > #psdle_bar").stop().animate({"width":q+"%"}); }
             $("#psdle_status").text(l+" / "+r);
 
-            repod.psdle.type_cache[parse.deep_type] = true;
+            repod.psdle.type_cache[parse.category] = true;
 
             if (index == "pid_cache") {
                 repod.psdle.pid_cache[data.id] = parse;
@@ -919,7 +978,7 @@ repod.psdle = {
                 type = (data.top_category) ? data.top_category : "unknown";
             }
 
-            extend.deep_type = type;
+            extend.category = type;
 
             if (data.star_rating && data.star_rating.score) { extend.rating = data.star_rating.score; }
             if (data.promomedia) {
@@ -1110,9 +1169,9 @@ repod.psdle = {
                 can_vita = (can_vita) ? "class='psp2'" : "";
 
                 if (dlQueue) {
-                    temp += "<td>"+sys+"</td><td>"+dlQueue.to_sys.toUpperCase().replace("VITA","PS Vita")+"</td><td>"+val.size_f+"</td><td>"+convertToNumericDateSlashes(convertStrToDateObj(dlQueue.createdTime))+"</td>"
+                    temp += "<td>"+sys+"</td><td>"+dlQueue.to_sys.toUpperCase().replace("VITA","PS Vita")+"</td><td>"+val.size_pretty+"</td><td>"+convertToNumericDateSlashes(convertStrToDateObj(dlQueue.createdTime))+"</td>"
                 } else {
-                    temp += "<td "+can_vita+">"+sys+((repod.psdle.config.check_tv && repod.psdle.id_cache[val.pid].tvcompat && sys == "PS Vita")?"<span class='psdletv'>TV</span>":"")+"</td><td>"+val.size_f+"</td><td>"+val.pdate+"</td>";
+                    temp += "<td "+can_vita+">"+sys+((repod.psdle.config.check_tv && repod.psdle.id_cache[val.pid].tvcompat && sys == "PS Vita")?"<span class='psdletv'>TV</span>":"")+"</td><td>"+val.size_pretty+"</td><td>"+val.date_pretty+"</td>";
                 }
                 temp += "</tr>";
 
@@ -1164,12 +1223,29 @@ repod.psdle = {
 
             try { if (game.rating) { var star = $("<div>", {class:"star-rating rater-0 ratingStarGeneric star-rating-applied star-rating-readonly star-rating-on",style:"display:inline-block !important;float:none !important;vertical-align:text-top"} ).append($("<a>",{text:""}))[0].outerHTML; dialog.append($("<div>", {id:"dlQARating"} ).append(star+" "+game.rating+" / 5")); } } catch (e) { }
 
-            dialog.append($("<div>", {id:"dlQAStat",text:repod.psdle.safeGuessSystem(game.platform)+" | "+game.size_f+" | "+game.pdate} ));
+            dialog.append($("<div>", {id:"dlQAStat",text:repod.psdle.safeGuessSystem(game.platform)+" | "+game.size_pretty+" | "+game.date_pretty} ));
 
             dialog = $("<div>", {id:"dlQueue_newbox",class:"cover"} ).append($("<div>").append(dialog[0].outerHTML));
 
-            if (game.images && game.images.length > 0) { $(dialog).css("background-image","url('"+game.images[Math.floor(Math.random() * game.images.length)]+"')"); }
-            //else if (!chihiro.isMobile() && game.videos && game.videos.length > 0) {$(dialog).prepend('<div style="z-index:-1;position:absolute;top:0px;left:0px;right:0px;bottom:0px;"><video style="min-width:100%;min-height:100%;" autoplay loop muted><source src="'+game.videos[0]+'" type="video/mp4"></video></div>'); }
+            //Combine videos (if not mobile) and images into a single array.
+            var media = [];
+            //if (!chihiro.isMobile() && game.videos) { $.each(game.videos, function(a,b) { media.push({'type':'video','url':b}); }); }
+            if (game.images) { $.each(game.images, function(a,b) { media.push({'type':'image','url':b}); }); }
+            if (media.length > 0) {
+                //Pick a random media item and set it as the background.
+                var media = media[Math.floor(Math.random() * media.length)];
+                if (media.type == 'video') {
+                    //Set the video as the background.
+                    $(dialog).prepend('<div style="z-index:-1;position:absolute;top:0px;left:0px;right:0px;bottom:0px;background-color:#000"><video style="min-height:100%;" autoplay loop muted><source src="'+game.videos[0]+'" type="video/mp4"></video></div>');
+                }
+                if (media.type =='image') {
+                    //Set the image as the background
+                    $(dialog).css("background-image","url('"+game.images[Math.floor(Math.random() * game.images.length)]+"')");
+                }
+            } else {
+                //Set the original icon (at maximum possible resolution) as the background.
+                //$(dialog).children("div").css("background","transparent url('"+icon.replace(/(w|h)=\d+/g,"")+"') no-repeat scroll center center / cover");
+            }
 
             return dialog[0].outerHTML;
         },
@@ -1320,7 +1396,7 @@ repod.psdle = {
                 $.each($(".cellGridGameStandard"), function(index) {
                     var temp = {};
 
-                    temp.deep_type = "unknown";
+                    temp.category = "unknown";
                     temp.pid = $(this).find(".permalink").attr("href").split("cid=").pop();
                     temp.id = temp.pid;
                     temp.index = repod.psdle.gamelist.length + 1;
@@ -1335,10 +1411,10 @@ repod.psdle = {
 
                     temp.icon = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.pid)+"&w=42&h=42";
 
-                    temp.size_f = formatFileSizeDisplayStr(temp.size);
+                    temp.size_pretty = formatFileSizeDisplayStr(temp.size);
                     temp.url = repod.psdle.config.game_page+temp.pid
                     temp.platform_og = temp.platform.slice(0);
-                    temp.pdate = convertToNumericDateSlashes(convertStrToDateObj(temp.date));
+                    temp.date_pretty = convertToNumericDateSlashes(convertStrToDateObj(temp.date));
 
                     repod.psdle.gamelist.push(temp);
                     if (repod.psdle.config.deep_search) { repod.psdle.game_api.queue(temp.index,temp.pid); }
@@ -1461,9 +1537,9 @@ repod.psdle = {
                 .append($("<img>",{class:"cell_icon",src:item.icon.replace(/(w|h)=\d+/g,"$1=124")}))
                 .append($("<div>",{class:"title psdle_blue",text:item.name}))
                 .append($("<div>",{class:"top"}).append(
-                    $("<div>",{class:"psdle_blue",text:repod.psdle.safeGuessSystem(item.platform)+" | "+item.size_f})
+                    $("<div>",{class:"psdle_blue",text:repod.psdle.safeGuessSystem(item.platform)+" | "+item.size_pretty})
                 ))
-                .append($("<div>",{class:"date psdle_blue",text:item.pdate}))
+                .append($("<div>",{class:"date psdle_blue",text:item.date_pretty}))
 
                 return out[0].outerHTML;
             }
