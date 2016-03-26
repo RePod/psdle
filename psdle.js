@@ -346,6 +346,27 @@ repod.psdle = {
             that.sys_cache[key] = name;
         });
     },
+    genPropCache: function() {
+        //Cache the properties to prop_cache to use for exporting. Move later.
+        //Also potentially just continuously extend a cache object then iterate over that.
+        var that = this,
+            bad = ["metadata"]; //Stuff we don't handle yet or want being exported.
+
+        this.prop_cache = [];
+
+        $.each(this.gamelist, function(i,c) {
+            $.each(c, function(key) {
+                if ($.inArray(key,bad) == -1 && $.inArray(key,that.prop_cache) == -1) {
+                    that.prop_cache.push(key);
+                }
+            });
+        });
+        //Custom properties (since they're not actually stored in an entry), sloppy.
+        this.prop_cache.push('vitaCompat');
+        if (this.config.check_tv) { this.prop_cache.push('vitatvCompat'); }
+
+        this.prop_cache.sort();
+    },
     table: {
         bindSearch: function() {
             //Unbind for safety.
@@ -363,19 +384,8 @@ repod.psdle = {
         gen: function() {
             var that = this;
 
-            //Cache the properties to prop_cache to use for exporting.
-            //Potentially move this later and use a single entry (risky?).
-            //Also potentially just continuously extend a cache object then iterate over that.
-            $.each(repod.psdle.gamelist, function(i,c) {
-                $.each(c, function(key) {
-                    if ($.inArray(key,repod.psdle.prop_cache) == -1) {
-                        repod.psdle.prop_cache.push(key);
-                    }
-                });
-            });
-            repod.psdle.prop_cache.sort();
-
             repod.psdle.genSysCache();
+            repod.psdle.genPropCache();
             repod.psdle.config.lastsort = "";
             repod.psdle.config.lastsort_r = false;
 
@@ -782,10 +792,10 @@ repod.psdle = {
             return select;
         },
         saveConfig: function() {
-            var table = $("#export_select").find("table"),
+            var config = $("#export_select").find("table tr:gt(0)"),
                 columns = [];
 
-            table.find("tr:gt(0)").each(function() {
+            config.each(function() {
                 columns.push({
                     name: $(this).find("input").val(),
                     target: $(this).find("select option:selected").val(),
@@ -849,13 +859,16 @@ repod.psdle = {
                     if (val) {
                         switch (val.target) {
                             //Exceptions.
-                            case "name": out += (b.name.indexOf(","))?"\""+b.name+"\"":b.name; break;
                             case "platform": out += repod.psdle.safeGuessSystem(b.platform); break;
                             case "plus": out += (b.plus) ? repod.psdle.lang.strings.yes : repod.psdle.lang.strings.no; break;
-                            case "can_vita": out += ($.inArray("PS Vita",b.platform_og) > -1) ? repod.psdle.lang.strings.yes : ""; break;
-                            case "tv": out += (repod.psdle.config.check_tv && repod.psdle.id_cache[b.productID].tvcompat && repod.psdle.safeGuessSystem(b.platform) == "PS Vita")?"Yes":""; break;
+                            case "vitaCompat": out += ($.inArray("PS Vita",b.platform_og) > -1) ? repod.psdle.lang.strings.yes : ""; break;
+                            case "vitatvCompat": out += (repod.psdle.config.check_tv && repod.psdle.id_cache[b.productID].tvcompat && repod.psdle.safeGuessSystem(b.platform) == "PS Vita")?"Yes":""; break;
                             default: //Generics
-                                out += b[val.target]; break;
+                                var temp = b[val.target];
+                                if (!temp) break;
+                                temp = temp.replace(/([\r\n]+?)/gm," ");
+                                //if (typeof temp == "object") { temp = JSON.stringify(temp); }
+                                out += (temp.indexOf(",")) ? '"'+temp+'"' : temp;
                                 break;
                         }
                         out += sep;
@@ -1003,7 +1016,7 @@ repod.psdle = {
                 });
             }
             if (data.metadata) { extend.metadata = data.metadata; }
-            if (data.description) { extend.description = data.description; }
+            if (data.long_desc) { extend.description = data.long_desc; }
 
             return extend;
         }
