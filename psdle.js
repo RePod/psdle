@@ -866,7 +866,7 @@ repod.psdle = {
                             default: //Generics
                                 var temp = b[val.target];
                                 if (!temp) break;
-                                temp = temp.replace(/([\r\n]+?)/gm," ");
+                                if (typeof temp == "string") { temp = temp.replace(/([\r\n]+?)/gm," "); }
                                 //if (typeof temp == "object") { temp = JSON.stringify(temp); }
                                 out += (temp.indexOf(",")) ? '"'+temp+'"' : temp;
                                 break;
