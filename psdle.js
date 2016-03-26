@@ -709,7 +709,7 @@ repod.psdle = {
                     /* Newbox          */ "#dlQueueAsk { width:400px;height:400px; } #dlQAN { cursor:move;background-color:rgba(33,133,244,0.8);padding:7px 15px;color:#fff;overflow:hidden;white-space:nowrap;text-overflow:ellipsis; } #dlQASys { position:absolute;bottom:0px;padding:7px 0px;color:#FFF;display:table;width:100%;table-layout:fixed; } #dlQASys > div { display:table-cell; } #dlQASys > div > div { cursor:pointer;background-color:rgba(33,133,244,0.8);border-radius:10px;padding:2px;margin:0px 10px; } #dlQAStat { color:#fff;background-color:rgba(33,133,244,0.8);border-bottom-left-radius:20px;padding:0px 10px 0px 15px;font-size:small;float:right; } #dlQARating { color:#fff;background-color:rgba(33,133,244,0.8);border-bottom-right-radius:20px;padding:0px 15px 0px 10px;font-size:small;float:left; } " +
                     /* Newbox Extended */ "#dlQueueExt { overflow: hidden; position: absolute; left: 10px; right: 10px; bottom: 40px; font-size: 0.8em; background-color: rgba(33, 133, 244, 0.8); padding: 10px; border-radius: 9px; top: 66px; text-align: left; }" +
                     /* Overlays        */ ".cover { z-index:9001;position:fixed;top:0px;left:0px;width:100%;height:100%;display:table;background-color:rgba(0,0,0,0.25);background-size:cover;background-position:center; } .cover > div { display:table-cell;vertical-align:middle;height:inherit;text-align:center; } .cover > div > div { box-shadow: 0px 0px 30px #000;display:inline-block;#background-color:#FFF;border-radius:20px;overflow:hidden;position:relative;background-size:cover; }" +
-                    /* Export          */ "#export_select { padding:10px;width:250px;background-color:#fff;color:#000; } #export_select > div { overflow-y:auto;overflow-x:hidden;max-height:490px; } #export_table { width: 100%; }" +
+                    /* Export          */ "#export_select { padding:10px;/*width:250px;*/background-color:#fff;color:#000; } #export_select > div { overflow-y:auto;overflow-x:hidden;max-height:490px; } #export_table { width: 100%; }" +
                     /* PS+ switch      */ "#slider { vertical-align: bottom;display:inline-block;cursor:pointer;border-radius:100%;width:30px;height:12px;border-radius:10px;border:2px solid #F0F0F0; } .handle_container { text-align:center;width:100%;height:100%; } .handle { width:10px;height:10px;border-radius:100%;margin:0px 2px 6px;border:1px solid #FFF;display:inline-block;background-color:#85C107; }" +
                     /* Tooltips        */ ".tooltip-inner { background-color:#2185F4 !important; border: 5px solid #2185F4 !important; } .tooltip-arrow { border-top-color:#2185F4 !important; } .tooltip.in { opacity:1 !important; }" +
                     /* Tooltips 2      */ ".ui-tooltip { background-color:#2185F4; max-width: 234px; z-index: 9002; background-color: #2185F4; font-size: 11px; text-align: center; line-height: 1.4em; padding: 12px; border-radius: 4px; }" +
@@ -825,8 +825,7 @@ repod.psdle = {
         },
         csv: {
             gen: function(sep) {
-                var that = this,
-                    sep  = (sep) ? sep : ",",
+                var sep  = (sep) ? sep : ",",
                     csv  = repod.psdle.exportList.formatRow(sep);
 
                 $.each(repod.psdle.gamelist_cur,function(i) {
@@ -867,8 +866,8 @@ repod.psdle = {
                                 var temp = b[val.target];
                                 if (!temp) break;
                                 if (typeof temp == "string") { temp = temp.replace(/([\r\n]+?)/gm," "); }
-                                //if (typeof temp == "object") { temp = JSON.stringify(temp); }
-                                out += (temp.indexOf(",")) ? '"'+temp+'"' : temp;
+                                if (typeof temp == "object") { temp = JSON.stringify(temp).replace(/"/g,"'"); }
+                                out += (temp.indexOf(sep) > -1) ? '"'+temp+'"' : temp;
                                 break;
                         }
                         out += sep;
@@ -879,9 +878,10 @@ repod.psdle = {
             } else if (index == -1) {
                 //Footer.
                 //To-do: Reimplement totals based on selected columns.
-                //For now we'll just spit out the export settings as JSON.
-                out = "PSDLE_EXPORT_SETTINGS"+sep+JSON.stringify(this.config);
+                $.each(this.config, function(index,val) { out += val.target+sep; }); //Align to columns.
+                out += JSON.stringify(this.config); //JSON in extra column.
             } else {
+                //Generally the first row, but more so a catch-all that spits out column names.
                 $.each(this.config, function(index,val) {
                     out += val.name+sep;
                 });
