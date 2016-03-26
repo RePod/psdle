@@ -276,13 +276,13 @@ repod.psdle = {
                 var i = repod.psdle.config.iconSize;// + "px";
                 i = "&w=" + i + "&h=" + i;
 
-                temp.prettySize    = (temp.size === 0) ? "N/A" : formatFileSizeDisplayStr(temp.size)
+                temp.prettySize     = (temp.size === 0) ? "N/A" : formatFileSizeDisplayStr(temp.size)
                 temp.icon           = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.productID) + i;
                 temp.api_icon       = temp.api_icon + i;
                 temp.date           = obj.active_date;
-                temp.prettyDate    = convertToNumericDateSlashes(convertStrToDateObj(temp.date));
+                temp.prettyDate     = convertToNumericDateSlashes(convertStrToDateObj(temp.date));
                 temp.url            = repod.psdle.config.game_page + temp.productID;
-                temp.platform_og    = temp.platform.slice(0);
+                temp.platformUsable = temp.platform.slice(0);
 
                 //Get Plus status
                 if (!obj.drm_def && !!obj.inactive_date)    { temp.plus = true; } //PS4, Vita, PSP
@@ -861,7 +861,7 @@ repod.psdle = {
                             //Exceptions.
                             case "platform": out += repod.psdle.safeGuessSystem(b.platform); break;
                             case "plus": out += (b.plus) ? repod.psdle.lang.strings.yes : repod.psdle.lang.strings.no; break;
-                            case "vitaCompat": out += ($.inArray("PS Vita",b.platform_og) > -1) ? repod.psdle.lang.strings.yes : ""; break;
+                            case "vitaCompat": out += ($.inArray("PS Vita",b.platformUsable) > -1) ? repod.psdle.lang.strings.yes : ""; break;
                             case "vitatvCompat": out += (repod.psdle.config.check_tv && repod.psdle.id_cache[b.productID].tvcompat && repod.psdle.safeGuessSystem(b.platform) == "PS Vita")?"Yes":""; break;
                             default: //Generics
                                 var temp = b[val.target];
@@ -1096,7 +1096,7 @@ repod.psdle = {
                             this.go(sys,game.id);
                             break;
                         case "all":
-                            var temp = game.platform_og.slice(0), i = $.inArray("PSP", temp); if(i != -1) { temp.splice(i, 1); } /* Make sure we don't have PSP */
+                            var temp = game.platformUsable.slice(0), i = $.inArray("PSP", temp); if(i != -1) { temp.splice(i, 1); } /* Make sure we don't have PSP */
                             $.each(temp,function(a,b) { that.go(b.replace(/ps /i,"").toLowerCase(),game.id); });
                             break;
                     }
@@ -1178,7 +1178,7 @@ repod.psdle = {
                     iS = repod.psdle.config.iconSize+"px",
                     temp = "<tr id='psdle_index_"+(val.index -1)+"'><td style='max-width:"+iS+";max-height:"+iS+";'><a target='_blank' href='"+val.url+"'><img title='"+repod.psdle.lang.labels.page+" #"+Math.ceil(val.index/pg)+"' src='"+icon+"' class='psdle_game_icon "+is_plus+"' /></a>"+"</td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+val.name+"</a></td>";
 
-                var can_vita = (sys == "PS Vita") ? false : ($.inArray("PS Vita",val.platform_og) > -1) ? true : false;
+                var can_vita = (sys == "PS Vita") ? false : ($.inArray("PS Vita",val.platformUsable) > -1) ? true : false;
                 can_vita = (can_vita) ? "class='psp2'" : "";
 
                 if (dlQueue) {
@@ -1217,7 +1217,7 @@ repod.psdle = {
             dialog.append($("<div>", {id:'dlQAN'} ).append(plus+game.name));
 
             if (repod.psdle.config.use_queue) {
-                var temp = $.grep(game.platform_og.slice(0), function(V) { return V !== "PSP" }), /* Make sure we don't have PSP */
+                var temp = $.grep(game.platformUsable.slice(0), function(V) { return V !== "PSP" }), /* Make sure we don't have PSP */
                     t    = $("<div>", {id:"dlQASys"} );
 
                 if (temp.length > 1) {
@@ -1229,7 +1229,7 @@ repod.psdle = {
                     });
                 } else {
                     var c = temp[0].slice(0).replace(/ps /i,"").toLowerCase(), d = (repod.psdle.config.active_consoles.hasOwnProperty(c)) ? "" : "toggled_off";
-                    t.html($("<div>").append($("<div>",{id:"dla_"+c+"_"+id,class:d,text:repod.psdle.lang.strings.queue_to.replace("$SYS$",game.platform_og[0].slice(0))})))
+                    t.html($("<div>").append($("<div>",{id:"dla_"+c+"_"+id,class:d,text:repod.psdle.lang.strings.queue_to.replace("$SYS$",game.platformUsable[0].slice(0))})))
                 }
                 dialog.append(t);
             }
@@ -1426,7 +1426,7 @@ repod.psdle = {
 
                     temp.prettySize = formatFileSizeDisplayStr(temp.size);
                     temp.url = repod.psdle.config.game_page+temp.productID;
-                    temp.platform_og = temp.platform.slice(0);
+                    temp.platformUsable = temp.platform.slice(0);
                     temp.prettyDate = convertToNumericDateSlashes(convertStrToDateObj(temp.date));
 
                     repod.psdle.gamelist.push(temp);
@@ -1504,7 +1504,7 @@ repod.psdle = {
                     || !obj.name || obj.name.length == 0
                     || !obj.size || obj.size.length == 0
                     || !obj.platform || obj.platform.length == 0
-                    || !obj.platform_og || obj.platform_og.length == 0
+                    || !obj.platformUsable || obj.platformUsable.length == 0
                     || !obj.date) {
                         bad.push(index);
                     }
@@ -1517,7 +1517,7 @@ repod.psdle = {
 
             $.each(repod.psdle.gamelist, function(i,o) {
                 var num = Math.ceil(Math.random() * 10),
-                    victim = ["productID", "id", "name", "platform", "platform_og", "date", "size", "", "", ""];
+                    victim = ["productID", "id", "name", "platform", "platformUsable", "date", "size", "", "", ""];
 
                 delete o[victim[num]];
             });
