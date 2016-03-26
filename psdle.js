@@ -249,10 +249,9 @@ repod.psdle = {
 
                 //Constants/pre-determined.
                 if (that.config.deep_search) { temp.category = "unknown"; }
-                temp.pid       = obj.product_id;
+                temp.productID = obj.product_id;
                 temp.id        = obj.id;
-                if (!that.pid_cache[temp.pid]) { that.pid_cache[temp.pid] = 1; } else { that.pid_cache[temp.pid]++; }
-
+                if (!that.pid_cache[temp.productID]) { that.pid_cache[temp.productID] = 1; } else { that.pid_cache[temp.productID]++; }
 
                 if (obj.entitlement_attributes) {
                     /* PS4 */
@@ -278,11 +277,11 @@ repod.psdle = {
                 i = "&w=" + i + "&h=" + i;
 
                 temp.prettySize    = (temp.size === 0) ? "N/A" : formatFileSizeDisplayStr(temp.size)
-                temp.icon           = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.pid) + i;
+                temp.icon           = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.productID) + i;
                 temp.api_icon       = temp.api_icon + i;
                 temp.date           = obj.active_date;
                 temp.prettyDate    = convertToNumericDateSlashes(convertStrToDateObj(temp.date));
-                temp.url            = repod.psdle.config.game_page + temp.pid;
+                temp.url            = repod.psdle.config.game_page + temp.productID;
                 temp.platform_og    = temp.platform.slice(0);
 
                 //Get Plus status
@@ -305,7 +304,7 @@ repod.psdle = {
             that.gamelist[a].index = a+1;
 
             if (that.config.deep_search) {
-                that.game_api.queue(a+1,((that.pid_cache[b.pid] > 1)?b.id:b.pid));
+                that.game_api.queue(a+1,((that.pid_cache[b.productID] > 1)?b.id:b.productID));
             }
         });
 
@@ -466,7 +465,7 @@ repod.psdle = {
                     $.get(url)
                     .success(function() { that.setIcon(index,url); return 1; })
                     .fail(function() {
-                        url = url.replace(temp.id,temp.pid);
+                        url = url.replace(temp.id,temp.productID);
                         $.get(url)
                         .success(function() { that.setIcon(index,url); return 1; })
                         .fail(function() { that.setIcon(index,temp.api_icon); return 1; })
@@ -525,7 +524,7 @@ repod.psdle = {
                     t = val.id;
                     break;
                 case 'pid':
-                    t = val.pid;
+                    t = val.productID;
                     break;
                 case 'date':
                     t = t.date;
@@ -854,7 +853,7 @@ repod.psdle = {
                             case "platform": out += repod.psdle.safeGuessSystem(b.platform); break;
                             case "plus": out += (b.plus) ? repod.psdle.lang.strings.yes : repod.psdle.lang.strings.no; break;
                             case "can_vita": out += ($.inArray("PS Vita",b.platform_og) > -1) ? repod.psdle.lang.strings.yes : ""; break;
-                            case "tv": out += (repod.psdle.config.check_tv && repod.psdle.id_cache[b.pid].tvcompat && repod.psdle.safeGuessSystem(b.platform) == "PS Vita")?"Yes":""; break;
+                            case "tv": out += (repod.psdle.config.check_tv && repod.psdle.id_cache[b.productID].tvcompat && repod.psdle.safeGuessSystem(b.platform) == "PS Vita")?"Yes":""; break;
                             default: //Generics
                                 out += b[val.target]; break;
                                 break;
@@ -905,8 +904,8 @@ repod.psdle = {
                 .fail(function() {
                     if (a.index !== "pid_cache") {
                         if (repod.psdle.gamelist[a.index]) {
-                            var pid = repod.psdle.gamelist[a.index].pid;
-                            if (repod.psdle.pid_cache[pid] && pid !== a.pid) {
+                            var pid = repod.psdle.gamelist[a.index].productID;
+                            if (repod.psdle.pid_cache[pid] && pid !== a.productID) {
                                 var temp = $.extend({}, repod.psdle.pid_cache[pid]);
                                 $.extend(temp, repod.psdle.gamelist[a.index]);
                                 repod.psdle.gamelist[a.index] = temp;
@@ -1172,7 +1171,7 @@ repod.psdle = {
                 if (dlQueue) {
                     temp += "<td>"+sys+"</td><td>"+dlQueue.to_sys.toUpperCase().replace("VITA","PS Vita")+"</td><td>"+val.prettySize+"</td><td>"+convertToNumericDateSlashes(convertStrToDateObj(dlQueue.createdTime))+"</td>"
                 } else {
-                    temp += "<td "+can_vita+">"+sys+((repod.psdle.config.check_tv && repod.psdle.id_cache[val.pid].tvcompat && sys == "PS Vita")?"<span class='psdletv'>TV</span>":"")+"</td><td>"+val.prettySize+"</td><td>"+val.prettyDate+"</td>";
+                    temp += "<td "+can_vita+">"+sys+((repod.psdle.config.check_tv && repod.psdle.id_cache[val.productID].tvcompat && sys == "PS Vita")?"<span class='psdletv'>TV</span>":"")+"</td><td>"+val.prettySize+"</td><td>"+val.prettyDate+"</td>";
                 }
                 temp += "</tr>";
 
@@ -1324,7 +1323,7 @@ repod.psdle = {
         url_cache: [],
         init: function() {
             $.each(repod.psdle.gamelist, function(index,val) {
-                repod.psdle.id_cache[val.pid] = {"tvcompat": false};
+                repod.psdle.id_cache[val.productID] = {"tvcompat": false};
             });
 
             this.fetchList();
@@ -1398,8 +1397,8 @@ repod.psdle = {
                     var temp = {};
 
                     temp.category = "unknown";
-                    temp.pid = $(this).find(".permalink").attr("href").split("cid=").pop();
-                    temp.id = temp.pid;
+                    temp.productID = $(this).find(".permalink").attr("href").split("cid=").pop();
+                    temp.id = temp.productID;
                     temp.index = repod.psdle.gamelist.length + 1;
                     temp.name = $(this).find(".cellTitle").text();
                     temp.platform = [ $(this).find(".pforms").text().split("|").pop() ];
@@ -1410,15 +1409,15 @@ repod.psdle = {
                     if (temp.plus) { repod.psdle.config.has_plus = true; } //PS+
                     min = new Date(); min.setDate(min.getDate() - 365*4); min = min.getTime(); temp.date = new Date(min + Math.random() * (Date.now() - min)).toISOString(); //Date
 
-                    temp.icon = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.pid)+"&w=42&h=42";
+                    temp.icon = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.productID)+"&w=42&h=42";
 
                     temp.prettySize = formatFileSizeDisplayStr(temp.size);
-                    temp.url = repod.psdle.config.game_page+temp.pid
+                    temp.url = repod.psdle.config.game_page+temp.productID;
                     temp.platform_og = temp.platform.slice(0);
                     temp.prettyDate = convertToNumericDateSlashes(convertStrToDateObj(temp.date));
 
                     repod.psdle.gamelist.push(temp);
-                    if (repod.psdle.config.deep_search) { repod.psdle.game_api.queue(temp.index,temp.pid); }
+                    if (repod.psdle.config.deep_search) { repod.psdle.game_api.queue(temp.index,temp.productID); }
                 });
                 repod.psdle.postList();
             } else {
@@ -1487,7 +1486,7 @@ repod.psdle = {
             var bad = [];
 
             $.each(repod.psdle.gamelist, function(index,obj) {
-                if (!obj.pid || obj.pid.length == 0
+                if (!obj.productID || obj.productID.length == 0
                     || !obj.id || obj.id.length == 0
                     || !obj.name || obj.name.length == 0
                     || !obj.size || obj.size.length == 0
@@ -1505,7 +1504,7 @@ repod.psdle = {
 
             $.each(repod.psdle.gamelist, function(i,o) {
                 var num = Math.ceil(Math.random() * 10),
-                    victim = ["pid", "id", "name", "platform", "platform_og", "date", "size", "", "", ""];
+                    victim = ["productID", "id", "name", "platform", "platform_og", "date", "size", "", "", ""];
 
                 delete o[victim[num]];
             });
