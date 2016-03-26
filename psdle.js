@@ -879,7 +879,7 @@ repod.psdle = {
                 //Footer.
                 //To-do: Reimplement totals based on selected columns.
                 $.each(this.config, function(index,val) { out += val.target+sep; }); //Align to columns.
-                out += '"'+JSON.stringify(this.config)+'"'; //JSON in extra column.
+                out += '"'+JSON.stringify(this.config).replace(/"/g,"'")+'"'; //JSON in extra column.
             } else {
                 //Generally the first row, but more so a catch-all that spits out column names.
                 $.each(this.config, function(index,val) {
