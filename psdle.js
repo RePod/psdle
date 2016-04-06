@@ -1029,6 +1029,7 @@ repod.psdle = {
             if (data.long_desc) { extend.description = data.long_desc; }
             if (data.title_name) { extend.baseGame = data.title_name; }
             if (data.provider_name) { extend.publisher = data.provider_name; }
+            if (data.release_date) { extend.releaseDate = convertToNumericDateSlashes(convertStrToDateObj(data.release_date)); }
 
             if (data.gameContentTypesList) {
                 $.each(data.gameContentTypesList, function (index, val) {
