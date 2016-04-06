@@ -861,15 +861,17 @@ repod.psdle = {
                 sep  = (sep) ? sep : ",";
 
             if (index >= 0) {
-                var b = repod.psdle.gamelist_cur[index];
+                var b = repod.psdle.gamelist_cur[index],
+                    yes = repod.psdle.lang.strings.yes, //Temporary until the switch chains properly.
+                    no = repod.psdle.lang.strings.no;
 
                 $.each(this.config, function(key,val) {
                     if (val) {
                         switch (val.target) {
                             //Exceptions.
                             case "platform": out += repod.psdle.safeGuessSystem(b.platform); break;
-                            case "vitaCompat": out += ($.inArray("PS Vita",b.platformUsable) > -1) ? repod.psdle.lang.strings.yes : ""; break;
-                            case "vitatvCompat": out += (repod.psdle.config.check_tv && repod.psdle.id_cache[b.productID].tvcompat && repod.psdle.safeGuessSystem(b.platform) == "PS Vita")?"Yes":""; break;
+                            case "vitaCompat": out += ($.inArray("PS Vita",b.platformUsable) > -1) ? yes : no; break;
+                            case "vitatvCompat": out += (repod.psdle.config.check_tv && repod.psdle.id_cache[b.productID].tvcompat && repod.psdle.safeGuessSystem(b.platform) == "PS Vita") ? yes : no; break;
                             default: //Generics
                                 var temp = b[val.target];
                                 if (!temp) break;
