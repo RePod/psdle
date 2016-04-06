@@ -849,7 +849,7 @@ repod.psdle = {
                 var that = this;
 
                 $("<a>",{
-                  "download" : "psdle_"+(new Date().toISOString())+".csv",
+                  "download" : "psdle_"+(new Date().toLocaleString().replace(/[:\/]/g,"-"))+".csv",
                   "href" : "data:text/csv;charset=utf-8,"+encodeURIComponent(this.gen())
                 })[0].dispatchEvent(new MouseEvent("click"));
             }
