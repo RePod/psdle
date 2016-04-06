@@ -537,20 +537,24 @@ repod.psdle = {
                     t = val.productID;
                     break;
                 case 'date':
-                    t = t.date;
+                    t = val.date;
                     break;
                 //Catalog results
                 case 'desc':
-                    if (!!t.description) {
-                        t = t.description;
+                    if (!!val.description) {
+                        t = val.description;
                     } else { a = false; }
                     break;
                 case 'genre':
-                    if (!!t.metadata && !!t.metadata.genre) {
-                        t = t.metadata.genre.values.join(",");
+                    if (val.metadata && val.metadata.genre) {
+                        t = val.metadata.genre.values.join(",");
                     } else { a = false; }
                     break;
-
+                case 'base':
+                    if (val.baseGame) {
+                        t = val.baseGame;
+                    } else { a = false; }
+                    break;
             }
 
             if ($.inArray(sys,safesys) > -1) {
@@ -633,9 +637,10 @@ repod.psdle = {
         if (!dlQueue) {
             //I did this HTML generation the lazy way.
             var select = '<select id="psdle_search_select"><option value="name">'+repod.psdle.lang.columns.name+'</option><option value="id">Item ID</option><option value="pid">Product ID</option>'; //<option value="date">'+repod.psdle.lang.columns.date+'</option>'
-            if (1 == 2 && this.config.deep_search) { //Future Catalog searching.
+            if (this.config.deep_search) { //Future Catalog searching.
                 select += '<option value="genre">Genre</option>'; //item.metadata.genre.values
-                select += '<option value="desc">Description</option>'; //item.description
+                select += '<option value="base">Base Game</option>'; //item.baseGame
+                //select += '<option value="desc">Description</option>'; //item.description
             }
             select += "</select>";
             temp += "<div>"+select+"<input type='text' id='psdle_search_text' placeholder='"+this.lang.strings.search+"' /></div>";
@@ -1017,6 +1022,7 @@ repod.psdle = {
             }
             if (data.metadata) { extend.metadata = data.metadata; }
             if (data.long_desc) { extend.description = data.long_desc; }
+            if (data.title_name) { extend.baseGame = data.title_name; }
 
             return extend;
         }
