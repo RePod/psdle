@@ -267,6 +267,8 @@ repod.psdle = {
                     temp.api_icon    = obj.drm_def.image_url;
                     temp.size        = obj.drm_def.drmContents[0].contentSize;
                     temp.platform    = [];
+                    temp.baseGame    = obj.drm_def.drmContents[0].titleName; //Apparently PS4 entitlements don't have this.
+                    temp.publisher   = obj.drm_def.drmContents[0].spName; //Or this.
 
                     temp.platform = that.determineSystem(obj.drm_def.drmContents[0].platformIds);
                 }
@@ -539,6 +541,9 @@ repod.psdle = {
                 case 'date':
                     t = val.date;
                     break;
+                case 'publisher':
+                    t = val.publisher;
+                    break;
                 //Catalog results
                 case 'desc':
                     if (!!val.description) {
@@ -636,10 +641,9 @@ repod.psdle = {
         }
         if (!dlQueue) {
             //I did this HTML generation the lazy way.
-            var select = '<select id="psdle_search_select"><option value="name">'+repod.psdle.lang.columns.name+'</option><option value="id">Item ID</option><option value="pid">Product ID</option>'; //<option value="date">'+repod.psdle.lang.columns.date+'</option>'
+            var select = '<select id="psdle_search_select"><option value="name">'+repod.psdle.lang.columns.name+'</option><option value="base">Base Game</option><option value="publisher">Publisher</option><option value="id">Item ID</option><option value="pid">Product ID</option>'; //<option value="date">'+repod.psdle.lang.columns.date+'</option>'
             if (this.config.deep_search) { //Future Catalog searching.
                 select += '<option value="genre">Genre</option>'; //item.metadata.genre.values
-                select += '<option value="base">Base Game</option>'; //item.baseGame
                 //select += '<option value="desc">Description</option>'; //item.description
             }
             select += "</select>";
