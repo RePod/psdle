@@ -577,7 +577,7 @@ repod.psdle = {
                     if (!!regex) {
                         if (RegExp((regex[1])?regex[1]:search,(regex[2])?regex[2]:"").test(t)) { a = !a; }
                     }
-                    else if (t.toLowerCase().indexOf(search.toLowerCase()) >= 0) {
+                    else if (t && t.toLowerCase().indexOf(search.toLowerCase()) >= 0) {
                         a = !a;
                     }
                 }
@@ -1315,30 +1315,17 @@ repod.psdle = {
         bind: function() {
             if ($(".ui-autocomplete-input").length) {
                 $("#psdle_search_text").autocomplete("close");
-
-                $("#psdle_search_text").autocomplete("option",
-                    {
-                        source    : repod.psdle.autocomplete_cache
-                    }
-                );
+                $("#psdle_search_text").autocomplete("option", {source: repod.psdle.autocomplete_cache});
             } else {
                 $("#psdle_search_text").autocomplete({
-                    source        : repod.psdle.autocomplete_cache,
-                    position    :
-                    {
-                        my        : "center top",
-                        at        : "center bottom"
-                    },
-                    messages    :
-                    {
-                        noResults: '',
-                        results: function() {}
-                    },
-                    select        : function(e,u) {
+                    source: repod.psdle.autocomplete_cache,
+                    position: {my: "center top", at: "center bottom"},
+                    messages: {noResults: '', results: function() {}},
+                    select: function(e,u) {
                         repod.psdle.config.last_search = u.item.value;
                         repod.psdle.table.regen(true);
                     }
-                })
+                });
             }
         }
     },
