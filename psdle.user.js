@@ -1,7 +1,7 @@
 // ==UserScript==
 // @author		RePod
 // @name		PSDLE for Greasemonkey
-// @description	Improving everyone's favorite online download list, one loop at a time. This will be updated infrequently, mostly for stability.
+// @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
 // @version		2.070
