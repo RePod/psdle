@@ -14,13 +14,13 @@
         <meta property="og:description" content="Improving everyone's favorite download list, one loop at a time. A better download list with PS+ support, Download Queue support, and more!" />
         <meta property="og:url" content="//repod.github.io/psdle/" />
         <meta property="og:image" content="//repod.github.io/psdle/logo/6_psdle_64px.png" />
-        
+
         <!-- CSS -->
         <link rel="stylesheet" href="bootstrap-3.3.2-dist/css/bootstrap.min.css" />
         <link rel="stylesheet" href="font-awesome-4.2.0/css/font-awesome.min.css" />
         <link rel="stylesheet" href="bootstrap.css" />
         <link rel="stylesheet" href="psdle_carousel.css" />
-        
+
         <!-- Javascript -->
         <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
         <script type="text/javascript" src="js/jquery-ui-1.11.2.custom/jquery-ui.min.js"></script>
@@ -34,7 +34,7 @@
             ga('create', 'UA-58660703-1', 'auto'); ga('send', 'pageview');
         </script>
     </head>
-    <body>    
+    <body>
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
@@ -117,7 +117,7 @@
                             <dt>Lightweight, portable, consistent.</dt>
                                 <dd>Computer or mobile, always the same experience.</dd>
                             <dt>Open source!</dt>
-                        </dl> 
+                        </dl>
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -196,22 +196,33 @@
                     When signed in, an account's Entitlement (game) data is available and used to generate the list.
                     <br><br>
                     <div id="paq_container" class="collapse">
-                        <strong>Is PSDLE meant to compete with or replace the Download List?</strong><br>
-                        It may appear to be a competitor or replacement due to its features. However, I see it as more of a supplement.<br><br>
-                        While the Download List may have shortcomings, I'm sure those who can officially provide a solution know and do not need to be reminded, told they "do not care", or told how their current product does not live up to PSDLE. Thank them for their awesome work instead, they do it for a living!<br><br>
-                        The Download List is a great thing to have, PSDLE simply makes it better!<br>
-                        <br>
-                        At the bare minimum, PSDLE intends to maintain parity with the download list and interact as expected with the PS4, PS3, and Vita first.<br>
-                        After that is done, pile on additional features (like powerful searching) to expedite those interactions.
+                        <ul>
+                            <li><a href="#paq1">Can I select which specific console I send items to for the download queue?</a></li>
+                            <li><a href="#paq2">Sending items to the download queue is failing, despite working (minutes) before?</a></li>
+                            <li><a href="#paq_catalog">Where are all the cool features like PS1/PS2 games, categories, background screenshots, etc.?</a></li>
+                            <li><a href="#paq_search">What all can I do with the search options?</a></li>
+                            <li><a href="#paq_pstv">Does this differentiate between Vita and PS/Vita TV games?</a></li>
+                            <li><a href="#paq_eh">Is PSDLE meant to compete with or replace the Download List?</a></li>
+                            <li><a href="#paq_mystery">What does PSDLE stand for?</a></li>
+                            <li><a href="#paq_share">Can I write an article about/share/print out and marry PSDLE?</a></li>
+                            <li><a href="#paq_desist">Am I free to copy, modify, redistribute, etc. PSDLE's source code?</a></li>
+                        </ul>
+                        <a class="anchor" id="paq1"></a><strong>Can I select which specific console I send items to for the download queue?</strong><br>
+                        Seemingly no. It appears any number of consoles share the same download queue so it's based on whichever checks it first.
                         <br><br>
-                        
-                        <strong>Where are all the cool features like PS1/PS2 games, categories, background screenshots, etc.?</strong><br>
+
+                        <a class="anchor" id="paq2"></a><strong>Sending items to the download queue is failing, despite working (minutes) before?</strong><br>
+                        Your connection to the store most likely timed out, refreshing the page and running PSDLE again should solve this.<br>
+                        If the system is failing to start downloading, ensure you're signed in (or sign in again) or try rebooting it.
+                        <br><br>
+
+                        <a class="anchor" id="paq_catalog"></a><strong>Where are all the cool features like PS1/PS2 games, categories, background screenshots, etc.?</strong><br>
                         Enable "Catalog" during startup to obtain additional information about each game.<br>
                         <br>
                         Keep in mind this increases the time to generate the list, relative to the amount of items on your list.
                         <br><br>
-                        
-                        <strong>What all can I do with the search options?</strong><br>
+
+                        <a class="anchor" id="paq_search"></a><strong>What all can I do with the search options?</strong><br>
                         <ul>
                             <li>Search by name, ID, Publisher, and more.</li>
                             <li>Get auto-complete suggestions to find things faster.</li>
@@ -221,32 +232,41 @@
                             <li>Use <a href="//wikipedia.org/wiki/Regular_expression" target="_blank">regular expressions (regex)</a>.
                                 <ul>
                                     <li>Wrap the search string in / like normal.</li>
-                                    <li>Use the custom <strong>/d</strong> modifier to <strong>exclude/invert</strong> matches.</li>  
+                                    <li>Use the custom <strong>/d</strong> modifier to <strong>exclude/invert</strong> matches.</li>
                                 </ul>
                         </ul>
 
                         For more information about Javascript Regex, <a href="//developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions" target="_blank">click here</a>.
                         <br><br>
-                        
-                        <strong>Does this differentiate between Vita and PS/Vita TV games?</strong><br>
+
+                        <a class="anchor" id="paq_pstv"></a><strong>Does this differentiate between Vita and PS/Vita TV games?</strong><br>
                         At the time of writing PSDLE can attempt to detect PS TV content for <strong>en-us only</strong>.<br>
                         The option will only show up if using the <strong>en-us</strong> web store, which accepts only <strong>en-us</strong> accounts.<br>
                         This is a limitation of the web store, not PSDLE.<br>
                         <br>
                         If detected, "TV" will appear next to content's platform.
                         <br><br>
-                        
-                        <strong>What does PSDLE stand for?</strong><br>
+
+                        <a class="anchor" id="paq_eh"></a><strong>Is PSDLE meant to compete with or replace the Download List?</strong><br>
+                        It may appear to be a competitor or replacement due to its features. However, I see it as more of a supplement.<br><br>
+                        While the Download List may have shortcomings, I'm sure those who can officially provide a solution know and do not need to be reminded, told they "do not care", or told how their current product does not live up to PSDLE. Thank them for their awesome work instead, they do it for a living!<br><br>
+                        The Download List is a great thing to have, PSDLE simply makes it better!<br>
+                        <br>
+                        At the bare minimum, PSDLE intends to maintain parity with the download list and interact as expected with the PS4, PS3, and Vita first.<br>
+                        After that is done, pile on additional features (like powerful searching) to expedite those interactions.
+                        <br><br>
+
+                        <a class="anchor" id="paq_mystery"></a><strong>What does PSDLE stand for?</strong><br>
                         <span>
                             <span style='background-color:#000;color:#000;width:100%;max-width:420px;height:1.2em;display:inline-block;cursor:text'></span>
                         </span>
                         <br><br>
-                        
-                        <strong>Can I write an article about/share/print out and marry PSDLE?</strong><br>
+
+                        <a class="anchor" id="paq_share"></a><strong>Can I write an article about/share/print out and marry PSDLE?</strong><br>
                         Sure! <span class="hidden-xs hidden-sm">Check out <a href="#promo">Promotional Material</a> for more information.</span>
                         <br><br>
-                        
-                        <strong>Am I free to copy, modify, redistribute, etc. PSDLE's source code?</strong><br>
+
+                        <a class="anchor" id="paq_redist"></a><strong>Am I free to copy, modify, redistribute, etc. PSDLE's source code?</strong><br>
                         Yes, per the rules of <a href='//github.com/RePod/psdle/blob/master/LICENSE'>the license</a>.<br>
                         Please do not imply that your version is supported by, endorsed by, or associated with the official one.<br>
                         <br>
