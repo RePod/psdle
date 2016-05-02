@@ -41,7 +41,7 @@ repod.psdle = {
     },
     determineLanguage: function(e,f) {
         e = (e) ? e.split("-") : this.config.language.split("-");
-        if (f === true) { this.lang = {}; this.lang = this.lang_cache.en.us; }
+        if (f === true) { this.lang = {}; this.lang = $.extend(true,{},this.lang_cache.en.us); }
         if (e[0] in this.lang_cache) {
             if (e[1] in this.lang_cache[e[0]]) {
                 if (f === true) { $.extend(true,this.lang,this.lang_cache[e[0]][e[1]]); this.sanitizeLanguage(); }
