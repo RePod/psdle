@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.074
+// @version		2.075
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -715,7 +715,7 @@ repod.psdle = {
     injectCSS: function() {
         var temp =/*Startup        */"#muh_games_container{display:none;position:fixed;top:0;right:0;left:0;color:#000;z-index:9001;text-align:center}#sub_container{padding:20px;background-color:#fff}#psdle_bar,.psdle_btn{background-color:#2185f4}#psdle_progressbar{overflow:hidden;display:inline-block;width:400px;height:16px;border:1px solid #999;margin:10px;border-radius:10px}#psdle_bar{width:0;height:100%;border-radius:10px}.psdle_btn{cursor:pointer;border-radius:13px;color:#fff;padding:1px 15px;display:inline-block;margin:5px auto}.psdle_tiny_link{line-height:0;cursor:pointer;color:#7F6D75!important;font-size:x-small}.psdle_tiny_link:hover{color:#000!important;text-decoration:underline}"+
                   /*Search options */"#search_options{position:fixed;left:0;top:0;width:100%;padding:15px 0;background-color:rgba(255,255,255,.8);z-index:9001}"+
-                  /*Table          */"th[id^=sort]{cursor:pointer}th{padding:5px;background-color:#2185F4;color:#fff}tr:hover{background-color:rgba(33,133,244,.7)!important}td a.psdle_game_link{display:block;width:100%;height:100%;color:#000;padding:8px}.is_plus{background-color:#FFD10D}tr:nth-child(2n){background-color:#EEE}td:nth-child(n+3):nth-child(-n+7),th:nth-child(n+3):nth-child(-n+7){text-align:center;padding:0 5px;position:relative}td:first-child{text-align:center;position:relative}"+
+                  /*Table          */"th[id^=sort]{cursor:pointer}th{padding:5px;background-color:#2185F4;color:#fff}tr:hover{background-color:rgba(33,133,244,.7)!important}td a.psdle_game_link{display:block;width:100%;height:100%;color:#000;padding:8px}.psdle_game_icon.is_plus{background-color:#FFD10D}tr[id^=psdle_index_].is_plus td:last-child{border-right:#FFD10D 3px solid}tr:nth-child(2n){background-color:#EEE}td:nth-child(n+3):nth-child(-n+7),th:nth-child(n+3):nth-child(-n+7){text-align:center;padding:0 5px;position:relative}td:first-child{text-align:center;position:relative}"+
                   /*Search buttons */"#psdle_search_select,#psdle_search_text{font-size:large;padding:5px 10px;border:1px solid #F0F0F0}#psdle_search_select{border-top-left-radius:90px;border-bottom-left-radius:90px;background-color:#F0F0F0;text-align:center}#psdle_search_text{font-size:large;max-width:480px;width:100%;border-top-right-radius:90px;border-bottom-right-radius:90px}.negate_regex{background-color:#FF8080;color:#fff}.psdle_fancy_bar>span,span#export_view,span[id^=dl_],span[id^=filter_],span[id^=system_]{font-weight:700;text-transform:uppercase;font-size:small;color:#fff;background-color:#2185f4;display:inline-block;margin-right:2px;margin-bottom:5px;padding:1px 15px;cursor:pointer}.psdle_fancy_but{border-radius:12px}.psdle_fancy_bar>span:first-of-type{border-top-left-radius:12px;border-bottom-left-radius:12px}.psdle_fancy_bar span:last-of-type{border-top-right-radius:12px;border-bottom-right-radius:12px}.toggled_off{opacity:.4}"+
                   /*Content icons  */".psdle_game_icon{max-width:100%;vertical-align:middle;padding:3px;min-width:42px;min-height:42px}"+
                   /*Sorting        */".psdle_sort_asc,.psdle_sort_desc{float:right;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent}.psdle_sort_asc{border-bottom:5px solid #fff}.psdle_sort_desc{border-top:5px solid #fff}"+
@@ -1213,7 +1213,7 @@ repod.psdle = {
                     sys = repod.psdle.safeGuessSystem(val.platform),
                     //style='background-image:url(\""+bg+"\")' bg = (val.images && val.images.length > 0) ? val.images[0] : "",
                     iS = repod.psdle.config.iconSize+"px",
-                    temp = "<tr id='psdle_index_"+(val.index -1)+"'><td style='max-width:"+iS+";max-height:"+iS+";'><a target='_blank' href='"+val.url+"'><img title='"+repod.psdle.lang.labels.page+" #"+Math.ceil(val.index/pg)+"' src='"+icon+"' class='psdle_game_icon "+is_plus+"' /></a>"+"</td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+val.name+"</a></td>";
+                    temp = "<tr id='psdle_index_"+(val.index -1)+"' class='"+is_plus+"'><td style='max-width:"+iS+";max-height:"+iS+";'><a target='_blank' href='"+val.url+"'><img title='"+repod.psdle.lang.labels.page+" #"+Math.ceil(val.index/pg)+"' src='"+icon+"' class='psdle_game_icon "+is_plus+"' /></a>"+"</td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+val.name+"</a></td>";
 
                 var can_vita = (sys == "PS Vita") ? false : ($.inArray("PS Vita",val.platformUsable) > -1) ? true : false;
                 can_vita = (can_vita) ? "class='psp2'" : "";
