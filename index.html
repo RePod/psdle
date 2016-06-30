@@ -129,8 +129,9 @@
                         <label class="btn btn-primary btn-block" data-target="#method_userscript"><input type="radio"/>Userscript</label>
                         <label class="btn btn-primary btn-block" data-target="#method_bookmarklet"><input type="radio"/><!--<i class="fa fa-mobile fa-fw"></i>-->Bookmarklet</label>
                         <label class="btn btn-primary btn-block" data-target="#method_extension"><input type="radio"/>Extension</label>
-                    </div><br>
-                    <div id="method_holder" class="accordion-group">
+                        <label class="btn btn-primary btn-block" data-target="#method_source"><input type="radio"/>Source</label>
+                    </div>
+                    <div id="method_holder" class="accordion-group" style='margin-top:.8em'>
                         <div id='method_direct' class="collapse in">
                             <div class="label label-primary method_info">
                                 Most reliable method, the ultimate last resort.
@@ -181,9 +182,16 @@
                                 A Firefox extension was planned, but currently not being developed (due to SDK+AMO).<br>
                                 Have experience developing Firefox extensions? <a href="//github.com/RePod/psdle">Contact me!</a>
                             </small><br>
-                            <br>
+                        </div>
+                        <div id='method_source' class="collapse text-center">
+                            <div class="label label-primary method_info">
+                                For advanced users and conspiracy theorists only!
+                            </div>
+                            <a href="//github.com/RePod/psdle/"><button class='btn btn-primary'><i class='fa fa-fw fa-github'></i> View source on GitHub!</button></a>
+                            <a href="//github.com/RePod/psdle/wiki"><button class='btn btn-primary'><i class='fa fa-fw fa-book'></i> Read the wiki for development notes!</button></a>
                         </div>
                     </div>
+                    <br>
                     After successful activation the PSDLE logo will appear in the bottom-left corner, click it to start.<br>
                     <br>
                     <div style="text-align:center">
