@@ -38,6 +38,8 @@ ol > span, ol > span > span { display:inline-block; }
 
 .btn-primary { background-color:#2185f4; }
 /*.btn, .navbar { background-image: linear-gradient(to bottom, #2185f4 0%, #265A88 100%); }*/
+.btn-primary.fancy { position:relative;overflow:hidden; }
+i.fa.fancy { position:absolute;left:-5%;top:-40%;color:rgba(255,255,255,0.3); }
 
 /* Footer */
 #footer { 
