@@ -12,11 +12,10 @@ repod.psdle = {
     sys_cache          : {},
     type_cache         : {},
     prop_cache         : [],
-    lang_cache         :
-    {
+    lang_cache         : {
         "en": {
             "def": "us",
-            "us":{"local":"English","startup":{"apis":"Select which APIs you would like to use, hover for more details.<br>Certain APIs may not be disabled.","wait":"Please wait.","start":"Start"},"columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"export_view":"Export View","page":"Page"},"categories":{"downloadable_game":"Games","demo":"Demos","add_on":"Add-ons","unlock":"Unlocks","unlock_key":"Unlock Keys","avatar":"Avatars","theme":"Themes","other":"other","other_game_related":"other_game_related","game_content":"game_content","tumbler_index":"tumbler_index","home":"home","ungrouped_game":"ungrouped_game","promo_content":"promo_content","beta":"Betas","application":"Applications","extras":"Extras","unknown":"Unknown"},"strings":{"delimiter":"Enter delimiter:","yes":"Yes","no":"No","search":"Search","dlQueue":"Queue","dlList":"List","plus":"Toggle visibility of PS+ titles.","queue_all":"All","queue_to":"Download to $SYS$"},"apis":[{"internal_id":"api_entitle","name":"Entitlements","desc":"Cannot be disabled. Accesses purchase information used to create the download list, determine PS+ status, and other things."},{"internal_id":"api_game","name":"Catalog","desc":"Accesses additional game information to determine proper console, fix broken images, and more."},{"internal_id":"api_queue","name":"Download Queue","desc":"Allows adding and removing items from the download queue. Reads download queue information and the amount of activated consoles on the account."},{"internal_id":"api_pstv","name":"PS TV","desc":"Detect PS TV compatible titles. Only supported on \"en-us\" web store (not PSDLE language).","disabled":true}]}
+            "us":{"local":"English","startup":{"apis":"Select which APIs you would like to use, hover for more details.<br>Certain APIs may not be disabled.","wait":"Please wait.","start":"Start"},"columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"export_view":"Export View","page":"Page"},"categories":{"downloadable_game":"Games","demo":"Demos","add_on":"Add-ons","unlock":"Unlocks","unlock_key":"Unlock Keys","avatar":"Avatars","theme":"Themes","other":"other","other_game_related":"other_game_related","game_content":"game_content","tumbler_index":"tumbler_index","home":"home","ungrouped_game":"ungrouped_game","promo_content":"promo_content","beta":"Betas","application":"Applications","extras":"Extras","unknown":"Unknown"},"strings":{"delimiter":"Enter delimiter:","yes":"Yes","no":"No","search":"Search","dlQueue":"Queue","dlList":"List","plus":"Toggle visibility of PS+ titles.","queue_all":"All","queue_to":"Download to $SYS$","no_target":"There is no available target console to send to."},"apis":[{"internal_id":"api_entitle","name":"Entitlements","desc":"Cannot be disabled. Accesses purchase information used to create the download list, determine PS+ status, and other things."},{"internal_id":"api_game","name":"Catalog","desc":"Accesses additional game information to determine proper console, fix broken images, and more."},{"internal_id":"api_queue","name":"Download Queue","desc":"Allows adding and removing items from the download queue. Reads download queue information and the amount of activated consoles on the account."},{"internal_id":"api_pstv","name":"PS TV","desc":"Detect PS TV compatible titles. Only supported on \"en-us\" web store (not PSDLE language).","disabled":true}]}
         },
         "es": {
             "def": "es",
@@ -366,7 +365,14 @@ repod.psdle = {
             $("#export_view").off("click").on("click", function() { repod.psdle.exportList.configure(); });
             $("#psdle_search_text").off("blur").on("blur", function() { repod.psdle.table.regen(true); });
             $("#dl_queue").one("click", function() { repod.psdle.dlQueue.generate.display(); });
-            $(document).off("click", "[id^=psdle_index_]").on("click", "[id^=psdle_index_]", function(e) { e.preventDefault(); repod.psdle.dlQueue.batch.add.ask(this); });
+            $(document).off("click", "[id^=psdle_index_]").on("click", "[id^=psdle_index_]", function(e) {
+                e.preventDefault();
+                if (e.shiftKey) {
+                    repod.psdle.dlQueue.batch.add.auto(this);
+                } else {
+                    repod.psdle.dlQueue.batch.add.ask(this);
+                }
+            });
         },
         gen: function() {
             var that = this;
@@ -1071,8 +1077,8 @@ repod.psdle = {
                     repod.psdle.dlQueue.generate.table();
                 }
             },
-            send: function(sys,id,cancel,completeCb,errorCb) {
-                var dat = {"platformString":sys}; //Build queue JSON.
+            send: function(sys,id,cancel,completeCb,errorCb,statusTarget) { //Not enough arguments.
+                var that = this, dat = {"platformString":sys}; //Build queue JSON.
                 if (cancel) { dat.status = "usercancelled"; } //If we're removing something.
                 if (sys == 'ps4') {
                     dat.entitlementId = id; //PS4 doesn't use contentId, and requires? clientId (by default).
@@ -1091,10 +1097,11 @@ repod.psdle = {
                     contentType: 'application/json; charset=utf-8', dataType: 'json',
                     data: JSON.stringify(dat),
                     complete: function(d) {
+                        var t = (statusTarget || "div[id^=dla_"+sys+"]");
                         if (d.status == 200) {
-                            $("div[id^=dla_"+sys+"]").animate({"background-color":"green"});
+                            that.good(t);
                         } else {
-                            $("div[id^=dla_"+sys+"]").animate({"background-color":"red"});
+                            that.bad(t);
                             var m = "[Download Queue / Error / "+d.status+"] ["+sys+" / "+id+"]\n"+d.responseText;
                             console.error(m); alert(m);
                         }
@@ -1102,8 +1109,10 @@ repod.psdle = {
                     error: function() {}
                 });
             },
+            good: function(target) { $(target).animate({"background-color":"green"}); },
+            bad: function(target) { $(target).animate({"background-color":"red"}); },
             add: {
-                parse: function(index,sys) {
+                parse: function(index,sys,autoTarget) {
                     var that = this,
                         game = repod.psdle.gamelist[index];
 
@@ -1111,7 +1120,7 @@ repod.psdle = {
                         case "ps4":
                         case "ps3":
                         case "vita":
-                            this.go(sys,game.id);
+                            this.go(sys,game.id,autoTarget);
                             break;
                         case "all":
                             var temp = game.platformUsable.slice(0), i = $.inArray("PSP", temp); if(i != -1) { temp.splice(i, 1); } /* Make sure we don't have PSP */
@@ -1124,18 +1133,41 @@ repod.psdle = {
                     //See notes for determining active consoles, probably the way to go.
                     repod.psdle.newbox.open(e);
                 },
-                go: function(sys,id) {
+                go: function(sys,id,autoTarget) {
                     //Add game to batch.
-                    repod.psdle.dlQueue.batch.send(sys,id,false);
+                    repod.psdle.dlQueue.batch.send(sys,id,false,undefined,undefined,autoTarget);
                 },
+                auto: function(e) {
+                    var index = (isNaN(e)) ? Number($(e).attr("id").split("_").pop()) : Number(e), //Target index to read from.
+                        active = repod.psdle.config.active_consoles,
+                        item = repod.psdle.gamelist[index];
+
+                    //Determine target queue based on assumed intent and priority. For instance: PSP/Vita to Vita. If no Vita, to PS3. Otherwise give up.
+                    var sys = item.platformUsable;
+                    if ($.inArray("PS Vita", sys) >= 0) { sys = (active.vita) ? 'vita' : (active.ps3) ? 'ps3' : false; }
+                    else if ($.inArray("PS3", sys) >= 0 || $.inArray("PSP", sys) >= 0) { sys = (active.ps3) ? 'ps3' : false; }
+                    else if ($.inArray("PS4", sys) >= 0) { sys = (active.ps4) ? 'ps4' : false; }
+
+                    if (sys == false) {
+                        alert(repod.psdle.lang.strings.no_target);
+                    } else {
+                        if ($(e).data("queued")) {
+                            $(e).removeData("queued").animate({"background-color":""});
+                            repod.psdle.dlQueue.batch.remove.go(sys,item.id,true);
+                        } else {
+                            $(e).data("queued", true);
+                            this.parse(index,sys,e);
+                        }
+                    }
+                }
             },
             remove: {
                 parse: function(e) {
-                    repod.psdle.dlQueue.batch.remove.go($(e).children("td:eq(3)").text().replace("PS ","").toLowerCase(),repod.psdle.gamelist[Number($(e).attr("id").split("_").pop())].id);
+                    this.go($(e).children("td:eq(3)").text().replace("PS ","").toLowerCase(),repod.psdle.gamelist[Number($(e).attr("id").split("_").pop())].id);
                 },
-                go: function(sys,id) {
+                go: function(sys,id,auto) {
                     //Remove game from batch.
-                    repod.psdle.dlQueue.batch.send(sys,id,true,repod.psdle.dlQueue.batch.get())
+                    repod.psdle.dlQueue.batch.send(sys,id,true,(auto)?undefined:repod.psdle.dlQueue.batch.get())
                 }
             }
         },
