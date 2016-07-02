@@ -4,6 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
+// @version		2.079
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -37,6 +38,7 @@ repod.psdle = {
     lang_cache         : {
         "en": {
             "def": "us",
+            "us":{"local":"English","startup":{"apis":"Select which APIs you would like to use, hover for more details.<br>Certain APIs may not be disabled.","wait":"Please wait.","start":"Start"},"columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"export_view":"Export View","page":"Page"},"categories":{"downloadable_game":"Games","demo":"Demos","add_on":"Add-ons","unlock":"Unlocks","unlock_key":"Unlock Keys","avatar":"Avatars","theme":"Themes","other":"other","other_game_related":"other_game_related","game_content":"game_content","tumbler_index":"tumbler_index","home":"home","ungrouped_game":"ungrouped_game","promo_content":"promo_content","beta":"Betas","application":"Applications","extras":"Extras","unknown":"Unknown"},"strings":{"delimiter":"Enter delimiter:","yes":"Yes","no":"No","search":"Search","dlQueue":"Queue","dlList":"List","plus":"Toggle visibility of PS+ titles.","queue_all":"All","queue_to":"Download to $SYS$","no_target":"There is no available target console to send to."},"apis":[{"internal_id":"api_entitle","name":"Entitlements","desc":"Cannot be disabled. Accesses purchase information used to create the download list, determine PS+ status, and other things."},{"internal_id":"api_game","name":"Catalog","desc":"Accesses additional game information to determine proper console, fix broken images, and more."},{"internal_id":"api_queue","name":"Download Queue","desc":"Allows adding and removing items from the download queue. Reads download queue information and the amount of activated consoles on the account."},{"internal_id":"api_pstv","name":"PS TV","desc":"Detect PS TV compatible titles. Only supported on \"en-us\" web store (not PSDLE language).","disabled":true}]}
         },
         "es": {
             "def": "es",
@@ -1170,6 +1172,7 @@ repod.psdle = {
                     else if ($.inArray("PS4", sys) >= 0) { sys = (active.ps4) ? 'ps4' : false; }
 
                     if (sys == false) {
+                        alert(repod.psdle.lang.strings.no_target);
                     } else {
                         this.parse(index,sys,e);
                     }
