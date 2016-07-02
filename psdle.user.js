@@ -1174,17 +1174,23 @@ repod.psdle = {
                     if (sys == false) {
                         alert(repod.psdle.lang.strings.no_target);
                     } else {
-                        this.parse(index,sys,e);
+                        if ($(e).data("queued")) {
+                            $(e).removeData("queued").animate({"background-color":""});
+                            repod.psdle.dlQueue.batch.remove.go(sys,item.id,true);
+                        } else {
+                            $(e).data("queued", true);
+                            this.parse(index,sys,e);
+                        }
                     }
                 }
             },
             remove: {
                 parse: function(e) {
-                    repod.psdle.dlQueue.batch.remove.go($(e).children("td:eq(3)").text().replace("PS ","").toLowerCase(),repod.psdle.gamelist[Number($(e).attr("id").split("_").pop())].id);
+                    this.go($(e).children("td:eq(3)").text().replace("PS ","").toLowerCase(),repod.psdle.gamelist[Number($(e).attr("id").split("_").pop())].id);
                 },
-                go: function(sys,id) {
+                go: function(sys,id,auto) {
                     //Remove game from batch.
-                    repod.psdle.dlQueue.batch.send(sys,id,true,repod.psdle.dlQueue.batch.get())
+                    repod.psdle.dlQueue.batch.send(sys,id,true,(auto)?undefined:repod.psdle.dlQueue.batch.get())
                 }
             }
         },
