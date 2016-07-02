@@ -8,7 +8,7 @@ repod.grid = {
 	config: {},
 	init: function() {
 		var that = this;
-		$("dl > dt").click(function() {
+		$("dl [id^=goto_]").click(function() {
 			ga('send', 'event', 'features', 'click', $(this).text().trim());
 			that.caro.goto_slide("#"+$(this).attr("id").split("goto_").pop());
 		});

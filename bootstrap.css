@@ -31,7 +31,7 @@ body { padding-top:70px; padding-bottom:300px; min-height: 100%; position: relat
 } 
 
 dd { margin-left:18px; }
-dl > dt[id^=goto_] { cursor: pointer; }
+dl [id^=goto_] { cursor: pointer; }
 ol > span, ol > span > span { display:inline-block; }
 
 #psdle_carousel { width:800px; }
