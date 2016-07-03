@@ -1222,8 +1222,8 @@ repod.psdle = {
     table_utils: {
         random: function() {
             var r = repod.psdle.gamelist_cur[Math.floor((Math.random() * repod.psdle.gamelist_cur.length))].index - 1;
-
             repod.psdle.newbox.open(r);
+            return r;
         },
         gen: {
             row: function(val,dlQueue) {
