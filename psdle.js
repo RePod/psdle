@@ -441,11 +441,7 @@ repod.psdle = {
             this.regen(true);
         },
         margin: function() {
-            $("#muh_table").animate(
-                {
-                    "margin-top"    : $("#search_options").outerHeight() - $("#sub_container").css("padding-top").replace("px","")+"px"
-                }
-            );
+            $("#muh_table").animate({"margin-top": $("#search_options").outerHeight() - $("#sub_container").css("padding-top").replace("px","")+"px"});
         },
         icons: {
             select: function(type) {
@@ -456,9 +452,9 @@ repod.psdle = {
                 });
                 this.smartScroll();
             },
-            validate: function(source) {
-                var index = (typeof source == "number") ? source : source.split("_").pop(),
-                    temp  = repod.psdle.gamelist[index];
+            validate: function(index) {
+                var index = Number(index);
+                var temp  = repod.psdle.gamelist[index];
 
                 if (!temp.safe_icon) {
                     var that = this,
@@ -488,7 +484,13 @@ repod.psdle = {
                     first   = ($(t[0]).index() - padding <= 0) ? 0 : $(t[0]).index() - padding,
                     last    = $(t[1]).index() + padding;
 
-                $("[id^=psdle_index_]").slice(first,last).not(".go_icon").each(function(a) { $(this).addClass("go_icon"); var b = this; setTimeout(function() { that.validate($(b).attr("id")); },a*50); });
+                $("[id^=psdle_index_]").slice(first,last).not(".go_icon").each(function(a) {
+                    $(this).addClass("go_icon");
+                    var b = this;
+                    setTimeout(function() {
+                        that.validate($(b).attr("id").split("_").pop());
+                    }, a*50);
+                });
             }
         }
     },
@@ -1002,7 +1004,11 @@ repod.psdle = {
                 if (data.metadata.secondary_classification && data.metadata.secondary_classification.values[0] == "ADD-ON") { type = "add_on"; }
                 else { type = "unknown"; }
             } else {
-                type = (data.top_category) ? data.top_category : "unknown";
+                /*data.game_contentType is specific type (like "level", "character", "music track") instead of broad type (like "add-on").
+                  Enabling it would allow finer precision of filtering, at the cost of a LOT of filters. It can also be "PS1 CLASSICS" or "PS2 CLASSICS",
+                  in a sense rendering the system filter null (although not really since then it could be filtered by platform). The good thing is
+                  simply enabling this will work instantly without needing additional code modifications.*/
+                type = (((repod.psdle.config.specific_categories)?data.game_contentType:false) || data.top_category || "unknown");
             }
 
             extend.category = type;
@@ -1133,7 +1139,7 @@ repod.psdle = {
                 ask: function(e) {
                     //Ask which system to queue for. (cannot validate outside of this.go() response, if we care)
                     //See notes for determining active consoles, probably the way to go.
-                    repod.psdle.newbox.open(e);
+                    repod.psdle.newbox.open($(e).attr("id").split("_").pop());
                 },
                 go: function(sys,id,autoTarget) {
                     //Add game to batch.
@@ -1254,10 +1260,9 @@ repod.psdle = {
         }
     },
     newbox: {
-        generate: function(e) {
+        generate: function(index) {
             var plus = "",
-                i    = (isNaN(e)) ? Number($(e).attr("id").split("_").pop()) : Number(e),
-                game = repod.psdle.gamelist[i],
+                game = repod.psdle.gamelist[index],
                 id   = (game.index -1),
                 icon = (game.safe_icon) ? game.icon : game.api_icon;
                 dialog = $("<div>", {
@@ -1341,12 +1346,12 @@ repod.psdle = {
                     break;
             }
         },
-        open: function(e) {
-            repod.psdle.table.icons.validate($(e).attr("id"));
+        open: function(index) {
+            repod.psdle.table.icons.validate(index);
 
             if ($("#dlQueue_newbox").length) this.close();
 
-            $("body").append(this.generate(e)).promise().done(function() { repod.psdle.newbox.bind(); });
+            $("body").append(this.generate(index)).promise().done(function() { repod.psdle.newbox.bind(); });
         },
         close: function() {
             $("#dlQueue_newbox").remove();
