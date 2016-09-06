@@ -873,7 +873,7 @@ repod.psdle = {
                     if (val) {
                         switch (val.target) {
                             //Exceptions.
-                            case "category": out += repod.psdle.lang.categories[b.category]; break;
+                            case "category": out += (repod.psdle.lang.categories[b.category] || b.category); break;
                             case "platform": out += repod.psdle.safeGuessSystem(b.platform); break;
                             case "vitaCompat": out += ($.inArray("PS Vita",b.platformUsable) > -1) ? yes : no; break;
                             case "vitatvCompat": out += (repod.psdle.config.check_tv && repod.psdle.id_cache[b.productID].tvcompat && repod.psdle.safeGuessSystem(b.platform) == "PS Vita") ? yes : no; break;
