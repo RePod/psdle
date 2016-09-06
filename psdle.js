@@ -866,20 +866,21 @@ repod.psdle = {
 
             if (index >= 0) {
                 var b = repod.psdle.gamelist_cur[index],
-                    yes = repod.psdle.lang.strings.yes, //Temporary until the switch chains properly.
+                    yes = repod.psdle.lang.strings.yes,
                     no = repod.psdle.lang.strings.no;
 
                 $.each(this.config, function(key,val) {
                     if (val) {
                         switch (val.target) {
                             //Exceptions.
+                            case "category": out += repod.psdle.lang.categories[b.category]; break;
                             case "platform": out += repod.psdle.safeGuessSystem(b.platform); break;
                             case "vitaCompat": out += ($.inArray("PS Vita",b.platformUsable) > -1) ? yes : no; break;
                             case "vitatvCompat": out += (repod.psdle.config.check_tv && repod.psdle.id_cache[b.productID].tvcompat && repod.psdle.safeGuessSystem(b.platform) == "PS Vita") ? yes : no; break;
                             default: //Generics
                                 var temp = b[val.target];
                                 if (!temp) break;
-                                if (typeof temp == "boolean") { temp = (temp) ? repod.psdle.lang.strings.yes : repod.psdle.lang.strings.no }
+                                if (typeof temp == "boolean") { temp = (temp) ? yes : no }
                                 if (typeof temp == "object") { temp = JSON.stringify(temp).replace(/"/g,"'"); }
                                 if (typeof temp == "string") { temp = temp.replace(/([\r\n]+?)/gm," "); }
                                 out += (temp.indexOf(sep) > -1) ? '"'+temp+'"' : temp;
