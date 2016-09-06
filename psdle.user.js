@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.081
+// @version		2.082
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -896,13 +896,14 @@ repod.psdle = {
                     if (val) {
                         switch (val.target) {
                             //Exceptions.
+                            case "category": out += repod.psdle.lang.categories[b.category]; break;
                             case "platform": out += repod.psdle.safeGuessSystem(b.platform); break;
                             case "vitaCompat": out += ($.inArray("PS Vita",b.platformUsable) > -1) ? yes : no; break;
                             case "vitatvCompat": out += (repod.psdle.config.check_tv && repod.psdle.id_cache[b.productID].tvcompat && repod.psdle.safeGuessSystem(b.platform) == "PS Vita") ? yes : no; break;
                             default: //Generics
                                 var temp = b[val.target];
                                 if (!temp) break;
-                                if (typeof temp == "boolean") { temp = (temp) ? repod.psdle.lang.strings.yes : repod.psdle.lang.strings.no }
+                                if (typeof temp == "boolean") { temp = (temp) ? yes : no }
                                 if (typeof temp == "object") { temp = JSON.stringify(temp).replace(/"/g,"'"); }
                                 if (typeof temp == "string") { temp = temp.replace(/([\r\n]+?)/gm," "); }
                                 out += (temp.indexOf(sep) > -1) ? '"'+temp+'"' : temp;
@@ -1245,8 +1246,8 @@ repod.psdle = {
     table_utils: {
         random: function() {
             var r = repod.psdle.gamelist_cur[Math.floor((Math.random() * repod.psdle.gamelist_cur.length))].index - 1;
-
             repod.psdle.newbox.open(r);
+            return r;
         },
         gen: {
             row: function(val,dlQueue) {
