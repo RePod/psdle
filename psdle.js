@@ -1111,7 +1111,7 @@ repod.psdle = {
                             that.good(t);
                         } else {
                             that.bad(t);
-                            var m = "[Download Queue / Error / "+d.status+"] ["+sys+" / "+id+"]\n"+d.responseText;
+                            var m = "Download Queue - Error "+d.status+" / "+sys+" - "+id+"\n"+d.responseText;
                             console.error(m); alert(m);
                         }
                     },
