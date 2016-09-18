@@ -245,6 +245,7 @@ repod.psdle = {
                     }
                     temp.size        = obj.entitlement_attributes[0].package_file_size;
                     temp.platform    = ["PS4"];
+                    temp.pkg         = obj.entitlement_attributes[0].reference_package_url
                 } else if (obj.drm_def) {
                     /* PS3, PSP, or Vita */
                     temp.name        = (obj.drm_def.contentName) ? obj.drm_def.contentName : (obj.drm_def.drmContents[0].titleName) ? obj.drm_def.drmContents[0].titleName : "Unknown! - Submit a bug report!";
@@ -253,6 +254,7 @@ repod.psdle = {
                     temp.platform    = [];
                     temp.baseGame    = obj.drm_def.drmContents[0].titleName; //Apparently PS4 entitlements don't have this.
                     temp.publisher   = obj.drm_def.drmContents[0].spName; //Or this.
+                    temp.pkg         = obj.drm_def.drmContents[0].contentUrl
 
                     temp.platform = that.determineSystem(obj.drm_def.drmContents[0].platformIds);
                 }
@@ -873,7 +875,7 @@ repod.psdle = {
                     if (val) {
                         switch (val.target) {
                             //Exceptions.
-                            case "category": out += repod.psdle.lang.categories[b.category]; break;
+                            case "category": out += (repod.psdle.lang.categories[b.category] || b.category); break;
                             case "platform": out += repod.psdle.safeGuessSystem(b.platform); break;
                             case "vitaCompat": out += ($.inArray("PS Vita",b.platformUsable) > -1) ? yes : no; break;
                             case "vitatvCompat": out += (repod.psdle.config.check_tv && repod.psdle.id_cache[b.productID].tvcompat && repod.psdle.safeGuessSystem(b.platform) == "PS Vita") ? yes : no; break;
@@ -1041,6 +1043,7 @@ repod.psdle = {
             if (data.title_name) { extend.baseGame = data.title_name; }
             if (data.provider_name) { extend.publisher = data.provider_name; }
             if (data.release_date) { extend.releaseDate = convertToNumericDateSlashes(convertStrToDateObj(data.release_date)); }
+            if (data.age_limit && data.content_rating) { extend.ageLimit = data.content_rating.rating_system + " " + data.age_limit; }
 
             if (data.gameContentTypesList) {
                 $.each(data.gameContentTypesList, function (index, val) {
@@ -1111,7 +1114,7 @@ repod.psdle = {
                             that.good(t);
                         } else {
                             that.bad(t);
-                            var m = "[Download Queue / Error / "+d.status+"] ["+sys+" / "+id+"]\n"+d.responseText;
+                            var m = "Download Queue - Error "+d.status+" / "+sys+" - "+id+"\n"+d.responseText;
                             console.error(m); alert(m);
                         }
                     },
