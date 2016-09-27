@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.083
+// @version		2.084
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -908,7 +908,7 @@ repod.psdle = {
                                 if (typeof temp == "boolean") { temp = (temp) ? yes : no }
                                 if (typeof temp == "object") { temp = JSON.stringify(temp).replace(/"/g,"'"); }
                                 if (typeof temp == "string") { temp = temp.replace(/([\r\n]+?)/gm," "); }
-                                out += (temp.indexOf(sep) > -1) ? '"'+temp+'"' : temp;
+                                out += (typeof temp == "string" && temp.indexOf(sep) > -1) ? '"'+temp+'"' : temp;
                                 break;
                         }
                         out += sep;

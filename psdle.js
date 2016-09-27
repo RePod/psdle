@@ -885,7 +885,7 @@ repod.psdle = {
                                 if (typeof temp == "boolean") { temp = (temp) ? yes : no }
                                 if (typeof temp == "object") { temp = JSON.stringify(temp).replace(/"/g,"'"); }
                                 if (typeof temp == "string") { temp = temp.replace(/([\r\n]+?)/gm," "); }
-                                out += (temp.indexOf(sep) > -1) ? '"'+temp+'"' : temp;
+                                out += (typeof temp == "string" && temp.indexOf(sep) > -1) ? '"'+temp+'"' : temp;
                                 break;
                         }
                         out += sep;
