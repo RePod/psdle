@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.084
+// @version		2.085
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -38,7 +38,7 @@ repod.psdle = {
     lang_cache         : {
         "en": {
             "def": "us",
-            "us":{"local":"English","startup":{"apis":"Select which APIs you would like to use, hover for more details.<br>Certain APIs may not be disabled.","wait":"Please wait.","start":"Start"},"columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"export_view":"Export View","page":"Page"},"categories":{"downloadable_game":"Games","demo":"Demos","add_on":"Add-ons","unlock":"Unlocks","unlock_key":"Unlock Keys","avatar":"Avatars","theme":"Themes","other":"other","other_game_related":"other_game_related","game_content":"game_content","tumbler_index":"tumbler_index","home":"home","ungrouped_game":"ungrouped_game","promo_content":"promo_content","beta":"Betas","application":"Applications","extras":"Extras","unknown":"Unknown"},"strings":{"delimiter":"Enter delimiter:","yes":"Yes","no":"No","search":"Search","dlQueue":"Queue","dlList":"List","plus":"Toggle visibility of PS+ titles.","queue_all":"All","queue_to":"Download to $SYS$","no_target":"There is no available target console to send to."},"apis":[{"internal_id":"api_entitle","name":"Entitlements","desc":"Cannot be disabled. Accesses purchase information used to create the download list, determine PS+ status, and other things."},{"internal_id":"api_game","name":"Catalog","desc":"Accesses additional game information to determine proper console, fix broken images, and more."},{"internal_id":"api_queue","name":"Download Queue","desc":"Allows adding and removing items from the download queue. Reads download queue information and the amount of activated consoles on the account."},{"internal_id":"api_pstv","name":"PS TV","desc":"Detect PS TV compatible titles. Only supported on \"en-us\" web store (not PSDLE language).","disabled":true}]}
+            "us":{"local":"English","startup":{"apis":"Select which APIs you would like to use, hover for more details.<br>Certain APIs may not be disabled.","wait":"Please wait.","start":"Start"},"columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"export_view":"Export View","page":"Page"},"categories":{"downloadable_game":"Games","demo":"Demos","add_on":"Add-ons","unlock":"Unlocks","unlock_key":"Unlock Keys","avatar":"Avatars","theme":"Themes","other":"other","other_game_related":"other_game_related","game_content":"game_content","tumbler_index":"tumbler_index","home":"home","ungrouped_game":"ungrouped_game","promo_content":"promo_content","beta":"Betas","application":"Applications","extras":"Extras","unknown":"Unknown"},"strings":{"delimiter":"Enter delimiter:","yes":"Yes","no":"No","search":"Search","dlQueue":"Queue","dlList":"List","plus":"Toggle visibility of PS+ titles.","queue_all":"All","queue_to":"Download to $SYS$","no_target":"There is no available target console to send to.","export_column_name":"Column Name","export_property":"Property"},"apis":[{"internal_id":"api_entitle","name":"Entitlements","desc":"Cannot be disabled. Accesses purchase information used to create the download list, determine PS+ status, and other things."},{"internal_id":"api_game","name":"Catalog","desc":"Accesses additional game information to determine proper console, fix broken images, and more."},{"internal_id":"api_queue","name":"Download Queue","desc":"Allows adding and removing items from the download queue. Reads download queue information and the amount of activated consoles on the account."},{"internal_id":"api_pstv","name":"PS TV","desc":"Detect PS TV compatible titles. Only supported on \"en-us\" web store (not PSDLE language).","disabled":true}]}
         },
         "es": {
             "def": "es",
@@ -59,10 +59,6 @@ repod.psdle = {
         "ru": {
             "def":"ru",
             "ru":{"local":"Русский","startup":{"wait":"Ожидание загрузки страниц..."},"columns":{"icon":"Иконка","name":"Название","platform":"Платформа","size":"Размер","date":"Дата"},"labels":{"export_view":"Export View","page":"Страница"},"categories":{"downloadable_game":"Игры","demo":"Демо-версии","add_on":"Дополенния","unlock":"Разблокировки","avatar":"Аватары","theme":"Темы","application":"Приложения","unknown":"Неизвестно"},"strings":{"delimiter":"Введите разделитель:","yes":"Да","no":"Нет","search":"Поиск"}} //MorbertDou (#2)
-        },
-        "ps": {
-            "def": "ha",
-            "ha":{"local":"H4ker","startup":{"apis":"import.APIs (hover: man)","wait":"...","start":"make"},"columns":{"icon":"1con","name":"H4ndle","platform":"P|a+f0rm","size":"S1z3","date":"D4t3"},"labels":{"export_view":"D0x","page":"P4g3"},"categories":{"downloadable_game":"W4rez","demo":"Freeware","add_on":"Add-0ns","unlock":"Cracks","avatar":"4va+ar","theme":"Themes","other":"other","beta":"Betas","application":"S0f+w4r3","unknown":"?"},"strings":{"delimiter":"explode:","yes":"Y","no":"N","search":"grep","queue_all":"wget all","queue_to":"wget $SYS$"}} //Everybody
         }
     },
     determineLanguage: function(e,f) {
@@ -251,7 +247,7 @@ repod.psdle = {
             entitlements = gEntitlementManager.getAllEntitlements().concat(this.e_inject_cache);
 
         $.each(entitlements, function(index,obj) {
-            if (that.isValidContent(obj)) { /* Determine if game content. */
+            if (that.isValidContent(obj)) { //Determine if game content.
                 var temp = {};
 
                 //Constants/pre-determined.
@@ -261,7 +257,7 @@ repod.psdle = {
                 if (!that.pid_cache[temp.productID]) { that.pid_cache[temp.productID] = 1; } else { that.pid_cache[temp.productID]++; }
 
                 if (obj.entitlement_attributes) {
-                    /* PS4 */
+                    //PS4
                     if (obj.game_meta) {
                         temp.name     = obj.game_meta.name;
                         temp.api_icon = obj.game_meta.icon_url;
@@ -270,7 +266,7 @@ repod.psdle = {
                     temp.platform    = ["PS4"];
                     temp.pkg         = obj.entitlement_attributes[0].reference_package_url
                 } else if (obj.drm_def) {
-                    /* PS3, PSP, or Vita */
+                    //PS3, PSP, or Vita
                     temp.name        = (obj.drm_def.contentName) ? obj.drm_def.contentName : (obj.drm_def.drmContents[0].titleName) ? obj.drm_def.drmContents[0].titleName : "Unknown! - Submit a bug report!";
                     temp.api_icon    = obj.drm_def.image_url;
                     temp.size        = obj.drm_def.drmContents[0].contentSize;
@@ -530,7 +526,7 @@ repod.psdle = {
             search  = (!!$("#psdle_search_text")) ? $("#psdle_search_text").val() : this.config.last_search,
             cache   = [];
 
-        /* Determine filters. */
+        //Determine filters.
         var filters = {};
 
         $.each($("[id^=filter_]"), function() {
@@ -757,30 +753,24 @@ repod.psdle = {
         }
     },
     exportList: {
-        config: [{name:"Name",target:"name"},{name:"Platform",target:"platform"},{name:"Size",target:"prettySize"},{name:"Date",target:"prettyDate"}], //Default export template.
-        tl: {},
+        config: [], //Default export template.
         configure: function() {
-            //TO-DO:
-            //window max-height: 80%;
-            //Translate default template
-            var that = this,
-                temp = {
-                    name: repod.psdle.lang.columns.name,
-                    platform: repod.psdle.lang.columns.platform,
-                    can_vita: "Vita?",
-                    size: repod.psdle.lang.columns.size,
-                    date: repod.psdle.lang.columns.date,
-                    plus: "PS+",
-                }
+            //TO-DO: window max-height: 80%;
+            if (this.config.length == 0) { //If export template is empty, set translated defaults.
+                this.config = [
+                    {name: repod.psdle.lang.columns.name, target: "name"},
+                    {name: repod.psdle.lang.columns.platform, target: "platform"},
+                    {name: repod.psdle.lang.columns.size, target: "prettySize"},
+                    {name: repod.psdle.lang.columns.date, target: "prettyDate"}
+                ];
+            }
 
-            if (repod.psdle.config.check_tv) { this.config.tv = false; temp.tv = "PS TV"; }
+            var that = this;
 
-            this.tl = temp;
-
-            /* Gen input    */
+            //Gen input
             var w = "<div id='export_select'><div>" + this.genTable() + "</div>";
 
-            /* Gen output    */
+            //Gen output
             w += '<br><span class="psdle_fancy_bar"><span id="export_row_del">-</span><span id="export_row_add">+</span></span><br><span class="psdle_fancy_bar"><span id="sel_export_view">'+repod.psdle.lang.labels.export_view+'</span><span id="sel_export_csv">CSV</span>'
 
             //Generate window.
@@ -799,7 +789,7 @@ repod.psdle = {
                 select = this.genSelect(),
                 max = (this.config.length || 5);
 
-            table += "<table id='export_table'><tr><th>Column Name</th><th>Property</th></tr>";
+            table += "<table id='export_table'><tr><th>"+repod.psdle.lang.strings.export_column_name+"</th><th>"+repod.psdle.lang.strings.export_property+"</th></tr>";
             for (i=0; i<max; i++) {
                 var text = (this.config[i]) ? this.config[i].name : "",
                     select2 = select.clone();
@@ -939,7 +929,7 @@ repod.psdle = {
             var that = this,
                 a    = {pid:pid,index:index};
 
-            /* Do some queue/delay magic here. */
+            //Do some queue/delay magic here.
             if (index == "pid_cache") {
                 this.batch.push(a)
             } else {
@@ -1158,7 +1148,7 @@ repod.psdle = {
                             this.go(sys,game.id,autoTarget);
                             break;
                         case "all":
-                            var temp = game.platformUsable.slice(0), i = $.inArray("PSP", temp); if(i != -1) { temp.splice(i, 1); } /* Make sure we don't have PSP */
+                            var temp = game.platformUsable.slice(0), i = $.inArray("PSP", temp); if(i != -1) { temp.splice(i, 1); } //Make sure we don't have PSP
                             $.each(temp,function(a,b) { that.go(b.replace(/ps /i,"").toLowerCase(),game.id); });
                             break;
                     }
@@ -1301,7 +1291,7 @@ repod.psdle = {
             dialog.append($("<div>", {id:'dlQAN'} ).append(plus+game.name));
 
             if (repod.psdle.config.use_queue) {
-                var temp = $.grep(game.platformUsable.slice(0), function(V) { return V !== "PSP" }), /* Make sure we don't have PSP */
+                var temp = $.grep(game.platformUsable.slice(0), function(V) { return V !== "PSP" }), //Make sure we don't have PSP
                     t    = $("<div>", {id:"dlQASys"} );
 
                 if (temp.length > 1) {
@@ -1456,9 +1446,9 @@ repod.psdle = {
     },
     debug: {
         die: function() {
-            /* Obviously.    */ $("#muh_games_container").remove();
-            /* CSS            */ $("#psdle_css").remove();
-            /* Just 'psdle'    */ delete repod.psdle; // Kappa
+            /* Obviously.   */ $("#muh_games_container").remove();
+            /* CSS          */ $("#psdle_css").remove();
+            /* Just 'psdle' */ delete repod.psdle;
         },
         inject_lang: function() {
             var lang = prompt("Insert JSON formatted language: (current below)",JSON.stringify(repod.psdle.lang));
@@ -1488,7 +1478,7 @@ repod.psdle = {
                     temp.name = $(this).find(".cellTitle").text();
                     temp.platform = [ $(this).find(".pforms").text().split("|").pop() ];
 
-                    /* Random values */
+                    //Random values
                     temp.size = Math.floor(Math.random() * 19999994000); //Size, in bytes.
                     temp.plus = (Math.random() < 0.5);
                     if (temp.plus) { repod.psdle.config.has_plus = true; } //PS+
