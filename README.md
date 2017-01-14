@@ -31,5 +31,5 @@ License
 =====
 MIT, have fun.
 
-**PSDLE is not sponsored, endorsed, or created by Sony, SIE, SNEI, SCEA, SCEE, SCEI, or affiliates.**
+**PSDLE is not sponsored, endorsed, or created by Sony, SIE, SNEI, SCEA, SCEE, SCEI, PlayStation, or affiliates.**
 **Third-party content (icons, names) re-rendered by PSDLE is provided from the Entitlements API.**
