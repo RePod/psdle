@@ -1425,7 +1425,7 @@ repod.psdle = {
                 repod.psdle.lang = {};
                 repod.psdle.lang = repod.psdle.lang_cache.en.us;
                 $.extend(true,repod.psdle.lang,lang);
-                repod.psdle.genDisplay();
+                repod.psdle.genDisplay("nobind");
             } catch (e) {
                 alert(e);
             }
