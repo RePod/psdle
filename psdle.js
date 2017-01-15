@@ -107,8 +107,7 @@ repod.psdle = {
             tv_url          : {
                 "en-us": atob("L2NoaWhpcm8tYXBpL3ZpZXdmaW5kZXIvVVMvZW4vMTkvU1RPUkUtTVNGNzcwMDgtUFNUVlZJVEFHQU1FUz9zaXplPTMwJnN0YXJ0PTA=")
             },
-            iconSize        : 42,
-            showExpired     : false
+            iconSize        : 42
         };
 
         console.log("PSDLE | Config set.");
@@ -182,7 +181,7 @@ repod.psdle = {
                     }
                 });
                 a += "</span><br><br><span id='psdle_go' class='psdle_btn'>"+that.lang.startup.start+"</span><br>"+that.generateLangBox()+"<br><span id='psdle_night' class='psdle_tiny_link'>Night Mode</span>"+that.config.tag_line;
-                a += "<br><span id='inject_lang' class='psdle_tiny_link'>Inject Language</span> - <a class='psdle_tiny_link' target='_blank' href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation#translation-submission-template'>Language Template</a> - <span id='gen_fake' class='psdle_tiny_link'>Generate Fake List</span> - <span id='ask_switches' class='psdle_tiny_link'>Switches</span>";
+                a += "<br><span id='inject_lang' class='psdle_tiny_link'>Inject Language</span> - <a class='psdle_tiny_link' target='_blank' href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation#translation-submission-template'>Language Template</a> - <span id='gen_fake' class='psdle_tiny_link'>Generate Fake List</span>";
                 a +="</div>";
                 if (mode !== "nobind") {
                     $(document).on("click","#psdle_night",function() { that.injectNightCSS(); });
@@ -193,15 +192,6 @@ repod.psdle = {
                         that.config.use_queue = !$("#api_queue").hasClass("toggled_off");
                         that.config.check_tv = ($("#api_pstv").length) ? !$("#api_pstv").hasClass("toggled_off") : false;
                         that.genDisplay("progress",($(this).attr("id") == "gen_fake")?true:false);
-                    });
-                    $(document).on("click","#ask_switches", function() {
-                        var input = prompt("Enter advanced switches here, seperated by spaces:");
-                        input = input.split(" ");
-
-                        if ($.inArray("showexpired",input) > -1) repod.psdle.config.showExpired = true;
-                        if ($.inArray("forcetv",input) > -1) repod.psdle.config.check_tv = true;
-
-                        alert("Switches processed.");
                     });
                 }
             }
@@ -315,8 +305,8 @@ repod.psdle = {
         var exp = (obj.license) ? obj.license.expiration : obj.inactive_date,
             inf = (obj.license) ? obj.license.infinite_duration : false;
 
-        if (obj.VUData || (obj.drm_def && obj.drm_def.contentType == "TV")) { return 0; }
-        else if (!this.config.showExpired && new Date(exp) < new Date() && !inf) { return 0; }
+        if (!this.config.includeVideo && (obj.VUData || (obj.drm_def && obj.drm_def.contentType == "TV"))) { return 0; }
+        else if (!this.config.includeExpired && new Date(exp) < new Date() && !inf) { return 0; }
         else if (obj.drm_def || obj.entitlement_attributes) { return 1; }
         else { return 0; }
     },
@@ -1001,7 +991,7 @@ repod.psdle = {
                   Enabling it would allow finer precision of filtering, at the cost of a LOT of filters. It can also be "PS1 CLASSICS" or "PS2 CLASSICS",
                   in a sense rendering the system filter null (although not really since then it could be filtered by platform). The good thing is
                   simply enabling this will work instantly without needing additional code modifications.*/
-                type = (((repod.psdle.config.specific_categories)?data.game_contentType:false) || data.top_category || "unknown");
+                type = (((repod.psdle.config.specificCategories)?data.game_contentType:false) || data.top_category || "unknown");
             }
 
             extend.category = type;
