@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.086
+// @version		2.087
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -59,6 +59,10 @@ repod.psdle = {
         "ru": {
             "def":"ru",
             "ru":{"local":"Русский","startup":{"wait":"Ожидание загрузки страниц..."},"columns":{"icon":"Иконка","name":"Название","platform":"Платформа","size":"Размер","date":"Дата"},"labels":{"export_view":"Export View","page":"Страница"},"categories":{"downloadable_game":"Игры","demo":"Демо-версии","add_on":"Дополенния","unlock":"Разблокировки","avatar":"Аватары","theme":"Темы","application":"Приложения","unknown":"Неизвестно"},"strings":{"delimiter":"Введите разделитель:","yes":"Да","no":"Нет","search":"Поиск"}} //MorbertDou (#2)
+        },
+        "ja": {
+            "def":"jp",
+            "jp":{"local":"日本語","startup":{"apis":"使用したいAPIを選択してください。ホバーすることによって詳細を確認することができます。<br>特定のAPIは無効化することが出来ない可能性があります。","wait":"お待ちください。","start":"開始"},"columns":{"icon":"アイコン","name":"ゲーム名","platform":"プラットフォーム","size":"サイズ","date":"日付"},"labels":{"export_view":"ビューをエクスポート","page":"ページ"},"categories":{"downloadable_game":"ゲーム","demo":"デモ","add_on":"アドオン","unlock":"アンロック","unlock_key":"アンロックキー","avatar":"アバター","theme":"テーマ","other":"その他","other_game_related":"その他ゲーム関連","game_content":"ゲームコンテンツ","tumbler_index":"タンブラーインデックス","home":"ホーム","ungrouped_game":"未分類のゲーム","promo_content":"プロモコンテンツ","beta":"ベータ","application":"アプリケーション","extras":"エキストラ","unknown":"不明"},"strings":{"delimiter":"区切り文字を入力してください:","yes":"はい","no":"いいえ","search":"検索","dlQueue":"待機リスト","dlList":"リスト","plus":"PS＋タイトルの表示を切り替える。","queue_all":"全て","queue_to":"$SYS$にダウンロード","no_target":"送信可能なコンソールが存在しません。","export_column_name":"カラム名","export_property":"プロパティ"},"apis":[{"internal_id":"api_entitle","name":"エンタイトルメント","desc":"無効化することは出来ません。購入情報にアクセスし、ダウンロードリストを作成、PS+の状態を確認、その他を行います。"},{"internal_id":"api_game","name":"カタログ","desc":"ゲームの追加情報にアクセスし、正確なコンソールの把握、壊れたイメージの修正、その他を行います。"},{"internal_id":"api_queue","name":"ダウンロード待機リスト","desc":"ダウンロード待機リストからアイテムの追加や削除の許可します。ダウンロード待機リスト情報とアカウントで有効化されたコンソールの数を読み込みます。"},{"internal_id":"api_pstv","name":"PS TV","desc":"PS TV互換タイトルを検知します。\"en-us\"ウェブストアでのみサポートされます。（PSDLEの言語設定ではありません）","disabled":true}]} //k0ta0uchi (#36)
         }
     },
     determineLanguage: function(e,f) {
