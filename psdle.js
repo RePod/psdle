@@ -597,7 +597,7 @@ repod.psdle = {
         //Search options.
         var temp = '<div id="search_options">';
 
-        if (!dlQueue) { temp += '<span><span class="psdle_fancy_bar"><span id="exportView">'+this.lang.labels.exportView+'</span></span> '; }
+        if (!dlQueue) { temp += '<span><span class="psdle_fancy_bar"><span id="export_view">'+this.lang.labels.exportView+'</span></span> '; }
         temp +=        '<span class="psdle_fancy_bar">';
 
         var order = ["ps1","ps2","ps3","ps4","psp","vita"],
