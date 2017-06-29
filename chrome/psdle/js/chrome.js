@@ -7,7 +7,9 @@ chrome.runtime.onMessage.addListener(
     }
 );
 
-var s = document.createElement('script');
-s.src = chrome.extension.getURL('js/psdle.js');
-s.onload = function() { this.parentNode.removeChild(this); };
-(document.head||document.documentElement).appendChild(s);
+["js/psdleChromium.js", "js/psdle.js"].forEach(function(item) {
+    var s = document.createElement('script');
+    s.src = chrome.extension.getURL(item);
+    s.onload = function() { this.parentNode.removeChild(this); };
+    (document.head||document.documentElement).appendChild(s);    
+});
