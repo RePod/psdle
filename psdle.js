@@ -15,7 +15,7 @@ repod.psdle = {
     lang_cache         : {
         "en": {
             "def": "us",
-            "us":{"local":"English","startup":{"apis":"Select which APIs you would like to use, hover for more details.<br>Certain APIs may not be disabled.","wait":"Please wait.","start":"Start"},"columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"exportView":"Export View","page":"Page"},"categories":{"downloadable_game":"Games","demo":"Demos","add_on":"Add-ons","unlock":"Unlocks","unlock_key":"Unlock Keys","avatar":"Avatars","theme":"Themes","other":"other","other_game_related":"other_game_related","game_content":"game_content","tumbler_index":"tumbler_index","home":"home","ungrouped_game":"ungrouped_game","promo_content":"promo_content","beta":"Betas","application":"Applications","extras":"Extras","unknown":"Unknown"},"strings":{"delimiter":"Enter delimiter:","yes":"Yes","no":"No","search":"Search","dlQueue":"Queue","dlList":"List","plus":"Toggle visibility of PS+ titles.","queueAll":"All","queueTo":"Download to $SYS$","noTarget":"There is no available target console to send to.","exportColumnName":"Column Name","exportProperty":"Property"},"apis":[{"internalID":"api_entitle","name":"Entitlements","desc":"Cannot be disabled. Accesses purchase information used to create the download list, determine PS+ status, and other things."},{"internalID":"api_game","name":"Catalog","desc":"Accesses additional game information to determine proper console, fix broken images, and more."},{"internalID":"api_queue","name":"Download Queue","desc":"Allows adding and removing items from the download queue. Reads download queue information and the amount of activated consoles on the account."},{"internalID":"api_pstv","name":"PS TV","desc":"Detect PS TV compatible titles. Only supported on \"en-us\" web store (not PSDLE language).","disabled":true}]}
+            "us":{"local":"English","startup":{"apis":"Select which APIs you would like to use, hover for more details.<br>Certain APIs may not be disabled.","wait":"Please wait.","start":"Start"},"columns":{"icon":"Icon","name":"Name","platform":"Platform","size":"Size","date":"Date"},"labels":{"exportView":"Export View","page":"Page"},"categories":{"downloadable_game":"Games","demo":"Demos","add_on":"Add-ons","unlock":"Unlocks","unlock_key":"Unlock Keys","avatar":"Avatars","theme":"Themes","other":"other","other_game_related":"other_game_related","game_content":"game_content","tumbler_index":"tumbler_index","home":"home","ungrouped_game":"ungrouped_game","promo_content":"promo_content","beta":"Betas","application":"Applications","extras":"Extras","unknown":"Unknown"},"strings":{"delimiter":"Enter delimiter:","yes":"Yes","no":"No","search":"Search","dlQueue":"Queue","dlList":"List","plus":"Toggle visibility of PS+ titles.","queueAll":"All","queueTo":"Download to $SYS$","noTarget":"There is no available target console to send to.","exportColumnName":"Column Name","exportProperty":"Property"},"apis":[{"internalID":"api_entitle","name":"Entitlements","desc":"Cannot be disabled. Accesses purchase information used to create the download list, determine PS+ status, and other things."},{"internalID":"api_game","name":"Catalog","desc":"Accesses additional game information to determine proper console, fix broken images, and more."},{"internalID":"api_queue","name":"Download Queue","desc":"Allows adding and removing items from the download queue. Reads download queue information and console activation status."},{"internalID":"api_pstv","name":"PS TV","desc":"Detect PS TV compatible titles. Only supported on \"en-us\" web store (not PSDLE language).","disabled":true}]}
         },
         "es": {
             "def": "es",
@@ -44,6 +44,10 @@ repod.psdle = {
         "nl": {
             "def":"nl",
             "nl":{"local":"Nederlands","startup":{"apis":"Selecteer welke APIs je wilt gebruiken, hover voor meer details.<br>Sommige APIs kunnen niet gedeselecteerd worden.","wait":"Even geduld alstublieft.","start":"Start"},"columns":{"icon":"Icoon","name":"Naam","platform":"Platform","size":"Grootte","date":"Datum"},"labels":{"exportView":"Exporteer View","page":"Pagina"},"categories":{"downloadable_game":"Spellen","demo":"Demos","add_on":"Add-ons","unlock":"Ontgrendelingen","unlock_key":"Ontgrendelings Sleutels","avatar":"Avatars","theme":"Themas","other":"anders","other_game_related":"ander_spel_gerelateerd","game_content":"spel_inhoud","tumbler_index":"tumbler_index","home":"begin","ungrouped_game":"ongegroepeerd_spel","promo_content":"promo_inhoud","beta":"Betas","application":"Applicaties","extras":"Extras","unknown":"Onbekend"},"strings":{"delimiter":"Voer delimiter in:","yes":"Ja","no":"Nee","search":"Zoeken","dlQueue":"Wachtrij","dlList":"Lijst","plus":"Laat PS+ titels zien.","queueAll":"Alles","queueTo":"Download naar $SYS$","noTarget":"Er is geen beschikbare console om naar toe te sturen","exportColumnName":"Kolom Naam","exportProperty":"Inhoud"},"apis":[{"internalID":"api_recht","name":"Rechten","desc":"Kan niet uitgeschakeld worden. Geeft toegang tot betalings informatie om te gebruiken voor de download lijst, bepaald PS+ status, en meer."},{"internalID":"api_spel","name":"Catalogus","desc":"Geeft toegang tot extra spel informatie om de goede console te bepalen, kapotte images te fixen, en meer."},{"internalID":"api_wachtrij","name":"Download Wachtrij","desc":"Geeft toegang tot het toevoegen en verwijderen van spellen op de download wachtrij. Leest de download wachtrij informatie en het aantal geactiveerde consoles op het account."},{"internalID":"api_pstv","name":"PS TV","desc":"Detecteert titels die met PS TV werken. Werkt alleen op de \"en-us\" web store (niet PSDLE taal).","disabled":true}]} //Tricksy
+        },
+        "ar": {
+            "def":"ae",
+            "ae":{"rtl":true,"local":"العربية","startup":{"apis":"أختار الميزات التي تود استخدامها حرك المؤشر فوقها للمزيد من المعاومات<br>بعض الميزات لا يمكن ابطالها","wait":"...جار التحميل","start":"ابدأ"},"columns":{"icon":"الأيقونة","name":"الأسم","platform":"نوع الجهاز","size":"الحجم","date":"التاريخ"},"labels":{"exportView":"أحفظ الائحة","page":"الصفحة"},"categories":{"downloadable_game":"الألعاب","demo":"الإصدارات التجريبية","add_on":"العناصر الأضافية","unlock":"Unlocks","unlock_key":"Unlock Keys","avatar":"صٌور رمزية","theme":"السمات","other":"اخرى","other_game_related":"other_game_related","game_content":"محتويات اللعبة","tumbler_index":"tumbler_index","home":"المنزل","ungrouped_game":"ungrouped_game","promo_content":"محتويات ترويجية","beta":"اصدار تجريبي","application":"التطبيقات","extras":"إضافات","unknown":"مجهول"},"strings":{"delimiter":":أدخل الفواصل","yes":"نعم","no":"لا","search":"أبحث","dlQueue":"لائحة التنزيل","dlList":"لائحة الألعاب","plus":"ضبط ظاهرية العاب PlayStation Plus","queueAll":"الكل","queueTo":"$SYS$ حَمل الى","noTarget":"لا يوجد جهاز للتحميل اليه","exportColumnName":"أسم العمود","exportProperty":"الخصائص"},"apis":[{"internalID":"api_entitle","name":"تاريخ الشراء","desc":"لا يمكن عدم التفعيل تستعمل بيانات شىرائك ليتم تشكيل الائحة و تحديد وضع PlayStation Plus"},{"internalID":"api_game","name":"الفهرس","desc":".فعل للحصول على معاومات اضافية عن الألعاب, منها الأنواع. تزيد الوقت اللازم لتحميل اللائحة"},{"internalID":"api_queue","name":"لائحة التنزيل","desc":".تسمح بزيادة أو حذف العناصر من لائحة التنزيل, تحصل على معلومات لائحة التنزيل و عدد الأجهزة المفعلة على الحساب"},{"internalID":"api_pstv","name":"PS TV","desc":"الكشف عن الألعاب لجهاز PS TV متوافر فقط لمتجر  en-us","disabled":true}]} //Oakkom
         }
     },
     determineLanguage: function(e,f) {
@@ -162,6 +166,11 @@ repod.psdle = {
         $(document).one("change", "#sub_container > select#lang_select", function() {
             that.config.language = $(this).val();
             that.determineLanguage($(this).val(),true);
+            if (!!that.lang.rtl && that.lang.rtl == true) {
+                $("#muh_games_container").addClass("rtl");
+            } else {
+                $("#muh_games_container").removeClass("rtl");
+            }
             that.genDisplay("nobind");
         });
 
@@ -716,15 +725,18 @@ repod.psdle = {
                   /*Export         */"#export_select{padding:10px;background-color:#fff;color:#000}#export_select>div{border-top-left-radius:10px;border-top-right-radius:10px;overflow-y:auto;overflow-x:hidden;max-height:490px}#export_table{width:100%}"+
                   /*PS+ switch     */"#slider,.handle{display:inline-block}#slider{vertical-align:bottom;cursor:pointer;width:30px;height:12px;border-radius:10px;border:2px solid #F0F0F0}.handle_container{text-align:center;width:100%;height:100%}.handle{width:10px;height:10px;border-radius:100%;margin:0 2px 6px;border:1px solid #FFF;background-color:#85C107}"+
                   /*Tooltips       */".tooltip-inner{background-color:#2185F4!important;border:5px solid #2185F4!important}.tooltip-arrow{border-top-color:#2185F4!important}.tooltip.in{opacity:1!important}"+
-                  /*Tooltips 2     */".ui-tooltip{max-width:234px;z-index:9002;background-color:#2185F4;font-size:11px;text-align:center;line-height:1.4em;padding:12px;border-radius:4px}"+
+                  /*Tooltips 2     */".ui-tooltip{direction:rtl;max-width:234px;z-index:9002;background-color:#2185F4;font-size:22px;text-align:center;line-height:1.4em;padding:12px;border-radius:4px}"+
                   /*Autocomplete   */".ui-autocomplete{z-index:9002;max-width:590px;max-height:200px;overflow-y:auto;overflow-x:hidden}.ui-menu{position:fixed;border:2px solid #F0F0F0;border-top:none;background-color:#fff}.ui-menu>.ui-menu-item *{color:#000;text-decoration:none;white-space:nowrap;text-overflow:ellipsis;cursor:pointer}.ui-menu>.ui-menu-item:nth-child(even){background-color:#e6e6e6}.ui-menu-item .ui-state-focus{display:inline-block;width:100%;color:#000;background-color:rgba(33,133,244,.7)}"+
                   /*PS TV          */".psdletv{font-style:italic;font-weight:700;font-size:.6em;vertical-align:text-top;position:absolute;top:4px}"+
                   /*PSP2           */".psp3{border-left:2px solid #2185F4;border-right:2px solid #2185F4}.psp2{background-color:rgba(33,133,244,.15)!important}";
-                  
+
                   /* RTL Languages */
-            temp += /* Container */ "#muh_games_container.rtl{direction:rtl}"+
-                    /* Search    */ ".rtl #psdle_search_select{border-radius:0px 90px 90px 0px} .rtl #psdle_search_text{border-radius:90px 0px 0px 90px}"+
-                    /* Fancy Bar */ ".rtl .psdle_fancy_bar span:last-of-type{border-top-left-radius:12px;border-bottom-left-radius:12px} .rtl .psdle_fancy_bar span:first-of-type{border-top-right-radius:12px;border-bottom-right-radius:12px}";
+            temp += /*Container */ "#muh_games_container.rtl{direction:rtl}"+
+                    /*Search    */ ".rtl #psdle_search_select{border-radius:0px 90px 90px 0px} .rtl #psdle_search_text{border-radius:90px 0px 0px 90px}"+
+                    /*Fancy Bar */ ".rtl .psdle_fancy_bar span:last-of-type{border-top-left-radius:12px;border-bottom-left-radius:12px} .rtl .psdle_fancy_bar span:first-of-type{border-top-right-radius:12px;border-bottom-right-radius:12px}"+
+                    /*Table     */ ".rtl #muh_table{text-align:right !important}"+
+                    /*PS+       */ ".rtl tr.is_plus[id^='psdle_index_'] td:last-child{border-right:none;border-left:#FFD10D 3px solid}";
+
         $("head").append("<style type='text/css'>"+temp+"</style>");
     },
     injectNightCSS: function() {
@@ -1294,7 +1306,7 @@ repod.psdle = {
 
             try { if (game.rating) { var star = $("<div>", {class:"star-rating rater-0 ratingStarGeneric star-rating-applied star-rating-readonly star-rating-on",style:"display:inline-block !important;float:none !important;vertical-align:text-top"} ).append($("<a>",{text:""}))[0].outerHTML; dialog.append($("<div>", {id:"dlQARating"} ).append(star+" "+game.rating+" / 5")); } } catch (e) { }
 
-            dialog.append($("<div>", {id:"dlQAStat",text:repod.psdle.safeGuessSystem(game.platform)+" | "+game.prettySize+" | "+game.prettyDate} ));
+            dialog.append($("<div>", {id:"dlQAStat",html:repod.psdle.safeGuessSystem(game.platform)+" | <div style='display:inline'>"+game.prettySize+"</div> | "+game.prettyDate} ));
 
             dialog = $("<div>", {id:"dlQueue_newbox",class:"cover"} ).append($("<div>").append(dialog[0].outerHTML));
 
