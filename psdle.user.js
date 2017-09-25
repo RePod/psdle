@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.093
+// @version		2.094
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -87,6 +87,13 @@ repod.psdle = {
         } else {
             e = "en-us";
         }
+
+        if (!!this.lang.rtl && this.lang.rtl == true) {
+            $("#muh_games_container").addClass("rtl");
+        } else {
+            $("#muh_games_container").removeClass("rtl");
+        }
+
         return e;
     },
     sanitizeLanguage: function() {
@@ -189,11 +196,6 @@ repod.psdle = {
         $(document).one("change", "#sub_container > select#lang_select", function() {
             that.config.language = $(this).val();
             that.determineLanguage($(this).val(),true);
-            if (!!that.lang.rtl && that.lang.rtl == true) {
-                $("#muh_games_container").addClass("rtl");
-            } else {
-                $("#muh_games_container").removeClass("rtl");
-            }
             that.genDisplay("nobind");
         });
 
