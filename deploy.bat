@@ -9,8 +9,9 @@
 @echo off
 
 ::Update version numbers (very specific quality of life n++ening)
-start "" /wait "C:\Program Files\Notepad++\notepad++.exe" -nosession -n9 "chrome/psdle/manifest.json"
-start "" /wait "C:\Program Files\Notepad++\notepad++.exe" -nosession -n7 "psdle.user.txt"
+SET NPP=start "" /max /wait "C:\Program Files\Notepad++\notepad++.exe" -multiInst -notabbar -nosession
+%NPP% -n9 "chrome/psdle/manifest.json"
+%NPP% -n7 "psdle.user.txt"
 
 ::Create min version
 jsmin <psdle.js >psdle.min.js "PSDLE, (c) RePod, https://github.com/RePod/psdle/blob/master/LICENSE"
