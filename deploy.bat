@@ -3,10 +3,15 @@
 :: - ./chrome/7-zip.bat - Zip up the PSDLE chrome extension properly for the webstore (and then opens the webstore for uploading).
 :: - ./deploy-sync.bat  - Copy psdle.js, psdle.user.js, and psdle.min.js to the gh-pages branch for everything else.
 ::Generally, only actual developers will find this useful. The 7-zip.bat is universally functional though.
-::Currently the min file is generated manually with Notepad++'s JSTool plugin which has JSMin built in. This may change in the future.
-::deploy-sync expects git available in PATH and ready to go.
+::jsmin is expected to be in PATH
+::Read deploy-sync.bat's comments for more info
 
 @echo off
+
+::Create min version
+jsmin <psdle.js >psdle.min.js "PSDLE, (c) RePod, https://github.com/RePod/psdle/blob/master/LICENSE"
+::Create userscript version
+copy psdle.user.txt+psdle.js /A /D psdle.user.js /B /Y
 
 ::Move into chrome directory, zip it, then return here.
 cd chrome && call "7-zip.bat" && cd ..
