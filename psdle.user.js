@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.095
+// @version		2.096
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -77,15 +77,14 @@ repod.psdle = {
             "tw":{"local": "中文 (繁體)","startup": {"apis": "請選擇要使用的PS Store功能，滑鼠游標停留以取得項目的詳細資訊<br>部份功能可能無法關閉","wait": "請稍候...","start": "開始"},"columns": {"icon": "圖示","name": "名稱","platform": "平台","size": "容量","date": "購買日期"},"labels": {"exportView": "匯出","page": "Page"},"categories": {"downloadable_game": "遊戲","demo": "體驗版","add_on": "追加內容","unlock": "關卡","unlock_key": "解鎖","avatar": "個人造型","theme": "主題","other": "other","other_game_related": "other_game_related","game_content": "game_content","tumbler_index": "tumbler_index","home": "home","ungrouped_game": "ungrouped_game","promo_content": "promo_content","beta": "Betas","application": "應用程式","extras": "Extras","unknown": "Unknown"},"strings": {"delimiter": "分隔字元:","yes": "是","no": "否","search": "搜尋","dlQueue": "佇列","dlList": "清單","plus": "選擇顯示PS+遊戲","queueAll": "全部","queueTo": "下載到$SYS$","noTarget": "沒有可傳送的主機。","exportColumnName": "欄位名稱","exportProperty": "屬性"},"apis": [{"internalID": "api_entitle","name": "購買記錄","desc": "此項不可關閉，將使用購買記錄來建立下載清單及確認PlayStation Plus狀態。"}, {"internalID": "api_game","name": "類別","desc": "開啟以取得更多遊戲資訊，包括類別及購買時間來建立下載清單。"}, {"internalID": "api_queue","name": "下載佇列","desc": "允許從下載佇列增加/移除項目。"}, {"internalID": "api_pstv","name": "PS TV","desc": "偵測Playstation Vita TV相容遊戲。目前只支援en-us區域","disabled": true}]}, //Alexsh
             "cn":{"local": "中文 (简体)","startup": {"apis": "请选择要使用的PS Store功能，鼠标光标停留以取得项目的详细信息<br>部份功能可能无法关闭","wait": "请稍候...","start": "开始"},"columns": {"icon": "图示","name": "名称","platform": "平台","size": "容量","date": "购买日期"},"labels": {"exportView": "汇出","page": "Page"},"categories": {"downloadable_game": "游戏","demo": "体验版","add_on": "追加内容","unlock": "关卡","unlock_key": "解锁","avatar": "个人造型","theme": "主题","other": "other","other_game_related": "other_game_related","game_content": "game_content","tumbler_index": "tumbler_index","home": "home","ungrouped_game": "ungrouped_game","promo_content": "promo_content","beta": "Betas","application": "应用程序","extras": "Extras","unknown": "Unknown"},"strings": {"delimiter": "分隔字符:","yes": "是","no": "否","search": "搜寻","dlQueue": "队列","dlList": "清单","plus": "选择显示PS+游戏","queueAll": "全部","queueTo": "下载到$SYS$","noTarget": "没有可传送的主机。","exportColumnName": "域名","exportProperty": "属性"},"apis": [{"internalID": "api_entitle","name": "购买记录","desc": "此项不可关闭，将使用购买记录来建立下载列表及确认PlayStation Plus状态。"}, {"internalID": "api_game","name": "类别","desc": "开启以取得更多游戏信息，包括类别及购买时间来建立下载清单。"}, {"internalID": "api_queue","name": "下载队列","desc": "允许从下载队列增加/移除项目。"}, {"internalID": "api_pstv","name": "PS TV","desc": "侦测Playstation Vita TV兼容游戏。目前只支持en-us区域","disabled": true}]} //Alexsh
         }
-
     },
     determineLanguage: function(e,f) {
         e = (e) ? e.split("-") : this.config.language.split("-");
         if (f === true) { this.lang = {}; this.lang = $.extend(true,{},this.lang_cache.en.us); }
         if (e[0] in this.lang_cache) {
-            if (e[1] in this.lang_cache[e[0]]) {
-                if (f === true) { $.extend(true,this.lang,this.lang_cache[e[0]][e[1]]); this.sanitizeLanguage(); }
-                e = e[0]+"-"+e[1];
+            if (e.slice(-1) in this.lang_cache[e[0]]) {
+                if (f === true) { $.extend(true,this.lang,this.lang_cache[e[0]][e.slice(-1)]); this.sanitizeLanguage(); }
+                e = e[0]+"-"+e.slice(-1);
             } else {
                 if (f === true) { $.extend(true,this.lang,this.lang_cache[e[0]][this.lang_cache[e[0]].def]); this.sanitizeLanguage(); }
                 e = e[0]+"-"+this.lang_cache[e[0]].def;
