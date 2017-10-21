@@ -59,9 +59,9 @@ repod.psdle = {
         e = (e) ? e.split("-") : this.config.language.split("-");
         if (f === true) { this.lang = {}; this.lang = $.extend(true,{},this.lang_cache.en.us); }
         if (e[0] in this.lang_cache) {
-            if (e[1] in this.lang_cache[e[0]]) {
-                if (f === true) { $.extend(true,this.lang,this.lang_cache[e[0]][e[1]]); this.sanitizeLanguage(); }
-                e = e[0]+"-"+e[1];
+            if (e.slice(-1) in this.lang_cache[e[0]]) {
+                if (f === true) { $.extend(true,this.lang,this.lang_cache[e[0]][e.slice(-1)]); this.sanitizeLanguage(); }
+                e = e[0]+"-"+e.slice(-1);
             } else {
                 if (f === true) { $.extend(true,this.lang,this.lang_cache[e[0]][this.lang_cache[e[0]].def]); this.sanitizeLanguage(); }
                 e = e[0]+"-"+this.lang_cache[e[0]].def;
