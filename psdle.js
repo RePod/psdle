@@ -868,7 +868,7 @@ repod.psdle = {
                     var tempprop = {}, item = repod.psdle.gamelist_cur[i];
 
                     $.each(config, function(key,val) {
-                        tempprop[val.target] = repod.psdle.exportList.format(i,val.target,false)
+                        tempprop[val.target] = repod.psdle.exportList.format(i,val.target,"JSONExp")
                     });
 
                     tempjson.items.push(tempprop);
@@ -907,8 +907,9 @@ repod.psdle = {
         },
         format: function(index,target,sep) {
             var item = repod.psdle.gamelist_cur[index],
-                yes = repod.psdle.lang.strings.yes,
-                no = repod.psdle.lang.strings.no;
+                toJSON = (sep == "JSONExp"),
+                yes = (toJSON) ? true : repod.psdle.lang.strings.yes,
+                no = (toJSON) ? false : repod.psdle.lang.strings.no;
 
             switch (target) {
                 //Exceptions.
@@ -920,13 +921,13 @@ repod.psdle = {
                     var temp = item[target];
                     if (!temp) break;
                     if (typeof temp == "boolean") { temp = (temp) ? yes : no }
-                    if (typeof temp == "object") { temp = JSON.stringify(temp).replace(/"/g,"'"); }
+                    if (typeof temp == "object") { temp = (toJSON) ? temp : JSON.stringify(temp).replace(/"/g,"'"); }
                     if (typeof temp == "string") { temp = temp.replace(/([\r\n]+?)/gm," "); }
                     return (typeof temp == "string" && temp.indexOf(sep) > -1) ? '"'+temp+'"' : temp;
                     break;
             }
 
-            return 0//Something
+            return (toJSON) ? undefined : "";
         },
         formatRow: function(sep,index) {
             //Use this.config{} and this.tl{}.
