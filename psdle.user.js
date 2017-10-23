@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.097
+// @version		2.100
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -797,16 +797,17 @@ repod.psdle = {
             var w = "<div id='export_select'><div>" + this.genTable() + "</div>";
 
             //Gen output
-            w += '<br><span class="psdle_fancy_bar"><span id="export_row_del">-</span><span id="export_row_add">+</span></span><br><span class="psdle_fancy_bar"><span id="sel_export_view">'+repod.psdle.lang.labels.exportView+'</span><span id="sel_export_csv">CSV</span>'
+            w += '<br><span class="psdle_fancy_bar"><span id="export_row_del">-</span><span id="export_row_add">+</span></span><br><span class="psdle_fancy_bar"><span id="sel_export_view">'+repod.psdle.lang.labels.exportView+'</span><span id="sel_export_json">JSON</span><span id="sel_export_csv">CSV</span>'
 
             //Generate window.
             $("<div />",{id:"export_configure",class:"cover"}).append($("<div />").append(w)).appendTo("#muh_games_container");
 
             //Bind
-            $("#sel_export_view").off("click").on("click", function () { that.saveConfig(); that.delimited.handle(); $("#export_configure").remove(); });
             $("#export_row_add").off("click").on("click", function(event) { $("#export_table tbody").append(that.genRow()); }); //Add row.
             $("#export_row_del").off("click").on("click", function(event) { $("#export_table tr:gt(1)").last().remove(); }); //Remove row.
+            $("#sel_export_view").off("click").on("click", function () { that.saveConfig(); that.delimited.handle(); $("#export_configure").remove(); });
             $("#sel_export_csv").off("click").on("click", function () { that.saveConfig(); that.csv.handle(); $("#export_configure").remove(); });
+            $("#sel_export_json").off("click").on("click", function () { that.saveConfig(); that.json.handle(); $("#export_configure").remove(); });
             $("#export_configure").off("click").one("click", function() { $(this).remove(); repod.psdle.newbox.bind("off"); });
             $("#export_select").off("click").on("click", function(event) { event.stopPropagation(); });
         },
@@ -858,7 +859,6 @@ repod.psdle = {
 
             this.config = columns;
         },
-        json: function() { return (!!JSON.stringify) ? JSON.stringify(repod.psdle.gamelist_cur) : "Browser does not have JSON.stringify()!"; },
         delimited: {
             gen: function(sep) {
                 var sep = (sep) ? sep : "\t",
@@ -876,6 +876,35 @@ repod.psdle = {
                 repod.psdle.table.margin();
             },
             destroy: function () { $("#sotextarea").remove(); repod.psdle.table.margin(); }
+        },
+        //json: function() { return (!!JSON.stringify) ? JSON.stringify(repod.psdle.gamelist_cur) : "Browser does not have JSON.stringify()!"; },
+        json: {
+            gen: function() {
+                var tempjson = {"columns":{},"items":[]};
+                var config = repod.psdle.exportList.config;
+
+                $.each(config, function(key,val) {
+                    tempjson.columns[val.target] = val.name
+                });
+
+                $.each(repod.psdle.gamelist_cur, function(i) {
+                    var tempprop = {}, item = repod.psdle.gamelist_cur[i];
+
+                    $.each(config, function(key,val) {
+                        tempprop[val.target] = repod.psdle.exportList.format(i,val.target,"JSONExp")
+                    });
+
+                    tempjson.items.push(tempprop);
+                });
+
+                return tempjson;
+            },
+            handle: function() {
+                $("<a>",{
+                  "download" : "psdle_"+(new Date().toLocaleString().replace(/[:\/]/g,"-"))+".json",
+                  "href" : "data:text/csv;charset=utf-8,"+encodeURIComponent(JSON.stringify(this.gen()))
+                })[0].dispatchEvent(new MouseEvent("click"));
+            }
         },
         csv: {
             gen: function(sep) {
@@ -899,6 +928,30 @@ repod.psdle = {
                 })[0].dispatchEvent(new MouseEvent("click"));
             }
         },
+        format: function(index,target,sep) {
+            var item = repod.psdle.gamelist_cur[index],
+                toJSON = (sep == "JSONExp"),
+                yes = (toJSON) ? true : repod.psdle.lang.strings.yes,
+                no = (toJSON) ? false : repod.psdle.lang.strings.no;
+
+            switch (target) {
+                //Exceptions.
+                case "category": return (repod.psdle.lang.categories[item.category] || item.category); break;
+                case "platform": return repod.psdle.safeGuessSystem(item.platform); break;
+                case "vitaCompat": return ($.inArray("PS Vita",item.platformUsable) > -1) ? yes : no; break;
+                case "vitatvCompat": return (repod.psdle.config.check_tv && repod.psdle.id_cache[item.productID].tvcompat && repod.psdle.safeGuessSystem(item.platform) == "PS Vita") ? yes : no; break;
+                default: //Generics
+                    var temp = item[target];
+                    if (!temp) break;
+                    if (typeof temp == "boolean") { temp = (temp) ? yes : no }
+                    if (typeof temp == "object") { temp = (toJSON) ? temp : JSON.stringify(temp).replace(/"/g,"'"); }
+                    if (typeof temp == "string") { temp = temp.replace(/([\r\n]+?)/gm," "); }
+                    return (typeof temp == "string" && temp.indexOf(sep) > -1) ? '"'+temp+'"' : temp;
+                    break;
+            }
+
+            return (toJSON) ? undefined : "";
+        },
         formatRow: function(sep,index) {
             //Use this.config{} and this.tl{}.
             var that = this,
@@ -912,22 +965,7 @@ repod.psdle = {
 
                 $.each(this.config, function(key,val) {
                     if (val) {
-                        switch (val.target) {
-                            //Exceptions.
-                            case "category": out += (repod.psdle.lang.categories[b.category] || b.category); break;
-                            case "platform": out += repod.psdle.safeGuessSystem(b.platform); break;
-                            case "vitaCompat": out += ($.inArray("PS Vita",b.platformUsable) > -1) ? yes : no; break;
-                            case "vitatvCompat": out += (repod.psdle.config.check_tv && repod.psdle.id_cache[b.productID].tvcompat && repod.psdle.safeGuessSystem(b.platform) == "PS Vita") ? yes : no; break;
-                            default: //Generics
-                                var temp = b[val.target];
-                                if (!temp) break;
-                                if (typeof temp == "boolean") { temp = (temp) ? yes : no }
-                                if (typeof temp == "object") { temp = JSON.stringify(temp).replace(/"/g,"'"); }
-                                if (typeof temp == "string") { temp = temp.replace(/([\r\n]+?)/gm," "); }
-                                out += (typeof temp == "string" && temp.indexOf(sep) > -1) ? '"'+temp+'"' : temp;
-                                break;
-                        }
-                        out += sep;
+                        out += that.format(index,val.target,sep) + sep;
                     }
                 });
 
