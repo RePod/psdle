@@ -59,6 +59,14 @@ i.fa.fancy { position:absolute;left:-5%;top:-40%;color:rgba(255,255,255,0.3); }
 #footer i { color:inherit; } #footer a:hover { color:#fff; }
 
 /* Navbar */
+#psdle_nav li a {
+    padding: 10px;
+    margin: 5px;
+    border-radius: 3px;
+}
+#psdle_nav li a:hover {
+    background-color: rgba(0,0,0,0.15)
+}
 .navbar-brand { padding:10px; }
 
 .navbar-default { background-color: #2185f4; /* border-color: #0000ee; */ }
