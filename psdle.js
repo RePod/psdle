@@ -101,11 +101,11 @@ repod.psdle = {
         console.log("PSDLE | Init.");
 
         var that = this,
-            l    = chihiro.getUrlCultureCode().toString().toLowerCase();
+            l    = location.hash.match(/!\/([a-z\-]+)\//i).pop().toLowerCase();
 
         this.config = {
             logoBase64      : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAAAfCAYAAAEO89r4AAABaUlEQVRoge2XS27CQAyGPSVSUVErdqzpMqveiRvALnu67Gl6D+gFuAKIPgQrs0o1TJSJJ7aJBvnbRXE8f357XoCIGyTiEBFf33+BwgMpyg/eVRNSsENEpAQWMa27agL1e7JWcmCSVSG+tF6jp1D4o/qkqN8un+Bl7JpJUxP5vH38XT2T655CtEf6olKoaFLq3ElK2heRlgq//U/KKVj4rcrvs+Y+h7Z1ow2Vv9eg6A5p53MxhnI2an0vWSmW0HI2EhUTI5vSN4T2Xem0ycZRh4h7AJgOLaQLlf1ega2br3/IQlMW6TA2dYEPc2XToyZUGtbOdMs1lyX0lqeubEpvQqVp9GhsghxPOpvY8yPA1yo+MRtCh7iWfJ/j49rOpEE2QnM55h1U7/Wcox0nb+y9lqY6dzYtmgtmqDBmqDBmqDCDGcq5Ew5xCqViHSqMGSqMGSqMGSpMp6H3unloYR0qjBkqjBkqjBkqzAUtBKxj5lT3GAAAAABJRU5ErkJggg==",
-            game_page       : chihiro.getBaseUrl() + "#!/" + l + "/cid=",
+            game_page       : location.toString().match(/(.*)#!/).pop() + "#!/" + l + "/cid=",
             game_api        : SonyChi_SessionManagerSingleton.getBaseCatalogURL() + "/",
             lastsort        : "",
             lastsort_r      : false,
@@ -131,7 +131,8 @@ repod.psdle = {
             tv_url          : {
                 "en-us": atob("L2NoaWhpcm8tYXBpL3ZpZXdmaW5kZXIvVVMvZW4vMTkvU1RPUkUtTVNGNzcwMDgtUFNUVlZJVEFHQU1FUz9zaXplPTMwJnN0YXJ0PTA=")
             },
-            iconSize        : 42
+            iconSize        : 42,
+            mobile          : false
         };
 
         console.log("PSDLE | Config set.");
@@ -201,7 +202,7 @@ repod.psdle = {
                 a += "<br><br>"+that.lang.startup.apis+"<br><br><span class='psdle_fancy_bar'>";
                 $.each(that.lang.apis, function(key,con) {
                     if (con.internalID == "api_pstv") {
-                        a += (chihiro.getUrlCultureCode().toString().toLowerCase() == "en-us")?"<span id='"+con.internalID+"' class='"+((con.disabled)?"toggled_off":"")+"' title='"+con.desc.replace(/'/g, "&apos;")+"'>"+con.name+"</span>":"";
+                        a += (that.config.language == "en-us")?"<span id='"+con.internalID+"' class='"+((con.disabled)?"toggled_off":"")+"' title='"+con.desc.replace(/'/g, "&apos;")+"'>"+con.name+"</span>":"";
                     } else {
                         var off = (con.internalID == "api_game") ? 'toggled_off' : "";
                         a += "<span id='"+con.internalID+"' title='"+con.desc.replace(/'/g, "&apos;")+"' class='"+off+"'>"+con.name.replace(/'/g, "&apos;")+"</span>";
@@ -432,7 +433,7 @@ repod.psdle = {
 
                 $("#table_stats").html(repod.psdle.gamelist_cur.length+psswitch+" / "+repod.psdle.gamelist.length);
                 if ($("#slider").length > 0) { $("#slider").tooltip().one("click",function() { that.plus_switch(); }); }
-                if (chihiro.isMobile()) {
+                if (repod.psdle.config.mobile) {
                     $("#psdleplus").html('<img class="psPlusIcon" src="mobile/img/furniture/psplusicon-small.a2ec8f23.png">');
                 } else {
                     $("#psdleplus").css($(".headerUserInfo.cart").css(["background-image","background-repeat"])).css({"height":"14px","width":"14px","background-position":"left -5px"});
@@ -1286,7 +1287,7 @@ repod.psdle = {
         gen: {
             row: function(val,dlQueue) {
                 var u = repod.psdle.config.game_page+val.id,
-                    pg = (chihiro.isMobile()) ? 50 : 24,
+                    pg = 50, //(page sizes between desktop/mobile, mobile can't hover anyway)
                     icon = (val.safe_icon) ? val.icon : "",
                     is_plus = (val.plus) ? "is_plus" : "",
                     sys = repod.psdle.safeGuessSystem(val.platform),
@@ -1357,7 +1358,7 @@ repod.psdle = {
 
             //Combine videos (if not mobile) and images into a single array.
             var media = [];
-            //if (!chihiro.isMobile() && game.videos) { $.each(game.videos, function(a,b) { media.push({'type':'video','url':b}); }); }
+            //if (repod.psdle.config.mobile && game.videos) { $.each(game.videos, function(a,b) { media.push({'type':'video','url':b}); }); }
             if (game.images) { $.each(game.images, function(a,b) { media.push({'type':'image','url':b}); }); }
             if (media.length > 0) {
                 //Pick a random media item and set it as the background.
