@@ -1664,6 +1664,14 @@ repod.psdle = {
     }
 };
 
-var a = setInterval(function(a){ if (chihiro.appReady === true) { clearInterval(repod.psdle.config.timerID); repod.psdle.init(); } },500);
+var a = setInterval(function(a){
+    function go() { clearInterval(repod.psdle.config.timerID); repod.psdle.init(); }
+    try {
+        if (chihiro.appReady === true) { go(); }
+    } catch (e) {
+        console.warn("Chihiro is not ready/available, checking directly.");
+        if (!$("body").hasClass("show-wait") && !$("body").hasClass("lockdown")) { go(); }
+    }
+},500);
 repod.psdle.config = {"timerID":a};
 console.log("PSDLE | Ready.");
