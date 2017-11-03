@@ -1669,7 +1669,7 @@ var a = setInterval(function(a){
     try {
         if (chihiro.appReady === true) { go(); }
     } catch (e) {
-        console.warn("Chihiro is not ready/available, checking directly.");
+        console.warn("Chihiro is not ready/available, THIS IS BAD! Checking manually.");
         if (!$("body").hasClass("show-wait") && !$("body").hasClass("lockdown")) { go(); }
     }
 },500);
