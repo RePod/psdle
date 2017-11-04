@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.101
+// @version		2.102
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -124,11 +124,12 @@ repod.psdle = {
         console.log("PSDLE | Init.");
 
         var that = this,
-            l    = location.hash.match(/!\/([a-z\-]+)\//i).pop().toLowerCase();
+            match = window.location.hash.match(/!\/([a-z\-]+)\//i),
+            l = (match !== null && match.length > 1 ? match.pop() : "en-us").toLowerCase();
 
         this.config = {
             logoBase64      : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAAAfCAYAAAEO89r4AAABaUlEQVRoge2XS27CQAyGPSVSUVErdqzpMqveiRvALnu67Gl6D+gFuAKIPgQrs0o1TJSJJ7aJBvnbRXE8f357XoCIGyTiEBFf33+BwgMpyg/eVRNSsENEpAQWMa27agL1e7JWcmCSVSG+tF6jp1D4o/qkqN8un+Bl7JpJUxP5vH38XT2T655CtEf6olKoaFLq3ElK2heRlgq//U/KKVj4rcrvs+Y+h7Z1ow2Vv9eg6A5p53MxhnI2an0vWSmW0HI2EhUTI5vSN4T2Xem0ycZRh4h7AJgOLaQLlf1ega2br3/IQlMW6TA2dYEPc2XToyZUGtbOdMs1lyX0lqeubEpvQqVp9GhsghxPOpvY8yPA1yo+MRtCh7iWfJ/j49rOpEE2QnM55h1U7/Wcox0nb+y9lqY6dzYtmgtmqDBmqDBmqDCDGcq5Ew5xCqViHSqMGSqMGSqMGSpMp6H3unloYR0qjBkqjBkqjBkqzAUtBKxj5lT3GAAAAABJRU5ErkJggg==",
-            game_page       : location.toString().match(/(.*)#!/).pop() + "#!/" + l + "/cid=",
+            game_page       : window.location.origin + "/#!/" + l + "/cid=",
             game_api        : SonyChi_SessionManagerSingleton.getBaseCatalogURL() + "/",
             lastsort        : "",
             lastsort_r      : false,
@@ -1692,7 +1693,7 @@ var a = setInterval(function(a){
     try {
         if (chihiro.appReady === true) { go(); }
     } catch (e) {
-        console.warn("Chihiro is not ready/available, THIS IS BAD! Checking manually.");
+        console.warn("Chihiro is not ready/available! Checking manually.");
         if (!$("body").hasClass("show-wait") && !$("body").hasClass("lockdown")) { go(); }
     }
 },500);
