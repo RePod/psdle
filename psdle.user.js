@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.103
+// @version		2.104
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -179,7 +179,7 @@ repod.psdle = {
         this.determineLanguage(this.config.language,true);
         this.injectCSS();
 
-        if (!this.config.valkAPI) { SonyChi_SessionManagerSingleton.getUserDevices() }
+        if (!this.config.valkyrie) { SonyChi_SessionManagerSingleton.getUserDevices() }
 
         this.genStartup();
         //this.genDisplay("progress",false);
