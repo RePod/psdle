@@ -6,7 +6,7 @@
 	"description": "__MSG_appDesc__",
 	"default_locale": "en",
 
-	"version": "1.76",
+	"version": "1.77",
 
 	"page_action": {
 		"default_icon": "icons/icon32.png",
