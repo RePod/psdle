@@ -103,13 +103,15 @@ repod.psdle = {
         var that = this,
             match = window.location.hash.match(/!\/([a-z\-]+)\//i),
             l = (match !== null && match.length > 1 ? match.pop() : "en-us").toLowerCase(),
-            valk = (typeof window.valkyrie == "object");
+            valkAPI = (typeof window.valkyrie == "object");
+
+        valkAPI && alert("PSDLE detected the new Valkyrie store API.\nSupport for this is currently experimental!\n\nFeatures like Catalog, autocomplete, queue, PS+ filtering, and even list detection may not work 100% if at all. Exporting is recommended to use with other database software for now. Entitlement fetching is very broad so you may see entitlements for multiple accounts if you use them.\n\nAny bugs should be reported here, along with region:\nhttps://github.com/RePod/psdle/issues/40")
 
         this.config = {
-            valkyrie        : valk,
+            valkyrie        : valkAPI,
             logoBase64      : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAAAfCAYAAAEO89r4AAABaUlEQVRoge2XS27CQAyGPSVSUVErdqzpMqveiRvALnu67Gl6D+gFuAKIPgQrs0o1TJSJJ7aJBvnbRXE8f357XoCIGyTiEBFf33+BwgMpyg/eVRNSsENEpAQWMa27agL1e7JWcmCSVSG+tF6jp1D4o/qkqN8un+Bl7JpJUxP5vH38XT2T655CtEf6olKoaFLq3ElK2heRlgq//U/KKVj4rcrvs+Y+h7Z1ow2Vv9eg6A5p53MxhnI2an0vWSmW0HI2EhUTI5vSN4T2Xem0ycZRh4h7AJgOLaQLlf1ega2br3/IQlMW6TA2dYEPc2XToyZUGtbOdMs1lyX0lqeubEpvQqVp9GhsghxPOpvY8yPA1yo+MRtCh7iWfJ/j49rOpEE2QnM55h1U7/Wcox0nb+y9lqY6dzYtmgtmqDBmqDBmqDCDGcq5Ew5xCqViHSqMGSqMGSqMGSpMp6H3unloYR0qjBkqjBkqjBkqzAUtBKxj5lT3GAAAAABJRU5ErkJggg==",
             game_page       : window.location.origin + "/#!/" + l + "/cid=",
-            game_api        : (valkyrie) ? "" : SonyChi_SessionManagerSingleton.getBaseCatalogURL() + "/",
+            game_api        : (valkAPI) ? "" : SonyChi_SessionManagerSingleton.getBaseCatalogURL() + "/",
             lastsort        : "",
             lastsort_r      : false,
             language        : l,
@@ -119,10 +121,10 @@ repod.psdle = {
             last_search     : "",
             dlQueue         :
             {
-                base        : (valkyrie) ? "" : SonyChi_SessionManagerSingleton.getDLQueueBaseURL(),
-                ps4         : (valkyrie) ? "" : SonyChi_SessionManagerSingleton.getDLQueueURL2(),
-                status      : (valkyrie) ? "" : SonyChi_SessionManagerSingleton.getDLQueueStatusURL(),
-                status2     : (valkyrie) ? "" : SonyChi_SessionManagerSingleton.getDLQueueStatusURL2()
+                base        : (valkAPI) ? "" : SonyChi_SessionManagerSingleton.getDLQueueBaseURL(),
+                ps4         : (valkAPI) ? "" : SonyChi_SessionManagerSingleton.getDLQueueURL2(),
+                status      : (valkAPI) ? "" : SonyChi_SessionManagerSingleton.getDLQueueStatusURL(),
+                status2     : (valkAPI) ? "" : SonyChi_SessionManagerSingleton.getDLQueueStatusURL2()
             },
             use_queue       : false,
             active_consoles : {},
@@ -154,7 +156,7 @@ repod.psdle = {
         this.determineLanguage(this.config.language,true);
         this.injectCSS();
 
-        if (!this.config.valkyrie) { SonyChi_SessionManagerSingleton.getUserDevices() }
+        if (!this.config.valkAPI) { SonyChi_SessionManagerSingleton.getUserDevices() }
 
         this.genStartup();
         //this.genDisplay("progress",false);
