@@ -4,7 +4,7 @@
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.102
+// @version		2.103
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -42,11 +42,11 @@ repod.psdle = {
         },
         "es": {
             "def": "es",
-            "es":{"local":"Español","startup":{"apis":"Elija APIs a utilizar. Coloque el puntero sobre el API para visualizar detalles.<br/>Algunos APIs no pueden ser deshabilitados.","wait":"Por favor espere...","start":"Inicio"},"columns":{"icon":"Ícono","name":"Nombre","platform":"Plataforma","size":"Tamaño","date":"Fecha"},"labels":{"exportView":"Exportar vista","page":"Página"},"categories":{"downloadable_game":"Juegos","demo":"Demos","add_on":"Complementos","unlock":"Desbloqueables","unlock_key":"Llaves","avatar":"Avatares","theme":"Temas","other":"Otros","other_game_related":"Otros","game_content":"Contenidos","tumbler_index":"tumbler_index","home":"Home","ungrouped_game":"No Clasificados","promo_content":"Promociones","beta":"Betas","application":"Aplicaciones","extras":"Extras","unknown":"Desconocido"},"strings":{"delimiter":"Ingrese delimitador:","yes":"Sí","no":"No","search":"Búsqueda","dlQueue":"Cola de Descargas","dlList":"Lista de Descargas","plus":"Alterna la visibilidad de los títulos de PS Plus.","queueAll":"Todos","queueTo":"Descargar a $SYS$"},"apis":[{"internalID":"api_entitle","name":"Licencias","desc":"No puede ser deshabilitado. Accede a la información de las compras y se utiliza para construir la lista de descargas, determinar el estado de PS Plus y otras cosas."},{"internalID":"api_game","name":"Catálogo","desc":"Accede a información adicional para determinar la consola adecuada, reparar imágenes rotas, y más."},{"internalID":"api_queue","name":"Cola de Descargas","desc":"Permite añadir y remover entradas a la cola de descargas. Lee la información de la cola de descargas y el número de consolas activadas en la cuenta."},{"internalID":"api_pstv","name":"PS TV","desc":"Detecta títulos compatibles con PS TV. Sólo soportado en la tienda de la región \"en-us\" (región, no idioma de PSDLE).","disabled":true}]} //Positronic-Brain (#18)
+            "es":{"local":"Español","startup":{"apis":"Elija APIs a utilizar. Coloque el puntero sobre el API para visualizar detalles.<br>Algunos APIs no pueden ser deshabilitados.","wait":"Por favor espere...","start":"Inicio"},"columns":{"icon":"Ícono","name":"Nombre","platform":"Plataforma","size":"Tamaño","date":"Fecha"},"labels":{"exportView":"Exportar vista","page":"Página"},"categories":{"downloadable_game":"Juegos","demo":"Demos","add_on":"Complementos","unlock":"Desbloqueables","unlock_key":"Llaves","avatar":"Avatares","theme":"Temas","other":"Otros","other_game_related":"Otros","game_content":"Contenidos","tumbler_index":"tumbler_index","home":"Home","ungrouped_game":"No Clasificados","promo_content":"Promociones","beta":"Betas","application":"Aplicaciones","extras":"Extras","unknown":"Desconocido"},"strings":{"delimiter":"Ingrese delimitador:","yes":"Sí","no":"No","search":"Búsqueda","dlQueue":"Cola de Descargas","dlList":"Lista de Descargas","plus":"Alterna la visibilidad de los títulos de PS Plus.","queueAll":"Todos","queueTo":"Descargar a $SYS$"},"apis":[{"internalID":"api_entitle","name":"Licencias","desc":"No puede ser deshabilitado. Accede a la información de las compras y se utiliza para construir la lista de descargas, determinar el estado de PS Plus y otras cosas."},{"internalID":"api_game","name":"Catálogo","desc":"Accede a información adicional para determinar la consola adecuada, reparar imágenes rotas, y más."},{"internalID":"api_queue","name":"Cola de Descargas","desc":"Permite añadir y remover entradas a la cola de descargas. Lee la información de la cola de descargas y el número de consolas activadas en la cuenta."},{"internalID":"api_pstv","name":"PS TV","desc":"Detecta títulos compatibles con PS TV. Sólo soportado en la tienda de la región \"en-us\" (región, no idioma de PSDLE).","disabled":true}]} //Positronic-Brain (#18)
         },
         "pt": {
             "def": "br",
-            "br":{"local":"Português (Brasil)","startup":{"apis":"Selecione quais APIs você gostaria de usar, passe o mouse por cima para mais detalhes.Algumas APIs não podem ser desabilitadas.","wait":"Por favor aguarde.","start":"Iniciar"},"columns":{"icon":"Ícone","name":"Nome","platform":"Platforma","size":"Tamanho","date":"Data"},"labels":{"exportView":"Exportar Visualização","page":"Página"},"categories":{"downloadable_game":"Jogos","demo":"Demos","add_on":"Expansões","unlock":"Desbloqueáveis","unlock_key":"Chaves","avatar":"Avatarws","theme":"Temas","other":"Outros","other_game_related":"Outros","game_content":"Conteúdo","tumbler_index":"tumbler_index","home":"Home","ungrouped_game":"Não classificado","promo_content":"Promoções","beta":"Betas","application":"Aplicações","extras":"Extras","unknown":"Desconhecido"},"strings":{"delimiter":"Entre delimitador:","stringify_error":"Erro: Navegador não possui JSON.stringify.","yes":"Sim","no":"Não","search":"Buscar por título do jogo","dlQueue":"Fila de downlaod","dlList":"Lista de download","plus":"Alterna ver títulos PS+.","queueAll":"Todos","queueTo":"Download para $SYS$"},"apis":[{"internalID":"api_entitle","name":"Licenças","desc":"Não pode ser desabilitado. Acessa informção de compra usada para criar a lista de download, determinar o status da PS+, e outras coisas."},{"internalID":"api_game","name":"Catálogo","desc":"Acessa informação adicional do jogo para determinar o console certo, corrigir imagens quebradas, e mais."},{"internalID":"api_queue","name":"Fila de download","desc":"Permite adicionar e remover itens da lista de download. Lê informação da lista de download e quantidade de consoles ativos na conta."},{"internalID":"api_pstv","name":"PS TV","desc":"Detecta títulos compatíveis com a PS TV. Somente suportado na web store \"en-us\" (não o idioma do PSDLE).","disabled":true}]} //msvalle (#33)
+            "br":{"local":"Português (Brasil)","startup":{"apis":"Selecione quais APIs você gostaria de usar, passe o mouse por cima para mais detalhes.<br>Algumas APIs não podem ser desabilitadas.","wait":"Por favor aguarde.","start":"Iniciar"},"columns":{"icon":"Ícone","name":"Nome","platform":"Platforma","size":"Tamanho","date":"Data"},"labels":{"exportView":"Exportar Visualização","page":"Página"},"categories":{"downloadable_game":"Jogos","demo":"Demos","add_on":"Expansões","unlock":"Desbloqueáveis","unlock_key":"Chaves","avatar":"Avatarws","theme":"Temas","other":"Outros","other_game_related":"Outros","game_content":"Conteúdo","tumbler_index":"tumbler_index","home":"Home","ungrouped_game":"Não classificado","promo_content":"Promoções","beta":"Betas","application":"Aplicações","extras":"Extras","unknown":"Desconhecido"},"strings":{"delimiter":"Entre delimitador:","stringify_error":"Erro: Navegador não possui JSON.stringify.","yes":"Sim","no":"Não","search":"Buscar por título do jogo","dlQueue":"Fila de downlaod","dlList":"Lista de download","plus":"Alterna ver títulos PS+.","queueAll":"Todos","queueTo":"Download para $SYS$"},"apis":[{"internalID":"api_entitle","name":"Licenças","desc":"Não pode ser desabilitado. Acessa informção de compra usada para criar a lista de download, determinar o status da PS+, e outras coisas."},{"internalID":"api_game","name":"Catálogo","desc":"Acessa informação adicional do jogo para determinar o console certo, corrigir imagens quebradas, e mais."},{"internalID":"api_queue","name":"Fila de download","desc":"Permite adicionar e remover itens da lista de download. Lê informação da lista de download e quantidade de consoles ativos na conta."},{"internalID":"api_pstv","name":"PS TV","desc":"Detecta títulos compatíveis com a PS TV. Somente suportado na web store \"en-us\" (não o idioma do PSDLE).","disabled":true}]} //msvalle (#33)
         },
         "de": {
             "def": "de",
@@ -125,12 +125,16 @@ repod.psdle = {
 
         var that = this,
             match = window.location.hash.match(/!\/([a-z\-]+)\//i),
-            l = (match !== null && match.length > 1 ? match.pop() : "en-us").toLowerCase();
+            l = (match !== null && match.length > 1 ? match.pop() : "en-us").toLowerCase(),
+            valkAPI = (typeof window.valkyrie == "object");
+
+        valkAPI && alert("PSDLE detected the new Valkyrie store API.\nSupport for this is currently experimental!\n\nFeatures like Catalog, autocomplete, queue, PS+ filtering, and even list detection may not work 100% if at all. Exporting is recommended to use with other database software for now. Entitlement fetching is very broad so you may see entitlements for multiple accounts if you use them.\n\nAny bugs should be reported here, along with region:\nhttps://github.com/RePod/psdle/issues/40")
 
         this.config = {
+            valkyrie        : valkAPI,
             logoBase64      : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAAAfCAYAAAEO89r4AAABaUlEQVRoge2XS27CQAyGPSVSUVErdqzpMqveiRvALnu67Gl6D+gFuAKIPgQrs0o1TJSJJ7aJBvnbRXE8f357XoCIGyTiEBFf33+BwgMpyg/eVRNSsENEpAQWMa27agL1e7JWcmCSVSG+tF6jp1D4o/qkqN8un+Bl7JpJUxP5vH38XT2T655CtEf6olKoaFLq3ElK2heRlgq//U/KKVj4rcrvs+Y+h7Z1ow2Vv9eg6A5p53MxhnI2an0vWSmW0HI2EhUTI5vSN4T2Xem0ycZRh4h7AJgOLaQLlf1ega2br3/IQlMW6TA2dYEPc2XToyZUGtbOdMs1lyX0lqeubEpvQqVp9GhsghxPOpvY8yPA1yo+MRtCh7iWfJ/j49rOpEE2QnM55h1U7/Wcox0nb+y9lqY6dzYtmgtmqDBmqDBmqDCDGcq5Ew5xCqViHSqMGSqMGSqMGSpMp6H3unloYR0qjBkqjBkqjBkqzAUtBKxj5lT3GAAAAABJRU5ErkJggg==",
             game_page       : window.location.origin + "/#!/" + l + "/cid=",
-            game_api        : SonyChi_SessionManagerSingleton.getBaseCatalogURL() + "/",
+            game_api        : (valkAPI) ? "" : SonyChi_SessionManagerSingleton.getBaseCatalogURL() + "/",
             lastsort        : "",
             lastsort_r      : false,
             language        : l,
@@ -140,10 +144,10 @@ repod.psdle = {
             last_search     : "",
             dlQueue         :
             {
-                base        : SonyChi_SessionManagerSingleton.getDLQueueBaseURL(),
-                ps4         : SonyChi_SessionManagerSingleton.getDLQueueURL2(),
-                status      : SonyChi_SessionManagerSingleton.getDLQueueStatusURL(),
-                status2     : SonyChi_SessionManagerSingleton.getDLQueueStatusURL2()
+                base        : (valkAPI) ? "" : SonyChi_SessionManagerSingleton.getDLQueueBaseURL(),
+                ps4         : (valkAPI) ? "" : SonyChi_SessionManagerSingleton.getDLQueueURL2(),
+                status      : (valkAPI) ? "" : SonyChi_SessionManagerSingleton.getDLQueueStatusURL(),
+                status2     : (valkAPI) ? "" : SonyChi_SessionManagerSingleton.getDLQueueStatusURL2()
             },
             use_queue       : false,
             active_consoles : {},
@@ -175,9 +179,10 @@ repod.psdle = {
         this.determineLanguage(this.config.language,true);
         this.injectCSS();
 
-        SonyChi_SessionManagerSingleton.getUserDevices()
+        if (!this.config.valkAPI) { SonyChi_SessionManagerSingleton.getUserDevices() }
 
         this.genStartup();
+        //this.genDisplay("progress",false);
     },
     genStartup: function() {
         if ($("#psdle_start").length == 0) {
@@ -214,7 +219,7 @@ repod.psdle = {
             var a = "<div id='sub_container'><a href='//repod.github.io/psdle/' target='_blank'><img src='"+repod.psdle.config.logoBase64+"' style='display:inline-block;font-size:200%;font-weight:bold' alt='psdle' /></a></span>";
 
             if (mode == "progress") {
-                if (that.config.use_queue) {
+                if (!that.config.valkyrie && that.config.use_queue) {
                     var sys = {}, c = SonyChi_SessionManagerSingleton.getUserObject();
                     if (c.hasActiveVita()) { sys.vita = 1; }
                     if (c.hasActivePS3()) { sys.ps3 = 1; }
@@ -251,7 +256,7 @@ repod.psdle = {
                 if (mode == "progress") { if (fake_list) { that.debug.fake_list() } else { that.generateList(); } }
                 else {
                     $("[id^=api_]").promise().done(function() {
-                        $("[id^=api_]").tooltip({position: {my: "center top", at: "center bottom"}})
+                        if (!that.config.valkyrie) $("[id^=api_]").tooltip({position: {my: "center top", at: "center bottom"}})
                     });
                 }
             });
@@ -262,8 +267,18 @@ repod.psdle = {
 
         this.gamelist = [];
 
-        var that         = this,
+        var that         = this;
+            entitlements = [];
+
+        if (this.config.valkyrie) {
+            for (i in localStorage) {
+                if (/^entitlements_/.test(i)) {
+                    entitlements = entitlements.concat(JSON.parse(localStorage[i])); //Bad if multiple accounts in localStorage!
+                }
+            }
+        } else {
             entitlements = gEntitlementManager.getAllEntitlements().concat(this.e_inject_cache);
+        }
 
         $.each(entitlements, function(index,obj) {
             if (that.isValidContent(obj)) { //Determine if game content.
@@ -302,11 +317,20 @@ repod.psdle = {
                 var i = repod.psdle.config.iconSize;// + "px";
                 i = "&w=" + i + "&h=" + i;
 
-                temp.prettySize     = (temp.size === 0) ? "N/A" : formatFileSizeDisplayStr(temp.size)
-                temp.icon           = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.productID) + i;
+                var ps = "";
+                if (that.config.valkyrie) {
+                    var t = require("valkyrie-storefront/utils/download").default.getFormattedFileSize(temp.size);
+                    ps = t.value+t.unit
+                } else {
+                    ps = formatFileSizeDisplayStr(temp.size)
+                }
+
+                temp.prettySize     = (temp.size === 0) ? "N/A" : ps;
                 temp.api_icon       = temp.api_icon + i;
+                temp.icon           = (that.config.valkyrie) ? temp.api_icon : SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.productID) + i;
+                if (temp.icon == temp.api_icon) { temp.safe_icon = true; }
                 temp.date           = obj.active_date;
-                temp.prettyDate     = convertToNumericDateSlashes(convertStrToDateObj(temp.date));
+                temp.prettyDate     = (that.config.valkyrie) ? temp.date : convertToNumericDateSlashes(convertStrToDateObj(temp.date));
                 temp.url            = repod.psdle.config.game_page + temp.productID;
                 temp.platformUsable = temp.platform.slice(0);
 
@@ -338,10 +362,15 @@ repod.psdle = {
         this.postList();
     },
     determineSystem: function(HASH) {
-        var sys = [];
+        var that = this,
+            sys = [],
+            K = (this.config.valkyrie) ? require("valkyrie-storefront/utils/const").default.KamajiPlatformFlags : KamajiPlatformFlags,
+            K2 = (this.config.valkyrie) ? require("valkyrie-storefront/utils/const").default.KamajiPlatforms : KamajiPlatforms,
+            _K = (this.config.valkyrie) ? K : {"1":K.PS3,"3":K.PSP,"8":K.VITA};
 
-        $.each({"1":KamajiPlatformFlags.PS3,"3": KamajiPlatformFlags.PSP,"8":KamajiPlatformFlags.VITA}, function (t,u) {
-            0 !== ((t == "1") ? (HASH >>> 1 & u >>> 1) : (HASH & u)) && sys.push(KamajiPlatforms[Number(t)]);
+        $.each(_K, function (t,u) {
+            var target = (that.config.valkyrie) ? K2[t] : K2[Number(t)];
+            0 !== ((t == "1") ? (HASH >>> 1 & u >>> 1) : (HASH & u)) && sys.push(target);
         });
 
         return sys;
@@ -443,7 +472,7 @@ repod.psdle = {
                     plus = 0;
 
                 repod.psdle.exportList.delimited.destroy();
-                repod.psdle.autocomplete.bind();
+                if (!repod.psdle.config.valkyrie) { repod.psdle.autocomplete.bind(); }
 
                 $.each(repod.psdle.gamelist_cur,function (a,val) {
                     if (val.plus) {
@@ -456,11 +485,13 @@ repod.psdle = {
                 var psswitch = (repod.psdle.config.has_plus) ? " (<div id='slider' title='"+repod.psdle.lang.strings.plus+"'><div class='handle_container' style='text-align:"+repod.psdle.config.switch_align+"'><div class='handle' style='background-color:"+repod.psdle.config.switch_color+"'/></div></div> <div id='psdleplus' style='display:inline-block' /> "+plus+")" : "";
 
                 $("#table_stats").html(repod.psdle.gamelist_cur.length+psswitch+" / "+repod.psdle.gamelist.length);
-                if ($("#slider").length > 0) { $("#slider").tooltip().one("click",function() { that.plus_switch(); }); }
-                if (repod.psdle.config.mobile) {
-                    $("#psdleplus").html("<img class='psPlusIcon' src='mobile/img/furniture/psplusicon-small.a2ec8f23.png'>");
-                } else {
-                    $("#psdleplus").css($(".headerUserInfo.cart").css(["background-image","background-repeat"])).css({"height":"14px","width":"14px","background-position":"left -5px"});
+                if (!repod.psdle.config.valkyrie && $("#slider").length > 0) { $("#slider").tooltip().one("click",function() { that.plus_switch(); }); }
+                if (!repod.psdle.config.valkyrie) {
+                    if (repod.psdle.config.mobile) {
+                        $("#psdleplus").html("<img class='psPlusIcon' src='mobile/img/furniture/psplusicon-small.a2ec8f23.png'>");
+                    } else {
+                        $("#psdleplus").css($(".headerUserInfo.cart").css(["background-image","background-repeat"])).css({"height":"14px","width":"14px","background-position":"left -5px"});
+                    }
                 }
                 $("#muh_table > tbody").html(temp);
 
@@ -477,7 +508,7 @@ repod.psdle = {
             }
             repod.psdle.config.switch_align = a;
             repod.psdle.config.switch_color = b;
-            $("#slider").tooltip();
+            if (!repod.psdle.config.valkyrie) { $("#slider").tooltip(); }
             this.regen(true);
         },
         margin: function() {
@@ -747,7 +778,7 @@ repod.psdle = {
         var temp =/*Startup        */"#muh_games_container{display:none;position:fixed;top:0;right:0;left:0;color:#000;z-index:9001;text-align:center}#sub_container{padding:20px;background-color:#fff}#psdle_bar,.psdle_btn{background-color:#2185f4}#psdle_progressbar{overflow:hidden;display:inline-block;width:400px;height:16px;border:1px solid #999;margin:10px;border-radius:10px}#psdle_bar{width:0;height:100%;border-radius:10px}.psdle_btn{cursor:pointer;border-radius:13px;color:#fff;padding:1px 15px;display:inline-block;margin:5px auto}.psdle_tiny_link{line-height:0;cursor:pointer;color:#7F6D75!important;font-size:x-small}.psdle_tiny_link:hover{color:#000!important;text-decoration:underline}"+
                   /*Search options */"#search_options{position:fixed;left:0;top:0;width:100%;padding:15px 0;background-color:rgba(255,255,255,.8);z-index:9001}"+
                   /*Table          */"th[id^=sort]{cursor:pointer}th{padding:5px;background-color:#2185F4;color:#fff}tr:hover{background-color:rgba(33,133,244,.7)!important}td a.psdle_game_link{display:block;width:100%;height:100%;color:#000;padding:8px}.psdle_game_icon.is_plus{background-color:#FFD10D}tr[id^=psdle_index_].is_plus td:last-child{border-right:#FFD10D 3px solid}tr:nth-child(2n){background-color:#EEE}td:nth-child(n+3):nth-child(-n+7),th:nth-child(n+3):nth-child(-n+7){text-align:center;padding:0 5px;position:relative}td:first-child{text-align:center;position:relative}"+
-                  /*Search buttons */"#psdle_search_select,#psdle_search_text{font-size:large;padding:5px 10px;border:1px solid #F0F0F0}#psdle_search_select{background-color:#F0F0F0;text-align:center}#psdle_search_text{font-size:large;max-width:480px;width:100%}.negate_regex{background-color:#FF8080;color:#fff}.psdle_fancy_bar>span,span#export_view,span[id^=dl_],span[id^=filter_],span[id^=system_]{font-weight:700;text-transform:uppercase;font-size:small;color:#fff;background-color:#2185f4;display:inline-block;margin-right:2px;margin-bottom:5px;padding:1px 15px;cursor:pointer}.psdle_fancy_but{border-radius:12px}#muh_games_container:not(.rtl) .psdle_fancy_bar>span:first-of-type{border-top-left-radius:12px;border-bottom-left-radius:12px}#muh_games_container:not(.rtl) .psdle_fancy_bar > span:last-of-type{border-top-right-radius:12px;border-bottom-right-radius:12px}.toggled_off{opacity:.4}"+
+                  /*Search buttons */"#psdle_search_select,#psdle_search_text{font-size:large;padding:5px 10px;border:1px solid #F0F0F0}#psdle_search_select{background-color:#F0F0F0;text-align:center}#psdle_search_text{font-size:large;max-width:480px;width:100%}.negate_regex{background-color:#FF8080;color:#fff}.psdle_fancy_bar>span,span#export_view,span[id^=dl_],span[id^=filter_],span[id^=system_]{font-weight:700;font-size:0.9em;color:#fff;background-color:#2185f4;display:inline-block;margin-right:2px;margin-bottom:5px;padding:1px 10px;cursor:pointer}.psdle_fancy_but{border-radius:12px}#muh_games_container:not(.rtl) .psdle_fancy_bar>span:first-of-type{border-top-left-radius:12px;border-bottom-left-radius:12px}#muh_games_container:not(.rtl) .psdle_fancy_bar > span:last-of-type{border-top-right-radius:12px;border-bottom-right-radius:12px}.toggled_off{opacity:.4}"+
                   /*Search borders */"#muh_games_container:not(.rtl) #psdle_search_select{border-radius:90px 0px 0px 90px} #psdle_search_text{border-radius:0px 90px 90px 0px}"+
                   /*Content icons  */".psdle_game_icon{max-width:100%;vertical-align:middle;padding:3px;min-width:42px;min-height:42px}"+
                   /*Sorting        */".psdle_sort_asc,.psdle_sort_desc{float:right;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent}.psdle_sort_asc{border-bottom:5px solid #fff}.psdle_sort_desc{border-top:5px solid #fff}"+
@@ -1338,7 +1369,8 @@ repod.psdle = {
                     a += c.size;
                 });
 
-                return "<tr id='psdle_totals'><td /><td /><td /><td>"+formatFileSizeDisplayStr(a)+"</td><td /></tr>";
+                return "<tr id='psdle_totals'><td /><td /><td /><td>"+a+"</td><td /></tr>";
+                //formatFileSizeDisplayStr(a)
             }
         }
     },
