@@ -156,7 +156,7 @@ repod.psdle = {
         this.determineLanguage(this.config.language,true);
         this.injectCSS();
 
-        if (!this.config.valkAPI) { SonyChi_SessionManagerSingleton.getUserDevices() }
+        if (!this.config.valkyrie) { SonyChi_SessionManagerSingleton.getUserDevices() }
 
         this.genStartup();
         //this.genDisplay("progress",false);
