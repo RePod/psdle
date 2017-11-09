@@ -39,22 +39,22 @@ module.exports = function(grunt) {
                     banner: '/*! <%= pkg.name %> <%= pkg.version %> <%= pkg.license %> - min - compiled <%= grunt.template.today("yyyy-mm-dd") %> */'
                 },
                 files: {
-                    '_dist/psdle.min.js': '_src/psdle.includes.js'
+                    'psdle.min.js': '_src/psdle.includes.js'
                 }
             }
         },
         copy: {
-            release: { files: {'_dist/psdle.js': '_src/psdle.includes.js'} },
-            chrome: { files: { '_dist/psdle.js': '_src/psdle.includes.js' } }
+            release: { files: {'psdle.js': '_src/psdle.includes.js'} },
+            chrome: { files: { 'psdle.js': '_src/psdle.includes.js' } }
         },
         concat: {
             options: {
                 stripBanners: true,
-                banner: '/*! <%= pkg.name %> <%= pkg.version %> <%= pkg.license %> - base+user - compiled <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+                banner: '/*! <%= pkg.name %> <%= pkg.version %> <%= pkg.license %> - user+base - compiled <%= grunt.template.today("yyyy-mm-dd") %> */\n'
             },
             userscript: {
                 src: ['_src/psdle.user.txt', '_src/psdle.includes.js'],
-                dest: '_dist/psdle.user.js',
+                dest: 'psdle.user.js',
             }
         },
         run_executables: {
