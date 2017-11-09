@@ -15,3 +15,6 @@ firefox/*
 # Etc.
 Thumbs.db
 images/*
+_dist/
+_src/
+node_modules/
