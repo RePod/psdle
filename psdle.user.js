@@ -1,11 +1,11 @@
-/*! psdle 2.105 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base+user - compiled 2017-11-09 */
+/*! psdle 2.106 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2017-11-09 */
 // ==UserScript==
 // @author		RePod
 // @name		PSDLE for Greasemonkey
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		2.105
+// @version		2.106
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -23,7 +23,7 @@ Alternatively, reconfigure the updating settings in your Userscript manager.
 */
 
 
-/*! psdle 2.105 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-09 */
+/*! psdle 2.106 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-09 */
 var repod = {};
 repod.psdle = {
     autocomplete_cache : [],
@@ -206,9 +206,9 @@ repod.psdle = {
                     $(document).on("click","[id^=api_]",function() { if ($(this).attr("id") !== "api_entitle") { $(this).toggleClass("toggled_off"); } });
                     $(document).on("click","#inject_lang",function() { that.debug.inject_lang(); });
                     $(document).on("click","#psdle_go, #gen_fake", function() {
-                        that.config.deep_search = !$("#api_game").hasClass("toggled_off");
-                        that.config.use_queue = !$("#api_queue").hasClass("toggled_off");
-                        that.config.check_tv = ($("#api_pstv").length) ? !$("#api_pstv").hasClass("toggled_off") : false;
+                        //that.config.deep_search = !$("#api_game").hasClass("toggled_off");
+                        //that.config.use_queue = !$("#api_queue").hasClass("toggled_off");
+                        //that.config.check_tv = ($("#api_pstv").length) ? !$("#api_pstv").hasClass("toggled_off") : false;
                         that.genDisplay("progress",($(this).attr("id") == "gen_fake")?true:false);
                     });
                 }
