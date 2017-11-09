@@ -13,3 +13,6 @@ Thumbs.db
 .DS_Store
 images/*
 *.zip
+
+# Node
+node_modules/*

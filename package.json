@@ -15,5 +15,11 @@
   "bugs": {
     "url": "https://github.com/RePod/psdle/issues"
   },
-  "homepage": "https://github.com/RePod/psdle#readme"
+  "homepage": "https://github.com/RePod/psdle#readme",
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-cssmin": "^2.2.1",
+    "grunt-includes": "^1.0.0",
+    "grunt-minjson": "^0.4.0"
+  }
 }

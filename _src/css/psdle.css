@@ -273,7 +273,7 @@ span[id^=system_] {
 .cover>div>div {
     box-shadow: 0 0 30px #000;
     display: inline-block;
-    #background-color: #FFF;
+    background-color: #FFF;
     border-radius: 20px;
     overflow: hidden;
     position: relative
