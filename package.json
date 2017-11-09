@@ -1,0 +1,19 @@
+{
+  "name": "psdle",
+  "version": "1.0.0",
+  "description": "Improving everyone's favorite online download list, one loop at a time. ",
+  "main": "src/psdle.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RePod/psdle.git"
+  },
+  "author": "RePod",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RePod/psdle/issues"
+  },
+  "homepage": "https://github.com/RePod/psdle#readme"
+}
