@@ -65,6 +65,9 @@ module.exports = function(grunt) {
             chrome: {
                 cmd: '_src/chrome/7-Zip.bat'
             },
+            chrome2: {
+                cmd: '_src/chrome/deploy.bat'
+            },
             deploy: {
                 cmd: 'deploy-sync.bat'
             }
@@ -108,8 +111,12 @@ module.exports = function(grunt) {
             'run_executables:chrome' //Chrome
        ]) 
     });
-    grunt.registerTask('deploy', 'Run release than deploy script.' function() {
-        
+    grunt.registerTask('deploy', 'Run release then deploy script.', function() {
+        grunt.task.run([
+            'release',
+            'run_executables:chrome2',
+            'run_executables:deploy'
+        ])
     });
     
     grunt.registerTask('default', 'Runs compile.', function() {
