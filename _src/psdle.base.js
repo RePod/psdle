@@ -180,9 +180,9 @@ repod.psdle = {
                     $(document).on("click","[id^=api_]",function() { if ($(this).attr("id") !== "api_entitle") { $(this).toggleClass("toggled_off"); } });
                     $(document).on("click","#inject_lang",function() { that.debug.inject_lang(); });
                     $(document).on("click","#psdle_go, #gen_fake", function() {
-                        that.config.deep_search = !$("#api_game").hasClass("toggled_off");
-                        that.config.use_queue = !$("#api_queue").hasClass("toggled_off");
-                        that.config.check_tv = ($("#api_pstv").length) ? !$("#api_pstv").hasClass("toggled_off") : false;
+                        //that.config.deep_search = !$("#api_game").hasClass("toggled_off");
+                        //that.config.use_queue = !$("#api_queue").hasClass("toggled_off");
+                        //that.config.check_tv = ($("#api_pstv").length) ? !$("#api_pstv").hasClass("toggled_off") : false;
                         that.genDisplay("progress",($(this).attr("id") == "gen_fake")?true:false);
                     });
                 }
