@@ -29,14 +29,14 @@ module.exports = function(grunt) {
                 options: {
                     silent: true,
                     includeRegexp: /{{{include\s+"(\S+)"}}}/,
-                    banner: '/*! <%= pkg.name %> <%= pkg.license %> - base - compiled <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+                    banner: '/*! <%= pkg.name %> <%= pkg.version %> <%= pkg.license %> - base - compiled <%= grunt.template.today("yyyy-mm-dd") %> */\n'
                 }
             }
         },
         uglify: {
             release: {
                 options: {
-                    banner: '/*! <%= pkg.name %> <%= pkg.license %> - min - compiled <%= grunt.template.today("yyyy-mm-dd") %> */'
+                    banner: '/*! <%= pkg.name %> <%= pkg.version %> <%= pkg.license %> - min - compiled <%= grunt.template.today("yyyy-mm-dd") %> */'
                 },
                 files: {
                     '_dist/psdle.min.js': ['_src/psdle.includes.js']
@@ -54,7 +54,7 @@ module.exports = function(grunt) {
         concat: {
             options: {
                 stripBanners: true,
-                banner: '/*! <%= pkg.name %> <%= pkg.license %> - base+user - compiled <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+                banner: '/*! <%= pkg.name %> <%= pkg.version %> <%= pkg.license %> - base+user - compiled <%= grunt.template.today("yyyy-mm-dd") %> */\n'
             },
             userscript: {
                 src: ['_src/psdle.user.txt', '_src/psdle.includes.js'],
@@ -64,6 +64,26 @@ module.exports = function(grunt) {
         run_executables: {
             chrome: {
                 cmd: '_src/chrome/7-Zip.bat'
+            },
+            deploy: {
+                cmd: 'deploy-sync.bat'
+            }
+        },
+        'string-replace': {
+            release: {
+                files: {
+                    '_src/chrome/psdle/manifest.json': ['_src/chrome/psdle/manifest.json'],
+                    '_src/psdle.user.txt': ['_src/psdle.user.txt']
+                },
+                options: {
+                    replacements: [{
+                        pattern: /("version":\s*").*?(",)/ig,
+                        replacement: '$1<%= pkg.version %>$2'
+                    },{
+                        pattern: /(\/\/ @version(\s*)).*/ig,
+                        replacement: '$1<%= pkg.version %>'
+                    },]
+                }
             }
         }
     });
@@ -75,16 +95,21 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-run-executables');
+    grunt.loadNpmTasks('grunt-string-replace');
 
     grunt.registerTask('compile', ['minjson','cssmin','includes:build']);
     grunt.registerTask('release', 'Generate PSDLE release, compiles first.', function() {
         grunt.task.run([
             'compile',
             'copy:release',     //Base
+            'string-replace:release', //Set versions
             'uglify:release',   //Minified
             'concat:userscript', //Userscript
             'run_executables:chrome' //Chrome
        ]) 
+    });
+    grunt.registerTask('deploy', 'Run release than deploy script.' function() {
+        
     });
     
     grunt.registerTask('default', 'Runs compile.', function() {
