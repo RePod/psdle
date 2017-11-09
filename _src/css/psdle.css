@@ -1,3 +1,12 @@
+/* Undo Valkyrie overrides, in a NON-GREEDY WAY */
+#muh_games_container select, #muh_games_container input  {
+    height: initial;
+    padding: initial;
+    margin: initial;
+    width: initial;
+    display: initial;
+}
+
 /*Startup        */
 #muh_games_container {
     display: none;
@@ -62,6 +71,14 @@
 }
 
 /*Table          */
+#muh_table {
+    /*display: inline-block;*/
+    text-align: left
+}
+
+td, th, tr, table tbody td, table thead th {
+    padding: initial;
+}
 th[id^=sort] {
     cursor: pointer
 }
@@ -105,7 +122,9 @@ td:first-child {
 #psdle_search_text {
     font-size: large;
     padding: 5px 10px;
-    border: 1px solid #F0F0F0
+    border: 1px solid #F0F0F0;
+    display: inline-block;
+    width: auto;
 }
 #psdle_search_select {
     background-color: #F0F0F0;

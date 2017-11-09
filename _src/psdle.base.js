@@ -163,11 +163,13 @@ repod.psdle = {
             } else {
                 a += "<br><br>"+that.lang.startup.apis+"<br><br><span class='psdle_fancy_bar'>";
                 $.each(that.lang.apis, function(key,con) {
-                    if (con.internalID == "api_pstv") {
-                        a += (that.config.language == "en-us")?"<span id='"+con.internalID+"' class='"+((con.disabled)?"toggled_off":"")+"' title='"+con.desc.replace(/'/g, "&apos;")+"'>"+con.name+"</span>":"";
-                    } else {
-                        var off = (con.internalID == "api_game") ? "toggled_off" : "";
-                        a += "<span id='"+con.internalID+"' title='"+con.desc.replace(/'/g, "&apos;")+"' class='"+off+"'>"+con.name.replace(/'/g, "&apos;")+"</span>";
+                    if (con.internalID == "api_entitle" || !that.config.valkyrie) { //Disable all APIs
+                        if (con.internalID == "api_pstv") {
+                            a += (that.config.language == "en-us")?"<span id='"+con.internalID+"' class='"+((con.disabled)?"toggled_off":"")+"' title='"+con.desc.replace(/'/g, "&apos;")+"'>"+con.name+"</span>":"";
+                        } else {
+                            var off = (con.internalID == "api_game") ? "toggled_off" : "";
+                            a += "<span id='"+con.internalID+"' title='"+con.desc.replace(/'/g, "&apos;")+"' class='"+off+"'>"+con.name.replace(/'/g, "&apos;")+"</span>";
+                        }
                     }
                 });
                 a += "</span><br><br><span id='psdle_go' class='psdle_btn'>"+that.lang.startup.start+"</span><br>"+that.generateLangBox()+"<br><span id='psdle_night' class='psdle_tiny_link'>Night Mode</span>"+that.config.tag_line;
@@ -385,7 +387,7 @@ repod.psdle = {
             repod.psdle.config.lastsort_r = false;
 
             $("#muh_games_container").css({"position":"absolute"});
-            $("#sub_container").html(repod.psdle.genSearchOptions()).append("<table id='muh_table' style='display:inline-block;text-align:left'><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+repod.psdle.lang.columns.platform+"</th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table><br>"+repod.psdle.config.tag_line);
+            $("#sub_container").html(repod.psdle.genSearchOptions()).append("<table id='muh_table'><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+repod.psdle.lang.columns.platform+"</th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table><br>"+repod.psdle.config.tag_line);
 
             this.regen(true);
             this.bindSearch();
