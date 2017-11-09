@@ -1,5 +1,3 @@
-/* PSDLE, (c) RePod, https://github.com/RePod/psdle/blob/master/LICENSE */
-
 var repod = {};
 repod.psdle = {
     autocomplete_cache : [],

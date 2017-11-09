@@ -11,15 +11,19 @@
     "url": "git+https://github.com/RePod/psdle.git"
   },
   "author": "RePod",
-  "license": "MIT",
+  "license": "(c) RePod, https://github.com/RePod/psdle/blob/master/LICENSE",
   "bugs": {
     "url": "https://github.com/RePod/psdle/issues"
   },
   "homepage": "https://github.com/RePod/psdle#readme",
   "devDependencies": {
     "grunt": "^1.0.1",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-cssmin": "^2.2.1",
+    "grunt-contrib-uglify": "^3.1.0",
     "grunt-includes": "^1.0.0",
     "grunt-minjson": "^0.4.0"
-  }
+  },
+  "dependencies": {}
 }

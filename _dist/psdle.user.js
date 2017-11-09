@@ -1,3 +1,28 @@
+/*! psdle (c) RePod, https://github.com/RePod/psdle/blob/master/LICENSE - base+user - compiled 2017-11-08 */
+// ==UserScript==
+// @author		RePod
+// @name		PSDLE for Greasemonkey
+// @description	Improving everyone's favorite online download list, one loop at a time.
+// @namespace	https://github.com/RePod/psdle
+// @homepage	https://repod.github.io/psdle/
+// @version		2.104
+// @include		/https://store.playstation.com/*/
+// @exclude		/https://store.playstation.com/(cam|liquid)/*/
+// @updateURL	https://repod.github.io/psdle/psdle.user.js
+// @downloadURL	https://repod.github.io/psdle/psdle.user.js
+// @icon		https://repod.github.io/psdle/logo/6_psdle_64px.png
+// @grant		none
+// @noframes
+// ==/UserScript==
+
+/*
+
+To keep this from updating remove the @updateURL (for automatic updates) and @downloadURL (for manual updates) above.
+Alternatively, reconfigure the updating settings in your Userscript manager.
+
+*/
+
+
 /*! psdle (c) RePod, https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-08 */
 var repod = {};
 repod.psdle = {
