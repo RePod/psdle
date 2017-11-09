@@ -21,9 +21,9 @@ module.exports = function(grunt) {
         },
         includes: {
             build: {
-                files: [
-                    {src: ['_src/psdle.base.js'], dest: '_src/psdle.includes.js'},// Source files
-                ],
+                files: {
+                    '_src/psdle.includes.js': '_src/psdle.base.js'
+                },
                 flatten: true,
                 cwd: '.',
                 options: {
@@ -39,17 +39,13 @@ module.exports = function(grunt) {
                     banner: '/*! <%= pkg.name %> <%= pkg.version %> <%= pkg.license %> - min - compiled <%= grunt.template.today("yyyy-mm-dd") %> */'
                 },
                 files: {
-                    '_dist/psdle.min.js': ['_src/psdle.includes.js']
+                    '_dist/psdle.min.js': '_src/psdle.includes.js'
                 }
             }
         },
         copy: {
-            release: {
-                files: [{expand: false, src: ['_src/psdle.includes.js'], dest: '_dist/psdle.js', filter: 'isFile'}],
-            },
-            chrome: {
-                files: [{expand: false, src: ['_src/psdle.includes.js'], dest: '_dist/psdle.js', filter: 'isFile'}],
-            }
+            release: { files: {'_dist/psdle.js': '_src/psdle.includes.js'} },
+            chrome: { files: { '_dist/psdle.js': '_src/psdle.includes.js' } }
         },
         concat: {
             options: {
@@ -62,15 +58,9 @@ module.exports = function(grunt) {
             }
         },
         run_executables: {
-            chrome: {
-                cmd: '_src/chrome/7-Zip.bat'
-            },
-            chrome2: {
-                cmd: '_src/chrome/deploy.bat'
-            },
-            deploy: {
-                cmd: 'deploy-sync.bat'
-            }
+            chrome: { cmd: '_src/chrome/7-Zip.bat' },
+            chrome2: { cmd: '_src/chrome/deploy.bat' },
+            deploy: { cmd: 'deploy-sync.bat' }
         },
         'string-replace': {
             release: {

@@ -1,4 +1,4 @@
-/*! psdle (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base+user - compiled 2017-11-09 */
+/*! psdle 2.105 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base+user - compiled 2017-11-09 */
 // ==UserScript==
 // @author		RePod
 // @name		PSDLE for Greasemonkey
@@ -23,7 +23,7 @@ Alternatively, reconfigure the updating settings in your Userscript manager.
 */
 
 
-/*! psdle (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-09 */
+/*! psdle 2.105 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-09 */
 var repod = {};
 repod.psdle = {
     autocomplete_cache : [],
