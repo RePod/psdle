@@ -78,11 +78,13 @@ module.exports = function(grunt) {
 
     grunt.registerTask('compile', ['minjson','cssmin','includes:build']);
     grunt.registerTask('release', 'Generate PSDLE release, compiles first.', function() {
-       grunt.task.run(['compile']) 
-       grunt.task.run(['copy:release'])      //Base
-       grunt.task.run(['uglify:release'])    //Minified
-       grunt.task.run(['concat:userscript']) //Userscript
-       grunt.task.run(['run_executables:chrome']) //Chrome
+        grunt.task.run([
+            'compile',
+            'copy:release',     //Base
+            'uglify:release',   //Minified
+            'concat:userscript', //Userscript
+            'run_executables:chrome' //Chrome
+       ]) 
     });
     
     grunt.registerTask('default', 'Runs compile.', function() {
