@@ -65,8 +65,8 @@ module.exports = function(grunt) {
         'string-replace': {
             release: {
                 files: {
-                    '_src/chrome/psdle/manifest.json': ['_src/chrome/psdle/manifest.json'],
-                    '_src/psdle.user.txt': ['_src/psdle.user.txt']
+                    '_src/chrome/psdle/manifest.json': '_src/chrome/psdle/manifest.json',
+                    '_src/psdle.user.txt': '_src/psdle.user.txt'
                 },
                 options: {
                     replacements: [{
@@ -75,7 +75,7 @@ module.exports = function(grunt) {
                     },{
                         pattern: /(\/\/ @version(\s*)).*/ig,
                         replacement: '$1<%= pkg.version %>'
-                    },]
+                    }]
                 }
             }
         }
