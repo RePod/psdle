@@ -46,6 +46,9 @@ module.exports = function(grunt) {
         copy: {
             release: {
                 files: [{expand: false, src: ['_src/psdle.includes.js'], dest: '_dist/psdle.js', filter: 'isFile'}],
+            },
+            chrome: {
+                files: [{expand: false, src: ['_src/psdle.includes.js'], dest: '_dist/psdle.js', filter: 'isFile'}],
             }
         },
         concat: {
@@ -53,9 +56,14 @@ module.exports = function(grunt) {
                 stripBanners: true,
                 banner: '/*! <%= pkg.name %> <%= pkg.license %> - base+user - compiled <%= grunt.template.today("yyyy-mm-dd") %> */\n'
             },
-            release: {
+            userscript: {
                 src: ['_src/psdle.user.txt', '_src/psdle.includes.js'],
                 dest: '_dist/psdle.user.js',
+            }
+        },
+        run_executables: {
+            chrome: {
+                cmd: '_src/chrome/7-Zip.bat'
             }
         }
     });
@@ -66,17 +74,18 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-run-executables');
 
     grunt.registerTask('compile', ['minjson','cssmin','includes:build']);
-    grunt.registerTask('test', ['concat:release']);
-    grunt.registerTask('release', 'Generate PSDLE release', function() {
+    grunt.registerTask('release', 'Generate PSDLE release, compiles first.', function() {
        grunt.task.run(['compile']) 
-       grunt.task.run(['copy:release'])   
-       grunt.task.run(['uglify'])         //Minified
-       grunt.task.run(['concat:release']) //Userscript
+       grunt.task.run(['copy:release'])      //Base
+       grunt.task.run(['uglify:release'])    //Minified
+       grunt.task.run(['concat:userscript']) //Userscript
+       grunt.task.run(['run_executables:chrome']) //Chrome
     });
     
-    grunt.registerTask('default', '', function() {
+    grunt.registerTask('default', 'Runs compile.', function() {
         grunt.task.run(['compile']);
     });
 };
