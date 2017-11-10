@@ -17,12 +17,14 @@ Usage
 
 PSDLE uses Node, NPM, and Grunt to compile versions.
 
-The latest versions should end up in **[_dist/](_dist/)**, and should be the same or newer than the files available from the website (they may even be broken!).
+The latest versions should end up in **the root** (except chrome zip), and should be the same or newer than the files available from the website (they may even be broken!).
 
 Notable Grunt tasks:
   - `grunt compile` compiles the base version in **_src/** including the min CSS and languages.  
   - `grunt` (default) is the same as `grunt compile`.
-  - `grunt release` generates all the release versions (base, min, user, chrome) into **_dist/**.
+  - `grunt release` generates all the release versions (base, min, user, chrome) into **the root**.
+  
+Releases end up in **the root** to ease in copying them to the *gh-pages* branch.
 
 What Needs To Be Done
 =====
