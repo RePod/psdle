@@ -1,7 +1,7 @@
 [![psdle](logo/4_psdle.png?raw=true)](//repod.github.io/psdle "To the website!")
 =====
 
-**For the new store API, Valkyrie, refer to [issue #40](https://github.com/RePod/psdle/issues/40). It is being worked on.**
+**For the new store API, Valkyrie, refer to [issue #40](//github.com/RePod/psdle/issues/40). It is being worked on.**
 
 Improving everyone's favorite online download list, one loop at a time.
 
@@ -24,7 +24,7 @@ Notable Grunt tasks:
   - `grunt` (default) is the same as `grunt compile`.
   - `grunt release` generates all the release versions (base, min, user, chrome) into **the root**.
   
-Releases end up in **the root** to ease in copying them to the *gh-pages* branch.
+Releases end up in **the root** to ease in copying them to the *[gh-pages](//github.com/RePod/psdle/tree/gh-pages)* branch.
 
 What Needs To Be Done
 =====
