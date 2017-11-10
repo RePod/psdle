@@ -101,10 +101,11 @@ module.exports = function(grunt) {
             'run_executables:chrome' //Chrome
        ]) 
     });
+    grunt.registerTask('chrome', ['run_executables:chrome2']);
     grunt.registerTask('deploy', 'Run release then deploy script.', function() {
         grunt.task.run([
             'release',
-            'run_executables:chrome2',
+            'chrome',
             'run_executables:deploy'
         ])
     });
