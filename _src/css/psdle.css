@@ -1,13 +1,24 @@
 /* Undo Valkyrie overrides, in a NON-GREEDY WAY */
-#muh_games_container select, #muh_games_container input  {
+
+#muh_games_container.valkyrie select,
+#muh_games_container.valkyrie input {
     height: initial;
     padding: initial;
     margin: initial;
     width: initial;
     display: initial;
 }
-
 /*Startup        */
+#psdle_start {
+    z-index: 9001;
+    width: 84px;
+    height: 31px;
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    cursor: pointer;
+    box-shadow: 0px 0px 10px #FFF
+}
 #muh_games_container {
     display: none;
     position: fixed;
@@ -51,15 +62,15 @@
 .psdle_tiny_link {
     line-height: 0;
     cursor: pointer;
-    color: #7F6D75!important;
+    color: #7F6D75 !important;
     font-size: x-small
 }
 .psdle_tiny_link:hover {
     color: #000!important;
     text-decoration: underline
 }
-
 /*Search options */
+
 #search_options {
     position: fixed;
     left: 0;
@@ -69,33 +80,36 @@
     background-color: rgba(255, 255, 255, .8);
     z-index: 9001
 }
-
 /*Table          */
+
 #muh_table {
-    /*display: inline-block;*/
     text-align: left
 }
-
-td, th, tr, table tbody td, table thead th {
-    padding: initial;
+.valkyrie #muh_table {
+    display: inline-block;
 }
 th[id^=sort] {
     cursor: pointer
 }
 th {
-    padding: 5px;
+    padding: 5px !important;
     background-color: #2185F4;
     color: #fff
+      border:none
 }
 tr:hover {
     background-color: rgba(33, 133, 244, .7)!important
+}
+.valkyrie td {
+    padding: 0px;
+  border:none
 }
 td a.psdle_game_link {
     display: block;
     width: 100%;
     height: 100%;
     color: #000;
-    padding: 8px
+    padding: 8px !important
 }
 .psdle_game_icon.is_plus {
     background-color: #FFD10D
@@ -109,15 +123,15 @@ tr:nth-child(2n) {
 td:nth-child(n+3):nth-child(-n+7),
 th:nth-child(n+3):nth-child(-n+7) {
     text-align: center;
-    padding: 0 5px;
+    padding: 0 5px !important;
     position: relative
 }
 td:first-child {
     text-align: center;
     position: relative
 }
-
 /*Search buttons */
+
 #psdle_search_select,
 #psdle_search_text {
     font-size: large;
@@ -168,16 +182,16 @@ span[id^=system_] {
 .toggled_off {
     opacity: .4
 }
-
 /*Search borders */
+
 #muh_games_container:not(.rtl) #psdle_search_select {
     border-radius: 90px 0px 0px 90px
 }
 #psdle_search_text {
     border-radius: 0px 90px 90px 0px
 }
-
 /*Content icons  */
+
 .psdle_game_icon {
     max-width: 100%;
     vertical-align: middle;
@@ -185,8 +199,8 @@ span[id^=system_] {
     min-width: 42px;
     min-height: 42px
 }
-
 /*Sorting        */
+
 .psdle_sort_asc,
 .psdle_sort_desc {
     float: right;
@@ -201,8 +215,8 @@ span[id^=system_] {
 .psdle_sort_desc {
     border-top: 5px solid #fff
 }
-
 /*Newbox         */
+
 #dlQARating,
 #dlQAStat {
     color: #fff;
@@ -214,7 +228,8 @@ span[id^=system_] {
     height: 400px
 }
 #dlQAN {
-    cursor: move;
+    /*cursor: move;*/
+    
     background-color: rgba(33, 133, 244, .8);
     padding: 7px 15px;
     color: #fff;
@@ -251,8 +266,8 @@ span[id^=system_] {
     padding: 0 15px 0 10px;
     float: left
 }
-
 /*Newbox Extended*/
+
 #dlQueueExt {
     overflow: hidden;
     position: absolute;
@@ -266,8 +281,8 @@ span[id^=system_] {
     top: 66px;
     text-align: left
 }
-
 /*Overlays       */
+
 .cover,
 .cover>div>div {
     background-size: cover
@@ -297,8 +312,8 @@ span[id^=system_] {
     overflow: hidden;
     position: relative
 }
-
 /*Export         */
+
 #export_select {
     padding: 10px;
     background-color: #fff;
@@ -314,9 +329,10 @@ span[id^=system_] {
 #export_table {
     width: 100%
 }
-
 /*PS+ switch     */
-#slider, .handle {
+
+#slider,
+.handle {
     display: inline-block
 }
 #slider {
@@ -340,8 +356,8 @@ span[id^=system_] {
     border: 1px solid #FFF;
     background-color: #85C107
 }
-
 /*Tooltips       */
+
 .tooltip-inner {
     background-color: #2185F4!important;
     border: 5px solid #2185F4!important
@@ -352,8 +368,8 @@ span[id^=system_] {
 .tooltip.in {
     opacity: 1!important
 }
-
 /*Tooltips 2     */
+
 .ui-tooltip {
     direction: rtl;
     max-width: 234px;
@@ -365,8 +381,8 @@ span[id^=system_] {
     padding: 12px;
     border-radius: 4px
 }
-
 /*Autocomplete   */
+
 .ui-autocomplete {
     z-index: 9002;
     max-width: 590px;
@@ -397,6 +413,7 @@ span[id^=system_] {
     background-color: rgba(33, 133, 244, .7)
 }
 /*PS TV          */
+
 .psdletv {
     font-style: italic;
     font-weight: 700;
@@ -406,6 +423,7 @@ span[id^=system_] {
     top: 4px
 }
 /*PSP2           */
+
 .psp3 {
     border-left: 2px solid #2185F4;
     border-right: 2px solid #2185F4
@@ -447,4 +465,22 @@ span[id^=system_] {
 .rtl tr.is_plus[id^='psdle_index_'] td:last-child {
     border-right: none;
     border-left: #FFD10D 3px solid
+}
+/* Night mode */
+
+.psdledark #sub_container {
+    background-color: #222;
+    color: rgb(231, 231, 231)
+}
+.psdledark a.psdle_game_link {
+    color: rgb(231, 231, 231)
+}
+.psdledark #search_options {
+    background-color: rgba(34, 34, 34, 0.7)
+}
+.psdledark tr {
+    background-color: rgb(34, 34, 34)
+}
+.psdledark tr:nth-child(2n) {
+    background-color: rgb(57, 57, 57)
 }

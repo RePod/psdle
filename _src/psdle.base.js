@@ -57,8 +57,9 @@ repod.psdle = {
         console.log("PSDLE | Init.");
 
         var that = this,
-            match = window.location.hash.match(/!\/([a-z\-]+)\//i),
+            match = window.location.pathname.match(/^\/([a-z\-]+)\//i),
             l = (match !== null && match.length > 1 ? match.pop() : "en-us").toLowerCase(),
+            l2 = l.split("-"),
             valkAPI = (typeof window.valkyrie == "object");
 
         valkAPI && alert("PSDLE detected the new Valkyrie store API.\nSupport for this is currently experimental!\n\nFeatures like Catalog, autocomplete, queue, PS+ filtering, and even list detection may not work 100% if at all. Exporting is recommended to use with other database software for now. Entitlement fetching is very broad so you may see entitlements for multiple accounts if you use them.\n\nAny bugs should be reported here, along with region:\nhttps://github.com/RePod/psdle/issues/40")
@@ -66,8 +67,8 @@ repod.psdle = {
         this.config = {
             valkyrie        : valkAPI,
             logoBase64      : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAAAfCAYAAAEO89r4AAABaUlEQVRoge2XS27CQAyGPSVSUVErdqzpMqveiRvALnu67Gl6D+gFuAKIPgQrs0o1TJSJJ7aJBvnbRXE8f357XoCIGyTiEBFf33+BwgMpyg/eVRNSsENEpAQWMa27agL1e7JWcmCSVSG+tF6jp1D4o/qkqN8un+Bl7JpJUxP5vH38XT2T655CtEf6olKoaFLq3ElK2heRlgq//U/KKVj4rcrvs+Y+h7Z1ow2Vv9eg6A5p53MxhnI2an0vWSmW0HI2EhUTI5vSN4T2Xem0ycZRh4h7AJgOLaQLlf1ega2br3/IQlMW6TA2dYEPc2XToyZUGtbOdMs1lyX0lqeubEpvQqVp9GhsghxPOpvY8yPA1yo+MRtCh7iWfJ/j49rOpEE2QnM55h1U7/Wcox0nb+y9lqY6dzYtmgtmqDBmqDBmqDCDGcq5Ew5xCqViHSqMGSqMGSqMGSpMp6H3unloYR0qjBkqjBkqjBkqzAUtBKxj5lT3GAAAAABJRU5ErkJggg==",
-            game_page       : window.location.origin + "/#!/" + l + "/cid=",
-            game_api        : (valkAPI) ? "" : SonyChi_SessionManagerSingleton.getBaseCatalogURL() + "/",
+            game_page       : window.location.origin + "/" +(valkAPI ? l+"/product/" : "#!/" + l + "/cid="),
+            game_api        : "https://store.playstation.com/store/api/chihiro/00_09_000/container/"+l2.slice(-1)+"/"+l2[0]+"/999/",
             lastsort        : "",
             lastsort_r      : false,
             language        : l,
@@ -124,7 +125,7 @@ repod.psdle = {
             if (window.psdleSkip && window.psdleSkip == true) {
                 that.genDisplay();
             } else {
-                var startup = $("<div/>",{id:"psdle_start"}).css({"z-index":"9001","width":"84px","height":"31px","position":"fixed","bottom":"10px","left":"10px","cursor":"pointer","box-shadow":"0px 0px 10px #FFF","background-image":"url('"+repod.psdle.config.logoBase64+"')"});
+                var startup = $("<div/>",{id:"psdle_start"}).css({'background-image':'url('+repod.psdle.config.logoBase64+')'});
                 //startup.append("<div style='position:absolute;line-height:11px;text-shadow:-1px -1px #000,1px -1px #000,-1px 1px #000,1px 1px #000;bottom:39px;width:180px;font-size:11px'>Please leave a review<br>for the Chrome extension!<br>It's very much appreciated.</div>");
                 startup.appendTo("body");
 
@@ -145,7 +146,7 @@ repod.psdle = {
         });
 
         if (!$("#muh_games_container").length) {
-            $("body").append("<div id='muh_games_container' />");
+            $("body").append($("<div />",{id:"muh_games_container",class:(this.config.valkyrie?"valkyrie":"")}));
         }
 
         $("#muh_games_container").slideUp("slow", function() {
@@ -163,26 +164,21 @@ repod.psdle = {
             } else {
                 a += "<br><br>"+that.lang.startup.apis+"<br><br><span class='psdle_fancy_bar'>";
                 $.each(that.lang.apis, function(key,con) {
-                    if (con.internalID == "api_entitle" || !that.config.valkyrie) { //Disable all APIs
-                        if (con.internalID == "api_pstv") {
-                            a += (that.config.language == "en-us")?"<span id='"+con.internalID+"' class='"+((con.disabled)?"toggled_off":"")+"' title='"+con.desc.replace(/'/g, "&apos;")+"'>"+con.name+"</span>":"";
-                        } else {
-                            var off = (con.internalID == "api_game") ? "toggled_off" : "";
-                            a += "<span id='"+con.internalID+"' title='"+con.desc.replace(/'/g, "&apos;")+"' class='"+off+"'>"+con.name.replace(/'/g, "&apos;")+"</span>";
-                        }
-                    }
+                    if (con.internalID == "api_pstv" && that.config.language !== "en-us") { return 0; }
+                    var off = (con.internalID == "api_game" || con.disabled) ? "toggled_off" : "";
+                    a += "<span id='"+con.internalID+"' title='"+con.desc.replace(/'/g, "&apos;")+"' class='"+off+"'>"+con.name.replace(/'/g, "&apos;")+"</span>";
                 });
                 a += "</span><br><br><span id='psdle_go' class='psdle_btn'>"+that.lang.startup.start+"</span><br>"+that.generateLangBox()+"<br><span id='psdle_night' class='psdle_tiny_link'>Night Mode</span>"+that.config.tag_line;
                 a += "<br><span id='inject_lang' class='psdle_tiny_link'>Inject Language</span> - <a class='psdle_tiny_link' target='_blank' href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation#translation-submission-template'>Language Template</a> - <span id='gen_fake' class='psdle_tiny_link'>Generate Fake List</span>";
                 a +="</div>";
                 if (mode !== "nobind") {
-                    $(document).on("click","#psdle_night",function() { that.injectNightCSS(); });
+                    $(document).on("click","#psdle_night",function() { that.darkCSS(); });
                     $(document).on("click","[id^=api_]",function() { if ($(this).attr("id") !== "api_entitle") { $(this).toggleClass("toggled_off"); } });
                     $(document).on("click","#inject_lang",function() { that.debug.inject_lang(); });
                     $(document).on("click","#psdle_go, #gen_fake", function() {
-                        //that.config.deep_search = !$("#api_game").hasClass("toggled_off");
+                        that.config.deep_search = !$("#api_game").hasClass("toggled_off");
                         //that.config.use_queue = !$("#api_queue").hasClass("toggled_off");
-                        //that.config.check_tv = ($("#api_pstv").length) ? !$("#api_pstv").hasClass("toggled_off") : false;
+                        that.config.check_tv = ($("#api_pstv").length) ? !$("#api_pstv").hasClass("toggled_off") : false;
                         that.genDisplay("progress",($(this).attr("id") == "gen_fake")?true:false);
                     });
                 }
@@ -248,10 +244,6 @@ repod.psdle = {
                 }
 
                 //Post-processing.
-
-                var i = repod.psdle.config.iconSize;// + "px";
-                i = "&w=" + i + "&h=" + i;
-
                 var ps = "";
                 if (that.config.valkyrie) {
                     var t = require("valkyrie-storefront/utils/download").default.getFormattedFileSize(temp.size);
@@ -261,9 +253,12 @@ repod.psdle = {
                 }
 
                 temp.prettySize     = (temp.size === 0) ? "N/A" : ps;
-                temp.api_icon       = temp.api_icon + i;
-                temp.icon           = (that.config.valkyrie) ? temp.api_icon : SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.productID) + i;
-                if (temp.icon == temp.api_icon) { temp.safe_icon = true; }
+                temp.api_icon       = temp.api_icon;
+                temp.icons          = [
+                    that.config.game_api+temp.id+"/image",
+                    that.config.game_api+temp.productID+"/image",
+                    temp.api_icon
+                ];
                 temp.date           = obj.active_date;
                 temp.prettyDate     = (that.config.valkyrie) ? temp.date : convertToNumericDateSlashes(convertStrToDateObj(temp.date));
                 temp.url            = repod.psdle.config.game_page + temp.productID;
@@ -458,28 +453,38 @@ repod.psdle = {
                 });
                 this.smartScroll();
             },
-            validate: function(index) {
-                var index = Number(index);
-                var temp  = repod.psdle.gamelist[index];
+            toSize: function(url,size) {
+                size = (size || repod.psdle.config.iconSize || 42);
+                return url + "?w=" + size + "&h=" + size
+            },
+            validate: function(index,last) {
+                var that = this,
+                    index = Number(index),
+                    temp  = repod.psdle.gamelist[index];
 
                 if (!temp.safe_icon) {
-                    var that = this,
-                        i = repod.psdle.config.iconSize,
-                        url = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.id) + "&w=" + i + "&h=" + i;
+                    var i = repod.psdle.config.iconSize,
+                        last = (last >= 0 ? last : -1)+1,
+                        url = this.toSize(temp.icons[last]);
 
                     $.get(url)
-                    .success(function() { that.setIcon(index,url); return 1; })
+                    .success(function() {
+                        $.extend(repod.psdle.gamelist[index],{safe_icon: true, icon: temp.icons[last]});
+                        that.setIcon(index,temp.icons[last]);
+                    })
                     .fail(function() {
-                        url = url.replace(temp.id,temp.productID);
-                        $.get(url)
-                        .success(function() { that.setIcon(index,url); return 1; })
-                        .fail(function() { that.setIcon(index,temp.api_icon); return 1; })
+                        if (last >= temp.icons.length) { 
+                            temp.safe_icon = true;
+                            return 0;
+                        }
+                        that.validate(index,last);
                     });
+                } else {
+                    that.setIcon(index);
                 }
             },
-            setIcon: function(index,url) {
-                $("#psdle_index_"+index+" .psdle_game_icon").attr("src",url);
-                $.extend(repod.psdle.gamelist[index],{safe_icon: true, icon: url});
+            setIcon: function(index) {
+                $("#psdle_index_"+index+" .psdle_game_icon").attr("src",this.toSize(repod.psdle.gamelist[index].icon));
             },
             smartScroll: function() {
                 var padding = 5,
@@ -713,14 +718,8 @@ repod.psdle = {
         var temp = "{{{include "css/psdle.min.css"}}}"
         $("head").append("<style type='text/css'>"+temp+"</style>");
     },
-    injectNightCSS: function() {
-        //Lazy CSS.
-        if ($("style#psdle_night").length) {
-            $("style#psdle_night").remove();
-        } else {
-            var temp="#sub_container{background-color:#222;color:rgb(231,231,231)}a.psdle_game_link{color:rgb(231,231,231)!important}#search_options{background-color:rgba(34,34,34,0.7)}tr:nth-child(2n){background-color:rgb(57,57,57)}"
-            $("head").append("<style type='text/css' id='psdle_night'>"+temp+"</style>");
-        }
+    darkCSS: function() {
+        $("#muh_games_container").toggleClass("psdledark");
     },
     exportList: {
         config: [], //Default export template.
@@ -1063,7 +1062,7 @@ repod.psdle = {
             if (data.long_desc) { extend.description = data.long_desc; }
             if (data.title_name) { extend.baseGame = data.title_name; }
             if (data.provider_name) { extend.publisher = data.provider_name; }
-            if (data.release_date) { extend.releaseDate = convertToNumericDateSlashes(convertStrToDateObj(data.release_date)); }
+            if (data.release_date) { extend.releaseDate = data.release_date; } //convertToNumericDateSlashes(convertStrToDateObj(
             if (data.age_limit && data.content_rating) { extend.ageLimit = data.content_rating.rating_system + " " + data.age_limit; }
 
             if (data.gameContentTypesList) {
@@ -1259,7 +1258,7 @@ repod.psdle = {
                     sys = repod.psdle.safeGuessSystem(val.platform),
                     //style='background-image:url(\""+bg+"\")' bg = (val.images && val.images.length > 0) ? val.images[0] : "",
                     iS = repod.psdle.config.iconSize+"px",
-                    temp = "<tr id='psdle_index_"+(val.index -1)+"' class='"+is_plus+"'><td style='max-width:"+iS+";max-height:"+iS+";'><a target='_blank' href='"+val.url+"'><img title='"+repod.psdle.lang.labels.page+" #"+Math.ceil(val.index/pg)+"' src='"+icon+"' class='psdle_game_icon "+is_plus+"' /></a>"+"</td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+val.name+"</a></td>";
+                    temp = "<tr id='psdle_index_"+(val.index -1)+"' class='"+is_plus+"'><td style='max-width:"+iS+";max-height:"+iS+";'><a target='_blank' href='"+val.url+"'><img title='"+repod.psdle.lang.labels.page+" #"+Math.ceil(val.index/pg)+"' class='psdle_game_icon "+is_plus+"' /></a>"+"</td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+val.name+"</a></td>";
 
                 var can_vita = (sys == "PS Vita") ? false : ($.inArray("PS Vita",val.platformUsable) > -1) ? true : false;
                 can_vita = (can_vita) ? "class='psp2'" : "";
@@ -1290,10 +1289,10 @@ repod.psdle = {
             var plus = "",
                 game = repod.psdle.gamelist[index],
                 id   = (game.index -1),
-                icon = (game.safe_icon) ? game.icon : game.api_icon;
+                icon = game.icon;
                 dialog = $("<div>", {
                             id: "dlQueueAsk",
-                            style: "background-image:url(\""+icon.replace(/(w|h)=\d+/g,"$1=400")+"\");"
+                            style: "background-image:url(\""+repod.psdle.table.icons.toSize(icon,400)+"\");"
                          });
 
             try { if (game.plus) { plus = $("#psdleplus").clone()[0].outerHTML+" "; } } catch(e) {}
@@ -1351,7 +1350,7 @@ repod.psdle = {
             switch (e) {
                 case "on":
                 default:
-                    $("#dlQueueAsk").draggable({handle:"#dlQAN",containment:"parent"});
+                    //$("#dlQueueAsk").draggable({handle:"#dlQAN",containment:"parent"});
 
                     $("#dlQueue_newbox").one("click", function() {
                         that.close();
@@ -1632,13 +1631,12 @@ repod.psdle = {
 };
 
 var a = setInterval(function(a){
-    function go() { clearInterval(repod.psdle.config.timerID); repod.psdle.init(); }
-    try {
-        if (chihiro.appReady === true) { go(); }
-    } catch (e) {
-        console.warn("Chihiro is not ready/available! Checking manually.");
-        if (!$("body").hasClass("show-wait") && !$("body").hasClass("lockdown")) { go(); }
+    if ((typeof chihiro !== "undefined" && chihiro.appReady === true) || (typeof Ember !== "undefined" && Ember.BOOTED))
+    { 
+        clearInterval(repod.psdle.config.timerID);
+        repod.psdle.init();
     }
+
 },500);
 repod.psdle.config = {"timerID":a};
 console.log("PSDLE | Ready.");
