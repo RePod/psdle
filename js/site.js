@@ -4,10 +4,13 @@ $(document).ready(function(){
   $("#method_holder .collapse.in").not(t).collapse("hide")
   $("#method_holder "+t).collapse("show")
   ga('send','event','Getting Started','click',$(this).text().trim())
- })
+ });
+ var ff57regex = /(?:rv:|Firefox\/)([\d\.]+)/i,
+ ff57 = (ff57regex.test(navigator.userAgent) && parseInt(navigator.userAgent.match(ff57regex).pop()) >= 57)
  var chrome=(window.chrome&&window.navigator.vendor==="Google Inc."),
+     ff=(typeof InstallTrigger !== undefined)
      mobile=(/Android|webOS|iPhone|iPad|iPod|BlackBerry|Opera Mini|mobile/ig.test(navigator.userAgent))
- if(chrome && !mobile){$("label[data-target=#method_extension]").click()}
+ if((chrome || (ff && ff57)) && !mobile){$("label[data-target=#method_extension]").click()}
  if (mobile){var a=$("#psdle_bit");a.text(a.text().replace(".js",".min.js"));}//min on mobile.
  $("#paq_more").click(function(){ga('send','event','P.A.Q.','click','More...')})
  $(".navbar-toggle").click(function(){ga('send','event','Navbar','click','Toggle')})
