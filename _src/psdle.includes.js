@@ -1,4 +1,4 @@
-/*! psdle 3.0.0 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-10 */
+/*! psdle 3.0.1 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-10 */
 var repod = {};
 repod.psdle = {
     autocomplete_cache : [],
@@ -469,7 +469,7 @@ repod.psdle = {
                         that.setIcon(index,temp.icons[last]);
                     })
                     .fail(function() {
-                        if (last >= temp.icons.length) { 
+                        if (last >= temp.icons.length) {
                             temp.safe_icon = true;
                             return 0;
                         }
@@ -1561,34 +1561,6 @@ repod.psdle = {
                 }
             });
         },
-        findBad: function() {
-            //Optimize eventually.
-            var bad = [];
-
-            $.each(repod.psdle.gamelist, function(index,obj) {
-                if (!obj.productID || obj.productID.length == 0
-                    || !obj.id || obj.id.length == 0
-                    || !obj.name || obj.name.length == 0
-                    || !obj.size || obj.size.length == 0
-                    || !obj.platform || obj.platform.length == 0
-                    || !obj.platformUsable || obj.platformUsable.length == 0
-                    || !obj.date) {
-                        bad.push(index);
-                    }
-            });
-
-            return bad;
-        },
-        makeBad: function() {
-            //Totally safe.
-
-            $.each(repod.psdle.gamelist, function(i,o) {
-                var num = Math.ceil(Math.random() * 10),
-                    victim = ["productID", "id", "name", "platform", "platformUsable", "date", "size", "", "", ""];
-
-                delete o[victim[num]];
-            });
-        },
         injectEntitlement: function(ENTITLEMENT) {
             //ENTITLEMENT should be valid Entitlement data or an array containing multiple.
             //This should be called before generating the list as it is appended to the end of the original Entitlements list.
@@ -1629,7 +1601,7 @@ repod.psdle = {
 
 var a = setInterval(function(a){
     if ((typeof chihiro !== "undefined" && chihiro.appReady === true) || (typeof Ember !== "undefined" && Ember.BOOTED))
-    { 
+    {
         clearInterval(repod.psdle.config.timerID);
         repod.psdle.init();
     }
