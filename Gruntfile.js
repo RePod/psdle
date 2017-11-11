@@ -126,7 +126,7 @@ module.exports = function(grunt) {
     });
     grunt.registerTask('deploy', 'Run release then deploy script.', function() {
         grunt.task.run([
-            'release',
+            'exec:firefox_clean',
             'chrome',
             'exec:deploy'
         ])
