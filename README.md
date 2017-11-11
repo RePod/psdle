@@ -22,7 +22,8 @@ The latest versions should end up in **the root** (except chrome zip), and shoul
 Notable Grunt tasks:
   - `grunt compile` compiles the base version in **_src/** including the min CSS and languages.  
   - `grunt` (default) is the same as `grunt compile`.
-  - `grunt release` generates all the release versions (base, min, user, chrome) into **the root**.
+  - `grunt release` generates all the release versions (base, min, user, chrome, firefox) into **the root** (except chrome).
+    - `grunt deploy` as a follow up to clean firefox add-on files, open chrome webstore, then sync to *gh-pages*.
   
 Releases end up in **the root** to ease in copying them to the *[gh-pages](//github.com/RePod/psdle/tree/gh-pages)* branch.
 
