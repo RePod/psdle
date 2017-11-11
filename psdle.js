@@ -79,10 +79,10 @@ repod.psdle = {
             last_search     : "",
             dlQueue         :
             {
-                base        : (valkAPI) ? "" : SonyChi_SessionManagerSingleton.getDLQueueBaseURL(),
-                ps4         : (valkAPI) ? "" : SonyChi_SessionManagerSingleton.getDLQueueURL2(),
-                status      : (valkAPI) ? "" : SonyChi_SessionManagerSingleton.getDLQueueStatusURL(),
-                status2     : (valkAPI) ? "" : SonyChi_SessionManagerSingleton.getDLQueueStatusURL2()
+                base: "/kamaji/api/chihiro/00_09_000/user/notification/download",
+                ps4: "/kamaji/api/chihiro/00_09_000/gateway/store/v1/users/me/notification/download",
+                status: "/kamaji/api/chihiro/00_09_000/user/notification/download/status",
+                status2: "/kamaji/api/chihiro/00_09_000/gateway/store/v1/users/me/notification/download/status"
             },
             use_queue       : false,
             active_consoles : {},
@@ -481,6 +481,7 @@ repod.psdle = {
                         that.validate(index,last);
                     });
                 } else {
+                    if (last == -1) return 0;
                     that.setIcon(index);
                 }
             },
@@ -1373,7 +1374,7 @@ repod.psdle = {
             }
         },
         open: function(index) {
-            repod.psdle.table.icons.validate(index);
+            repod.psdle.table.icons.validate(index,-1);
 
             if ($("#dlQueue_newbox").length) this.close();
 

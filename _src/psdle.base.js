@@ -78,10 +78,10 @@ repod.psdle = {
             last_search     : "",
             dlQueue         :
             {
-                base        : (valkAPI) ? "" : SonyChi_SessionManagerSingleton.getDLQueueBaseURL(),
-                ps4         : (valkAPI) ? "" : SonyChi_SessionManagerSingleton.getDLQueueURL2(),
-                status      : (valkAPI) ? "" : SonyChi_SessionManagerSingleton.getDLQueueStatusURL(),
-                status2     : (valkAPI) ? "" : SonyChi_SessionManagerSingleton.getDLQueueStatusURL2()
+                base: "/kamaji/api/chihiro/00_09_000/user/notification/download",
+                ps4: "/kamaji/api/chihiro/00_09_000/gateway/store/v1/users/me/notification/download",
+                status: "/kamaji/api/chihiro/00_09_000/user/notification/download/status",
+                status2: "/kamaji/api/chihiro/00_09_000/gateway/store/v1/users/me/notification/download/status"
             },
             use_queue       : false,
             active_consoles : {},
@@ -153,13 +153,7 @@ repod.psdle = {
             var a = "<div id='sub_container'><a href='//repod.github.io/psdle/' target='_blank'><img src='"+repod.psdle.config.logoBase64+"' style='display:inline-block;font-size:200%;font-weight:bold' alt='psdle' /></a></span>";
 
             if (mode == "progress") {
-                if (!that.config.valkyrie && that.config.use_queue) {
-                    var sys = {}, c = SonyChi_SessionManagerSingleton.getUserObject();
-                    if (c.hasActiveVita()) { sys.vita = 1; }
-                    if (c.hasActivePS3()) { sys.ps3 = 1; }
-                    if (c.hasActivePS4()) { sys.ps4 = 1; }
-                    that.config.active_consoles = sys;
-                }
+                that.config.active_consoles = {vita: 1, ps3: 1, ps4: 1};
                 a += "<br><div id='psdle_progressbar'><div id='psdle_bar'>&nbsp;</div></div><br><span id='psdle_status'>"+that.lang.startup.wait+"</span>";
             } else {
                 a += "<br><br>"+that.lang.startup.apis+"<br><br><span class='psdle_fancy_bar'>";
@@ -177,7 +171,7 @@ repod.psdle = {
                     $(document).on("click","#inject_lang",function() { that.debug.inject_lang(); });
                     $(document).on("click","#psdle_go, #gen_fake", function() {
                         that.config.deep_search = !$("#api_game").hasClass("toggled_off");
-                        //that.config.use_queue = !$("#api_queue").hasClass("toggled_off");
+                        that.config.use_queue = !$("#api_queue").hasClass("toggled_off");
                         that.config.check_tv = ($("#api_pstv").length) ? !$("#api_pstv").hasClass("toggled_off") : false;
                         that.genDisplay("progress",($(this).attr("id") == "gen_fake")?true:false);
                     });
@@ -197,7 +191,6 @@ repod.psdle = {
         console.log("PSDLE | Generating download list.");
 
         this.gamelist = [];
-
         var that         = this;
             entitlements = [];
 
@@ -208,8 +201,9 @@ repod.psdle = {
                 }
             }
         } else {
-            entitlements = gEntitlementManager.getAllEntitlements().concat(this.e_inject_cache);
+            entitlements = gEntitlementManager.getAllEntitlements();
         }
+        entitlements = entitlements.concat(this.e_inject_cache);
 
         $.each(entitlements, function(index,obj) {
             if (that.isValidContent(obj)) { //Determine if game content.
@@ -443,6 +437,7 @@ repod.psdle = {
         },
         margin: function() {
             $("#muh_table").animate({"margin-top": $("#search_options").outerHeight() - $("#sub_container").css("padding-top").replace("px","")+"px"});
+            this.icons.smartScroll();
         },
         icons: {
             select: function(type) {
@@ -473,13 +468,14 @@ repod.psdle = {
                         that.setIcon(index,temp.icons[last]);
                     })
                     .fail(function() {
-                        if (last >= temp.icons.length) { 
+                        if (last >= temp.icons.length) {
                             temp.safe_icon = true;
                             return 0;
                         }
                         that.validate(index,last);
                     });
                 } else {
+                    if (last == -1) return 0;
                     that.setIcon(index);
                 }
             },
@@ -1141,8 +1137,8 @@ repod.psdle = {
                     error: function() {}
                 });
             },
-            good: function(target) { $(target).animate({"background-color":"green"}); },
-            bad: function(target) { $(target).animate({"background-color":"red"}); },
+            good: function(target) { $(target).addClass('success'); },
+            bad: function(target) { $(target).addClass('failure'); },
             add: {
                 parse: function(index,sys,autoTarget) {
                     var that = this,
@@ -1264,7 +1260,7 @@ repod.psdle = {
                 can_vita = (can_vita) ? "class='psp2'" : "";
 
                 if (dlQueue) {
-                    temp += "<td>"+sys+"</td><td>"+dlQueue.to_sys.toUpperCase().replace("VITA","PS Vita")+"</td><td>"+val.prettySize+"</td><td>"+convertToNumericDateSlashes(convertStrToDateObj(dlQueue.createdTime))+"</td>"
+                    temp += "<td>"+sys+"</td><td>"+dlQueue.to_sys.toUpperCase().replace("VITA","PS Vita")+"</td><td>"+val.prettySize+"</td><td>"+dlQueue.createdTime+"</td>"//convertToNumericDateSlashes(convertStrToDateObj())
                 } else {
                     temp += "<td "+can_vita+">"+sys+((repod.psdle.config.check_tv && repod.psdle.id_cache[val.productID].tvcompat && sys == "PS Vita")?"<span class='psdletv'>TV</span>":"")+"</td><td>"+val.prettySize+"</td><td>"+val.prettyDate+"</td>";
                 }
@@ -1372,7 +1368,7 @@ repod.psdle = {
             }
         },
         open: function(index) {
-            repod.psdle.table.icons.validate(index);
+            repod.psdle.table.icons.validate(index,-1);
 
             if ($("#dlQueue_newbox").length) this.close();
 
@@ -1632,7 +1628,7 @@ repod.psdle = {
 
 var a = setInterval(function(a){
     if ((typeof chihiro !== "undefined" && chihiro.appReady === true) || (typeof Ember !== "undefined" && Ember.BOOTED))
-    { 
+    {
         clearInterval(repod.psdle.config.timerID);
         repod.psdle.init();
     }

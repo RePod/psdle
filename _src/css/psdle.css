@@ -254,7 +254,9 @@ span[id^=system_] {
     background-color: rgba(33, 133, 244, .8);
     border-radius: 10px;
     padding: 2px;
-    margin: 0 10px
+    margin: 0 10px;
+    box-shadow: 0 0 30px #000;
+    transition: background-color 0.5s 
 }
 #dlQAStat {
     border-bottom-left-radius: 20px;
@@ -266,6 +268,13 @@ span[id^=system_] {
     padding: 0 15px 0 10px;
     float: left
 }
+.success {
+    background-color: #237423 !important;
+}
+.failure {
+    background-color: #a43636 !important;
+}
+
 /*Newbox Extended*/
 
 #dlQueueExt {
