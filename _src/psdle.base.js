@@ -62,10 +62,14 @@ repod.psdle = {
             l2 = l.split("-"),
             valkAPI = (typeof window.valkyrie == "object");
 
-        valkAPI && alert("PSDLE detected the new Valkyrie store API.\nSupport for this is currently experimental!\n\nFeatures like Catalog, autocomplete, queue, PS+ filtering, and even list detection may not work 100% if at all. Exporting is recommended to use with other database software for now. Entitlement fetching is very broad so you may see entitlements for multiple accounts if you use them.\n\nAny bugs should be reported here, along with region:\nhttps://github.com/RePod/psdle/issues/40")
-
         this.config = {
             valkyrie        : valkAPI,
+            valkyrieInstance: require("valkyrie-storefront/app").default.create().__container__
+        }
+
+        //valkAPI && alert("PSDLE detected the new Valkyrie store API.\nSupport for this is currently experimental!\nAny issues should be reported here, along with region:\nhttps://github.com/RePod/psdle/issues/40")
+
+        this.config = $.extend(this.config,{
             logoBase64      : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAAAfCAYAAAEO89r4AAABaUlEQVRoge2XS27CQAyGPSVSUVErdqzpMqveiRvALnu67Gl6D+gFuAKIPgQrs0o1TJSJJ7aJBvnbRXE8f357XoCIGyTiEBFf33+BwgMpyg/eVRNSsENEpAQWMa27agL1e7JWcmCSVSG+tF6jp1D4o/qkqN8un+Bl7JpJUxP5vH38XT2T655CtEf6olKoaFLq3ElK2heRlgq//U/KKVj4rcrvs+Y+h7Z1ow2Vv9eg6A5p53MxhnI2an0vWSmW0HI2EhUTI5vSN4T2Xem0ycZRh4h7AJgOLaQLlf1ega2br3/IQlMW6TA2dYEPc2XToyZUGtbOdMs1lyX0lqeubEpvQqVp9GhsghxPOpvY8yPA1yo+MRtCh7iWfJ/j49rOpEE2QnM55h1U7/Wcox0nb+y9lqY6dzYtmgtmqDBmqDBmqDCDGcq5Ew5xCqViHSqMGSqMGSqMGSpMp6H3unloYR0qjBkqjBkqjBkqzAUtBKxj5lT3GAAAAABJRU5ErkJggg==",
             game_page       : window.location.origin + "/" +(valkAPI ? l+"/product/" : "#!/" + l + "/cid="),
             game_api        : "https://store.playstation.com/store/api/chihiro/00_09_000/container/"+l2.slice(-1)+"/"+l2[0]+"/999/",
@@ -95,7 +99,7 @@ repod.psdle = {
             },
             iconSize        : 42,
             mobile          : false
-        };
+        });
 
         console.log("PSDLE | Config set.");
 
@@ -113,6 +117,7 @@ repod.psdle = {
         this.determineLanguage(this.config.language,true);
         this.injectCSS();
 
+        //to-do re-implement this
         if (!this.config.valkyrie) { SonyChi_SessionManagerSingleton.getUserDevices() }
 
         this.genStartup();
@@ -153,7 +158,7 @@ repod.psdle = {
             var a = "<div id='sub_container'><a href='//repod.github.io/psdle/' target='_blank'><img src='"+repod.psdle.config.logoBase64+"' style='display:inline-block;font-size:200%;font-weight:bold' alt='psdle' /></a></span>";
 
             if (mode == "progress") {
-                that.config.active_consoles = {vita: 1, ps3: 1, ps4: 1};
+                that.config.active_consoles = {vita: 1, ps3: 1, ps4: 1}; //to-do: re-implement
                 a += "<br><div id='psdle_progressbar'><div id='psdle_bar'>&nbsp;</div></div><br><span id='psdle_status'>"+that.lang.startup.wait+"</span>";
             } else {
                 a += "<br><br>"+that.lang.startup.apis+"<br><br><span class='psdle_fancy_bar'>";
@@ -192,18 +197,10 @@ repod.psdle = {
 
         this.gamelist = [];
         var that         = this;
-            entitlements = [];
+            entitlements = [],
+            i18n = this.config.valkyrieInstance.lookup('service:i18n');
 
-        if (this.config.valkyrie) {
-            for (i in localStorage) {
-                if (/^entitlements_/.test(i)) {
-                    entitlements = entitlements.concat(JSON.parse(localStorage[i])); //Bad if multiple accounts in localStorage!
-                }
-            }
-        } else {
-            entitlements = gEntitlementManager.getAllEntitlements();
-        }
-        entitlements = entitlements.concat(this.e_inject_cache);
+        entitlements = JSON.parse(localStorage["entitlements_0_"+(this.config.valkyrieInstance.lookup('service:kamaji/session').sessionModel.accountId)+"_e1-np"]).concat(this.e_inject_cache);
 
         $.each(entitlements, function(index,obj) {
             if (that.isValidContent(obj)) { //Determine if game content.
@@ -238,23 +235,19 @@ repod.psdle = {
                 }
 
                 //Post-processing.
-                var ps = "";
-                if (that.config.valkyrie) {
-                    var t = require("valkyrie-storefront/utils/download").default.getFormattedFileSize(temp.size);
-                    ps = t.value+t.unit
-                } else {
-                    ps = formatFileSizeDisplayStr(temp.size)
-                }
-
-                temp.prettySize     = (temp.size === 0) ? "N/A" : ps;
-                temp.api_icon       = temp.api_icon;
                 temp.icons          = [
                     that.config.game_api+temp.id+"/image",
                     that.config.game_api+temp.productID+"/image",
                     temp.api_icon
                 ];
+
                 temp.date           = obj.active_date;
-                temp.prettyDate     = (that.config.valkyrie) ? temp.date : convertToNumericDateSlashes(convertStrToDateObj(temp.date));
+                var tempDate = new Date(temp.date);
+                    toPrettyDate = {mm:tempDate.getMonth()+1, dd:tempDate.getDate(), yyyy:tempDate.getFullYear()}
+                temp.prettyDate     = i18n.t("c.format.numericDateSlashes",toPrettyDate)
+
+                var tempSize        = require("valkyrie-storefront/utils/download").default.getFormattedFileSize(temp.size);
+                temp.prettySize     = (temp.size === 0) ? "N/A" : i18n.t("c.page.details.drmDetails."+tempSize.unit,{val: tempSize.value});
                 temp.url            = repod.psdle.config.game_page + temp.productID;
                 temp.platformUsable = temp.platform.slice(0);
 
@@ -288,12 +281,12 @@ repod.psdle = {
     determineSystem: function(HASH) {
         var that = this,
             sys = [],
-            K = (this.config.valkyrie) ? require("valkyrie-storefront/utils/const").default.KamajiPlatformFlags : KamajiPlatformFlags,
-            K2 = (this.config.valkyrie) ? require("valkyrie-storefront/utils/const").default.KamajiPlatforms : KamajiPlatforms,
-            _K = (this.config.valkyrie) ? K : {"1":K.PS3,"3":K.PSP,"8":K.VITA};
+            K = require("valkyrie-storefront/utils/const").default.KamajiPlatformFlags,
+            K2 = require("valkyrie-storefront/utils/const").default.KamajiPlatforms,
+            _K = K
 
         $.each(_K, function (t,u) {
-            var target = (that.config.valkyrie) ? K2[t] : K2[Number(t)];
+            var target = K2[t];
             0 !== ((t == "1") ? (HASH >>> 1 & u >>> 1) : (HASH & u)) && sys.push(target);
         });
 
@@ -450,32 +443,35 @@ repod.psdle = {
             },
             toSize: function(url,size) {
                 size = (size || repod.psdle.config.iconSize || 42);
-                return url + "?w=" + size + "&h=" + size
+                var suf = /\?w=\d+&h=\d+$/.test(url) ? "" : "?w=" + size + "&h=" + size
+                return url + suf;
             },
-            validate: function(index,last) {
+            validate: function(index) {
                 var that = this,
                     index = Number(index),
                     temp  = repod.psdle.gamelist[index];
 
                 if (!temp.safe_icon) {
                     var i = repod.psdle.config.iconSize,
-                        last = (last >= 0 ? last : -1)+1,
-                        url = this.toSize(temp.icons[last]);
+                        u = temp.icons.shift(),
+                        url = this.toSize(u);
+
+                    if (u == undefined) {
+                        temp.safe_icon = true;
+                        temp.icon = temp.api_icon;
+                        that.setIcon(index);
+                        return 0;
+                    }
 
                     $.get(url)
                     .success(function() {
-                        $.extend(repod.psdle.gamelist[index],{safe_icon: true, icon: temp.icons[last]});
-                        that.setIcon(index,temp.icons[last]);
+                        $.extend(repod.psdle.gamelist[index],{safe_icon: true, icon: u});
+                        that.setIcon(index);
                     })
-                    .fail(function() {
-                        if (last >= temp.icons.length) {
-                            temp.safe_icon = true;
-                            return 0;
-                        }
-                        that.validate(index,last);
+                    .fail(function(e) {
+                        that.validate(index);
                     });
                 } else {
-                    if (last == -1) return 0;
                     that.setIcon(index);
                 }
             },
@@ -1274,6 +1270,9 @@ repod.psdle = {
                 $.each(repod.psdle.gamelist_cur, function(b,c) {
                     a += c.size;
                 });
+
+                var tempSize = require("valkyrie-storefront/utils/download").default.getFormattedFileSize(a);
+                a = i18n.t("c.page.details.drmDetails."+tempSize.unit,{val: tempSize.value});
 
                 return "<tr id='psdle_totals'><td /><td /><td /><td>"+a+"</td><td /></tr>";
                 //formatFileSizeDisplayStr(a)
