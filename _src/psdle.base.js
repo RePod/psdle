@@ -244,10 +244,10 @@ repod.psdle = {
                 temp.date           = obj.active_date;
                 var tempDate = new Date(temp.date);
                     toPrettyDate = {mm:tempDate.getMonth()+1, dd:tempDate.getDate(), yyyy:tempDate.getFullYear()}
-                temp.prettyDate     = i18n.t("c.format.numericDateSlashes",toPrettyDate)
+                temp.prettyDate     = i18n.t("c.format.numericDateSlashes",toPrettyDate).string
 
                 var tempSize        = require("valkyrie-storefront/utils/download").default.getFormattedFileSize(temp.size);
-                temp.prettySize     = (temp.size === 0) ? "N/A" : i18n.t("c.page.details.drmDetails."+tempSize.unit,{val: tempSize.value});
+                temp.prettySize     = (temp.size === 0) ? "N/A" : i18n.t("c.page.details.drmDetails."+tempSize.unit,{val: tempSize.value}).string;
                 temp.url            = repod.psdle.config.game_page + temp.productID;
                 temp.platformUsable = temp.platform.slice(0);
 
@@ -261,11 +261,13 @@ repod.psdle = {
         });
         this.gamelist.sort(function(a,b) { return (a.date > b.date)?-1:(a.date < b.date)?1:0 });
 
-        $.each(this.pid_cache, function(i,v) {
+        $.each(this.pid_cache, function (i,v) {
             if (v > 1) {
-                that.game_api.queue("pid_cache",i)
+                //that.game_api.queue("pid_cache",i)
+            } else {
+                delete that.pid_cache[i]
             }
-        });
+        })
 
         $.each(this.gamelist,function(a,b) {
             that.gamelist[a].index = a+1;
@@ -935,136 +937,90 @@ repod.psdle = {
                 this.batch.unshift(a);
             }
         },
+        ran: false,
         run: function() {
-            var that = this;
+            var that = this,
+                catalog = repod.psdle.config.valkyrieInstance.lookup('service:susuwatari');
 
-            if (this.batch.length > 0) {
-                var a = this.batch.pop();
-                $.getJSON(repod.psdle.config.game_api+a.pid)
-                .success(function(data) {
-                    that.process(a.index,data);
-                })
-                .fail(function() {
-                    if (a.index !== "pid_cache") {
-                        if (repod.psdle.gamelist[a.index]) {
-                            var pid = repod.psdle.gamelist[a.index].productID;
-                            if (repod.psdle.pid_cache[pid] && pid !== a.productID) {
-                                var temp = $.extend({}, repod.psdle.pid_cache[pid]);
-                                $.extend(temp, repod.psdle.gamelist[a.index]);
-                                repod.psdle.gamelist[a.index] = temp;
-                            } else {
-                                repod.psdle.type_cache.unknown = true;
-                            }
-                            repod.psdle.type_cache.unknown = true;
-                        }
+            if (this.batch.length == 0) {
+                if (!this.ran) {
+                    this.ran = true;
+                    repod.psdle.table.gen();
+                }
+                return 0;
+            }
+
+            this.batch.splice(0,1).forEach(function(i, e) {
+                catalog.resolve(i.pid)
+                .then(function (data) {
+                    if (data.response && data.response.status == 404) return 0;
+
+                    var parse = that.parse(data),
+                        cached = repod.psdle.pid_cache.hasOwnProperty(data.id)
+                    repod.psdle.type_cache[parse.category] = true;
+
+                    if (cached) {
+                        repod.psdle.pid_cache[data.id] = parse;
                     }
 
-                    that.run();
-                });
-            } else {
-                repod.psdle.table.gen();
-            }
+                    //BAD WITH PROMISES 101, this is probably a huge performance hit
+                    var target = repod.psdle.gamelist.find(function (i) { return i.id == data.id });
+
+                    if (target.hasOwnProperty("index")) {
+                        $.extend(repod.psdle.gamelist[target.index-1], parse);
+                    }
+                })
+                .catch(function(e){ repod.psdle.type_cache["unknown"] = true; })
+                .then(function() { that.updateBar(); that.run() });
+            });
         },
-        process: function(index,data) {
-            var parse = this.parse(data),
+        updateBar: function() {
+            var that  = this,
                 l     = Math.abs(repod.psdle.gamelist.length - this.batch.length), r = repod.psdle.gamelist.length,
                 w     = $('#psdle_bar').width(), pW = $('#psdle_bar').parent().width(), p = Math.round(100*w/pW), q = Math.round(100*l/r);
 
             if (q > p) { $("#psdle_progressbar > #psdle_bar").stop().animate({"width":q+"%"}); }
-            $("#psdle_status").text(l+" / "+r);
-
-            repod.psdle.type_cache[parse.category] = true;
-
-            if (index == "pid_cache") {
-                repod.psdle.pid_cache[data.id] = parse;
-            }
-            else {
-                index--; $.extend(repod.psdle.gamelist[index],parse);
-            }
-
-            this.run();
+            $("#psdle_status").text(l+" / "+r).click(that.run());
         },
         parse: function(data) {
             var extend = {},
-                type   = "unknown",
-                sys,
-                r      = /^(PS\d+)_\w+\+?$/i;
+                regexClassic = /^(PS\d+)_\w+\+?$/i;
 
-            if (data.default_sku && data.default_sku.entitlements.length == 1) {
-                if (data.default_sku.display_price) { extend.displayPrice = data.default_sku.display_price; }
-                if (data.metadata) {
-                    if (data.metadata.secondary_classification && !!data.metadata.secondary_classification.values[0].match(r)) {
-                        sys = data.metadata.secondary_classification.values[0].match(r).pop();
-                    }
-                    //else if (!!data.metadata.game_subtype.values[0].match(r)) { sys = data.metadata.game_subtype.values[0].match(r).pop(); }
-                    else if (data.metadata.primary_classification && !!data.metadata.primary_classification.values[0].match(r)) {
-                        sys = data.metadata.primary_classification.values[0].match(r).pop();
-                    }
-                    else if (!!data.metadata.playable_platform) {
-                        sys = [];
-
-                        $.each(data.metadata.playable_platform.values,function(i,val) {
-                            sys.push(val.replace(/[^\w\d ]/g,""))
-                        });
-                    }
+            $.each([data.secondaryClassification, data.primaryClassification], function (i,v) {
+                if (regexClassic.test(v)) {
+                    extend.platform = repod.psdle.safeGuessSystem(v.match(regexClassic).pop());
+                    return false;
                 }
+            });
 
-                if (sys) {
-                    extend.platform = repod.psdle.safeGuessSystem(sys);
-                }
-            }
+            if (data.mediaList) {
+                extend.images = [];
+                extend.videos = [];
 
-            if (data.top_category == "tumbler_index") {
-                //We must go deeper.
-                if (data.metadata.secondary_classification && data.metadata.secondary_classification.values[0] == "ADD-ON") { type = "add_on"; }
-                else { type = "unknown"; }
-            } else {
-                /*data.game_contentType is specific type (like "level", "character", "music track") instead of broad type (like "add-on").
-                  Enabling it would allow finer precision of filtering, at the cost of a LOT of filters. It can also be "PS1 CLASSICS" or "PS2 CLASSICS",
-                  in a sense rendering the system filter null (although not really since then it could be filtered by platform). The good thing is
-                  simply enabling this will work instantly without needing additional code modifications.*/
-                type = (((repod.psdle.config.specificCategories)?data.game_contentType:false) || data.top_category || "unknown");
-            }
+                var regexImg = /\.(png|jpg)$/ig,
+                    regexVid = /\.mp4$/ig
+                    media = []
+                    .concat(data.mediaList.screenshots)
+                    .concat(data.mediaList.promo.images)
+                    .concat(data.mediaList.promo.videos)
+                    .concat(data.mediaList.screenshots)
 
-            extend.category = type;
-
-            if (data.star_rating && data.star_rating.score) { extend.rating = data.star_rating.score; }
-            if (data.promomedia) {
-                extend.images = [], extend.videos = [];
-                $.each(data.promomedia, function(i,v) {
-                    if (v.materials) {
-                        $.each(v.materials, function(index, value) {
-                            if (value.urls && value.urls[0]) {
-                                var a = value.urls[0].url;
-
-                                if (/\.(png|jpg)/ig.test(a)) { extend.images.push(a); }
-                                else if (/\.mp4/ig.test(a.split("?")[0])) { extend.videos.push(a); }
-                            }
-                        });
-                    } else {
-                        //Some promomedia entries don't have a materials section, just a direct URL.
-                        var a = v.url;
-
-                        if (/\.(png|jpg)/ig.test(a)) { extend.images.push(a); }
-                        else if (/\.mp4/ig.test(a.split("?")[0])) { extend.videos.push(a); }
-                    }
+                $.each(media, function(i,v) {
+                    if (regexImg.test(v.url)) { extend.images.push(v.url); }
+                    else if (regexVid.test(v.url.split("?")[0])) { extend.videos.push(v.url); }
                 });
-            }
-            if (data.metadata) { extend.metadata = data.metadata; }
-            if (data.long_desc) { extend.description = data.long_desc; }
-            if (data.title_name) { extend.baseGame = data.title_name; }
-            if (data.provider_name) { extend.publisher = data.provider_name; }
-            if (data.release_date) { extend.releaseDate = data.release_date; } //convertToNumericDateSlashes(convertStrToDateObj(
-            if (data.age_limit && data.content_rating) { extend.ageLimit = data.content_rating.rating_system + " " + data.age_limit; }
 
-            if (data.gameContentTypesList) {
-                $.each(data.gameContentTypesList, function (index, val) {
-                    if (val.name == "PS Now" || val.key == "cloud") {
-                        extend.psNow = true;
-                        return false;
-                    }
-                });
             }
+
+            extend.baseGame = (data.name || undefined)
+            extend.category = (data.topCategory || "unknown");
+            extend.description = (data.longDescription || undefined)
+            extend.displayPrice = ((data.mbSkus && data.mbSkus[0] && data.mbSkus[0].display_price) || undefined)
+            //extend.metadata = (data.metadata || undefined)
+            extend.publisher = (data.providerName || undefined)
+            extend.rating = ((data.starRating && data.starRating.score) || undefined)
+            extend.releaseDate = (data.releaseDate || undefined) //TO-DO: prettify?
+            //if (data.age_limit && data.content_rating) { extend.ageLimit = data.content_rating.rating_system + " " + data.age_limit; }
 
             return extend;
         }
