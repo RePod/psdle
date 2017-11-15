@@ -90,8 +90,6 @@ repod.psdle = {
             use_queue       : false,
             active_consoles : {},
             tag_line        : "<br><a class='psdle_tiny_link' href='//repod.github.io/psdle#support' target='_blank'>Support PSDLE</a> - <a class='psdle_tiny_link' href='//repod.github.io/psdle' target='_blank'>Website</a> - <a class='psdle_tiny_link' href='//github.com/RePod/psdle' target='_blank'>Repository</a> - <a class='psdle_tiny_link' href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation' target='_blank'>Submit Bug/Translation</a>",
-            switch_align    : "center",
-            switch_color    : "#85C107",
             has_plus        : false,
             check_tv        : false,
             tv_url          : {
@@ -298,7 +296,7 @@ repod.psdle = {
         var safe = !0;
 
         if (repod.psdle.config.check_tv)    { safe = !1; repod.psdle.tv.init(); }
-        if (repod.psdle.config.deep_search) { safe = !1; this.game_api.run(); this.game_api.run(); this.game_api.run(); this.game_api.run(); }
+        if (repod.psdle.config.deep_search) { safe = !1; this.game_api.run(); }
         if (safe)                           { this.table.gen(); }
     },
     isValidContent: function(obj) {
@@ -371,7 +369,9 @@ repod.psdle = {
             repod.psdle.config.lastsort_r = false;
 
             $("#muh_games_container").css({"position":"absolute"});
-            $("#sub_container").html(repod.psdle.genSearchOptions()).append("<div class='psdle_table'><table><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+repod.psdle.lang.columns.platform+"</th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table></div><br>"+repod.psdle.config.tag_line);
+            $("#sub_container").html("")
+            .append(this.header.gen())
+            .append("<div class='psdle_table'><table><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+repod.psdle.lang.columns.platform+"</th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table></div><br>"+repod.psdle.config.tag_line);
 
             this.regen(true);
             this.bindSearch();
@@ -381,6 +381,97 @@ repod.psdle = {
             $("#muh_games_container").slideDown("slow").promise().done(function() {
                 that.margin();
             });
+        },
+        header: {
+            gen: function() {
+                return $("<div />", {class: "search main container"})
+                    .append(this.searchOptions())
+                    .append(this.stats())
+            },
+            searchOptions: function(dlQueue) {
+                var r = $("<div />", {class: "search options container"}),
+                    lang = repod.psdle.lang;
+
+                if (!dlQueue) {
+                    r.append($("<span />", {class: "psdle_fancy_bar"})
+                        .append($("<span />", {id: "export_view", text: lang.labels.exportView}))
+                    )
+                }
+
+                var systems = $("<span />", {class: "psdle_fancy_bar search options system"}),
+                    order = ["ps1","ps2","ps3","ps4","psp","vita"];
+                $.each(order, function (i,v) {
+                    if (repod.psdle.sys_cache.hasOwnProperty(v)) {
+                        $("<span />", {id: "system_"+v, text: repod.psdle.sys_cache[v]}).appendTo(systems);
+                    }
+                });
+                systems.appendTo(r);
+
+                if (repod.psdle.config.use_queue) {
+                    var nid = (dlQueue) ? "dl_list" : "dl_queue",
+                        tr = lang.strings[(dlQueue) ? "dlList" : "dlQueue"];
+
+                    $("<span />", {class: "psdle_fancy_but", id: nid, text: tr}).appendTo(r);
+                }
+
+                if (!dlQueue && repod.psdle.config.deep_search) {
+                    var categories = $("<div />", {class: "psdle_fancy_bar search options categories"}),
+                        order = ["downloadable_game","demo","add_on","avatar","application","theme","unknown"];
+
+                    //TO-DO: sort by order
+                    $.each(repod.psdle.type_cache, function (key) {
+                        console.log("type_cache",key)
+                        $("<span />", {id: "filter_"+key, text: (lang.categories[key] || key)}).appendTo(categories);
+                    });
+
+                    categories.appendTo(r);
+                }
+
+                if (!dlQueue) {
+                    var textSearch = $("<div />"),
+                        sel = $("<select />", {id: "psdle_search_select", class: "search input select"}),
+                        keys = {
+                            "name": lang.columns.name,
+                            "base": "Base Game",
+                            "publisher": "Publisher",
+                            "id": "Item ID",
+                            "pid": "Product ID"
+                        };
+
+                    if (repod.psdle.config.deep_search) {
+                        keys["genre"] = "Genre";
+                        // + Metadata, description
+                    }
+
+                    $.each(keys, function (i, v) {
+                        $("<option />", {value: i, text: v}).appendTo(sel);
+                    })
+
+                    sel.appendTo(textSearch);
+                    $("<input />", {id: "psdle_search_text", class: "search input text", type: "text", placeholder: lang.strings.search}).appendTo(textSearch);
+
+                    textSearch.appendTo(r);
+                }
+
+                return r;
+            },
+            stats: function() {
+                var current = $("<span />", {class: 'search stats current'})[0].outerHTML,
+                    total = $("<span />", {class: 'search stats total'})[0].outerHTML,
+                    out = $("<div>"+current+" / "+total+"</div>", {class: "psdleSearchStats"});
+
+                var psswitch = $("<input />", {type: "checkbox", class: "psdlePlusToggle", readonly: true, title: repod.psdle.lang.strings.plus})
+                .prop({"indeterminate": true})
+                .click(function() {
+                    if (this.readOnly) this.checked=this.readOnly=false;
+                    else if (!this.checked) this.readOnly=this.indeterminate=true;
+
+                    repod.psdle.table.regen(true);
+                })
+                psswitch.appendTo(out);
+
+                return out;
+            }
         },
         regen: function(a) {
             if (a == true) {
@@ -393,6 +484,7 @@ repod.psdle = {
                 repod.psdle.exportList.delimited.destroy();
                 if (!repod.psdle.config.valkyrie) { repod.psdle.autocomplete.bind(); }
 
+                
                 $.each(repod.psdle.gamelist_cur,function (a,val) {
                     if (val.plus) {
                         plus++;
@@ -400,11 +492,10 @@ repod.psdle = {
                     temp += repod.psdle.table_utils.gen.row(val);
                 });
                 temp += repod.psdle.table_utils.gen.totals();
-
-                var psswitch = (repod.psdle.config.has_plus) ? " (<div id='slider' title='"+repod.psdle.lang.strings.plus+"'><div class='handle_container' style='text-align:"+repod.psdle.config.switch_align+"'><div class='handle' style='background-color:"+repod.psdle.config.switch_color+"'/></div></div> <div id='psdleplus' style='display:inline-block' /> "+plus+")" : "";
-
-                $("#table_stats").html(repod.psdle.gamelist_cur.length+psswitch+" / "+repod.psdle.gamelist.length);
-                if (!repod.psdle.config.valkyrie && $("#slider").length > 0) { $("#slider").tooltip().one("click",function() { that.plus_switch(); }); }
+                
+                $(".search.stats.current").text(repod.psdle.gamelist_cur.length)
+                $(".search.stats.total").text(repod.psdle.gamelist.length)
+                
                 if (!repod.psdle.config.valkyrie) {
                     if (repod.psdle.config.mobile) {
                         $("#psdleplus").html("<img class='psPlusIcon' src='mobile/img/furniture/psplusicon-small.a2ec8f23.png'>");
@@ -418,20 +509,10 @@ repod.psdle = {
             }
         },
         plus_switch: function() {
-            var a, b;
-
-            switch ($(".handle_container").css("text-align")) {
-                case "left": default: a = "center"; b = "#85C107"; break;
-                case "center": a = "right"; b = "#2185f4"; break;
-                case "right": a = "left"; b = "#F6573A"; break;
-            }
-            repod.psdle.config.switch_align = a;
-            repod.psdle.config.switch_color = b;
-            if (!repod.psdle.config.valkyrie) { $("#slider").tooltip(); }
             this.regen(true);
         },
         margin: function() {
-            $(".psdle_table").animate({"margin-top": $("#search_options").outerHeight() - $("#sub_container").css("padding-top").replace("px","")+"px"});
+            $(".psdle_table").animate({"margin-top": $(".search.main.container").outerHeight() - $("#sub_container").css("padding-top").replace("px","")+"px"});
             this.icons.smartScroll();
         },
         icons: {
@@ -580,9 +661,11 @@ repod.psdle = {
                     }
                 }
 
-                switch (repod.psdle.config.switch_align) {
-                    case "left": if (val.plus) { a = false } break;
-                    case "right": if (!val.plus) { a = false; } break;
+                if ($(".psdlePlusToggle").prop("checked")) {
+                    a = val.plus == true;
+                } else if ($(".psdlePlusToggle").prop("indeterminate")) {
+                } else if (!$(".psdlePlusToggle").prop("checked")) {
+                    a = !(val.plus == true);
                 }
 
                 if (a == true) {
@@ -598,59 +681,6 @@ repod.psdle = {
         });
         that.config.last_search = search;
         this.sortGamelist("noreverse");
-    },
-    genSearchOptions: function(dlQueue) {
-        //TO-DO: Not this. Make scalable.
-        var that = this;
-
-        //Search options.
-        var temp = "<div id='search_options'>";
-
-        if (!dlQueue) { temp += "<span><span class='psdle_fancy_bar'><span id='export_view'>"+this.lang.labels.exportView+"</span></span> "; }
-        temp +=        "<span class='psdle_fancy_bar'>";
-
-        var order = ["ps1","ps2","ps3","ps4","psp","vita"],
-            out = [];
-
-        out[order.length +1] = "";
-        $.each(this.sys_cache, function(i,v) {
-            if ($.inArray(i,order) >= 0) {
-                out[$.inArray(i,order)] = "<span id='system_"+i+"'>"+v+"</span>";
-            }
-        });
-        temp += out.join("")+"</span>";
-
-        if (this.config.use_queue) {
-            if (!dlQueue) {
-                temp += " <span class='psdle_fancy_but' id='dl_queue'>"+this.lang.strings.dlQueue+"</span>";
-            } else {
-                temp += " <span><span class='psdle_fancy_but' id='dl_list'>"+this.lang.strings.dlList+"</span></span>";
-            }
-        }
-        temp += "<br>";
-        if (this.config.deep_search && !dlQueue) {
-            temp +=    "<span class='psdle_fancy_bar'>";
-            var order = ["downloadable_game","demo","add_on","avatar","application","theme","unknown"], out = []; out[order.length +1] = "";
-            $.each(this.type_cache, function(key) {
-                var line = "<span id='filter_"+key+"'>"+((that.lang.categories[key]) ? that.lang.categories[key] : key)+"</span>";
-                if ($.inArray(key,order) >= 0) { out[$.inArray(key,order)] = line} else { out.push(line); }
-            });
-            temp += out.join("")+"</span><br>";
-        }
-        if (!dlQueue) {
-            //I did this HTML generation the lazy way.
-            var select = "<select id='psdle_search_select'><option value='name'>"+repod.psdle.lang.columns.name+"</option><option value='base'>Base Game</option><option value='publisher'>Publisher</option><option value='id'>Item ID</option><option value='pid'>Product ID</option>"; //<option value="date">'+repod.psdle.lang.columns.date+'</option>'
-            if (this.config.deep_search) { //Future Catalog searching.
-                select += "<option value='genre'>Genre</option>"; //item.metadata.genre.values
-                //select += '<option value="desc">Description</option>'; //item.description
-            }
-            select += "</select>";
-            temp += "<div>"+select+"<input type='text' id='psdle_search_text' placeholder='"+this.lang.strings.search+"' /></div>";
-        }
-        //temp += "<br>";
-        temp += "<span id='table_stats'></span></div>";
-
-        return temp;
     },
     sortGamelist: function(sort_method) {
         var that = this,
@@ -943,10 +973,12 @@ repod.psdle = {
                 catalog = repod.psdle.config.valkyrieInstance.lookup('service:susuwatari');
 
             if (this.batch.length == 0) {
+                /*console.log('run called!',repod.psdle.type_cache);
                 if (!this.ran) {
                     this.ran = true;
+                    console.log('table gen!', repod.psdle.type_cache);
                     repod.psdle.table.gen();
-                }
+                }*/
                 return 0;
             }
 
@@ -956,7 +988,7 @@ repod.psdle = {
                     if (data.response && data.response.status == 404) return 0;
 
                     var parse = that.parse(data),
-                        cached = repod.psdle.pid_cache.hasOwnProperty(data.id)
+                        cached = repod.psdle.pid_cache.hasOwnProperty(data.id);
                     repod.psdle.type_cache[parse.category] = true;
 
                     if (cached) {
@@ -971,13 +1003,22 @@ repod.psdle = {
                     }
                 })
                 .catch(function(e){ repod.psdle.type_cache["unknown"] = true; })
-                .then(function() { that.updateBar(); that.run() });
+                .then(function() { that.run(); that.updateBar(); });
             });
         },
+        called: 0,
         updateBar: function() {
+            this.called++;
+
             var that  = this,
-                l     = Math.abs(repod.psdle.gamelist.length - this.batch.length), r = repod.psdle.gamelist.length,
-                w     = $('#psdle_bar').width(), pW = $('#psdle_bar').parent().width(), p = Math.round(100*w/pW), q = Math.round(100*l/r);
+                l     = this.called, //Math.abs(repod.psdle.gamelist.length - this.batch.length),
+                r     = repod.psdle.gamelist.length,
+                w     = $('#psdle_bar').width(),
+                pW    = $('#psdle_bar').parent().width(),
+                p     = Math.round(100*w/pW),
+                q     = Math.round(100*l/r);
+                
+            if (100*l/r == 100) { repod.psdle.table.gen(); } //Ultimate in promise abuse technology.
 
             if (q > p) { $("#psdle_progressbar > #psdle_bar").stop().animate({"width":q+"%"}); }
             $("#psdle_status").text(l+" / "+r).click(that.run());
@@ -1061,9 +1102,9 @@ repod.psdle = {
                     Kamaji = repod.psdle.config.valkyrieInstance.lookup('service:kamaji/downloads'),
                     KPlatforms = require("valkyrie-storefront/utils/const").default.KamajiPlatforms,
                     id = repod.psdle.gamelist[index].id;
-                
+
                 this.recordQueue.push({"sys":sys, "id":id})
-                
+
                 switch (sys) {
                     case 'ps4':
                         Kamaji.startPS4Download(id)

@@ -91,8 +91,6 @@ repod.psdle = {
             use_queue       : false,
             active_consoles : {},
             tag_line        : "<br><a class='psdle_tiny_link' href='//repod.github.io/psdle#support' target='_blank'>Support PSDLE</a> - <a class='psdle_tiny_link' href='//repod.github.io/psdle' target='_blank'>Website</a> - <a class='psdle_tiny_link' href='//github.com/RePod/psdle' target='_blank'>Repository</a> - <a class='psdle_tiny_link' href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation' target='_blank'>Submit Bug/Translation</a>",
-            switch_align    : "center",
-            switch_color    : "#85C107",
             has_plus        : false,
             check_tv        : false,
             tv_url          : {
@@ -299,7 +297,7 @@ repod.psdle = {
         var safe = !0;
 
         if (repod.psdle.config.check_tv)    { safe = !1; repod.psdle.tv.init(); }
-        if (repod.psdle.config.deep_search) { safe = !1; this.game_api.run(); this.game_api.run(); this.game_api.run(); this.game_api.run(); }
+        if (repod.psdle.config.deep_search) { safe = !1; this.game_api.run(); }
         if (safe)                           { this.table.gen(); }
     },
     isValidContent: function(obj) {
@@ -372,7 +370,9 @@ repod.psdle = {
             repod.psdle.config.lastsort_r = false;
 
             $("#muh_games_container").css({"position":"absolute"});
-            $("#sub_container").html(repod.psdle.genSearchOptions()).append("<div class='psdle_table'><table><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+repod.psdle.lang.columns.platform+"</th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table></div><br>"+repod.psdle.config.tag_line);
+            $("#sub_container").html("")
+            .append(this.header.gen())
+            .append("<div class='psdle_table'><table><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+repod.psdle.lang.columns.platform+"</th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table></div><br>"+repod.psdle.config.tag_line);
 
             this.regen(true);
             this.bindSearch();
@@ -382,6 +382,97 @@ repod.psdle = {
             $("#muh_games_container").slideDown("slow").promise().done(function() {
                 that.margin();
             });
+        },
+        header: {
+            gen: function() {
+                return $("<div />", {class: "search main container"})
+                    .append(this.searchOptions())
+                    .append(this.stats())
+            },
+            searchOptions: function(dlQueue) {
+                var r = $("<div />", {class: "search options container"}),
+                    lang = repod.psdle.lang;
+
+                if (!dlQueue) {
+                    r.append($("<span />", {class: "psdle_fancy_bar"})
+                        .append($("<span />", {id: "export_view", text: lang.labels.exportView}))
+                    )
+                }
+
+                var systems = $("<span />", {class: "psdle_fancy_bar search options system"}),
+                    order = ["ps1","ps2","ps3","ps4","psp","vita"];
+                $.each(order, function (i,v) {
+                    if (repod.psdle.sys_cache.hasOwnProperty(v)) {
+                        $("<span />", {id: "system_"+v, text: repod.psdle.sys_cache[v]}).appendTo(systems);
+                    }
+                });
+                systems.appendTo(r);
+
+                if (repod.psdle.config.use_queue) {
+                    var nid = (dlQueue) ? "dl_list" : "dl_queue",
+                        tr = lang.strings[(dlQueue) ? "dlList" : "dlQueue"];
+
+                    $("<span />", {class: "psdle_fancy_but", id: nid, text: tr}).appendTo(r);
+                }
+
+                if (!dlQueue && repod.psdle.config.deep_search) {
+                    var categories = $("<div />", {class: "psdle_fancy_bar search options categories"}),
+                        order = ["downloadable_game","demo","add_on","avatar","application","theme","unknown"];
+
+                    //TO-DO: sort by order
+                    $.each(repod.psdle.type_cache, function (key) {
+                        console.log("type_cache",key)
+                        $("<span />", {id: "filter_"+key, text: (lang.categories[key] || key)}).appendTo(categories);
+                    });
+
+                    categories.appendTo(r);
+                }
+
+                if (!dlQueue) {
+                    var textSearch = $("<div />"),
+                        sel = $("<select />", {id: "psdle_search_select", class: "search input select"}),
+                        keys = {
+                            "name": lang.columns.name,
+                            "base": "Base Game",
+                            "publisher": "Publisher",
+                            "id": "Item ID",
+                            "pid": "Product ID"
+                        };
+
+                    if (repod.psdle.config.deep_search) {
+                        keys["genre"] = "Genre";
+                        // + Metadata, description
+                    }
+
+                    $.each(keys, function (i, v) {
+                        $("<option />", {value: i, text: v}).appendTo(sel);
+                    })
+
+                    sel.appendTo(textSearch);
+                    $("<input />", {id: "psdle_search_text", class: "search input text", type: "text", placeholder: lang.strings.search}).appendTo(textSearch);
+
+                    textSearch.appendTo(r);
+                }
+
+                return r;
+            },
+            stats: function() {
+                var current = $("<span />", {class: 'search stats current'})[0].outerHTML,
+                    total = $("<span />", {class: 'search stats total'})[0].outerHTML,
+                    out = $("<div>"+current+" / "+total+"</div>", {class: "psdleSearchStats"});
+
+                var psswitch = $("<input />", {type: "checkbox", class: "psdlePlusToggle", readonly: true, title: repod.psdle.lang.strings.plus})
+                .prop({"indeterminate": true})
+                .click(function() {
+                    if (this.readOnly) this.checked=this.readOnly=false;
+                    else if (!this.checked) this.readOnly=this.indeterminate=true;
+
+                    repod.psdle.table.regen(true);
+                })
+                psswitch.appendTo(out);
+
+                return out;
+            }
         },
         regen: function(a) {
             if (a == true) {
@@ -394,6 +485,7 @@ repod.psdle = {
                 repod.psdle.exportList.delimited.destroy();
                 if (!repod.psdle.config.valkyrie) { repod.psdle.autocomplete.bind(); }
 
+                
                 $.each(repod.psdle.gamelist_cur,function (a,val) {
                     if (val.plus) {
                         plus++;
@@ -401,11 +493,10 @@ repod.psdle = {
                     temp += repod.psdle.table_utils.gen.row(val);
                 });
                 temp += repod.psdle.table_utils.gen.totals();
-
-                var psswitch = (repod.psdle.config.has_plus) ? " (<div id='slider' title='"+repod.psdle.lang.strings.plus+"'><div class='handle_container' style='text-align:"+repod.psdle.config.switch_align+"'><div class='handle' style='background-color:"+repod.psdle.config.switch_color+"'/></div></div> <div id='psdleplus' style='display:inline-block' /> "+plus+")" : "";
-
-                $("#table_stats").html(repod.psdle.gamelist_cur.length+psswitch+" / "+repod.psdle.gamelist.length);
-                if (!repod.psdle.config.valkyrie && $("#slider").length > 0) { $("#slider").tooltip().one("click",function() { that.plus_switch(); }); }
+                
+                $(".search.stats.current").text(repod.psdle.gamelist_cur.length)
+                $(".search.stats.total").text(repod.psdle.gamelist.length)
+                
                 if (!repod.psdle.config.valkyrie) {
                     if (repod.psdle.config.mobile) {
                         $("#psdleplus").html("<img class='psPlusIcon' src='mobile/img/furniture/psplusicon-small.a2ec8f23.png'>");
@@ -419,20 +510,10 @@ repod.psdle = {
             }
         },
         plus_switch: function() {
-            var a, b;
-
-            switch ($(".handle_container").css("text-align")) {
-                case "left": default: a = "center"; b = "#85C107"; break;
-                case "center": a = "right"; b = "#2185f4"; break;
-                case "right": a = "left"; b = "#F6573A"; break;
-            }
-            repod.psdle.config.switch_align = a;
-            repod.psdle.config.switch_color = b;
-            if (!repod.psdle.config.valkyrie) { $("#slider").tooltip(); }
             this.regen(true);
         },
         margin: function() {
-            $(".psdle_table").animate({"margin-top": $("#search_options").outerHeight() - $("#sub_container").css("padding-top").replace("px","")+"px"});
+            $(".psdle_table").animate({"margin-top": $(".search.main.container").outerHeight() - $("#sub_container").css("padding-top").replace("px","")+"px"});
             this.icons.smartScroll();
         },
         icons: {
@@ -581,9 +662,11 @@ repod.psdle = {
                     }
                 }
 
-                switch (repod.psdle.config.switch_align) {
-                    case "left": if (val.plus) { a = false } break;
-                    case "right": if (!val.plus) { a = false; } break;
+                if ($(".psdlePlusToggle").prop("checked")) {
+                    a = val.plus == true;
+                } else if ($(".psdlePlusToggle").prop("indeterminate")) {
+                } else if (!$(".psdlePlusToggle").prop("checked")) {
+                    a = !(val.plus == true);
                 }
 
                 if (a == true) {
@@ -599,59 +682,6 @@ repod.psdle = {
         });
         that.config.last_search = search;
         this.sortGamelist("noreverse");
-    },
-    genSearchOptions: function(dlQueue) {
-        //TO-DO: Not this. Make scalable.
-        var that = this;
-
-        //Search options.
-        var temp = "<div id='search_options'>";
-
-        if (!dlQueue) { temp += "<span><span class='psdle_fancy_bar'><span id='export_view'>"+this.lang.labels.exportView+"</span></span> "; }
-        temp +=        "<span class='psdle_fancy_bar'>";
-
-        var order = ["ps1","ps2","ps3","ps4","psp","vita"],
-            out = [];
-
-        out[order.length +1] = "";
-        $.each(this.sys_cache, function(i,v) {
-            if ($.inArray(i,order) >= 0) {
-                out[$.inArray(i,order)] = "<span id='system_"+i+"'>"+v+"</span>";
-            }
-        });
-        temp += out.join("")+"</span>";
-
-        if (this.config.use_queue) {
-            if (!dlQueue) {
-                temp += " <span class='psdle_fancy_but' id='dl_queue'>"+this.lang.strings.dlQueue+"</span>";
-            } else {
-                temp += " <span><span class='psdle_fancy_but' id='dl_list'>"+this.lang.strings.dlList+"</span></span>";
-            }
-        }
-        temp += "<br>";
-        if (this.config.deep_search && !dlQueue) {
-            temp +=    "<span class='psdle_fancy_bar'>";
-            var order = ["downloadable_game","demo","add_on","avatar","application","theme","unknown"], out = []; out[order.length +1] = "";
-            $.each(this.type_cache, function(key) {
-                var line = "<span id='filter_"+key+"'>"+((that.lang.categories[key]) ? that.lang.categories[key] : key)+"</span>";
-                if ($.inArray(key,order) >= 0) { out[$.inArray(key,order)] = line} else { out.push(line); }
-            });
-            temp += out.join("")+"</span><br>";
-        }
-        if (!dlQueue) {
-            //I did this HTML generation the lazy way.
-            var select = "<select id='psdle_search_select'><option value='name'>"+repod.psdle.lang.columns.name+"</option><option value='base'>Base Game</option><option value='publisher'>Publisher</option><option value='id'>Item ID</option><option value='pid'>Product ID</option>"; //<option value="date">'+repod.psdle.lang.columns.date+'</option>'
-            if (this.config.deep_search) { //Future Catalog searching.
-                select += "<option value='genre'>Genre</option>"; //item.metadata.genre.values
-                //select += '<option value="desc">Description</option>'; //item.description
-            }
-            select += "</select>";
-            temp += "<div>"+select+"<input type='text' id='psdle_search_text' placeholder='"+this.lang.strings.search+"' /></div>";
-        }
-        //temp += "<br>";
-        temp += "<span id='table_stats'></span></div>";
-
-        return temp;
     },
     sortGamelist: function(sort_method) {
         var that = this,
@@ -710,7 +740,7 @@ repod.psdle = {
         return sys;
     },
     injectCSS: function() {
-        var temp = ".valkyrie #export_table input,.valkyrie #export_table select,.valkyrie #lang_select{height:unset;padding:unset;margin:unset;width:unset;display:unset}#psdle_start{z-index:9001;width:84px;height:31px;position:fixed;bottom:10px;left:10px;cursor:pointer;box-shadow:0 0 10px #fff}#muh_games_container{display:none;position:absolute;top:0;right:0;left:0;color:#000;z-index:9001;text-align:center}#sub_container{padding:20px;background-color:#fff}#psdle_bar,.psdle_btn{background-color:#2185f4}#psdle_progressbar{overflow:hidden;display:inline-block;width:400px;height:16px;border:1px solid #999;margin:10px;border-radius:10px}#psdle_bar{width:0;height:100%;border-radius:10px}.psdle_btn{cursor:pointer;border-radius:13px;color:#fff;padding:1px 15px;display:inline-block;margin:5px auto}.psdle_tiny_link{line-height:0;cursor:pointer;color:#7f6d75!important;font-size:x-small}.psdle_tiny_link:hover{color:#000!important;text-decoration:underline}#search_options{position:fixed;left:0;top:0;width:100%;padding:15px 0;background-color:rgba(255,255,255,.8);z-index:9001}.psdle_table,table{text-align:left;display:inline-block;border-collapse:initial}th[id^=sort]{cursor:pointer}th[id^=sort]:hover{background-color:#62a5f0}th{padding:5px!important;background-color:#2185f4;color:#fff;border:none;transition:background-color .3s}tr:hover{background-color:rgba(33,133,244,.7)!important}.valkyrie td{padding:0;border:none}td a.psdle_game_link{display:block;width:100%;height:100%;color:#000;padding:8px!important}.psdle_game_icon.is_plus{background-color:#ffd10d}tr[id^=psdle_index_].is_plus td:last-child{border-right:#ffd10d 3px solid}tr:nth-child(2n){background-color:#eee}td:nth-child(n+3):nth-child(-n+7),th:nth-child(n+3):nth-child(-n+7){text-align:center;padding:0 5px!important;position:relative}td:first-child{text-align:center;position:relative}#psdle_search_select,#psdle_search_text{font-size:large;padding:5px 10px;border:1px solid #f0f0f0;display:inline-block;width:auto}#psdle_search_select{background-color:#f0f0f0;text-align:center}#psdle_search_text{font-size:large;max-width:480px;width:100%}.negate_regex{background-color:#ff8080;color:#fff}.psdle_fancy_bar>span,span#export_view,span[id^=dl_],span[id^=filter_],span[id^=system_]{font-weight:700;font-size:.9em;color:#fff;background-color:#2185f4;display:inline-block;margin-right:2px;margin-bottom:5px;padding:1px 10px;cursor:pointer}.psdle_fancy_but{border-radius:12px}#muh_games_container:not(.rtl) .psdle_fancy_bar>span:first-of-type{border-top-left-radius:12px;border-bottom-left-radius:12px}#muh_games_container:not(.rtl) .psdle_fancy_bar>span:last-of-type{border-top-right-radius:12px;border-bottom-right-radius:12px}.toggled_off{opacity:.4}#muh_games_container:not(.rtl) #psdle_search_select{border-radius:90px 0 0 90px}#psdle_search_text{border-radius:0 90px 90px 0}.psdle_game_icon{max-width:100%;vertical-align:middle;padding:3px;min-width:42px;min-height:42px}.psdle_sort_asc,.psdle_sort_desc{float:right;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent}.psdle_sort_asc{border-bottom:5px solid #fff}.psdle_sort_desc{border-top:5px solid #fff}#dlQARating,#dlQAStat{color:#fff;background-color:rgba(33,133,244,.8);font-size:small}#dlQueueAsk{width:400px;height:400px}#dlQAN{background-color:rgba(33,133,244,.8);padding:7px 15px;color:#fff;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}#dlQASys{position:absolute;bottom:0;padding:7px 0;color:#fff;display:table;width:100%;table-layout:fixed}#dlQASys>div{display:table-cell}#dlQASys>div>div{cursor:pointer;background-color:rgba(33,133,244,.8);border-radius:10px;padding:2px;margin:0 10px;box-shadow:0 0 30px #000;transition:background-color .5s,box-shadow .5s}#dlQASys>div>div:hover{background-color:rgba(33,133,244,1);box-shadow:0 0 30px rgba(33,133,244,1)}#dlQAStat{border-bottom-left-radius:20px;padding:0 10px 0 15px;float:right}#dlQARating{border-bottom-right-radius:20px;padding:0 15px 0 10px;float:left}.success{background-color:#237423!important}.failure{background-color:#a43636!important}#dlQueueExt{overflow:hidden;position:absolute;left:10px;right:10px;bottom:40px;font-size:.8em;background-color:rgba(33,133,244,.8);padding:10px;border-radius:9px;top:66px;text-align:left}.cover,.cover>div>div{background-size:cover}.cover{z-index:9001;position:fixed;top:0;left:0;width:100%;height:100%;display:table;background-color:rgba(0,0,0,.25);background-position:center}.cover>div{display:table-cell;vertical-align:middle;height:inherit;text-align:center}.cover>div>div{box-shadow:0 0 30px #000;display:inline-block;background-color:#fff;border-radius:20px;overflow:hidden;position:relative}#export_select{padding:10px;background-color:#fff;color:#000}#export_select>div{border-top-left-radius:10px;border-top-right-radius:10px;overflow-y:auto;overflow-x:hidden;max-height:490px}#export_table{width:100%}#slider,.handle{display:inline-block}#slider{vertical-align:bottom;cursor:pointer;width:30px;height:12px;border-radius:10px;border:2px solid #f0f0f0}.handle_container{text-align:center;width:100%;height:100%}.handle{width:10px;height:10px;border-radius:100%;margin:0 2px 6px;border:1px solid #fff;background-color:#85c107}.tooltip-inner{background-color:#2185f4!important;border:5px solid #2185f4!important}.tooltip-arrow{border-top-color:#2185f4!important}.tooltip.in{opacity:1!important}.ui-tooltip{direction:rtl;max-width:234px;z-index:9002;background-color:#2185f4;font-size:22px;text-align:center;line-height:1.4em;padding:12px;border-radius:4px}.ui-autocomplete{z-index:9002;max-width:590px;max-height:200px;overflow-y:auto;overflow-x:hidden}.ui-menu{position:fixed;border:2px solid #f0f0f0;border-top:none;background-color:#fff}.ui-menu>.ui-menu-item *{color:#000;text-decoration:none;white-space:nowrap;text-overflow:ellipsis;cursor:pointer}.ui-menu>.ui-menu-item:nth-child(even){background-color:#e6e6e6}.ui-menu-item .ui-state-focus{display:inline-block;width:100%;color:#000;background-color:rgba(33,133,244,.7)}.psdletv{font-style:italic;font-weight:700;font-size:.6em;vertical-align:text-top;position:absolute;top:4px}.psp3{border-left:2px solid #2185f4;border-right:2px solid #2185f4}.psp2{background-color:rgba(33,133,244,.15)!important}#muh_games_container.rtl{direction:rtl}.rtl #psdle_search_select{border-radius:0 90px 90px 0}.rtl #psdle_search_text{border-radius:90px 0 0 90px}.rtl .psdle_fancy_bar span:last-of-type{border-top-left-radius:12px;border-bottom-left-radius:12px}.rtl .psdle_fancy_bar span:first-of-type{border-top-right-radius:12px;border-bottom-right-radius:12px}.rtl #muh_table{text-align:right!important}.rtl tr.is_plus[id^=psdle_index_] td:last-child{border-right:none;border-left:#ffd10d 3px solid}.psdledark #sub_container{background-color:#222;color:#e7e7e7}.psdledark a.psdle_game_link{color:#e7e7e7}.psdledark #search_options{background-color:rgba(34,34,34,.7)}.psdledark tr{background-color:#222}.psdledark tr:nth-child(2n){background-color:#393939}"
+        var temp = ".valkyrie #export_table input,.valkyrie #export_table select,.valkyrie #lang_select{height:unset;padding:unset;margin:unset;width:unset;display:unset}#psdle_start{z-index:9001;width:84px;height:31px;position:fixed;bottom:10px;left:10px;cursor:pointer;box-shadow:0 0 10px #fff}#muh_games_container{display:none;position:absolute;top:0;right:0;left:0;color:#000;z-index:9001;text-align:center}#sub_container{padding:20px;background-color:#fff}#psdle_bar,.psdle_btn{background-color:#2185f4}#psdle_progressbar{overflow:hidden;display:inline-block;width:400px;height:16px;border:1px solid #999;margin:10px;border-radius:10px}#psdle_bar{width:0;height:100%;border-radius:10px}.psdle_btn{cursor:pointer;border-radius:13px;color:#fff;padding:1px 15px;display:inline-block;margin:5px auto}.psdle_tiny_link{line-height:0;cursor:pointer;color:#7f6d75!important;font-size:x-small}.psdle_tiny_link:hover{color:#000!important;text-decoration:underline}.search.main.container{position:fixed;left:0;top:0;width:100%;padding:15px 0;background-color:rgba(255,255,255,.8);z-index:9001}.psdlePlusToggle{cursor:pointer!important}.psdle_table,table{text-align:left;display:inline-block;border-collapse:initial}th[id^=sort]{cursor:pointer}th[id^=sort]:hover{background-color:#62a5f0}th{padding:5px!important;background-color:#2185f4;color:#fff;border:none;transition:background-color .3s}tr:hover{background-color:rgba(33,133,244,.7)!important}.valkyrie td{padding:0;border:none}td a.psdle_game_link{display:block;width:100%;height:100%;color:#000;padding:8px!important}.psdle_game_icon.is_plus{background-color:#ffd10d}tr[id^=psdle_index_].is_plus td:last-child{border-right:#ffd10d 3px solid}tr:nth-child(2n){background-color:#eee}td:nth-child(n+3):nth-child(-n+7),th:nth-child(n+3):nth-child(-n+7){text-align:center;padding:0 5px!important;position:relative}td:first-child{text-align:center;position:relative}#psdle_search_select,#psdle_search_text{font-size:large;padding:5px 10px;border:1px solid #f0f0f0;display:inline-block;width:auto}#psdle_search_select{background-color:#f0f0f0;text-align:center}#psdle_search_text{font-size:large;max-width:480px;width:100%}.negate_regex{background-color:#ff8080;color:#fff}.psdle_fancy_bar>span,span#export_view,span[id^=dl_],span[id^=filter_],span[id^=system_]{font-weight:700;font-size:.9em;color:#fff;background-color:#2185f4;display:inline-block;margin-right:2px;margin-bottom:5px;padding:1px 10px;cursor:pointer}.psdle_fancy_but{border-radius:12px}#muh_games_container:not(.rtl) .psdle_fancy_bar>span:first-of-type{border-top-left-radius:12px;border-bottom-left-radius:12px}#muh_games_container:not(.rtl) .psdle_fancy_bar>span:last-of-type{border-top-right-radius:12px;border-bottom-right-radius:12px}.toggled_off{opacity:.4}#muh_games_container:not(.rtl) #psdle_search_select{border-radius:90px 0 0 90px}#psdle_search_text{border-radius:0 90px 90px 0}.psdle_game_icon{max-width:100%;vertical-align:middle;padding:3px;min-width:42px;min-height:42px}.psdle_sort_asc,.psdle_sort_desc{float:right;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent}.psdle_sort_asc{border-bottom:5px solid #fff}.psdle_sort_desc{border-top:5px solid #fff}#dlQARating,#dlQAStat{color:#fff;background-color:rgba(33,133,244,.8);font-size:small}#dlQueueAsk{width:400px;height:400px}#dlQAN{background-color:rgba(33,133,244,.8);padding:7px 15px;color:#fff;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}#dlQASys{position:absolute;bottom:0;padding:7px 0;color:#fff;display:table;width:100%;table-layout:fixed}#dlQASys>div{display:table-cell}#dlQASys>div>div{cursor:pointer;background-color:rgba(33,133,244,.8);border-radius:10px;padding:2px;margin:0 10px;box-shadow:0 0 30px #000;transition:background-color .5s,box-shadow .5s}#dlQASys>div>div:hover{background-color:rgba(33,133,244,1);box-shadow:0 0 30px rgba(33,133,244,1)}#dlQAStat{border-bottom-left-radius:20px;padding:0 10px 0 15px;float:right}#dlQARating{border-bottom-right-radius:20px;padding:0 15px 0 10px;float:left}.success{background-color:#237423!important}.failure{background-color:#a43636!important}#dlQueueExt{overflow:hidden;position:absolute;left:10px;right:10px;bottom:40px;font-size:.8em;background-color:rgba(33,133,244,.8);padding:10px;border-radius:9px;top:66px;text-align:left}.cover,.cover>div>div{background-size:cover}.cover{z-index:9001;position:fixed;top:0;left:0;width:100%;height:100%;display:table;background-color:rgba(0,0,0,.25);background-position:center}.cover>div{display:table-cell;vertical-align:middle;height:inherit;text-align:center}.cover>div>div{box-shadow:0 0 30px #000;display:inline-block;background-color:#fff;border-radius:20px;overflow:hidden;position:relative}#export_select{padding:10px;background-color:#fff;color:#000}#export_select>div{border-top-left-radius:10px;border-top-right-radius:10px;overflow-y:auto;overflow-x:hidden;max-height:490px}#export_table{width:100%}#slider,.handle{display:inline-block}#slider{vertical-align:bottom;cursor:pointer;width:30px;height:12px;border-radius:10px;border:2px solid #f0f0f0}.handle_container{text-align:center;width:100%;height:100%}.handle{width:10px;height:10px;border-radius:100%;margin:0 2px 6px;border:1px solid #fff;background-color:#85c107}.tooltip-inner{background-color:#2185f4!important;border:5px solid #2185f4!important}.tooltip-arrow{border-top-color:#2185f4!important}.tooltip.in{opacity:1!important}.ui-tooltip{direction:rtl;max-width:234px;z-index:9002;background-color:#2185f4;font-size:22px;text-align:center;line-height:1.4em;padding:12px;border-radius:4px}.ui-autocomplete{z-index:9002;max-width:590px;max-height:200px;overflow-y:auto;overflow-x:hidden}.ui-menu{position:fixed;border:2px solid #f0f0f0;border-top:none;background-color:#fff}.ui-menu>.ui-menu-item *{color:#000;text-decoration:none;white-space:nowrap;text-overflow:ellipsis;cursor:pointer}.ui-menu>.ui-menu-item:nth-child(even){background-color:#e6e6e6}.ui-menu-item .ui-state-focus{display:inline-block;width:100%;color:#000;background-color:rgba(33,133,244,.7)}.psdletv{font-style:italic;font-weight:700;font-size:.6em;vertical-align:text-top;position:absolute;top:4px}.psp3{border-left:2px solid #2185f4;border-right:2px solid #2185f4}.psp2{background-color:rgba(33,133,244,.15)!important}#muh_games_container.rtl{direction:rtl}.rtl #psdle_search_select{border-radius:0 90px 90px 0}.rtl #psdle_search_text{border-radius:90px 0 0 90px}.rtl .psdle_fancy_bar span:last-of-type{border-top-left-radius:12px;border-bottom-left-radius:12px}.rtl .psdle_fancy_bar span:first-of-type{border-top-right-radius:12px;border-bottom-right-radius:12px}.rtl #muh_table{text-align:right!important}.rtl tr.is_plus[id^=psdle_index_] td:last-child{border-right:none;border-left:#ffd10d 3px solid}.psdledark #sub_container{background-color:#222;color:#e7e7e7}.psdledark a.psdle_game_link{color:#e7e7e7}.psdledark #search_options{background-color:rgba(34,34,34,.7)}.psdledark tr{background-color:#222}.psdledark tr:nth-child(2n){background-color:#393939}"
         $("head").append("<style type='text/css'>"+temp+"</style>");
     },
     darkCSS: function() {
@@ -944,10 +974,12 @@ repod.psdle = {
                 catalog = repod.psdle.config.valkyrieInstance.lookup('service:susuwatari');
 
             if (this.batch.length == 0) {
+                /*console.log('run called!',repod.psdle.type_cache);
                 if (!this.ran) {
                     this.ran = true;
+                    console.log('table gen!', repod.psdle.type_cache);
                     repod.psdle.table.gen();
-                }
+                }*/
                 return 0;
             }
 
@@ -957,7 +989,7 @@ repod.psdle = {
                     if (data.response && data.response.status == 404) return 0;
 
                     var parse = that.parse(data),
-                        cached = repod.psdle.pid_cache.hasOwnProperty(data.id)
+                        cached = repod.psdle.pid_cache.hasOwnProperty(data.id);
                     repod.psdle.type_cache[parse.category] = true;
 
                     if (cached) {
@@ -972,13 +1004,22 @@ repod.psdle = {
                     }
                 })
                 .catch(function(e){ repod.psdle.type_cache["unknown"] = true; })
-                .then(function() { that.updateBar(); that.run() });
+                .then(function() { that.run(); that.updateBar(); });
             });
         },
+        called: 0,
         updateBar: function() {
+            this.called++;
+
             var that  = this,
-                l     = Math.abs(repod.psdle.gamelist.length - this.batch.length), r = repod.psdle.gamelist.length,
-                w     = $('#psdle_bar').width(), pW = $('#psdle_bar').parent().width(), p = Math.round(100*w/pW), q = Math.round(100*l/r);
+                l     = this.called, //Math.abs(repod.psdle.gamelist.length - this.batch.length),
+                r     = repod.psdle.gamelist.length,
+                w     = $('#psdle_bar').width(),
+                pW    = $('#psdle_bar').parent().width(),
+                p     = Math.round(100*w/pW),
+                q     = Math.round(100*l/r);
+                
+            if (100*l/r == 100) { repod.psdle.table.gen(); } //Ultimate in promise abuse technology.
 
             if (q > p) { $("#psdle_progressbar > #psdle_bar").stop().animate({"width":q+"%"}); }
             $("#psdle_status").text(l+" / "+r).click(that.run());
@@ -1062,9 +1103,9 @@ repod.psdle = {
                     Kamaji = repod.psdle.config.valkyrieInstance.lookup('service:kamaji/downloads'),
                     KPlatforms = require("valkyrie-storefront/utils/const").default.KamajiPlatforms,
                     id = repod.psdle.gamelist[index].id;
-                
+
                 this.recordQueue.push({"sys":sys, "id":id})
-                
+
                 switch (sys) {
                     case 'ps4':
                         Kamaji.startPS4Download(id)

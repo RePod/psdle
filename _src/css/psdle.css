@@ -74,7 +74,7 @@
 }
 /*Search options */
 
-#search_options {
+.search.main.container {
     position: fixed;
     left: 0;
     top: 0;
@@ -83,6 +83,10 @@
     background-color: rgba(255, 255, 255, .8);
     z-index: 9001
 }
+.psdlePlusToggle {
+    cursor: pointer !important;
+}
+
 /*Table          */
 
 .psdle_table, table {
