@@ -1,12 +1,13 @@
 /* Undo Valkyrie overrides, in a NON-GREEDY WAY */
 
-#muh_games_container.valkyrie select,
-#muh_games_container.valkyrie input {
-    height: initial;
-    padding: initial;
-    margin: initial;
-    width: initial;
-    display: initial;
+.valkyrie #lang_select,
+.valkyrie #export_table select,
+.valkyrie #export_table input {
+    height: unset;
+    padding: unset;
+    margin: unset;
+    width: unset;
+    display: unset;
 }
 
 
