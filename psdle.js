@@ -1,4 +1,4 @@
-/*! psdle 3.0.3 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-15 */
+/*! psdle 3.0.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-15 */
 var repod = {};
 repod.psdle = {
     autocomplete_cache : [],
@@ -345,7 +345,7 @@ repod.psdle = {
     table: {
         bindSearch: function() {
             //Unbind for safety.
-            $(document).off("click","#muh_table > tbody > tr, span[id^=system_], span[id^=filter_], span[id^=dl_], th[id^=sort_], #export_view, #export_csv").off("blur","#psdle_search_text");
+            $(document).off("click",".psdle_table tbody > tr, span[id^=system_], span[id^=filter_], span[id^=dl_], th[id^=sort_], #export_view, #export_csv").off("blur","#psdle_search_text");
             //Bind.
             $(document).keypress(function(e) { if (e.which == 13 && $("#psdle_search_text").is(":focus")) { repod.psdle.table.regen(true); } });
             $("#psdle_search_select").off("change").change(function() { repod.psdle.table.regen(true); });
@@ -372,7 +372,7 @@ repod.psdle = {
             repod.psdle.config.lastsort_r = false;
 
             $("#muh_games_container").css({"position":"absolute"});
-            $("#sub_container").html(repod.psdle.genSearchOptions()).append("<table id='muh_table'><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+repod.psdle.lang.columns.platform+"</th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table><br>"+repod.psdle.config.tag_line);
+            $("#sub_container").html(repod.psdle.genSearchOptions()).append("<div class='psdle_table'><table><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+repod.psdle.lang.columns.platform+"</th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table></div><br>"+repod.psdle.config.tag_line);
 
             this.regen(true);
             this.bindSearch();
@@ -413,7 +413,7 @@ repod.psdle = {
                         $("#psdleplus").css($(".headerUserInfo.cart").css(["background-image","background-repeat"])).css({"height":"14px","width":"14px","background-position":"left -5px"});
                     }
                 }
-                $("#muh_table > tbody").html(temp);
+                $(".psdle_table tbody").html(temp);
 
                 this.icons.select();
             }
@@ -432,7 +432,7 @@ repod.psdle = {
             this.regen(true);
         },
         margin: function() {
-            $("#muh_table").animate({"margin-top": $("#search_options").outerHeight() - $("#sub_container").css("padding-top").replace("px","")+"px"});
+            $(".psdle_table").animate({"margin-top": $("#search_options").outerHeight() - $("#sub_container").css("padding-top").replace("px","")+"px"});
             this.icons.smartScroll();
         },
         icons: {
@@ -710,7 +710,7 @@ repod.psdle = {
         return sys;
     },
     injectCSS: function() {
-        var temp = "#muh_games_container.valkyrie input,#muh_games_container.valkyrie select{height:initial;padding:initial;margin:initial;width:initial;display:initial}#psdle_start{z-index:9001;width:84px;height:31px;position:fixed;bottom:10px;left:10px;cursor:pointer;box-shadow:0 0 10px #fff}#muh_games_container{display:none;position:fixed;top:0;right:0;left:0;color:#000;z-index:9001;text-align:center}#sub_container{padding:20px;background-color:#fff}#psdle_bar,.psdle_btn{background-color:#2185f4}#psdle_progressbar{overflow:hidden;display:inline-block;width:400px;height:16px;border:1px solid #999;margin:10px;border-radius:10px}#psdle_bar{width:0;height:100%;border-radius:10px}.psdle_btn{cursor:pointer;border-radius:13px;color:#fff;padding:1px 15px;display:inline-block;margin:5px auto}.psdle_tiny_link{line-height:0;cursor:pointer;color:#7f6d75!important;font-size:x-small}.psdle_tiny_link:hover{color:#000!important;text-decoration:underline}#search_options{position:fixed;left:0;top:0;width:100%;padding:15px 0;background-color:rgba(255,255,255,.8);z-index:9001}#muh_table{text-align:left}.valkyrie #muh_table{display:inline-block}th[id^=sort]{cursor:pointer}th{padding:5px!important;background-color:#2185f4;color:#fff border:none}tr:hover{background-color:rgba(33,133,244,.7)!important}.valkyrie td{padding:0;border:none}td a.psdle_game_link{display:block;width:100%;height:100%;color:#000;padding:8px!important}.psdle_game_icon.is_plus{background-color:#ffd10d}tr[id^=psdle_index_].is_plus td:last-child{border-right:#ffd10d 3px solid}tr:nth-child(2n){background-color:#eee}td:nth-child(n+3):nth-child(-n+7),th:nth-child(n+3):nth-child(-n+7){text-align:center;padding:0 5px!important;position:relative}td:first-child{text-align:center;position:relative}#psdle_search_select,#psdle_search_text{font-size:large;padding:5px 10px;border:1px solid #f0f0f0;display:inline-block;width:auto}#psdle_search_select{background-color:#f0f0f0;text-align:center}#psdle_search_text{font-size:large;max-width:480px;width:100%}.negate_regex{background-color:#ff8080;color:#fff}.psdle_fancy_bar>span,span#export_view,span[id^=dl_],span[id^=filter_],span[id^=system_]{font-weight:700;font-size:.9em;color:#fff;background-color:#2185f4;display:inline-block;margin-right:2px;margin-bottom:5px;padding:1px 10px;cursor:pointer}.psdle_fancy_but{border-radius:12px}#muh_games_container:not(.rtl) .psdle_fancy_bar>span:first-of-type{border-top-left-radius:12px;border-bottom-left-radius:12px}#muh_games_container:not(.rtl) .psdle_fancy_bar>span:last-of-type{border-top-right-radius:12px;border-bottom-right-radius:12px}.toggled_off{opacity:.4}#muh_games_container:not(.rtl) #psdle_search_select{border-radius:90px 0 0 90px}#psdle_search_text{border-radius:0 90px 90px 0}.psdle_game_icon{max-width:100%;vertical-align:middle;padding:3px;min-width:42px;min-height:42px}.psdle_sort_asc,.psdle_sort_desc{float:right;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent}.psdle_sort_asc{border-bottom:5px solid #fff}.psdle_sort_desc{border-top:5px solid #fff}#dlQARating,#dlQAStat{color:#fff;background-color:rgba(33,133,244,.8);font-size:small}#dlQueueAsk{width:400px;height:400px}#dlQAN{background-color:rgba(33,133,244,.8);padding:7px 15px;color:#fff;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}#dlQASys{position:absolute;bottom:0;padding:7px 0;color:#fff;display:table;width:100%;table-layout:fixed}#dlQASys>div{display:table-cell}#dlQASys>div>div{cursor:pointer;background-color:rgba(33,133,244,.8);border-radius:10px;padding:2px;margin:0 10px;box-shadow:0 0 30px #000;transition:background-color .5s}#dlQAStat{border-bottom-left-radius:20px;padding:0 10px 0 15px;float:right}#dlQARating{border-bottom-right-radius:20px;padding:0 15px 0 10px;float:left}.success{background-color:#237423!important}.failure{background-color:#a43636!important}#dlQueueExt{overflow:hidden;position:absolute;left:10px;right:10px;bottom:40px;font-size:.8em;background-color:rgba(33,133,244,.8);padding:10px;border-radius:9px;top:66px;text-align:left}.cover,.cover>div>div{background-size:cover}.cover{z-index:9001;position:fixed;top:0;left:0;width:100%;height:100%;display:table;background-color:rgba(0,0,0,.25);background-position:center}.cover>div{display:table-cell;vertical-align:middle;height:inherit;text-align:center}.cover>div>div{box-shadow:0 0 30px #000;display:inline-block;background-color:#fff;border-radius:20px;overflow:hidden;position:relative}#export_select{padding:10px;background-color:#fff;color:#000}#export_select>div{border-top-left-radius:10px;border-top-right-radius:10px;overflow-y:auto;overflow-x:hidden;max-height:490px}#export_table{width:100%}#slider,.handle{display:inline-block}#slider{vertical-align:bottom;cursor:pointer;width:30px;height:12px;border-radius:10px;border:2px solid #f0f0f0}.handle_container{text-align:center;width:100%;height:100%}.handle{width:10px;height:10px;border-radius:100%;margin:0 2px 6px;border:1px solid #fff;background-color:#85c107}.tooltip-inner{background-color:#2185f4!important;border:5px solid #2185f4!important}.tooltip-arrow{border-top-color:#2185f4!important}.tooltip.in{opacity:1!important}.ui-tooltip{direction:rtl;max-width:234px;z-index:9002;background-color:#2185f4;font-size:22px;text-align:center;line-height:1.4em;padding:12px;border-radius:4px}.ui-autocomplete{z-index:9002;max-width:590px;max-height:200px;overflow-y:auto;overflow-x:hidden}.ui-menu{position:fixed;border:2px solid #f0f0f0;border-top:none;background-color:#fff}.ui-menu>.ui-menu-item *{color:#000;text-decoration:none;white-space:nowrap;text-overflow:ellipsis;cursor:pointer}.ui-menu>.ui-menu-item:nth-child(even){background-color:#e6e6e6}.ui-menu-item .ui-state-focus{display:inline-block;width:100%;color:#000;background-color:rgba(33,133,244,.7)}.psdletv{font-style:italic;font-weight:700;font-size:.6em;vertical-align:text-top;position:absolute;top:4px}.psp3{border-left:2px solid #2185f4;border-right:2px solid #2185f4}.psp2{background-color:rgba(33,133,244,.15)!important}#muh_games_container.rtl{direction:rtl}.rtl #psdle_search_select{border-radius:0 90px 90px 0}.rtl #psdle_search_text{border-radius:90px 0 0 90px}.rtl .psdle_fancy_bar span:last-of-type{border-top-left-radius:12px;border-bottom-left-radius:12px}.rtl .psdle_fancy_bar span:first-of-type{border-top-right-radius:12px;border-bottom-right-radius:12px}.rtl #muh_table{text-align:right!important}.rtl tr.is_plus[id^=psdle_index_] td:last-child{border-right:none;border-left:#ffd10d 3px solid}.psdledark #sub_container{background-color:#222;color:#e7e7e7}.psdledark a.psdle_game_link{color:#e7e7e7}.psdledark #search_options{background-color:rgba(34,34,34,.7)}.psdledark tr{background-color:#222}.psdledark tr:nth-child(2n){background-color:#393939}"
+        var temp = ".valkyrie #export_table input,.valkyrie #export_table select,.valkyrie #lang_select{height:unset;padding:unset;margin:unset;width:unset;display:unset}#psdle_start{z-index:9001;width:84px;height:31px;position:fixed;bottom:10px;left:10px;cursor:pointer;box-shadow:0 0 10px #fff}#muh_games_container{display:none;position:absolute;top:0;right:0;left:0;color:#000;z-index:9001;text-align:center}#sub_container{padding:20px;background-color:#fff}#psdle_bar,.psdle_btn{background-color:#2185f4}#psdle_progressbar{overflow:hidden;display:inline-block;width:400px;height:16px;border:1px solid #999;margin:10px;border-radius:10px}#psdle_bar{width:0;height:100%;border-radius:10px}.psdle_btn{cursor:pointer;border-radius:13px;color:#fff;padding:1px 15px;display:inline-block;margin:5px auto}.psdle_tiny_link{line-height:0;cursor:pointer;color:#7f6d75!important;font-size:x-small}.psdle_tiny_link:hover{color:#000!important;text-decoration:underline}#search_options{position:fixed;left:0;top:0;width:100%;padding:15px 0;background-color:rgba(255,255,255,.8);z-index:9001}.psdle_table,table{text-align:left;display:inline-block;border-collapse:initial}th[id^=sort]{cursor:pointer}th[id^=sort]:hover{background-color:#62a5f0}th{padding:5px!important;background-color:#2185f4;color:#fff;border:none;transition:background-color .3s}tr:hover{background-color:rgba(33,133,244,.7)!important}.valkyrie td{padding:0;border:none}td a.psdle_game_link{display:block;width:100%;height:100%;color:#000;padding:8px!important}.psdle_game_icon.is_plus{background-color:#ffd10d}tr[id^=psdle_index_].is_plus td:last-child{border-right:#ffd10d 3px solid}tr:nth-child(2n){background-color:#eee}td:nth-child(n+3):nth-child(-n+7),th:nth-child(n+3):nth-child(-n+7){text-align:center;padding:0 5px!important;position:relative}td:first-child{text-align:center;position:relative}#psdle_search_select,#psdle_search_text{font-size:large;padding:5px 10px;border:1px solid #f0f0f0;display:inline-block;width:auto}#psdle_search_select{background-color:#f0f0f0;text-align:center}#psdle_search_text{font-size:large;max-width:480px;width:100%}.negate_regex{background-color:#ff8080;color:#fff}.psdle_fancy_bar>span,span#export_view,span[id^=dl_],span[id^=filter_],span[id^=system_]{font-weight:700;font-size:.9em;color:#fff;background-color:#2185f4;display:inline-block;margin-right:2px;margin-bottom:5px;padding:1px 10px;cursor:pointer}.psdle_fancy_but{border-radius:12px}#muh_games_container:not(.rtl) .psdle_fancy_bar>span:first-of-type{border-top-left-radius:12px;border-bottom-left-radius:12px}#muh_games_container:not(.rtl) .psdle_fancy_bar>span:last-of-type{border-top-right-radius:12px;border-bottom-right-radius:12px}.toggled_off{opacity:.4}#muh_games_container:not(.rtl) #psdle_search_select{border-radius:90px 0 0 90px}#psdle_search_text{border-radius:0 90px 90px 0}.psdle_game_icon{max-width:100%;vertical-align:middle;padding:3px;min-width:42px;min-height:42px}.psdle_sort_asc,.psdle_sort_desc{float:right;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent}.psdle_sort_asc{border-bottom:5px solid #fff}.psdle_sort_desc{border-top:5px solid #fff}#dlQARating,#dlQAStat{color:#fff;background-color:rgba(33,133,244,.8);font-size:small}#dlQueueAsk{width:400px;height:400px}#dlQAN{background-color:rgba(33,133,244,.8);padding:7px 15px;color:#fff;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}#dlQASys{position:absolute;bottom:0;padding:7px 0;color:#fff;display:table;width:100%;table-layout:fixed}#dlQASys>div{display:table-cell}#dlQASys>div>div{cursor:pointer;background-color:rgba(33,133,244,.8);border-radius:10px;padding:2px;margin:0 10px;box-shadow:0 0 30px #000;transition:background-color .5s,box-shadow .5s}#dlQASys>div>div:hover{background-color:rgba(33,133,244,1);box-shadow:0 0 30px rgba(33,133,244,1)}#dlQAStat{border-bottom-left-radius:20px;padding:0 10px 0 15px;float:right}#dlQARating{border-bottom-right-radius:20px;padding:0 15px 0 10px;float:left}.success{background-color:#237423!important}.failure{background-color:#a43636!important}#dlQueueExt{overflow:hidden;position:absolute;left:10px;right:10px;bottom:40px;font-size:.8em;background-color:rgba(33,133,244,.8);padding:10px;border-radius:9px;top:66px;text-align:left}.cover,.cover>div>div{background-size:cover}.cover{z-index:9001;position:fixed;top:0;left:0;width:100%;height:100%;display:table;background-color:rgba(0,0,0,.25);background-position:center}.cover>div{display:table-cell;vertical-align:middle;height:inherit;text-align:center}.cover>div>div{box-shadow:0 0 30px #000;display:inline-block;background-color:#fff;border-radius:20px;overflow:hidden;position:relative}#export_select{padding:10px;background-color:#fff;color:#000}#export_select>div{border-top-left-radius:10px;border-top-right-radius:10px;overflow-y:auto;overflow-x:hidden;max-height:490px}#export_table{width:100%}#slider,.handle{display:inline-block}#slider{vertical-align:bottom;cursor:pointer;width:30px;height:12px;border-radius:10px;border:2px solid #f0f0f0}.handle_container{text-align:center;width:100%;height:100%}.handle{width:10px;height:10px;border-radius:100%;margin:0 2px 6px;border:1px solid #fff;background-color:#85c107}.tooltip-inner{background-color:#2185f4!important;border:5px solid #2185f4!important}.tooltip-arrow{border-top-color:#2185f4!important}.tooltip.in{opacity:1!important}.ui-tooltip{direction:rtl;max-width:234px;z-index:9002;background-color:#2185f4;font-size:22px;text-align:center;line-height:1.4em;padding:12px;border-radius:4px}.ui-autocomplete{z-index:9002;max-width:590px;max-height:200px;overflow-y:auto;overflow-x:hidden}.ui-menu{position:fixed;border:2px solid #f0f0f0;border-top:none;background-color:#fff}.ui-menu>.ui-menu-item *{color:#000;text-decoration:none;white-space:nowrap;text-overflow:ellipsis;cursor:pointer}.ui-menu>.ui-menu-item:nth-child(even){background-color:#e6e6e6}.ui-menu-item .ui-state-focus{display:inline-block;width:100%;color:#000;background-color:rgba(33,133,244,.7)}.psdletv{font-style:italic;font-weight:700;font-size:.6em;vertical-align:text-top;position:absolute;top:4px}.psp3{border-left:2px solid #2185f4;border-right:2px solid #2185f4}.psp2{background-color:rgba(33,133,244,.15)!important}#muh_games_container.rtl{direction:rtl}.rtl #psdle_search_select{border-radius:0 90px 90px 0}.rtl #psdle_search_text{border-radius:90px 0 0 90px}.rtl .psdle_fancy_bar span:last-of-type{border-top-left-radius:12px;border-bottom-left-radius:12px}.rtl .psdle_fancy_bar span:first-of-type{border-top-right-radius:12px;border-bottom-right-radius:12px}.rtl #muh_table{text-align:right!important}.rtl tr.is_plus[id^=psdle_index_] td:last-child{border-right:none;border-left:#ffd10d 3px solid}.psdledark #sub_container{background-color:#222;color:#e7e7e7}.psdledark a.psdle_game_link{color:#e7e7e7}.psdledark #search_options{background-color:rgba(34,34,34,.7)}.psdledark tr{background-color:#222}.psdledark tr:nth-child(2n){background-color:#393939}"
         $("head").append("<style type='text/css'>"+temp+"</style>");
     },
     darkCSS: function() {
@@ -1057,65 +1057,49 @@ repod.psdle = {
                     repod.psdle.dlQueue.generate.table();
                 }
             },
-            send: function(sys,id,cancel,completeCb,errorCb,statusTarget) { //Not enough arguments.
-                var that = this, dat = {"platformString":sys}; //Build queue JSON.
-                if (cancel) { dat.status = "usercancelled"; } //If we're removing something.
-                if (sys == "ps4") {
-                    dat.entitlementId = id; //PS4 doesn't use contentId, and requires? clientId (by default).
-                    dat.clientId = 1;
-                    dat = {"notifications":[dat]};
-                } else {
-                    dat.contentId = id;
-                    dat = [dat];
+            send: function(index,sys) {
+                var that = this,
+                    Kamaji = repod.psdle.config.valkyrieInstance.lookup('service:kamaji/downloads'),
+                    KPlatforms = require("valkyrie-storefront/utils/const").default.KamajiPlatforms,
+                    id = repod.psdle.gamelist[index].id;
+                
+                this.recordQueue.push({"sys":sys, "id":id})
+                
+                switch (sys) {
+                    case 'ps4':
+                        Kamaji.startPS4Download(id)
+                        break;
+                    case 'ps3':
+                    case 'vita':
+                    case 'psvita':
+                        sys = ((sys == "vita") ? "psvita" : sys).toUpperCase();
+                        Kamaji.startDRMDownload(KPlatforms[sys], id).then(function(a) {
+                            that.recordProcess()
+                        })
+                        break;
+                    default:
+                        break;
                 }
+            },
+            recordQueue: [],
+            recordProcess: function() {
+                //TO-DO: Lookup download record, close but not quite Valkyrie accurate (bogus promise?)
+                var Kamaji = repod.psdle.config.valkyrieInstance.lookup('service:kamaji/downloads'),
+                    record = this.recordQueue.splice(0,1)[0];
 
-                var base = (sys == "ps4") ? repod.psdle.config.dlQueue.ps4 : repod.psdle.config.dlQueue.base,
-                    base_url = (cancel) ? repod.psdle.config.dlQueue.status : base;
-
-                $.ajax({
-                    type: "POST", url: base_url,
-                    contentType: "application/json; charset=utf-8", dataType: "json",
-                    data: JSON.stringify(dat),
-                    complete: function(d) {
-                        var t = (statusTarget || "div[id^=dla_"+sys+"]");
-                        if (d.status == 200) {
-                            that.good(t);
-                        } else {
-                            that.bad(t);
-                            var m = "Download Queue - Error "+d.status+" / "+sys+" - "+id+"\n"+d.responseText;
-                            console.error(m); alert(m);
-                        }
-                    },
-                    error: function() {}
-                });
+                if (Kamaji.waitingDownloads[(record.sys+"Downloads")].find(function (a) { return a == record.id }) !== undefined) {
+                    this.good($("[id^=dla_"+record.sys+"]"));
+                } else {
+                    this.bad($("[id^=dla_"+record.sys+"]"));
+                }
             },
             good: function(target) { $(target).addClass('success'); },
             bad: function(target) { $(target).addClass('failure'); },
             add: {
-                parse: function(index,sys,autoTarget) {
-                    var that = this,
-                        game = repod.psdle.gamelist[index];
-
-                    switch (sys) {
-                        case "ps4":
-                        case "ps3":
-                        case "vita":
-                            this.go(sys,game.id,autoTarget);
-                            break;
-                        case "all":
-                            var temp = game.platformUsable.slice(0), i = $.inArray("PSP", temp); if(i != -1) { temp.splice(i, 1); } //Make sure we don't have PSP
-                            $.each(temp,function(a,b) { that.go(b.replace(/ps /i,"").toLowerCase(),game.id); });
-                            break;
-                    }
-                },
                 ask: function(e) {
                     //Ask which system to queue for. (cannot validate outside of this.go() response, if we care)
                     //See notes for determining active consoles, probably the way to go.
                     repod.psdle.newbox.open($(e).attr("id").split("_").pop());
-                },
-                go: function(sys,id,autoTarget) {
-                    //Add game to batch.
-                    repod.psdle.dlQueue.batch.send(sys,id,false,undefined,undefined,autoTarget);
                 },
                 auto: function(e) {
                     var index = (isNaN(e)) ? Number($(e).attr("id").split("_").pop()) : Number(e), //Target index to read from.
@@ -1162,8 +1146,8 @@ repod.psdle = {
             table: function() {
                 var temp = "";
 
-                $("#muh_table").remove();
-                $("#sub_container").append("<table id='muh_table' style='display:inline-block;text-align:left'><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th>"+repod.psdle.lang.columns.platform+"</th><th> > </th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table>");
+                $(".psdle_table").remove();
+                $("#sub_container").append("<div class='psdle_table'><table style='display:inline-block;text-align:left'><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th>"+repod.psdle.lang.columns.platform+"</th><th> > </th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table></div>");
 
                 $.each(repod.psdle.dlQueue.batch.cache, function(key,value) {
                     if (value.length) {
@@ -1178,7 +1162,7 @@ repod.psdle = {
                     }
                 });
 
-                $("#muh_table > tbody").html(temp);
+                $(".psdle_table tbody").html(temp);
                 repod.psdle.table.margin();
             },
             display: function() {
@@ -1254,7 +1238,7 @@ repod.psdle = {
                     t    = $("<div>", {id:"dlQASys"} );
 
                 if (temp.length > 1) {
-                    t.append($("<div>").append($("<div>", {id:"dla_all_"+id,text:repod.psdle.lang.strings.queueAll} )));
+                    //t.append($("<div>").append($("<div>", {id:"dla_all_"+id,text:repod.psdle.lang.strings.queueAll} ))); //TO-DO: #bringback
 
                     $.each(temp,function(a,b) {
                         var c = b.replace(/ps /i,"").toLowerCase(), d = (repod.psdle.config.active_consoles.hasOwnProperty(c)) ? "" : "toggled_off";
@@ -1312,7 +1296,7 @@ repod.psdle = {
                     });
 
                     $("div[id^=dla_]:not('.toggled_off')").on("click", function() {
-                        repod.psdle.dlQueue.batch.add.parse($(this).attr("id").split("_")[2],$(this).attr("id").split("_")[1]);
+                        repod.psdle.dlQueue.batch.send($(this).attr("id").split("_")[2],$(this).attr("id").split("_")[1]);
                     });
                     break;
 
