@@ -1056,65 +1056,49 @@ repod.psdle = {
                     repod.psdle.dlQueue.generate.table();
                 }
             },
-            send: function(sys,id,cancel,completeCb,errorCb,statusTarget) { //Not enough arguments.
-                var that = this, dat = {"platformString":sys}; //Build queue JSON.
-                if (cancel) { dat.status = "usercancelled"; } //If we're removing something.
-                if (sys == "ps4") {
-                    dat.entitlementId = id; //PS4 doesn't use contentId, and requires? clientId (by default).
-                    dat.clientId = 1;
-                    dat = {"notifications":[dat]};
-                } else {
-                    dat.contentId = id;
-                    dat = [dat];
+            send: function(index,sys) {
+                var that = this,
+                    Kamaji = repod.psdle.config.valkyrieInstance.lookup('service:kamaji/downloads'),
+                    KPlatforms = require("valkyrie-storefront/utils/const").default.KamajiPlatforms,
+                    id = repod.psdle.gamelist[index].id;
+                
+                this.recordQueue.push({"sys":sys, "id":id})
+                
+                switch (sys) {
+                    case 'ps4':
+                        Kamaji.startPS4Download(id)
+                        break;
+                    case 'ps3':
+                    case 'vita':
+                    case 'psvita':
+                        sys = ((sys == "vita") ? "psvita" : sys).toUpperCase();
+                        Kamaji.startDRMDownload(KPlatforms[sys], id).then(function(a) {
+                            that.recordProcess()
+                        })
+                        break;
+                    default:
+                        break;
                 }
+            },
+            recordQueue: [],
+            recordProcess: function() {
+                //TO-DO: Lookup download record, close but not quite Valkyrie accurate (bogus promise?)
+                var Kamaji = repod.psdle.config.valkyrieInstance.lookup('service:kamaji/downloads'),
+                    record = this.recordQueue.splice(0,1)[0];
 
-                var base = (sys == "ps4") ? repod.psdle.config.dlQueue.ps4 : repod.psdle.config.dlQueue.base,
-                    base_url = (cancel) ? repod.psdle.config.dlQueue.status : base;
-
-                $.ajax({
-                    type: "POST", url: base_url,
-                    contentType: "application/json; charset=utf-8", dataType: "json",
-                    data: JSON.stringify(dat),
-                    complete: function(d) {
-                        var t = (statusTarget || "div[id^=dla_"+sys+"]");
-                        if (d.status == 200) {
-                            that.good(t);
-                        } else {
-                            that.bad(t);
-                            var m = "Download Queue - Error "+d.status+" / "+sys+" - "+id+"\n"+d.responseText;
-                            console.error(m); alert(m);
-                        }
-                    },
-                    error: function() {}
-                });
+                if (Kamaji.waitingDownloads[(record.sys+"Downloads")].find(function (a) { return a == record.id }) !== undefined) {
+                    this.good($("[id^=dla_"+record.sys+"]"));
+                } else {
+                    this.bad($("[id^=dla_"+record.sys+"]"));
+                }
             },
             good: function(target) { $(target).addClass('success'); },
             bad: function(target) { $(target).addClass('failure'); },
             add: {
-                parse: function(index,sys,autoTarget) {
-                    var that = this,
-                        game = repod.psdle.gamelist[index];
-
-                    switch (sys) {
-                        case "ps4":
-                        case "ps3":
-                        case "vita":
-                            this.go(sys,game.id,autoTarget);
-                            break;
-                        case "all":
-                            var temp = game.platformUsable.slice(0), i = $.inArray("PSP", temp); if(i != -1) { temp.splice(i, 1); } //Make sure we don't have PSP
-                            $.each(temp,function(a,b) { that.go(b.replace(/ps /i,"").toLowerCase(),game.id); });
-                            break;
-                    }
-                },
                 ask: function(e) {
                     //Ask which system to queue for. (cannot validate outside of this.go() response, if we care)
                     //See notes for determining active consoles, probably the way to go.
                     repod.psdle.newbox.open($(e).attr("id").split("_").pop());
-                },
-                go: function(sys,id,autoTarget) {
-                    //Add game to batch.
-                    repod.psdle.dlQueue.batch.send(sys,id,false,undefined,undefined,autoTarget);
                 },
                 auto: function(e) {
                     var index = (isNaN(e)) ? Number($(e).attr("id").split("_").pop()) : Number(e), //Target index to read from.
@@ -1253,7 +1237,7 @@ repod.psdle = {
                     t    = $("<div>", {id:"dlQASys"} );
 
                 if (temp.length > 1) {
-                    t.append($("<div>").append($("<div>", {id:"dla_all_"+id,text:repod.psdle.lang.strings.queueAll} )));
+                    //t.append($("<div>").append($("<div>", {id:"dla_all_"+id,text:repod.psdle.lang.strings.queueAll} ))); //TO-DO: #bringback
 
                     $.each(temp,function(a,b) {
                         var c = b.replace(/ps /i,"").toLowerCase(), d = (repod.psdle.config.active_consoles.hasOwnProperty(c)) ? "" : "toggled_off";
@@ -1311,7 +1295,7 @@ repod.psdle = {
                     });
 
                     $("div[id^=dla_]:not('.toggled_off')").on("click", function() {
-                        repod.psdle.dlQueue.batch.add.parse($(this).attr("id").split("_")[2],$(this).attr("id").split("_")[1]);
+                        repod.psdle.dlQueue.batch.send($(this).attr("id").split("_")[2],$(this).attr("id").split("_")[1]);
                     });
                     break;
 
