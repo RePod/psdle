@@ -999,12 +999,11 @@ repod.psdle = {
                 extend.videos = [];
 
                 var regexImg = /\.(png|jpg)$/ig,
-                    regexVid = /\.mp4$/ig
+                    regexVid = /\.mp4$/ig,
                     media = []
                     .concat(data.mediaList.screenshots)
                     .concat(data.mediaList.promo.images)
-                    .concat(data.mediaList.promo.videos)
-                    .concat(data.mediaList.screenshots)
+                    .concat(data.mediaList.promo.videos);
 
                 $.each(media, function(i,v) {
                     if (regexImg.test(v.url)) { extend.images.push(v.url); }
