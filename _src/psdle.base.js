@@ -344,7 +344,7 @@ repod.psdle = {
     table: {
         bindSearch: function() {
             //Unbind for safety.
-            $(document).off("click","#muh_table > tbody > tr, span[id^=system_], span[id^=filter_], span[id^=dl_], th[id^=sort_], #export_view, #export_csv").off("blur","#psdle_search_text");
+            $(document).off("click",".psdle_table tbody > tr, span[id^=system_], span[id^=filter_], span[id^=dl_], th[id^=sort_], #export_view, #export_csv").off("blur","#psdle_search_text");
             //Bind.
             $(document).keypress(function(e) { if (e.which == 13 && $("#psdle_search_text").is(":focus")) { repod.psdle.table.regen(true); } });
             $("#psdle_search_select").off("change").change(function() { repod.psdle.table.regen(true); });
@@ -371,7 +371,7 @@ repod.psdle = {
             repod.psdle.config.lastsort_r = false;
 
             $("#muh_games_container").css({"position":"absolute"});
-            $("#sub_container").html(repod.psdle.genSearchOptions()).append("<table id='muh_table'><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+repod.psdle.lang.columns.platform+"</th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table><br>"+repod.psdle.config.tag_line);
+            $("#sub_container").html(repod.psdle.genSearchOptions()).append("<div class='psdle_table'><table><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+repod.psdle.lang.columns.platform+"</th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table></div><br>"+repod.psdle.config.tag_line);
 
             this.regen(true);
             this.bindSearch();
@@ -412,7 +412,7 @@ repod.psdle = {
                         $("#psdleplus").css($(".headerUserInfo.cart").css(["background-image","background-repeat"])).css({"height":"14px","width":"14px","background-position":"left -5px"});
                     }
                 }
-                $("#muh_table > tbody").html(temp);
+                $(".psdle_table tbody").html(temp);
 
                 this.icons.select();
             }
@@ -431,7 +431,7 @@ repod.psdle = {
             this.regen(true);
         },
         margin: function() {
-            $("#muh_table").animate({"margin-top": $("#search_options").outerHeight() - $("#sub_container").css("padding-top").replace("px","")+"px"});
+            $(".psdle_table").animate({"margin-top": $("#search_options").outerHeight() - $("#sub_container").css("padding-top").replace("px","")+"px"});
             this.icons.smartScroll();
         },
         icons: {
@@ -1145,8 +1145,8 @@ repod.psdle = {
             table: function() {
                 var temp = "";
 
-                $("#muh_table").remove();
-                $("#sub_container").append("<table id='muh_table' style='display:inline-block;text-align:left'><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th>"+repod.psdle.lang.columns.platform+"</th><th> > </th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table>");
+                $(".psdle_table").remove();
+                $("#sub_container").append("<div class='psdle_table'><table style='display:inline-block;text-align:left'><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th>"+repod.psdle.lang.columns.platform+"</th><th> > </th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table></div>");
 
                 $.each(repod.psdle.dlQueue.batch.cache, function(key,value) {
                     if (value.length) {
@@ -1161,7 +1161,7 @@ repod.psdle = {
                     }
                 });
 
-                $("#muh_table > tbody").html(temp);
+                $(".psdle_table tbody").html(temp);
                 repod.psdle.table.margin();
             },
             display: function() {

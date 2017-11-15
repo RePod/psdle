@@ -8,6 +8,8 @@
     width: initial;
     display: initial;
 }
+
+
 /*Startup        */
 #psdle_start {
     z-index: 9001;
@@ -21,7 +23,7 @@
 }
 #muh_games_container {
     display: none;
-    position: fixed;
+    position: absolute;
     top: 0;
     right: 0;
     left: 0;
@@ -82,20 +84,23 @@
 }
 /*Table          */
 
-#muh_table {
-    text-align: left
-}
-.valkyrie #muh_table {
+.psdle_table, table {
+    text-align: left;
     display: inline-block;
+    border-collapse: initial;
 }
 th[id^=sort] {
     cursor: pointer
 }
+th[id^=sort]:hover {
+    background-color: rgb(98, 165, 240);
+}
 th {
     padding: 5px !important;
     background-color: #2185F4;
-    color: #fff
-      border:none
+    color: #fff;
+    border: none;
+    transition: background-color 0.3s
 }
 tr:hover {
     background-color: rgba(33, 133, 244, .7)!important
@@ -256,7 +261,11 @@ span[id^=system_] {
     padding: 2px;
     margin: 0 10px;
     box-shadow: 0 0 30px #000;
-    transition: background-color 0.5s 
+    transition: background-color 0.5s, box-shadow 0.5s
+}
+#dlQASys>div>div:hover {
+    background-color: rgba(33, 133, 244, 1);
+    box-shadow: 0 0 30px rgba(33, 133, 244, 1);
 }
 #dlQAStat {
     border-bottom-left-radius: 20px;
