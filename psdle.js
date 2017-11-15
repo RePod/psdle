@@ -1,4 +1,4 @@
-/*! psdle 3.0.2 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-15 */
+/*! psdle 3.0.3 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-15 */
 var repod = {};
 repod.psdle = {
     autocomplete_cache : [],
@@ -998,8 +998,8 @@ repod.psdle = {
                 extend.images = [];
                 extend.videos = [];
 
-                var regexImg = /\.(png|jpg)$/ig,
-                    regexVid = /\.mp4$/ig,
+                var regexImg = new RegExp('\\.(png|jpg)$','i'),
+                    regexVid = new RegExp('\\.mp4$','i'),
                     media = []
                     .concat(data.mediaList.screenshots)
                     .concat(data.mediaList.promo.images)
