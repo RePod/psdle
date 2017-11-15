@@ -997,8 +997,8 @@ repod.psdle = {
                 extend.images = [];
                 extend.videos = [];
 
-                var regexImg = /\.(png|jpg)$/ig,
-                    regexVid = /\.mp4$/ig,
+                var regexImg = new RegExp('\\.(png|jpg)$','i'),
+                    regexVid = new RegExp('\\.mp4$','i'),
                     media = []
                     .concat(data.mediaList.screenshots)
                     .concat(data.mediaList.promo.images)
