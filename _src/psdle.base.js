@@ -420,7 +420,6 @@ repod.psdle = {
 
                     //TO-DO: sort by order
                     $.each(repod.psdle.type_cache, function (key) {
-                        console.log("type_cache",key)
                         $("<span />", {id: "filter_"+key, text: (lang.categories[key] || key)}).appendTo(categories);
                     });
 
@@ -1001,15 +1000,15 @@ repod.psdle = {
                     if (target.hasOwnProperty("index")) {
                         $.extend(repod.psdle.gamelist[target.index-1], parse);
                     }
+                    
+                    that.called++;
                 })
-                .catch(function(e){ repod.psdle.type_cache["unknown"] = true; })
+                .catch(function(e){ that.called++; repod.psdle.type_cache["unknown"] = true; })
                 .then(function() { that.run(); that.updateBar(); });
             });
         },
         called: 0,
         updateBar: function() {
-            this.called++;
-
             var that  = this,
                 l     = this.called, //Math.abs(repod.psdle.gamelist.length - this.batch.length),
                 r     = repod.psdle.gamelist.length,
