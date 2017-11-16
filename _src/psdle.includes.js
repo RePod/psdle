@@ -421,7 +421,15 @@ repod.psdle = {
 
                     //TO-DO: sort by order
                     $.each(repod.psdle.type_cache, function (key) {
-                        $("<span />", {id: "filter_"+key, text: (lang.categories[key] || key)}).appendTo(categories);
+                        var i = $("<span />", {id: "filter_"+key, text: (lang.categories[key] || key)})
+                        if (order.indexOf(key) >= 0) {
+                            order[order.indexOf(key)] = i;
+                        } else {
+                            order.push(i);
+                        }
+                    });
+                    $.each(order, function (i,v) {
+                       v.appendTo(categories); 
                     });
 
                     categories.appendTo(r);
