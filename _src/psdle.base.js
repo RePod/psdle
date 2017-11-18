@@ -199,11 +199,9 @@ repod.psdle = {
             i18n = this.config.valkyrieInstance.lookup('service:i18n');
 
         entitlements = this.config.valkyrieInstance.lookup("service:macrossBrain").macrossBrainInstance.getEntitlementStore().getAllEntitlements()._result
-
         //.concat(this.e_inject_cache);
 
         $.each(entitlements, function(index,obj) {
-            console.log(obj);
             if (that.isValidContent(obj)) { //Determine if game content.
                 var temp = {};
 
