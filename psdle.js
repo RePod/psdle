@@ -1,4 +1,4 @@
-/*! psdle 3.0.5 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-18 */
+/*! psdle 3.0.6 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-18 */
 var repod = {};
 repod.psdle = {
     autocomplete_cache : [],
@@ -200,11 +200,9 @@ repod.psdle = {
             i18n = this.config.valkyrieInstance.lookup('service:i18n');
 
         entitlements = this.config.valkyrieInstance.lookup("service:macrossBrain").macrossBrainInstance.getEntitlementStore().getAllEntitlements()._result
-
         //.concat(this.e_inject_cache);
 
         $.each(entitlements, function(index,obj) {
-            console.log(obj);
             if (that.isValidContent(obj)) { //Determine if game content.
                 var temp = {};
 

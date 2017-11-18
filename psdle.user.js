@@ -1,11 +1,11 @@
-/*! psdle 3.0.5 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2017-11-18 */
+/*! psdle 3.0.6 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2017-11-18 */
 // ==UserScript==
 // @author		RePod
 // @name		PSDLE for Greasemonkey
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		3.0.5
+// @version		3.0.6
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -23,7 +23,7 @@ Alternatively, reconfigure the updating settings in your Userscript manager.
 */
 
 
-/*! psdle 3.0.5 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-18 */
+/*! psdle 3.0.6 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-18 */
 var repod = {};
 repod.psdle = {
     autocomplete_cache : [],
@@ -225,11 +225,9 @@ repod.psdle = {
             i18n = this.config.valkyrieInstance.lookup('service:i18n');
 
         entitlements = this.config.valkyrieInstance.lookup("service:macrossBrain").macrossBrainInstance.getEntitlementStore().getAllEntitlements()._result
-
         //.concat(this.e_inject_cache);
 
         $.each(entitlements, function(index,obj) {
-            console.log(obj);
             if (that.isValidContent(obj)) { //Determine if game content.
                 var temp = {};
 
