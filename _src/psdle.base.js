@@ -428,7 +428,7 @@ repod.psdle = {
                         }
                     });
                     $.each(order, function (i,v) {
-                       v.appendTo(categories); 
+                       v.appendTo(categories);
                     });
 
                     categories.appendTo(r);
@@ -463,19 +463,29 @@ repod.psdle = {
                 return r;
             },
             stats: function() {
-                var current = $("<span />", {class: 'search stats current'})[0].outerHTML,
-                    total = $("<span />", {class: 'search stats total'})[0].outerHTML,
-                    out = $("<div>"+current+" / "+total+"</div>", {class: "psdleSearchStats"});
+                var current = $("<span />", {class: 'search stats all current'}).append("<span />", {class: 'search stats psplus'}),
+                    total = $("<span />", {class: 'search stats all total'});
 
-                var psswitch = $("<input />", {type: "checkbox", class: "psdlePlusToggle", readonly: true, title: repod.psdle.lang.strings.plus})
+                var psswitch = $("<input />", {type: "checkbox", class: "search input plus", readonly: true, title: repod.psdle.lang.strings.plus})
                 .prop({"indeterminate": true})
                 .click(function() {
                     if (this.readOnly) this.checked=this.readOnly=false;
                     else if (!this.checked) this.readOnly=this.indeterminate=true;
 
                     repod.psdle.table.regen(true);
-                })
-                psswitch.appendTo(out);
+                }),
+                switchContainer = $("<span />", {class: 'search stats plus'})
+                    .append(" (")
+                    .append(psswitch)
+                    .append(" ")
+                    .append($("<span />", {class: 'search stats plus total'}))
+                    .append(")");
+
+                var out = $("<div />", {class: "psdleSearchStats"})
+                            .append(current)
+                            .append(switchContainer)
+                            .append(" / ")
+                            .append(total);
 
                 return out;
             }
@@ -491,7 +501,6 @@ repod.psdle = {
                 repod.psdle.exportList.delimited.destroy();
                 if (!repod.psdle.config.valkyrie) { repod.psdle.autocomplete.bind(); }
 
-                
                 $.each(repod.psdle.gamelist_cur,function (a,val) {
                     if (val.plus) {
                         plus++;
@@ -499,10 +508,11 @@ repod.psdle = {
                     temp += repod.psdle.table_utils.gen.row(val);
                 });
                 temp += repod.psdle.table_utils.gen.totals();
-                
-                $(".search.stats.current").text(repod.psdle.gamelist_cur.length)
-                $(".search.stats.total").text(repod.psdle.gamelist.length)
-                
+
+                $(".search.stats.all.current").text(repod.psdle.gamelist_cur.length)
+                $(".search.stats.all.total").text(repod.psdle.gamelist.length)
+                $(".search.stats.plus.total").text(plus)
+
                 if (!repod.psdle.config.valkyrie) {
                     if (repod.psdle.config.mobile) {
                         $("#psdleplus").html("<img class='psPlusIcon' src='mobile/img/furniture/psplusicon-small.a2ec8f23.png'>");
@@ -668,10 +678,10 @@ repod.psdle = {
                     }
                 }
 
-                if ($(".psdlePlusToggle").prop("checked")) {
+                if ($(".search.input.plus").prop("checked")) {
                     a = val.plus == true;
-                } else if ($(".psdlePlusToggle").prop("indeterminate")) {
-                } else if (!$(".psdlePlusToggle").prop("checked")) {
+                } else if ($(".search.input.plus").prop("indeterminate")) {
+                } else if (!$(".search.input.plus").prop("checked")) {
                     a = !(val.plus == true);
                 }
 
@@ -1008,7 +1018,7 @@ repod.psdle = {
                     if (target.hasOwnProperty("index")) {
                         $.extend(repod.psdle.gamelist[target.index-1], parse);
                     }
-                    
+
                     that.called++;
                 })
                 .catch(function(e){ that.called++; repod.psdle.type_cache["unknown"] = true; })
@@ -1024,7 +1034,7 @@ repod.psdle = {
                 pW    = $('#psdle_bar').parent().width(),
                 p     = Math.round(100*w/pW),
                 q     = Math.round(100*l/r);
-                
+
             if (100*l/r == 100) { repod.psdle.table.gen(); } //Ultimate in promise abuse technology.
 
             if (q > p) { $("#psdle_progressbar > #psdle_bar").stop().animate({"width":q+"%"}); }
