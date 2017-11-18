@@ -2,9 +2,9 @@
 _src/chrome/psdle/js/psdle.js
 *.pem
 *.crx
-!_src/chrome/psdle.crx
 # Firefox Add-on
-*-raw.xpi
+*.xpi
+!psdle.xpi
 
 # Etc.
 Thumbs.db

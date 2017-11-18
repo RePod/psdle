@@ -45,7 +45,7 @@ module.exports = function(grunt) {
         },
         copy: {
             release: { files: {'psdle.js': '_src/psdle.includes.js'} },
-            chrome: { files: { 'psdle.js': '_src/psdle.includes.js' } }
+            chrome: { files: { '_src/chrome/psdle/js/psdle.js': 'psdle.min.js' } }
         },
         concat: {
             options: {
@@ -137,6 +137,7 @@ module.exports = function(grunt) {
             'copy:release',     //Base
             'string-replace:release', //Set versions
             'uglify:release',   //Minified
+            'copy:chrome',
             'concat:userscript', //Userscript
             'exec:chrome', //Chrome
             'firefox' //We just don't know (last because may fail and at worst breaks deploy) 
