@@ -1,5 +1,6 @@
 var repod = {};
 repod.psdle = {
+    version            : (0 || "Testing"),
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -101,13 +102,6 @@ repod.psdle = {
 
         console.log("PSDLE | Config set.");
 
-        try {
-            if (GM_info) {
-                this.config.tag_line += " - <span class='psdle_tiny_link'>Userscript: "+GM_info.script.version+"</span>";
-            }
-        }
-        catch (e) { };
-
         if (this.config.tv_url[this.config.language]) {
             this.config.tv_url = this.config.tv_url[this.config.language];
         }
@@ -153,7 +147,7 @@ repod.psdle = {
         }
 
         $("#muh_games_container").slideUp("slow", function() {
-            var a = "<div id='sub_container'><a href='//repod.github.io/psdle/' target='_blank'><img src='"+repod.psdle.config.logoBase64+"' style='display:inline-block;font-size:200%;font-weight:bold' alt='psdle' /></a></span>";
+            var a = "<div id='sub_container'><a href='//repod.github.io/psdle/' target='_blank'><img src='"+repod.psdle.config.logoBase64+"' style='display:inline-block;font-size:200%;font-weight:bold' alt='psdle' /><br><small>v"+repod.psdle.version+"</small></a></span>";
 
             if (mode == "progress") {
                 that.config.active_consoles = {vita: 1, ps3: 1, ps4: 1}; //to-do: re-implement

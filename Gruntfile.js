@@ -67,6 +67,17 @@ module.exports = function(grunt) {
             deploy: 'deploy-sync.bat'
         },
         'string-replace': {
+            compile: {
+                files: {
+                    '_src/psdle.includes.js': '_src/psdle.includes.js'
+                },
+                options: {
+                    replacements: [{
+                        pattern: /(version\s*:\s*\().*?(\s)/ig,
+                        replacement: '$1"<%= pkg.version %>"$2'
+                    }]
+                }
+            },
             release: {
                 files: {
                     '_src/chrome/psdle/manifest.json': '_src/chrome/psdle/manifest.json',
@@ -105,7 +116,14 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-webext-builder');
     grunt.loadNpmTasks('grunt-exec');
 
-    grunt.registerTask('compile', ['minjson','cssmin','includes:build']);
+    grunt.registerTask('compile', 'Minify and bake in language JSON and CSS, then bake in version.', function(){
+        grunt.task.run([
+            'minjson',
+            'cssmin',
+            'includes:build',
+            'string-replace:compile'
+        ])
+    });
     grunt.registerTask('chrome', ['exec:chrome2']);
     grunt.registerTask('firefox', 'Create and sign Firefox extension.', function() {
         grunt.task.run([
