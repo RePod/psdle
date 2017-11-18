@@ -195,12 +195,15 @@ repod.psdle = {
 
         this.gamelist = [];
         var that         = this;
-            entitlements = [],
+            /*entitlements = [],*/
             i18n = this.config.valkyrieInstance.lookup('service:i18n');
 
-        entitlements = JSON.parse(localStorage["entitlements_0_"+(this.config.valkyrieInstance.lookup('service:kamaji/session').sessionModel.accountId)+"_e1-np"]).concat(this.e_inject_cache);
+        entitlements = this.config.valkyrieInstance.lookup("service:macrossBrain").macrossBrainInstance.getEntitlementStore().getAllEntitlements()._result
+
+        //.concat(this.e_inject_cache);
 
         $.each(entitlements, function(index,obj) {
+            console.log(obj);
             if (that.isValidContent(obj)) { //Determine if game content.
                 var temp = {};
 
@@ -855,8 +858,14 @@ repod.psdle = {
             handle: function() {
                 this.destroy();
                 var w = 600;
-                $("#search_options").append("<span id='sotextarea' style='display:none'><br><textarea></textarea></span>");
-                $("#sotextarea > textarea").css({"width":w,"max-width":w}).text(this.gen(prompt(repod.psdle.lang.strings.delimiter,"\t"))).select().parent().delay(500).slideDown();
+
+                $("<span />", {id: "sotextarea"})
+                .append(
+                    $("<textarea />", {text: this.gen(prompt(repod.psdle.lang.strings.delimiter,"\t"))})
+                    .css({"width":w,"max-width":w})
+                )
+                .insertAfter(".psdleSearchStats");
+
                 repod.psdle.table.margin();
             },
             destroy: function () { $("#sotextarea").remove(); repod.psdle.table.margin(); }
