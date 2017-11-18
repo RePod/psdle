@@ -1,11 +1,11 @@
-/*! psdle 3.0.6 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2017-11-18 */
+/*! psdle 3.0.7 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2017-11-18 */
 // ==UserScript==
 // @author		RePod
 // @name		PSDLE for Greasemonkey
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		3.0.6
+// @version		3.0.7
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -23,9 +23,10 @@ Alternatively, reconfigure the updating settings in your Userscript manager.
 */
 
 
-/*! psdle 3.0.6 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-18 */
+/*! psdle 3.0.7 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-18 */
 var repod = {};
 repod.psdle = {
+    version            : ("3.0.7" || "Testing"),
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -127,13 +128,6 @@ repod.psdle = {
 
         console.log("PSDLE | Config set.");
 
-        try {
-            if (GM_info) {
-                this.config.tag_line += " - <span class='psdle_tiny_link'>Userscript: "+GM_info.script.version+"</span>";
-            }
-        }
-        catch (e) { };
-
         if (this.config.tv_url[this.config.language]) {
             this.config.tv_url = this.config.tv_url[this.config.language];
         }
@@ -179,7 +173,7 @@ repod.psdle = {
         }
 
         $("#muh_games_container").slideUp("slow", function() {
-            var a = "<div id='sub_container'><a href='//repod.github.io/psdle/' target='_blank'><img src='"+repod.psdle.config.logoBase64+"' style='display:inline-block;font-size:200%;font-weight:bold' alt='psdle' /></a></span>";
+            var a = "<div id='sub_container'><a href='//repod.github.io/psdle/' target='_blank'><img src='"+repod.psdle.config.logoBase64+"' style='display:inline-block;font-size:200%;font-weight:bold' alt='psdle' /><br><small>v"+repod.psdle.version+"</small></a></span>";
 
             if (mode == "progress") {
                 that.config.active_consoles = {vita: 1, ps3: 1, ps4: 1}; //to-do: re-implement
