@@ -62,16 +62,22 @@
     display: inline-block;
     margin: 5px auto
 }
-.psdle_tiny_link {
+
+.psdle.tagline {
+    font-size: small
+}
+.psdle.tagline > a,
+.psdle.tagline > span {
     line-height: 0;
     cursor: pointer;
     color: #7F6D75 !important;
-    font-size: x-small
 }
-.psdle_tiny_link:hover {
-    color: #000!important;
-    text-decoration: underline
+.psdle.tagline > a:hover,
+.psdle.tagline > span:hover {
+    color: inherit !important;
+    text-decoration: underline;
 }
+
 /*Search options */
 
 .search.main.container {
@@ -498,7 +504,7 @@ span[id^=system_] {
 .psdledark a.psdle_game_link {
     color: rgb(231, 231, 231)
 }
-.psdledark #search_options {
+.psdledark .search.main.container {
     background-color: rgba(34, 34, 34, 0.7)
 }
 .psdledark tr {
