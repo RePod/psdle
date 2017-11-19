@@ -1,7 +1,7 @@
-/*! psdle 3.0.9 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-18 */
+/*! psdle 3.0.9 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-19 */
 var repod = {};
 repod.psdle = {
-    version            : ("3.0.9" || "Testing"),
+    version            : (0 || "Testing"),
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -176,8 +176,8 @@ repod.psdle = {
                 }
             }
             $("#muh_games_container").html(a).slideDown("slow",function() {
-                if (mode == "progress") { if (fake_list) { that.debug.fake_list() } else { that.generateList(); } }
-                else {
+                if (mode == "progress") { if (fake_list) { that.debug.fake_list() } else { that.macrossBrain(); }
+                } else {
                     $("[id^=api_]").promise().done(function() {
                         if (!that.config.valkyrie) $("[id^=api_]").tooltip({position: {my: "center top", at: "center bottom"}})
                     });
@@ -185,15 +185,22 @@ repod.psdle = {
             });
         });
     },
+    macrossBrain: function() {
+        var that = this;
+        var macrossBrain = this.config.valkyrieInstance.lookup("service:macrossBrain").macrossBrainInstance.getEntitlementStore();
+        console.log("PSDLE | Waiting on Macross Brain.")
+        macrossBrain.sync().then(function() {
+            console.log("PSDLE | Macross Brain resolved.")
+            that.generateList()
+        })
+    },
     generateList: function() {
         console.log("PSDLE | Generating download list.");
 
         this.gamelist = [];
-        var that         = this;
-            /*entitlements = [],*/
-            i18n = this.config.valkyrieInstance.lookup('service:i18n');
-
-        entitlements = this.config.valkyrieInstance.lookup("service:macrossBrain").macrossBrainInstance.getEntitlementStore().getAllEntitlements()._result
+        var that = this;
+        var i18n = this.config.valkyrieInstance.lookup('service:i18n');
+        var entitlements = this.config.valkyrieInstance.lookup("service:macrossBrain").macrossBrainInstance.getEntitlementStore().getAllEntitlements()._result;
         //.concat(this.e_inject_cache);
 
         $.each(entitlements, function(index,obj) {
@@ -237,7 +244,7 @@ repod.psdle = {
 
                 temp.date           = obj.active_date;
                 var tempDate = new Date(temp.date);
-                    toPrettyDate = {mm:tempDate.getMonth()+1, dd:tempDate.getDate(), yyyy:tempDate.getFullYear()}
+                var toPrettyDate = {mm:tempDate.getMonth()+1, dd:tempDate.getDate(), yyyy:tempDate.getFullYear()};
                 temp.prettyDate     = i18n.t("c.format.numericDateSlashes",toPrettyDate).string
 
                 var tempSize        = require("valkyrie-storefront/utils/download").default.getFormattedFileSize(temp.size);
@@ -271,7 +278,7 @@ repod.psdle = {
             }
         });
 
-        console.log("PSDLE | Finished generating download list.");
+        console.log("PSDLE | Finished generating download list. Processed "+entitlements.length+" item(s).");
         this.postList();
     },
     determineSystem: function(HASH) {
@@ -299,6 +306,7 @@ repod.psdle = {
         var exp = (obj.license) ? obj.license.expiration : obj.inactive_date,
             inf = (obj.license) ? obj.license.infinite_duration : false;
 
+        //if (obj.entitlement_type == 1 || obj.entitlement_type == 4) //Services = Ignored
         if (!this.config.includeVideo && (obj.VUData || (obj.drm_def && obj.drm_def.contentType == "TV"))) { return 0; }
         else if (!this.config.includeExpired && new Date(exp) < new Date() && !inf) { return 0; }
         else if (obj.drm_def || obj.entitlement_attributes) { return 1; }
@@ -1265,6 +1273,7 @@ repod.psdle = {
             },
             totals: function() {
                 var a = 0;
+                var i18n = repod.psdle.config.valkyrieInstance.lookup('service:i18n');
 
                 $.each(repod.psdle.gamelist_cur, function(b,c) {
                     a += c.size;
