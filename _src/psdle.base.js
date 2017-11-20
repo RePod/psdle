@@ -65,7 +65,7 @@ repod.psdle = {
 
         this.config = {
             valkyrie        : valkAPI,
-            valkyrieInstance: require("valkyrie-storefront/app").default.create().__container__
+            valkyrieInstance: Ember.Application.NAMESPACES_BY_ID["valkyrie-storefront"].__container__
         }
 
         //valkAPI && alert("PSDLE detected the new Valkyrie store API.\nSupport for this is currently experimental!\nAny issues should be reported here, along with region:\nhttps://github.com/RePod/psdle/issues/40")
@@ -180,7 +180,7 @@ repod.psdle = {
                 }
             }
             $("#muh_games_container").html(a).slideDown("slow",function() {
-                if (mode == "progress") { if (fake_list) { that.debug.fake_list() } else { that.macrossBrain(); }
+                if (mode == "progress") { if (fake_list) { that.debug.fake_list() } else { that.generateList(); }
                 } else {
                     $("[id^=api_]").promise().done(function() {
                         if (!that.config.valkyrie) $("[id^=api_]").tooltip({position: {my: "center top", at: "center bottom"}})
@@ -189,21 +189,16 @@ repod.psdle = {
             });
         });
     },
-    macrossBrain: function() {
-        console.log("PSDLE | Initializing Macross Brain.");
-
-        var that = this;
-        var macrossBrain = this.config.valkyrieInstance.lookup("service:macrossBrain").macrossBrainInstance.getEntitlementStore().getAllEntitlements().then(function(t) {;
-            console.log("PSDLE | Macross Brain resolved. Items:",t.length)
-            that.generateList(t)
-        })
-    },
-    generateList: function(entitlements) {
+    generateList: function() {
         console.log("PSDLE | Generating download list.");
 
         this.gamelist = [];
         var that = this;
         var i18n = this.config.valkyrieInstance.lookup('service:i18n');
+        
+        //Currently a BAD way to grab this, but the only way until big brother sorts out fighting with localStorage
+        //Even when that is fixed, use s:mb.entitlements
+        var entitlements = this.config.valkyrieInstance.lookup("service:macross-brain").macrossBrainInstance._entitlementStore._storage._entitlementMapCache;
         //.concat(this.e_inject_cache);
 
         $.each(entitlements, function(index,obj) {
@@ -281,7 +276,7 @@ repod.psdle = {
             }
         });
 
-        console.log("PSDLE | Finished generating download list. Processed "+entitlements.length+" item(s).");
+        console.log("PSDLE | Finished generating download list. End result is "+this.gamelist.length+" item(s).");
         this.postList();
     },
     determineSystem: function(HASH) {
@@ -506,7 +501,7 @@ repod.psdle = {
                     plus = 0;
 
                 repod.psdle.exportList.delimited.destroy();
-                if (!repod.psdle.config.valkyrie) { repod.psdle.autocomplete.bind(); }
+                //repod.psdle.autocomplete.bind();//TO-DO
 
                 $.each(repod.psdle.gamelist_cur,function (a,val) {
                     if (val.plus) {
@@ -520,13 +515,12 @@ repod.psdle = {
                 $(".search.stats.all.total").text(repod.psdle.gamelist.length)
                 $(".search.stats.plus.total").text(plus)
 
-                if (!repod.psdle.config.valkyrie) {
-                    if (repod.psdle.config.mobile) {
-                        $("#psdleplus").html("<img class='psPlusIcon' src='mobile/img/furniture/psplusicon-small.a2ec8f23.png'>");
-                    } else {
-                        $("#psdleplus").css($(".headerUserInfo.cart").css(["background-image","background-repeat"])).css({"height":"14px","width":"14px","background-position":"left -5px"});
-                    }
-                }
+                /*TO-DO
+                if (repod.psdle.config.mobile) {
+                    $("#psdleplus").html("<img class='psPlusIcon' src='mobile/img/furniture/psplusicon-small.a2ec8f23.png'>");
+                } else {
+                    $("#psdleplus").css($(".headerUserInfo.cart").css(["background-image","background-repeat"])).css({"height":"14px","width":"14px","background-position":"left -5px"});
+                }*/
                 $(".psdle_table tbody").html(temp);
 
                 this.icons.select();

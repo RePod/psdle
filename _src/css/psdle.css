@@ -166,7 +166,7 @@ td:first-child {
     width: 100%
 }
 .negate_regex {
-    background-color: #FF8080;
+    background-color: #FF8080 !important;
     color: #fff
 }
 .psdle_fancy_bar>span,
