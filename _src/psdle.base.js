@@ -190,21 +190,20 @@ repod.psdle = {
         });
     },
     macrossBrain: function() {
+        console.log("PSDLE | Initializing Macross Brain.");
+
         var that = this;
-        var macrossBrain = this.config.valkyrieInstance.lookup("service:macrossBrain").macrossBrainInstance.getEntitlementStore();
-        console.log("PSDLE | Waiting on Macross Brain.")
-        macrossBrain.sync().then(function() {
-            console.log("PSDLE | Macross Brain resolved.")
-            that.generateList()
+        var macrossBrain = this.config.valkyrieInstance.lookup("service:macrossBrain").macrossBrainInstance.getEntitlementStore().getAllEntitlements().then(function(t) {;
+            console.log("PSDLE | Macross Brain resolved. Items:",t.length,)
+            that.generateList(t)
         })
     },
-    generateList: function() {
+    generateList: function(entitlements) {
         console.log("PSDLE | Generating download list.");
 
         this.gamelist = [];
         var that = this;
         var i18n = this.config.valkyrieInstance.lookup('service:i18n');
-        var entitlements = this.config.valkyrieInstance.lookup("service:macrossBrain").macrossBrainInstance.getEntitlementStore().getAllEntitlements()._result;
         //.concat(this.e_inject_cache);
 
         $.each(entitlements, function(index,obj) {
@@ -1618,4 +1617,5 @@ var a = setInterval(function(a){
 
 },500);
 repod.psdle.config = {"timerID":a};
+console.log("%cPSDLE has started!", "color:#2185f4;font-size:x-large;font-weight:bold;")
 console.log("PSDLE | Ready.");
