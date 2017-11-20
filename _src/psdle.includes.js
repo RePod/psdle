@@ -1,4 +1,4 @@
-/*! psdle 3.1.0 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-19 */
+/*! psdle 3.1.0 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-20 */
 var repod = {};
 repod.psdle = {
     version            : (0 || "Testing"),
@@ -195,7 +195,7 @@ repod.psdle = {
 
         var that = this;
         var macrossBrain = this.config.valkyrieInstance.lookup("service:macrossBrain").macrossBrainInstance.getEntitlementStore().getAllEntitlements().then(function(t) {;
-            console.log("PSDLE | Macross Brain resolved. Items:",t.length,)
+            console.log("PSDLE | Macross Brain resolved. Items:",t.length)
             that.generateList(t)
         })
     },

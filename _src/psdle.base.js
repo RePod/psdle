@@ -194,7 +194,7 @@ repod.psdle = {
 
         var that = this;
         var macrossBrain = this.config.valkyrieInstance.lookup("service:macrossBrain").macrossBrainInstance.getEntitlementStore().getAllEntitlements().then(function(t) {;
-            console.log("PSDLE | Macross Brain resolved. Items:",t.length,)
+            console.log("PSDLE | Macross Brain resolved. Items:",t.length)
             that.generateList(t)
         })
     },
