@@ -1,11 +1,11 @@
-/*! psdle 3.1.2 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2017-11-21 */
+/*! psdle 3.1.3 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2017-11-21 */
 // ==UserScript==
 // @author		RePod
 // @name		PSDLE for Greasemonkey
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		3.1.2
+// @version		3.1.3
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -23,10 +23,10 @@ Alternatively, reconfigure the updating settings in your Userscript manager.
 */
 
 
-/*! psdle 3.1.2 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-21 */
+/*! psdle 3.1.3 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-21 */
 var repod = {};
 repod.psdle = {
-    version            : "3.1.2",
+    version            : "3.1.3",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -463,9 +463,9 @@ repod.psdle = {
                 }
 
                 if (!dlQueue) {
-                    var textSearch = $("<div />"),
-                        sel = $("<select />", {id: "psdle_search_select", class: "search input select"}),
-                        keys = {
+                    var textSearch = $("<div />");
+                    var sel = $("<select />", {id: "psdle_search_select", class: "search input select"});
+                    var keys = {
                             "name": lang.columns.name,
                             "base": "Base Game",
                             "publisher": "Publisher",
@@ -473,17 +473,25 @@ repod.psdle = {
                             "pid": "Product ID"
                         };
 
+                    //Scope select
                     if (repod.psdle.config.deep_search) {
                         keys["genre"] = "Genre";
                         // + Metadata, description
                     }
-
                     $.each(keys, function (i, v) {
                         $("<option />", {value: i, text: v}).appendTo(sel);
                     })
-
                     sel.appendTo(textSearch);
-                    $("<input />", {id: "psdle_search_text", class: "search input text", type: "text", placeholder: lang.strings.search}).appendTo(textSearch);
+
+                    //Autocomplete
+                    $("<input />", {
+                        id: "psdle_search_text",
+                        class: "search input text",
+                        type: "text",
+                        list: "searchAutocomplete",
+                        placeholder: lang.strings.search
+                    }).appendTo(textSearch);
+                    $("<datalist />", {id: "searchAutocomplete"}).appendTo(textSearch);
 
                     textSearch.appendTo(r);
                 }
@@ -550,6 +558,15 @@ repod.psdle = {
                 $(".search.stats.all.current").text(repod.psdle.gamelist_cur.length)
                 $(".search.stats.all.total").text(repod.psdle.gamelist.length)
                 $(".search.stats.plus.total").text(plus)
+
+                //Generate autocomplete datalist
+                $("datalist#searchAutocomplete").empty()
+                $.each(repod.psdle.autocomplete_cache, function (i,v) {
+                    $("<option />", {
+                        value: v
+                    })
+                    .appendTo("datalist#searchAutocomplete")
+                });
 
                 /*TO-DO
                 if (repod.psdle.config.mobile) {
@@ -728,7 +745,7 @@ repod.psdle = {
                     //Prevent duplicates from filling the autocomplete.
                     if ($.inArray(t,cache) == -1) {
                         cache.push(t);
-                        that.autocomplete_cache.push({"label":t,"value":t});
+                        that.autocomplete_cache.push(t);
                     }
                 }
             }
@@ -1413,24 +1430,6 @@ repod.psdle = {
         close: function() {
             $("#dlQueue_newbox").remove();
             this.bind("off");
-        }
-    },
-    autocomplete: {
-        bind: function() {
-            if ($(".ui-autocomplete-input").length) {
-                $("#psdle_search_text").autocomplete("close");
-                $("#psdle_search_text").autocomplete("option", {source: repod.psdle.autocomplete_cache});
-            } else {
-                $("#psdle_search_text").autocomplete({
-                    source: repod.psdle.autocomplete_cache,
-                    position: {my: "center top", at: "center bottom"},
-                    messages: {noResults: "", results: function() {}},
-                    select: function(e,u) {
-                        repod.psdle.config.last_search = u.item.value;
-                        repod.psdle.table.regen(true);
-                    }
-                });
-            }
         }
     },
     tv: {
