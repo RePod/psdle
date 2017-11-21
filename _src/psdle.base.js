@@ -195,7 +195,7 @@ repod.psdle = {
         this.gamelist = [];
         var that = this;
         var i18n = this.config.valkyrieInstance.lookup('service:i18n');
-        
+
         //Currently a BAD way to grab this, but the only way until big brother sorts out fighting with localStorage
         //Even when that is fixed, use s:mb.entitlements
         var entitlements = this.config.valkyrieInstance.lookup("service:macross-brain").macrossBrainInstance._entitlementStore._storage._entitlementMapCache;
@@ -855,18 +855,16 @@ repod.psdle = {
             },
             handle: function() {
                 this.destroy();
-                var w = 600;
 
-                $("<span />", {id: "sotextarea"})
-                .append(
-                    $("<textarea />", {text: this.gen(prompt(repod.psdle.lang.strings.delimiter,"\t"))})
-                    .css({"width":w,"max-width":w})
-                )
+                $("<textarea />", {
+                    class: "search export",
+                    text: this.gen(prompt(repod.psdle.lang.strings.delimiter,"\t"))
+                })
                 .insertAfter(".psdleSearchStats");
 
                 repod.psdle.table.margin();
             },
-            destroy: function () { $("#sotextarea").remove(); repod.psdle.table.margin(); }
+            destroy: function () { $(".search.export").remove(); repod.psdle.table.margin(); }
         },
         //json: function() { return (!!JSON.stringify) ? JSON.stringify(repod.psdle.gamelist_cur) : "Browser does not have JSON.stringify()!"; },
         json: {
@@ -1270,17 +1268,14 @@ repod.psdle = {
             },
             totals: function() {
                 var a = 0;
+                var out_size = "";
                 var i18n = repod.psdle.config.valkyrieInstance.lookup('service:i18n');
 
-                $.each(repod.psdle.gamelist_cur, function(b,c) {
-                    a += c.size;
-                });
-
+                $.each(repod.psdle.gamelist_cur, function(b,c) { a += c.size; });
                 var tempSize = require("valkyrie-storefront/utils/download").default.getFormattedFileSize(a);
-                a = i18n.t("c.page.details.drmDetails."+tempSize.unit,{val: tempSize.value});
+                out_size = (a > 0) ? i18n.t("c.page.details.drmDetails."+tempSize.unit,{val: tempSize.value}) : "";
 
-                return "<tr id='psdle_totals'><td /><td /><td /><td>"+a+"</td><td /></tr>";
-                //formatFileSizeDisplayStr(a)
+                return "<tr id='psdle_totals'><td /><td /><td /><td>"+out_size+"</td><td /></tr>";
             }
         }
     },

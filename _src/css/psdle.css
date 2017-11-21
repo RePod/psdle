@@ -92,6 +92,12 @@
 .search.input.plus {
     cursor: pointer !important;
 }
+.search.export {
+    display: inline;
+    width: 95%;
+    max-width: 600px;
+}
+
 
 /*Table          */
 
@@ -245,7 +251,7 @@ span[id^=system_] {
 }
 #dlQAN {
     /*cursor: move;*/
-    
+
     background-color: rgba(33, 133, 244, .8);
     padding: 7px 15px;
     color: #fff;
