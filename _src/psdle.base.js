@@ -1,6 +1,6 @@
 var repod = {};
 repod.psdle = {
-    version            : (0 || "Testing"),
+    version            : "Testing",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
