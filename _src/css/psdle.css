@@ -1,3 +1,5 @@
+/* Prefer using " over ' and escaping otherwise due to the CSS injection in base. See base for extra details. */
+
 /* Undo Valkyrie overrides, in a NON-GREEDY WAY */
 
 .valkyrie #lang_select,
@@ -202,7 +204,7 @@ span[id^=system_] {
     border-bottom-right-radius: 12px
 }
 .toggled_off {
-    opacity: .4
+    background-color: rgba(33,133,244,0.4) !important;
 }
 /*Search borders */
 
@@ -392,30 +394,57 @@ span[id^=system_] {
     background-color: #85C107
 }
 /*Tooltips       */
+[data-tooltip] {
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+}
 
-.tooltip-inner {
-    background-color: #2185F4!important;
-    border: 5px solid #2185F4!important
+[data-tooltip]:before,
+[data-tooltip]:after {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
 }
-.tooltip-arrow {
-    border-top-color: #2185F4!important
-}
-.tooltip.in {
-    opacity: 1!important
-}
-/*Tooltips 2     */
 
-.ui-tooltip {
-    direction: rtl;
-    max-width: 234px;
-    z-index: 9002;
-    background-color: #2185F4;
-    font-size: 22px;
-    text-align: center;
-    line-height: 1.4em;
-    padding: 12px;
-    border-radius: 4px
+[data-tooltip]:before {
+  --width: 300px;
+  position: absolute;
+  top: 150%;
+  left: 50%;
+  margin-left: calc(var(--width)/2*-1);
+  padding: 7px;
+  width: var(--width);
+  border-radius: 3px;
+  background-color: rgba(33,133,244,0.9);
+  color: #fff;
+  content: attr(data-tooltip);
+  text-align: center;
+  font-size: 0.9em;
+  line-height: 1.2;
+  box-shadow: 0px 0px 10px #FFF;
 }
+
+[data-tooltip]:after {
+  position: absolute;
+  top: calc(150% - 5px);
+  left: 50%;
+  margin-left: -5px;
+  width: 0;
+  border-bottom: 5px solid rgba(33,133,244,0.9);
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+  content: " ";
+  font-size: 0;
+  line-height: 0;
+}
+
+[data-tooltip]:hover:before,
+[data-tooltip]:hover:after {
+  visibility: visible;
+  opacity: 1;
+}
+
 /*Autocomplete   */
 
 .ui-autocomplete {

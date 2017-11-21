@@ -157,7 +157,7 @@ repod.psdle = {
                 $.each(that.lang.apis, function(key,con) {
                     if (con.internalID == "api_pstv" && that.config.language !== "en-us") { return 0; }
                     var off = (con.internalID == "api_game" || con.disabled) ? "toggled_off" : "";
-                    a += "<span id='"+con.internalID+"' title='"+con.desc.replace(/'/g, "&apos;")+"' class='"+off+"'>"+con.name.replace(/'/g, "&apos;")+"</span>";
+                    a += "<span id='"+con.internalID+"' data-tooltip='"+con.desc.replace(/'/g, "&apos;")+"' class='"+off+"'>"+con.name.replace(/'/g, "&apos;")+"</span>";
                 });
                 a += "</span><br><br><span id='psdle_go' class='psdle_btn'>"+that.lang.startup.start+"</span><br>"+that.generateLangBox()+"<br><br>";
                 //Great use of appends! Not sarcasm!
@@ -465,22 +465,31 @@ repod.psdle = {
                 return r;
             },
             stats: function() {
-                var current = $("<span />", {class: 'search stats all current'}).append("<span />", {class: 'search stats psplus'}),
+                var current = $("<span />", {class: "search stats all current"}),
                     total = $("<span />", {class: 'search stats all total'});
 
-                var psswitch = $("<input />", {type: "checkbox", class: "search input plus", readonly: true, title: repod.psdle.lang.strings.plus})
+                var psswitch = $("<input />", {
+                    type: "checkbox",
+                    class: "search input plus",
+                    readonly: true
+                })
                 .prop({"indeterminate": true})
                 .click(function() {
                     if (this.readOnly) this.checked=this.readOnly=false;
                     else if (!this.checked) this.readOnly=this.indeterminate=true;
 
                     repod.psdle.table.regen(true);
-                }),
-                switchContainer = $("<span />", {class: 'search stats plus'})
+                });
+
+                var switchContainer =
+                    $("<span />", {
+                        class: "search stats plus",
+                        "data-tooltip": repod.psdle.lang.strings.plus
+                    })
                     .append(" (")
                     .append(psswitch)
                     .append(" ")
-                    .append($("<span />", {class: 'search stats plus total'}))
+                    .append($("<span />", {class: "search stats plus total"}))
                     .append(")");
 
                 var out = $("<div />", {class: "psdleSearchStats"})
@@ -757,8 +766,9 @@ repod.psdle = {
         return sys;
     },
     injectCSS: function() {
-        var temp = "{{{include "css/psdle.min.css"}}}"
-        $("head").append("<style type='text/css'>"+temp+"</style>");
+        //CSS prefers " over ' to avoid string literal issues.
+        var temp = '{{{include "css/psdle.min.css"}}}';
+        $("head").append('<style type="text/css">'+temp+'</style>');
     },
     darkCSS: function() {
         $("#muh_games_container").toggleClass("psdledark");
