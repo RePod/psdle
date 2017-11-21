@@ -487,7 +487,7 @@ repod.psdle = {
                         class: "search stats plus",
                         "data-tooltip": repod.psdle.lang.strings.plus
                     })
-                    .append(" (")
+                    .append("(")
                     .append(psswitch)
                     .append(" ")
                     .append($("<span />", {class: "search stats plus total"}))
@@ -495,6 +495,7 @@ repod.psdle = {
 
                 var out = $("<div />", {class: "psdleSearchStats"})
                             .append(current)
+                            .append(" ")
                             .append(switchContainer)
                             .append(" / ")
                             .append(total);
