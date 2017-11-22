@@ -1,0 +1,37 @@
+{
+    "def": "de",
+    "de": {
+        "author": "/u/_MrBubbles",
+        "local": "Deutsch",
+        "startup": {
+            "wait": "Seite wird geladen, bitte warten."
+        },
+        "columns": {
+            "icon": "Symbol",
+            "name": "Name",
+            "platform": "Plattform",
+            "size": "Größe",
+            "date": "Datum"
+        },
+        "labels": {
+            "exportView": "Exportiere Ansicht",
+            "page": "Seite"
+        },
+        "categories": {
+            "downloadable_game": "Spiele",
+            "demo": "Demos",
+            "add_on": "Erweiterungen",
+            "unlock": "Freischaltbares",
+            "avatar": "Spielerbilder",
+            "theme": "Themen",
+            "application": "Anwendungen",
+            "unknown": "Unbekannt"
+        },
+        "strings": {
+            "delimiter": "Geben sie ein Trennzeichen ein",
+            "yes": "Ja",
+            "no": "Nein",
+            "search": "Suche"
+        }
+    }
+}

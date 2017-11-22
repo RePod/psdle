@@ -1,0 +1,76 @@
+{
+    "def": "ae",
+    "ae": {
+        "author": "Oakkom",
+        "rtl": true,
+        "local": "العربية",
+        "startup": {
+            "apis": "أختار الميزات التي تود استخدامها حرك المؤشر فوقها للمزيد من المعاومات<br>بعض الميزات لا يمكن ابطالها",
+            "wait": "...جار التحميل",
+            "start": "ابدأ"
+        },
+        "columns": {
+            "icon": "الأيقونة",
+            "name": "الأسم",
+            "platform": "نوع الجهاز",
+            "size": "الحجم",
+            "date": "التاريخ"
+        },
+        "labels": {
+            "exportView": "أحفظ الائحة",
+            "page": "الصفحة"
+        },
+        "categories": {
+            "downloadable_game": "الألعاب",
+            "demo": "الإصدارات التجريبية",
+            "add_on": "العناصر الأضافية",
+            "unlock": "Unlocks",
+            "unlock_key": "Unlock Keys",
+            "avatar": "صٌور رمزية",
+            "theme": "السمات",
+            "other": "اخرى",
+            "other_game_related": "other_game_related",
+            "game_content": "محتويات اللعبة",
+            "tumbler_index": "tumbler_index",
+            "home": "المنزل",
+            "ungrouped_game": "ungrouped_game",
+            "promo_content": "محتويات ترويجية",
+            "beta": "اصدار تجريبي",
+            "application": "التطبيقات",
+            "extras": "إضافات",
+            "unknown": "مجهول"
+        },
+        "strings": {
+            "delimiter": ":أدخل الفواصل",
+            "yes": "نعم",
+            "no": "لا",
+            "search": "أبحث",
+            "dlQueue": "لائحة التنزيل",
+            "dlList": "لائحة الألعاب",
+            "plus": "ضبط ظاهرية العاب PlayStation Plus",
+            "queueAll": "الكل",
+            "queueTo": "$SYS$ حَمل الى",
+            "noTarget": "لا يوجد جهاز للتحميل اليه",
+            "exportColumnName": "أسم العمود",
+            "exportProperty": "الخصائص"
+        },
+        "apis": [{
+            "internalID": "api_entitle",
+            "name": "تاريخ الشراء",
+            "desc": "لا يمكن عدم التفعيل تستعمل بيانات شىرائك ليتم تشكيل الائحة و تحديد وضع PlayStation Plus"
+        }, {
+            "internalID": "api_game",
+            "name": "الفهرس",
+            "desc": ".فعل للحصول على معاومات اضافية عن الألعاب, منها الأنواع. تزيد الوقت اللازم لتحميل اللائحة"
+        }, {
+            "internalID": "api_queue",
+            "name": "لائحة التنزيل",
+            "desc": ".تسمح بزيادة أو حذف العناصر من لائحة التنزيل, تحصل على معلومات لائحة التنزيل و عدد الأجهزة المفعلة على الحساب"
+        }, {
+            "internalID": "api_pstv",
+            "name": "PS TV",
+            "desc": "الكشف عن الألعاب لجهاز PS TV متوافر فقط لمتجر  en-us",
+            "disabled": true
+        }]
+    }
+}

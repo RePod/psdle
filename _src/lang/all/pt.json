@@ -1,0 +1,73 @@
+{
+    "def": "br",
+    "br": {
+        "author": "msvalle (#33)",
+        "local": "Português (Brasil)",
+        "startup": {
+            "apis": "Selecione quais APIs você gostaria de usar, passe o mouse por cima para mais detalhes.<br>Algumas APIs não podem ser desabilitadas.",
+            "wait": "Por favor aguarde.",
+            "start": "Iniciar"
+        },
+        "columns": {
+            "icon": "Ícone",
+            "name": "Nome",
+            "platform": "Platforma",
+            "size": "Tamanho",
+            "date": "Data"
+        },
+        "labels": {
+            "exportView": "Exportar Visualização",
+            "page": "Página"
+        },
+        "categories": {
+            "downloadable_game": "Jogos",
+            "demo": "Demos",
+            "add_on": "Expansões",
+            "unlock": "Desbloqueáveis",
+            "unlock_key": "Chaves",
+            "avatar": "Avatarws",
+            "theme": "Temas",
+            "other": "Outros",
+            "other_game_related": "Outros",
+            "game_content": "Conteúdo",
+            "tumbler_index": "tumbler_index",
+            "home": "Home",
+            "ungrouped_game": "Não classificado",
+            "promo_content": "Promoções",
+            "beta": "Betas",
+            "application": "Aplicações",
+            "extras": "Extras",
+            "unknown": "Desconhecido"
+        },
+        "strings": {
+            "delimiter": "Entre delimitador:",
+            "stringify_error": "Erro: Navegador não possui JSON.stringify.",
+            "yes": "Sim",
+            "no": "Não",
+            "search": "Buscar por título do jogo",
+            "dlQueue": "Fila de downlaod",
+            "dlList": "Lista de download",
+            "plus": "Alterna ver títulos PS+.",
+            "queueAll": "Todos",
+            "queueTo": "Download para $SYS$"
+        },
+        "apis": [{
+            "internalID": "api_entitle",
+            "name": "Licenças",
+            "desc": "Não pode ser desabilitado. Acessa informção de compra usada para criar a lista de download, determinar o status da PS+, e outras coisas."
+        }, {
+            "internalID": "api_game",
+            "name": "Catálogo",
+            "desc": "Acessa informação adicional do jogo para determinar o console certo, corrigir imagens quebradas, e mais."
+        }, {
+            "internalID": "api_queue",
+            "name": "Fila de download",
+            "desc": "Permite adicionar e remover itens da lista de download. Lê informação da lista de download e quantidade de consoles ativos na conta."
+        }, {
+            "internalID": "api_pstv",
+            "name": "PS TV",
+            "desc": "Detecta títulos compatíveis com a PS TV. Somente suportado na web store \"en-us\" (não o idioma do PSDLE).",
+            "disabled": true
+        }]
+    }
+}

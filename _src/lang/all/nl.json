@@ -1,0 +1,75 @@
+{
+    "def": "nl",
+    "nl": {
+        "author": "Tricksy",
+        "local": "Nederlands",
+        "startup": {
+            "apis": "Selecteer welke APIs je wilt gebruiken, hover voor meer details.<br>Sommige APIs kunnen niet gedeselecteerd worden.",
+            "wait": "Even geduld alstublieft.",
+            "start": "Start"
+        },
+        "columns": {
+            "icon": "Icoon",
+            "name": "Naam",
+            "platform": "Platform",
+            "size": "Grootte",
+            "date": "Datum"
+        },
+        "labels": {
+            "exportView": "Exporteer View",
+            "page": "Pagina"
+        },
+        "categories": {
+            "downloadable_game": "Spellen",
+            "demo": "Demos",
+            "add_on": "Add-ons",
+            "unlock": "Ontgrendelingen",
+            "unlock_key": "Ontgrendelings Sleutels",
+            "avatar": "Avatars",
+            "theme": "Themas",
+            "other": "anders",
+            "other_game_related": "ander_spel_gerelateerd",
+            "game_content": "spel_inhoud",
+            "tumbler_index": "tumbler_index",
+            "home": "begin",
+            "ungrouped_game": "ongegroepeerd_spel",
+            "promo_content": "promo_inhoud",
+            "beta": "Betas",
+            "application": "Applicaties",
+            "extras": "Extras",
+            "unknown": "Onbekend"
+        },
+        "strings": {
+            "delimiter": "Voer delimiter in:",
+            "yes": "Ja",
+            "no": "Nee",
+            "search": "Zoeken",
+            "dlQueue": "Wachtrij",
+            "dlList": "Lijst",
+            "plus": "Laat PS+ titels zien.",
+            "queueAll": "Alles",
+            "queueTo": "Download naar $SYS$",
+            "noTarget": "Er is geen beschikbare console om naar toe te sturen",
+            "exportColumnName": "Kolom Naam",
+            "exportProperty": "Inhoud"
+        },
+        "apis": [{
+            "internalID": "api_recht",
+            "name": "Rechten",
+            "desc": "Kan niet uitgeschakeld worden. Geeft toegang tot betalings informatie om te gebruiken voor de download lijst, bepaald PS+ status, en meer."
+        }, {
+            "internalID": "api_spel",
+            "name": "Catalogus",
+            "desc": "Geeft toegang tot extra spel informatie om de goede console te bepalen, kapotte images te fixen, en meer."
+        }, {
+            "internalID": "api_wachtrij",
+            "name": "Download Wachtrij",
+            "desc": "Geeft toegang tot het toevoegen en verwijderen van spellen op de download wachtrij. Leest de download wachtrij informatie en het aantal geactiveerde consoles op het account."
+        }, {
+            "internalID": "api_pstv",
+            "name": "PS TV",
+            "desc": "Detecteert titels die met PS TV werken. Werkt alleen op de \"en-us\" web store (niet PSDLE taal).",
+            "disabled": true
+        }]
+    }
+}

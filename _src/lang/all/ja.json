@@ -1,0 +1,75 @@
+{
+    "def": "jp",
+    "jp": {
+        "author": "k0ta0uchi (#36)",
+        "local": "日本語",
+        "startup": {
+            "apis": "使用したいAPIを選択してください。ホバーすることによって詳細を確認することができます。<br>特定のAPIは無効化することが出来ない可能性があります。",
+            "wait": "お待ちください。",
+            "start": "開始"
+        },
+        "columns": {
+            "icon": "アイコン",
+            "name": "ゲーム名",
+            "platform": "プラットフォーム",
+            "size": "サイズ",
+            "date": "日付"
+        },
+        "labels": {
+            "exportView": "ビューをエクスポート",
+            "page": "ページ"
+        },
+        "categories": {
+            "downloadable_game": "ゲーム",
+            "demo": "デモ",
+            "add_on": "アドオン",
+            "unlock": "アンロック",
+            "unlock_key": "アンロックキー",
+            "avatar": "アバター",
+            "theme": "テーマ",
+            "other": "その他",
+            "other_game_related": "その他ゲーム関連",
+            "game_content": "ゲームコンテンツ",
+            "tumbler_index": "タンブラーインデックス",
+            "home": "ホーム",
+            "ungrouped_game": "未分類のゲーム",
+            "promo_content": "プロモコンテンツ",
+            "beta": "ベータ",
+            "application": "アプリケーション",
+            "extras": "エキストラ",
+            "unknown": "不明"
+        },
+        "strings": {
+            "delimiter": "区切り文字を入力してください:",
+            "yes": "はい",
+            "no": "いいえ",
+            "search": "検索",
+            "dlQueue": "待機リスト",
+            "dlList": "リスト",
+            "plus": "PS＋タイトルの表示を切り替える。",
+            "queueAll": "全て",
+            "queueTo": "$SYS$にダウンロード",
+            "noTarget": "送信可能なコンソールが存在しません。",
+            "exportColumnName": "カラム名",
+            "exportProperty": "プロパティ"
+        },
+        "apis": [{
+            "internalID": "api_entitle",
+            "name": "エンタイトルメント",
+            "desc": "無効化することは出来ません。購入情報にアクセスし、ダウンロードリストを作成、PS+の状態を確認、その他を行います。"
+        }, {
+            "internalID": "api_game",
+            "name": "カタログ",
+            "desc": "ゲームの追加情報にアクセスし、正確なコンソールの把握、壊れたイメージの修正、その他を行います。"
+        }, {
+            "internalID": "api_queue",
+            "name": "ダウンロード待機リスト",
+            "desc": "ダウンロード待機リストからアイテムの追加や削除の許可します。ダウンロード待機リスト情報とアカウントで有効化されたコンソールの数を読み込みます。"
+        }, {
+            "internalID": "api_pstv",
+            "name": "PS TV",
+            "desc": "PS TV互換タイトルを検知します。\"en-us\"ウェブストアでのみサポートされます。（PSDLEの言語設定ではありません）",
+            "disabled": true
+        }]
+    }
+}

@@ -1,0 +1,72 @@
+{
+    "def": "es",
+    "es": {
+        "author": "Positronic-Brain (#18)",
+        "local": "Español",
+        "startup": {
+            "apis": "Elija APIs a utilizar. Coloque el puntero sobre el API para visualizar detalles.<br>Algunos APIs no pueden ser deshabilitados.",
+            "wait": "Por favor espere...",
+            "start": "Inicio"
+        },
+        "columns": {
+            "icon": "Ícono",
+            "name": "Nombre",
+            "platform": "Plataforma",
+            "size": "Tamaño",
+            "date": "Fecha"
+        },
+        "labels": {
+            "exportView": "Exportar vista",
+            "page": "Página"
+        },
+        "categories": {
+            "downloadable_game": "Juegos",
+            "demo": "Demos",
+            "add_on": "Complementos",
+            "unlock": "Desbloqueables",
+            "unlock_key": "Llaves",
+            "avatar": "Avatares",
+            "theme": "Temas",
+            "other": "Otros",
+            "other_game_related": "Otros",
+            "game_content": "Contenidos",
+            "tumbler_index": "tumbler_index",
+            "home": "Home",
+            "ungrouped_game": "No Clasificados",
+            "promo_content": "Promociones",
+            "beta": "Betas",
+            "application": "Aplicaciones",
+            "extras": "Extras",
+            "unknown": "Desconocido"
+        },
+        "strings": {
+            "delimiter": "Ingrese delimitador:",
+            "yes": "Sí",
+            "no": "No",
+            "search": "Búsqueda",
+            "dlQueue": "Cola de Descargas",
+            "dlList": "Lista de Descargas",
+            "plus": "Alterna la visibilidad de los títulos de PS Plus.",
+            "queueAll": "Todos",
+            "queueTo": "Descargar a $SYS$"
+        },
+        "apis": [{
+            "internalID": "api_entitle",
+            "name": "Licencias",
+            "desc": "No puede ser deshabilitado. Accede a la información de las compras y se utiliza para construir la lista de descargas, determinar el estado de PS Plus y otras cosas."
+        }, {
+            "internalID": "api_game",
+            "name": "Catálogo",
+            "desc": "Accede a información adicional para determinar la consola adecuada, reparar imágenes rotas, y más."
+        }, {
+            "internalID": "api_queue",
+            "name": "Cola de Descargas",
+            "desc": "Permite añadir y remover entradas a la cola de descargas. Lee la información de la cola de descargas y el número de consolas activadas en la cuenta."
+        }, {
+            "internalID": "api_pstv",
+            "name": "PS TV",
+            "desc": "Detecta títulos compatibles con PS TV. Sólo soportado en la tienda de la región \"en-us\" (región, no idioma de PSDLE).",
+            "disabled": true
+        }]
+    }
+}

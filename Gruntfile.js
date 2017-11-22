@@ -1,13 +1,6 @@
 module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-        minjson: {
-            compile: {
-                files: {
-                    '_src/lang/lang.min.json': '_src/lang/lang.json'
-                }
-            }
-        },
         cssmin: {
             target: {
             files: [{
@@ -104,9 +97,15 @@ module.exports = function(grunt) {
                 }
             }
         },
+        'concat-json': {
+            lang: {
+                cwd: "_src/lang/all",
+                src: [ "*.json" ],
+                dest: "_src/lang/lang.min.json"
+            }
+        }
     });
-    
-    grunt.loadNpmTasks('grunt-minjson');
+
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-includes');
     grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -115,10 +114,11 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-string-replace');
     grunt.loadNpmTasks('grunt-webext-builder');
     grunt.loadNpmTasks('grunt-exec');
+    grunt.loadNpmTasks('grunt-concat-json');
 
-    grunt.registerTask('compile', 'Minify and bake in language JSON and CSS, then bake in version.', function(){
+    grunt.registerTask('minlang', 'Concat and minify language files. Never automate, shouldn\'t need often.', ['concat-json:lang']);
+    grunt.registerTask('compile', 'Bake in language JSON and minified CSS, then bake in version.', function(){
         grunt.task.run([
-            'minjson',
             'cssmin',
             'includes:build',
             'string-replace:compile'
@@ -140,7 +140,7 @@ module.exports = function(grunt) {
             'copy:chrome',
             'concat:userscript', //Userscript
             'exec:chrome', //Chrome
-            'firefox' //We just don't know (last because may fail and at worst breaks deploy) 
+            'firefox' //We just don't know (last because may fail and at worst breaks deploy)
        ]);
     });
     grunt.registerTask('deploy', 'Run release then deploy script.', function() {
