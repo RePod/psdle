@@ -521,9 +521,10 @@ span[id^=system_] {
 }
 /*Table     */
 
-.rtl #muh_table {
-    text-align: right !important
+.rtl .psdle_table * {
+    text-align: right;
 }
+
 /*PS+       */
 
 .rtl tr.is_plus[id^='psdle_index_'] td:last-child {

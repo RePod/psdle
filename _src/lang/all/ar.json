@@ -49,7 +49,7 @@
             "dlList": "لائحة الألعاب",
             "plus": "ضبط ظاهرية العاب PlayStation Plus",
             "queueAll": "الكل",
-            "queueTo": "$SYS$ حَمل الى",
+            "queueTo": "حَمل الى $SYS$",
             "noTarget": "لا يوجد جهاز للتحميل اليه",
             "exportColumnName": "أسم العمود",
             "exportProperty": "الخصائص"
