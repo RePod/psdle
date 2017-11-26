@@ -1,7 +1,7 @@
-/*! psdle 3.1.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-22 */
+/*! psdle 3.1.5 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-26 */
 var repod = {};
 repod.psdle = {
-    version            : "3.1.4",
+    version            : "3.1.5",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -55,6 +55,7 @@ repod.psdle = {
         temp += "</select>";
         return temp;
     },
+    config: {"timerID": 0},
     init: function() {
         console.log("PSDLE | Init.");
 
@@ -72,7 +73,6 @@ repod.psdle = {
         //valkAPI && alert("PSDLE detected the new Valkyrie store API.\nSupport for this is currently experimental!\nAny issues should be reported here, along with region:\nhttps://github.com/RePod/psdle/issues/40")
 
         this.config = $.extend(this.config,{
-            logoBase64      : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAAAfCAYAAAEO89r4AAABaUlEQVRoge2XS27CQAyGPSVSUVErdqzpMqveiRvALnu67Gl6D+gFuAKIPgQrs0o1TJSJJ7aJBvnbRXE8f357XoCIGyTiEBFf33+BwgMpyg/eVRNSsENEpAQWMa27agL1e7JWcmCSVSG+tF6jp1D4o/qkqN8un+Bl7JpJUxP5vH38XT2T655CtEf6olKoaFLq3ElK2heRlgq//U/KKVj4rcrvs+Y+h7Z1ow2Vv9eg6A5p53MxhnI2an0vWSmW0HI2EhUTI5vSN4T2Xem0ycZRh4h7AJgOLaQLlf1ega2br3/IQlMW6TA2dYEPc2XToyZUGtbOdMs1lyX0lqeubEpvQqVp9GhsghxPOpvY8yPA1yo+MRtCh7iWfJ/j49rOpEE2QnM55h1U7/Wcox0nb+y9lqY6dzYtmgtmqDBmqDBmqDCDGcq5Ew5xCqViHSqMGSqMGSqMGSpMp6H3unloYR0qjBkqjBkqjBkqzAUtBKxj5lT3GAAAAABJRU5ErkJggg==",
             game_page       : window.location.origin + "/" +(valkAPI ? l+"/product/" : "#!/" + l + "/cid="),
             game_api        : "https://store.playstation.com/store/api/chihiro/00_09_000/container/"+l2.slice(-1)+"/"+l2[0]+"/999/",
             lastsort        : "",
@@ -123,14 +123,11 @@ repod.psdle = {
             if (window.psdleSkip && window.psdleSkip == true) {
                 that.genDisplay();
             } else {
-                var startup = $("<div/>",{id:"psdle_start"}).css({'background-image':'url('+repod.psdle.config.logoBase64+')'});
                 //startup.append("<div style='position:absolute;line-height:11px;text-shadow:-1px -1px #000,1px -1px #000,-1px 1px #000,1px 1px #000;bottom:39px;width:180px;font-size:11px'>Please leave a review<br>for the Chrome extension!<br>It's very much appreciated.</div>");
-                startup.appendTo("body");
-
-                $(document).one("click","#psdle_start",function() {
+                $("<div/>",{class:"psdle_logo startup"}).click(function() {
                     $(this).remove();
                     that.genDisplay();
-                });
+                }).appendTo("body");
             }
         }
     },
@@ -148,10 +145,10 @@ repod.psdle = {
         }
 
         $("#muh_games_container").slideUp("slow", function() {
-            var a = "<div id='sub_container'><a href='//repod.github.io/psdle/' target='_blank'><img src='"+repod.psdle.config.logoBase64+"' style='display:inline-block;font-size:200%;font-weight:bold' alt='psdle' /><br><small>v"+repod.psdle.version+"</small></a></span>";
+            var a = "<div id='sub_container'><a href='//repod.github.io/psdle/' target='_blank'><div class='psdle_logo'></div></a><br><small>v"+repod.psdle.version+"</small></span>";
 
             if (mode == "progress") {
-                that.config.active_consoles = {vita: 1, ps3: 1, ps4: 1}; //to-do: re-implement
+                if (that.config.use_queue) { that.dlQueue.batch.init(); }
                 a += "<br><div id='psdle_progressbar'><div id='psdle_bar'>&nbsp;</div></div><br><span id='psdle_status'>"+that.lang.startup.wait+"</span>";
             } else {
                 a += "<br><br>"+that.lang.startup.apis+"<br><br><span class='psdle_fancy_bar'>";
@@ -196,9 +193,6 @@ repod.psdle = {
         this.gamelist = [];
         var that = this;
         var i18n = this.config.valkyrieInstance.lookup('service:i18n');
-
-        //Currently a BAD way to grab this, but the only way until big brother sorts out fighting with localStorage
-        //Even when that is fixed, use s:mb.entitlements
         var entitlements = this.config.valkyrieInstance.lookup("service:macross-brain").macrossBrainInstance._entitlementStore._storage._entitlementMapCache;
         //.concat(this.e_inject_cache);
 
@@ -386,10 +380,10 @@ repod.psdle = {
             });
         },
         header: {
-            gen: function() {
+            gen: function(dlQueue) {
                 return $("<div />", {class: "search main container"})
-                    .append(this.searchOptions())
-                    .append(this.stats())
+                    .append(this.searchOptions(dlQueue))
+                    .append(this.stats(dlQueue))
             },
             searchOptions: function(dlQueue) {
                 var r = $("<div />", {class: "search options container"}),
@@ -473,7 +467,9 @@ repod.psdle = {
 
                 return r;
             },
-            stats: function() {
+            stats: function(dlQueue) {
+                if (dlQueue) { return; }
+
                 var current = $("<span />", {class: "search stats all current"}),
                     total = $("<span />", {class: 'search stats all total'});
 
@@ -520,7 +516,6 @@ repod.psdle = {
                     plus = 0;
 
                 repod.psdle.exportList.delimited.destroy();
-                //repod.psdle.autocomplete.bind();//TO-DO
 
                 $.each(repod.psdle.gamelist_cur,function (a,val) {
                     if (val.plus) {
@@ -786,7 +781,7 @@ repod.psdle = {
     },
     injectCSS: function() {
         //CSS prefers " over ' to avoid string literal issues.
-        var temp = '.valkyrie #export_table input,.valkyrie #export_table select,.valkyrie #lang_select{height:unset;padding:unset;margin:unset;width:unset;display:unset}#psdle_start{z-index:9001;width:84px;height:31px;position:fixed;bottom:10px;left:10px;cursor:pointer;box-shadow:0 0 10px #fff}#muh_games_container{display:none;position:absolute;top:0;right:0;left:0;color:#000;z-index:9001;text-align:center}#sub_container{padding:20px;background-color:#fff}#psdle_bar,.psdle_btn{background-color:#2185f4}#psdle_progressbar{overflow:hidden;display:inline-block;width:400px;height:16px;border:1px solid #999;margin:10px;border-radius:10px}#psdle_bar{width:0;height:100%;border-radius:10px}.psdle_btn{cursor:pointer;border-radius:13px;color:#fff;padding:1px 15px;display:inline-block;margin:5px auto}.psdle.tagline{font-size:small}.psdle.tagline>a,.psdle.tagline>span{line-height:0;cursor:pointer;color:#7f6d75!important}.psdle.tagline>a:hover,.psdle.tagline>span:hover{color:inherit!important;text-decoration:underline}.search.main.container{position:fixed;left:0;top:0;width:100%;padding:15px 0;background-color:rgba(255,255,255,.8);z-index:9001}.search.input.plus{cursor:pointer!important}.search.export{display:inline;width:95%;max-width:600px}.psdle_table,table{text-align:left;display:inline-block;border-collapse:initial}th[id^=sort]{cursor:pointer}th[id^=sort]:hover{background-color:#62a5f0}th{padding:5px!important;background-color:#2185f4;color:#fff;border:none;transition:background-color .3s}tr:hover{background-color:rgba(33,133,244,.7)!important}.valkyrie td{padding:0;border:none}td a.psdle_game_link{display:block;width:100%;height:100%;color:#000;padding:8px!important}.psdle_game_icon.is_plus{background-color:#ffd10d}tr[id^=psdle_index_].is_plus td:last-child{border-right:#ffd10d 3px solid}tr:nth-child(2n){background-color:#eee}td:nth-child(n+3):nth-child(-n+7),th:nth-child(n+3):nth-child(-n+7){text-align:center;padding:0 5px!important;position:relative}td:first-child{text-align:center;position:relative}#psdle_search_select,#psdle_search_text{font-size:large;padding:5px 10px;border:1px solid #f0f0f0;display:inline-block;width:auto}#psdle_search_select{background-color:#f0f0f0;text-align:center}#psdle_search_text{font-size:large;max-width:480px;width:100%}.negate_regex{background-color:#ff8080!important;color:#fff}.psdle_fancy_bar>span,span#export_view,span[id^=dl_],span[id^=filter_],span[id^=system_]{font-weight:700;font-size:.9em;color:#fff;background-color:#2185f4;display:inline-block;margin-right:2px;margin-bottom:5px;padding:1px 10px;cursor:pointer}.psdle_fancy_but{border-radius:12px}#muh_games_container:not(.rtl) .psdle_fancy_bar>span:first-of-type{border-top-left-radius:12px;border-bottom-left-radius:12px}#muh_games_container:not(.rtl) .psdle_fancy_bar>span:last-of-type{border-top-right-radius:12px;border-bottom-right-radius:12px}.toggled_off{background-color:rgba(33,133,244,.4)!important}#muh_games_container:not(.rtl) #psdle_search_select{border-radius:90px 0 0 90px}#psdle_search_text{border-radius:0 90px 90px 0}.psdle_game_icon{max-width:100%;vertical-align:middle;padding:3px;min-width:42px;min-height:42px}.psdle_sort_asc,.psdle_sort_desc{float:right;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent}.psdle_sort_asc{border-bottom:5px solid #fff}.psdle_sort_desc{border-top:5px solid #fff}#dlQARating,#dlQAStat{color:#fff;background-color:rgba(33,133,244,.8);font-size:small}#dlQueueAsk{width:400px;height:400px}#dlQAN{background-color:rgba(33,133,244,.8);padding:7px 15px;color:#fff;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}#dlQASys{position:absolute;bottom:0;padding:7px 0;color:#fff;display:table;width:100%;table-layout:fixed}#dlQASys>div{display:table-cell}#dlQASys>div>div{cursor:pointer;background-color:rgba(33,133,244,.8);border-radius:10px;padding:2px;margin:0 10px;box-shadow:0 0 30px #000;transition:background-color .5s,box-shadow .5s}#dlQASys>div>div:hover{background-color:rgba(33,133,244,1);box-shadow:0 0 30px rgba(33,133,244,1)}#dlQAStat{border-bottom-left-radius:20px;padding:0 10px 0 15px;float:right}#dlQARating{border-bottom-right-radius:20px;padding:0 15px 0 10px;float:left}.success{background-color:#237423!important}.failure{background-color:#a43636!important}#dlQueueExt{overflow:hidden;position:absolute;left:10px;right:10px;bottom:40px;font-size:.8em;background-color:rgba(33,133,244,.8);padding:10px;border-radius:9px;top:66px;text-align:left}.cover,.cover>div>div{background-size:cover}.cover{z-index:9001;position:fixed;top:0;left:0;width:100%;height:100%;display:table;background-color:rgba(0,0,0,.25);background-position:center}.cover>div{display:table-cell;vertical-align:middle;height:inherit;text-align:center}.cover>div>div{box-shadow:0 0 30px #000;display:inline-block;background-color:#fff;border-radius:20px;overflow:hidden;position:relative}#export_select{padding:10px;background-color:#fff;color:#000}#export_select>div{border-top-left-radius:10px;border-top-right-radius:10px;overflow-y:auto;overflow-x:hidden;max-height:490px}#export_table{width:100%}#slider,.handle{display:inline-block}#slider{vertical-align:bottom;cursor:pointer;width:30px;height:12px;border-radius:10px;border:2px solid #f0f0f0}.handle_container{text-align:center;width:100%;height:100%}.handle{width:10px;height:10px;border-radius:100%;margin:0 2px 6px;border:1px solid #fff;background-color:#85c107}[data-tooltip]{position:relative;z-index:2;cursor:pointer}[data-tooltip]:after,[data-tooltip]:before{visibility:hidden;opacity:0;pointer-events:none}[data-tooltip]:before{--width:300px;position:absolute;top:150%;left:50%;margin-left:calc(var(--width)/2*-1);padding:7px;width:var(--width);border-radius:3px;background-color:rgba(33,133,244,.9);color:#fff;content:attr(data-tooltip);text-align:center;font-size:.9em;line-height:1.2;box-shadow:0 0 10px #fff}[data-tooltip]:after{position:absolute;top:calc(150% - 5px);left:50%;margin-left:-5px;width:0;border-bottom:5px solid rgba(33,133,244,.9);border-right:5px solid transparent;border-left:5px solid transparent;content:" ";font-size:0;line-height:0}[data-tooltip]:hover:after,[data-tooltip]:hover:before{visibility:visible;opacity:1}.ui-autocomplete{z-index:9002;max-width:590px;max-height:200px;overflow-y:auto;overflow-x:hidden}.ui-menu{position:fixed;border:2px solid #f0f0f0;border-top:none;background-color:#fff}.ui-menu>.ui-menu-item *{color:#000;text-decoration:none;white-space:nowrap;text-overflow:ellipsis;cursor:pointer}.ui-menu>.ui-menu-item:nth-child(even){background-color:#e6e6e6}.ui-menu-item .ui-state-focus{display:inline-block;width:100%;color:#000;background-color:rgba(33,133,244,.7)}.psdletv{font-style:italic;font-weight:700;font-size:.6em;vertical-align:text-top;position:absolute;top:4px}.psp3{border-left:2px solid #2185f4;border-right:2px solid #2185f4}.psp2{background-color:rgba(33,133,244,.15)!important}#muh_games_container.rtl{direction:rtl}.rtl #psdle_search_select{border-radius:0 90px 90px 0}.rtl #psdle_search_text{border-radius:90px 0 0 90px}.rtl .psdle_fancy_bar span:last-of-type{border-top-left-radius:12px;border-bottom-left-radius:12px}.rtl .psdle_fancy_bar span:first-of-type{border-top-right-radius:12px;border-bottom-right-radius:12px}.rtl .psdle_table *{text-align:right}.rtl tr.is_plus[id^=psdle_index_] td:last-child{border-right:none;border-left:#ffd10d 3px solid}.psdledark #sub_container{background-color:#222;color:#e7e7e7}.psdledark a.psdle_game_link{color:#e7e7e7}.psdledark .search.main.container{background-color:rgba(34,34,34,.7)}.psdledark tr{background-color:#222}.psdledark tr:nth-child(2n){background-color:#393939}';
+        var temp = '.valkyrie #export_table input,.valkyrie #export_table select,.valkyrie #lang_select{height:unset;padding:unset;margin:unset;width:unset;display:unset}.psdle_logo{display:inline-block;width:84px;height:31px;background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAAAfCAYAAAEO89r4AAABaUlEQVRoge2XS27CQAyGPSVSUVErdqzpMqveiRvALnu67Gl6D+gFuAKIPgQrs0o1TJSJJ7aJBvnbRXE8f357XoCIGyTiEBFf33+BwgMpyg/eVRNSsENEpAQWMa27agL1e7JWcmCSVSG+tF6jp1D4o/qkqN8un+Bl7JpJUxP5vH38XT2T655CtEf6olKoaFLq3ElK2heRlgq//U/KKVj4rcrvs+Y+h7Z1ow2Vv9eg6A5p53MxhnI2an0vWSmW0HI2EhUTI5vSN4T2Xem0ycZRh4h7AJgOLaQLlf1ega2br3/IQlMW6TA2dYEPc2XToyZUGtbOdMs1lyX0lqeubEpvQqVp9GhsghxPOpvY8yPA1yo+MRtCh7iWfJ/j49rOpEE2QnM55h1U7/Wcox0nb+y9lqY6dzYtmgtmqDBmqDBmqDCDGcq5Ew5xCqViHSqMGSqMGSqMGSpMp6H3unloYR0qjBkqjBkqjBkqzAUtBKxj5lT3GAAAAABJRU5ErkJggg==)}.startup{z-index:9001;position:fixed;bottom:10px;left:10px;cursor:pointer;box-shadow:0 0 10px #fff}#muh_games_container{display:none;position:absolute;top:0;right:0;left:0;color:#000;z-index:9001;text-align:center}#sub_container{padding:20px;background-color:#fff}#psdle_bar,.psdle_btn{background-color:#2185f4}#psdle_progressbar{overflow:hidden;display:inline-block;width:400px;height:16px;border:1px solid #999;margin:10px;border-radius:10px}#psdle_bar{width:0;height:100%;border-radius:10px}.psdle_btn{cursor:pointer;border-radius:13px;color:#fff;padding:1px 15px;display:inline-block;margin:5px auto}.psdle.tagline{font-size:small}.psdle.tagline>a,.psdle.tagline>span{line-height:0;cursor:pointer;color:#7f6d75!important}.psdle.tagline>a:hover,.psdle.tagline>span:hover{color:inherit!important;text-decoration:underline}.search.main.container{position:fixed;left:0;top:0;width:100%;padding:15px 0;background-color:rgba(255,255,255,.8);z-index:9001}.search.input.plus{cursor:pointer!important}.search.export{display:inline;width:95%;max-width:600px}.psdle_table,table{text-align:left;display:inline-block;border-collapse:initial}th[id^=sort]{cursor:pointer}th[id^=sort]:hover{background-color:#62a5f0}th{padding:5px!important;background-color:#2185f4;color:#fff;border:none;transition:background-color .3s}tr:hover{background-color:rgba(33,133,244,.7)!important}.valkyrie td{padding:0;border:none}td a.psdle_game_link{display:block;width:100%;height:100%;color:#000;padding:8px!important}.psdle_game_icon.is_plus{background-color:#ffd10d}tr[id^=psdle_index_].is_plus td:last-child{border-right:#ffd10d 3px solid}tr:nth-child(2n){background-color:#eee}td:nth-child(n+3):nth-child(-n+7),th:nth-child(n+3):nth-child(-n+7){text-align:center;padding:0 5px!important;position:relative}td:first-child{text-align:center;position:relative}#psdle_search_select,#psdle_search_text{font-size:large;padding:5px 10px;border:1px solid #f0f0f0;display:inline-block;width:auto}#psdle_search_select{background-color:#f0f0f0;text-align:center}#psdle_search_text{font-size:large;max-width:480px;width:100%}.negate_regex{background-color:#ff8080!important;color:#fff}.psdle_fancy_bar>span,span#export_view,span[id^=dl_],span[id^=filter_],span[id^=system_]{font-weight:700;font-size:.9em;color:#fff;background-color:#2185f4;display:inline-block;margin-right:2px;margin-bottom:5px;padding:1px 10px;cursor:pointer}.psdle_fancy_but{border-radius:12px}#muh_games_container:not(.rtl) .psdle_fancy_bar>span:first-of-type{border-top-left-radius:12px;border-bottom-left-radius:12px}#muh_games_container:not(.rtl) .psdle_fancy_bar>span:last-of-type{border-top-right-radius:12px;border-bottom-right-radius:12px}.toggled_off{background-color:rgba(33,133,244,.4)!important}#muh_games_container:not(.rtl) #psdle_search_select{border-radius:90px 0 0 90px}#psdle_search_text{border-radius:0 90px 90px 0}.psdle_game_icon{max-width:100%;vertical-align:middle;padding:3px;min-width:42px;min-height:42px}.psdle_sort_asc,.psdle_sort_desc{float:right;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent}.psdle_sort_asc{border-bottom:5px solid #fff}.psdle_sort_desc{border-top:5px solid #fff}#dlQARating,#dlQAStat{color:#fff;background-color:rgba(33,133,244,.8);font-size:small}#dlQueueAsk{width:400px;height:400px}#dlQAN{background-color:rgba(33,133,244,.8);padding:7px 15px;color:#fff;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}#dlQASys{position:absolute;bottom:0;padding:7px 0;color:#fff;display:table;width:100%;table-layout:fixed}#dlQASys>div{display:table-cell}#dlQASys>div>div{cursor:pointer;background-color:rgba(33,133,244,.8);border-radius:10px;padding:2px;margin:0 10px;box-shadow:0 0 30px #000;transition:background-color .5s,box-shadow .5s}#dlQASys>div>div:hover{background-color:rgba(33,133,244,1);box-shadow:0 0 30px rgba(33,133,244,1)}#dlQAStat{border-bottom-left-radius:20px;padding:0 10px 0 15px;float:right}#dlQARating{border-bottom-right-radius:20px;padding:0 15px 0 10px;float:left}.success{background-color:#237423!important}.failure{background-color:#a43636!important}#dlQueueExt{overflow:hidden;position:absolute;left:10px;right:10px;bottom:40px;font-size:.8em;background-color:rgba(33,133,244,.8);padding:10px;border-radius:9px;top:66px;text-align:left}.cover,.cover>div>div{background-size:cover}.cover{z-index:9001;position:fixed;top:0;left:0;width:100%;height:100%;display:table;background-color:rgba(0,0,0,.25);background-position:center}.cover>div{display:table-cell;vertical-align:middle;height:inherit;text-align:center}.cover>div>div{box-shadow:0 0 30px #000;display:inline-block;background-color:#fff;border-radius:20px;overflow:hidden;position:relative}#export_select{padding:10px;background-color:#fff;color:#000}#export_select>div{border-top-left-radius:10px;border-top-right-radius:10px;overflow-y:auto;overflow-x:hidden;max-height:490px}#export_table{width:100%}#slider,.handle{display:inline-block}#slider{vertical-align:bottom;cursor:pointer;width:30px;height:12px;border-radius:10px;border:2px solid #f0f0f0}.handle_container{text-align:center;width:100%;height:100%}.handle{width:10px;height:10px;border-radius:100%;margin:0 2px 6px;border:1px solid #fff;background-color:#85c107}[data-tooltip]{position:relative;z-index:2;cursor:pointer}[data-tooltip]:after,[data-tooltip]:before{visibility:hidden;opacity:0;pointer-events:none}[data-tooltip]:before{--width:300px;position:absolute;top:150%;left:50%;margin-left:calc(var(--width)/2*-1);padding:7px;width:var(--width);border-radius:3px;background-color:rgba(33,133,244,.9);color:#fff;content:attr(data-tooltip);text-align:center;font-size:.9em;line-height:1.2;box-shadow:0 0 10px #fff}[data-tooltip]:after{position:absolute;top:calc(150% - 5px);left:50%;margin-left:-5px;width:0;border-bottom:5px solid rgba(33,133,244,.9);border-right:5px solid transparent;border-left:5px solid transparent;content:" ";font-size:0;line-height:0}[data-tooltip]:hover:after,[data-tooltip]:hover:before{visibility:visible;opacity:1}.ui-autocomplete{z-index:9002;max-width:590px;max-height:200px;overflow-y:auto;overflow-x:hidden}.ui-menu{position:fixed;border:2px solid #f0f0f0;border-top:none;background-color:#fff}.ui-menu>.ui-menu-item *{color:#000;text-decoration:none;white-space:nowrap;text-overflow:ellipsis;cursor:pointer}.ui-menu>.ui-menu-item:nth-child(even){background-color:#e6e6e6}.ui-menu-item .ui-state-focus{display:inline-block;width:100%;color:#000;background-color:rgba(33,133,244,.7)}.psdletv{font-style:italic;font-weight:700;font-size:.6em;vertical-align:text-top;position:absolute;top:4px}.psp3{border-left:2px solid #2185f4;border-right:2px solid #2185f4}.psp2{background-color:rgba(33,133,244,.15)!important}#muh_games_container.rtl{direction:rtl}.rtl #psdle_search_select{border-radius:0 90px 90px 0}.rtl #psdle_search_text{border-radius:90px 0 0 90px}.rtl .psdle_fancy_bar span:last-of-type{border-top-left-radius:12px;border-bottom-left-radius:12px}.rtl .psdle_fancy_bar span:first-of-type{border-top-right-radius:12px;border-bottom-right-radius:12px}.rtl .psdle_table *{text-align:right}.rtl tr.is_plus[id^=psdle_index_] td:last-child{border-right:none;border-left:#ffd10d 3px solid}.psdledark #sub_container{background-color:#222;color:#e7e7e7}.psdledark a.psdle_game_link{color:#e7e7e7}.psdledark .search.main.container{background-color:rgba(34,34,34,.7)}.psdledark tr{background-color:#222}.psdledark tr:nth-child(2n){background-color:#393939}';
         $("head").append('<style type="text/css">'+temp+'</style>');
     },
     darkCSS: function() {
@@ -1118,39 +1113,23 @@ repod.psdle = {
     },
     dlQueue: {
         batch: {
-            cache: {},
-            get: function(prev_sys) {
-                if (!prev_sys) { this.cache = {"ps3":[], "ps4":[], "vita":[]} }
+            init: function() {
+                var that = this;
+                this.Kamaji = repod.psdle.config.valkyrieInstance.lookup('service:kamaji/downloads');
 
-                var that = this,
-                    base_url = repod.psdle.config.dlQueue.status+"/?status=notstarted&status=stopped&status=waitfordownload&platformString=$$1&size=100",
-                    consoles = [];
+                this.Kamaji.fetchDeviceCount().then(function(a) {
+                    repod.psdle.config.active_consoles = {
+                        vita: (a.numPSVITA > 0),
+                        ps3: (a.numPS3 > 0),
+                        ps4: (a.numPS4 > 0)
+                    }
 
-                for (var i in repod.psdle.config.active_consoles) {
-                    consoles.push(i)
-                }
-
-                var index = $.inArray(prev_sys,consoles) + 1,
-                    n = consoles[index];
-
-                if (n) {
-                    $.getJSON(base_url.replace("$$1",n))
-                    .fail(function() {
-                        console.error("PSDLE | DL Queue parse error for \""+n+"\". Is it activated on the account?");
-                    })
-                    .success(function(data) {
-                        that.cache[n] = data.data.notifications;
-                    })
-                    .complete(function() {
-                        that.get(n);
-                    });
-                } else {
-                    repod.psdle.dlQueue.generate.table();
-                }
+                    that.Kamaji.enableDownloadStatusPolling();
+                })
             },
             send: function(index,sys) {
                 var that = this,
-                    Kamaji = repod.psdle.config.valkyrieInstance.lookup('service:kamaji/downloads'),
+                    Kamaji = this.Kamaji,
                     KPlatforms = require("valkyrie-storefront/utils/const").default.KamajiPlatforms,
                     id = repod.psdle.gamelist[index].id;
 
@@ -1175,7 +1154,7 @@ repod.psdle = {
             recordQueue: [],
             recordProcess: function() {
                 //TO-DO: Lookup download record, close but not quite Valkyrie accurate (bogus promise?)
-                var Kamaji = repod.psdle.config.valkyrieInstance.lookup('service:kamaji/downloads'),
+                var Kamaji = this.Kamaji,
                     record = this.recordQueue.splice(0,1)[0];
 
                 if (Kamaji.waitingDownloads[(record.sys+"Downloads")].find(function (a) { return a == record.id }) !== undefined) {
@@ -1222,7 +1201,8 @@ repod.psdle = {
                 },
                 go: function(sys,id,auto) {
                     //Remove game from batch.
-                    repod.psdle.dlQueue.batch.send(sys,id,true,(auto)?undefined:repod.psdle.dlQueue.batch.get())
+                    //repod.psdle.dlQueue.batch.send(sys,id,true,(auto)?undefined:repod.psdle.dlQueue.batch.get())
+                    alert('DLQueue remove TO-DO');
                 }
             }
         },
@@ -1240,15 +1220,16 @@ repod.psdle = {
                 $(".psdle_table").remove();
                 $("#sub_container").append("<div class='psdle_table'><table style='display:inline-block;text-align:left'><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th>"+repod.psdle.lang.columns.platform+"</th><th> > </th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table></div>");
 
-                $.each(repod.psdle.dlQueue.batch.cache, function(key,value) {
-                    if (value.length) {
-                        $.each(value, function(index,val) {
-                            $.each(repod.psdle.gamelist, function(a,b) {
-                                if (b.id == val.contentId) {
-                                    var c = val; c.to_sys = key;
-                                    temp += repod.psdle.table_utils.gen.row(b,c);
+                $.each(repod.psdle.dlQueue.batch.Kamaji.waitingDownloads, function(sys,items) {
+                    if (/Downloads$/.test(sys) && items.length > 0) { //TO-DO: Stricter
+                        $.each(repod.psdle.gamelist, function(a,b) {
+                            if (items.indexOf(b.id) >= 0) {
+                                var c = {
+                                    createdTime: 0, //Find this
+                                    to_sys: sys.match(/(.*?)Downloads/).pop()
                                 }
-                            });
+                                temp += repod.psdle.table_utils.gen.row(b,c);
+                            }
                         });
                     }
                 });
@@ -1258,8 +1239,9 @@ repod.psdle = {
             },
             display: function() {
                 this.bindings();
-                $("#sub_container").html("").append(repod.psdle.genSearchOptions(true));
-                repod.psdle.dlQueue.batch.get();
+                $("#sub_container").empty()
+                .append(repod.psdle.table.header.gen(true));
+                this.table();
             },
             destroy: function() {
                 $("#sub_container").html("");
@@ -1608,14 +1590,15 @@ repod.psdle = {
     }
 };
 
-var a = setInterval(function(a){
-    if ((typeof chihiro !== "undefined" && chihiro.appReady === true) || (typeof Ember !== "undefined" && Ember.BOOTED))
+repod.psdle.config.timerID = setInterval(function(a){
+    if (
+        (typeof Ember !== "undefined" && Ember.BOOTED) &&
+        Ember.Application.NAMESPACES_BY_ID["valkyrie-storefront"]._booted
+    )
     {
         clearInterval(repod.psdle.config.timerID);
         repod.psdle.init();
     }
-
 },500);
-repod.psdle.config = {"timerID":a};
 console.log("%cPSDLE has started!", "color:#2185f4;font-size:x-large;font-weight:bold;")
 console.log("PSDLE | Ready.");
