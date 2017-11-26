@@ -192,9 +192,6 @@ repod.psdle = {
         this.gamelist = [];
         var that = this;
         var i18n = this.config.valkyrieInstance.lookup('service:i18n');
-
-        //Currently a BAD way to grab this, but the only way until big brother sorts out fighting with localStorage
-        //Even when that is fixed, use s:mb.entitlements
         var entitlements = this.config.valkyrieInstance.lookup("service:macross-brain").macrossBrainInstance._entitlementStore._storage._entitlementMapCache;
         //.concat(this.e_inject_cache);
 
