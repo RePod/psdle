@@ -147,7 +147,13 @@ repod.psdle = {
             var a = "<div id='sub_container'><a href='//repod.github.io/psdle/' target='_blank'><div class='psdle_logo'></div></a><br><small>v"+repod.psdle.version+"</small></span>";
 
             if (mode == "progress") {
-                that.config.active_consoles = {vita: 1, ps3: 1, ps4: 1}; //to-do: re-implement
+                repod.psdle.config.valkyrieInstance.lookup("service:kamaji/downloads").fetchDeviceCount().then(function(a) { 
+                    that.config.active_consoles = {
+                        vita: (a.numPSVITA > 0),
+                        ps3: (a.numPS3 > 0),
+                        ps4: (a.numPS4 > 0)
+                    }
+                })
                 a += "<br><div id='psdle_progressbar'><div id='psdle_bar'>&nbsp;</div></div><br><span id='psdle_status'>"+that.lang.startup.wait+"</span>";
             } else {
                 a += "<br><br>"+that.lang.startup.apis+"<br><br><span class='psdle_fancy_bar'>";
