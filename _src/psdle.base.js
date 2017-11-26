@@ -147,13 +147,7 @@ repod.psdle = {
             var a = "<div id='sub_container'><a href='//repod.github.io/psdle/' target='_blank'><div class='psdle_logo'></div></a><br><small>v"+repod.psdle.version+"</small></span>";
 
             if (mode == "progress") {
-                repod.psdle.config.valkyrieInstance.lookup("service:kamaji/downloads").fetchDeviceCount().then(function(a) { 
-                    that.config.active_consoles = {
-                        vita: (a.numPSVITA > 0),
-                        ps3: (a.numPS3 > 0),
-                        ps4: (a.numPS4 > 0)
-                    }
-                })
+                if (that.config.use_queue) { that.dlQueue.batch.init(); }
                 a += "<br><div id='psdle_progressbar'><div id='psdle_bar'>&nbsp;</div></div><br><span id='psdle_status'>"+that.lang.startup.wait+"</span>";
             } else {
                 a += "<br><br>"+that.lang.startup.apis+"<br><br><span class='psdle_fancy_bar'>";
@@ -385,10 +379,10 @@ repod.psdle = {
             });
         },
         header: {
-            gen: function() {
+            gen: function(dlQueue) {
                 return $("<div />", {class: "search main container"})
-                    .append(this.searchOptions())
-                    .append(this.stats())
+                    .append(this.searchOptions(dlQueue))
+                    .append(this.stats(dlQueue))
             },
             searchOptions: function(dlQueue) {
                 var r = $("<div />", {class: "search options container"}),
@@ -472,7 +466,9 @@ repod.psdle = {
 
                 return r;
             },
-            stats: function() {
+            stats: function(dlQueue) {
+                if (dlQueue) { return; }
+
                 var current = $("<span />", {class: "search stats all current"}),
                     total = $("<span />", {class: 'search stats all total'});
 
@@ -1116,39 +1112,23 @@ repod.psdle = {
     },
     dlQueue: {
         batch: {
-            cache: {},
-            get: function(prev_sys) {
-                if (!prev_sys) { this.cache = {"ps3":[], "ps4":[], "vita":[]} }
+            init: function() {
+                var that = this;
+                this.Kamaji = repod.psdle.config.valkyrieInstance.lookup('service:kamaji/downloads');
 
-                var that = this,
-                    base_url = repod.psdle.config.dlQueue.status+"/?status=notstarted&status=stopped&status=waitfordownload&platformString=$$1&size=100",
-                    consoles = [];
+                this.Kamaji.fetchDeviceCount().then(function(a) {
+                    repod.psdle.config.active_consoles = {
+                        vita: (a.numPSVITA > 0),
+                        ps3: (a.numPS3 > 0),
+                        ps4: (a.numPS4 > 0)
+                    }
 
-                for (var i in repod.psdle.config.active_consoles) {
-                    consoles.push(i)
-                }
-
-                var index = $.inArray(prev_sys,consoles) + 1,
-                    n = consoles[index];
-
-                if (n) {
-                    $.getJSON(base_url.replace("$$1",n))
-                    .fail(function() {
-                        console.error("PSDLE | DL Queue parse error for \""+n+"\". Is it activated on the account?");
-                    })
-                    .success(function(data) {
-                        that.cache[n] = data.data.notifications;
-                    })
-                    .complete(function() {
-                        that.get(n);
-                    });
-                } else {
-                    repod.psdle.dlQueue.generate.table();
-                }
+                    that.Kamaji.enableDownloadStatusPolling();
+                })
             },
             send: function(index,sys) {
                 var that = this,
-                    Kamaji = repod.psdle.config.valkyrieInstance.lookup('service:kamaji/downloads'),
+                    Kamaji = this.Kamaji,
                     KPlatforms = require("valkyrie-storefront/utils/const").default.KamajiPlatforms,
                     id = repod.psdle.gamelist[index].id;
 
@@ -1173,7 +1153,7 @@ repod.psdle = {
             recordQueue: [],
             recordProcess: function() {
                 //TO-DO: Lookup download record, close but not quite Valkyrie accurate (bogus promise?)
-                var Kamaji = repod.psdle.config.valkyrieInstance.lookup('service:kamaji/downloads'),
+                var Kamaji = this.Kamaji,
                     record = this.recordQueue.splice(0,1)[0];
 
                 if (Kamaji.waitingDownloads[(record.sys+"Downloads")].find(function (a) { return a == record.id }) !== undefined) {
@@ -1220,7 +1200,8 @@ repod.psdle = {
                 },
                 go: function(sys,id,auto) {
                     //Remove game from batch.
-                    repod.psdle.dlQueue.batch.send(sys,id,true,(auto)?undefined:repod.psdle.dlQueue.batch.get())
+                    //repod.psdle.dlQueue.batch.send(sys,id,true,(auto)?undefined:repod.psdle.dlQueue.batch.get())
+                    alert('DLQueue remove TO-DO');
                 }
             }
         },
@@ -1238,15 +1219,16 @@ repod.psdle = {
                 $(".psdle_table").remove();
                 $("#sub_container").append("<div class='psdle_table'><table style='display:inline-block;text-align:left'><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th>"+repod.psdle.lang.columns.platform+"</th><th> > </th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table></div>");
 
-                $.each(repod.psdle.dlQueue.batch.cache, function(key,value) {
-                    if (value.length) {
-                        $.each(value, function(index,val) {
-                            $.each(repod.psdle.gamelist, function(a,b) {
-                                if (b.id == val.contentId) {
-                                    var c = val; c.to_sys = key;
-                                    temp += repod.psdle.table_utils.gen.row(b,c);
+                $.each(repod.psdle.dlQueue.batch.Kamaji.waitingDownloads, function(sys,items) {
+                    if (/Downloads$/.test(sys) && items.length > 0) { //TO-DO: Stricter
+                        $.each(repod.psdle.gamelist, function(a,b) {
+                            if (items.indexOf(b.id) >= 0) {
+                                var c = {
+                                    createdTime: 0, //Find this
+                                    to_sys: sys.match(/(.*?)Downloads/).pop()
                                 }
-                            });
+                                temp += repod.psdle.table_utils.gen.row(b,c);
+                            }
                         });
                     }
                 });
@@ -1256,8 +1238,9 @@ repod.psdle = {
             },
             display: function() {
                 this.bindings();
-                $("#sub_container").html("").append(repod.psdle.genSearchOptions(true));
-                repod.psdle.dlQueue.batch.get();
+                $("#sub_container").empty()
+                .append(repod.psdle.table.header.gen(true));
+                this.table();
             },
             destroy: function() {
                 $("#sub_container").html("");
