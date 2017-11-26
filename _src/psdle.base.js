@@ -54,6 +54,7 @@ repod.psdle = {
         temp += "</select>";
         return temp;
     },
+    config: {"timerID:" 0},
     init: function() {
         console.log("PSDLE | Init.");
 
@@ -519,7 +520,6 @@ repod.psdle = {
                     plus = 0;
 
                 repod.psdle.exportList.delimited.destroy();
-                //repod.psdle.autocomplete.bind();//TO-DO
 
                 $.each(repod.psdle.gamelist_cur,function (a,val) {
                     if (val.plus) {
@@ -1607,14 +1607,15 @@ repod.psdle = {
     }
 };
 
-var a = setInterval(function(a){
-    if ((typeof chihiro !== "undefined" && chihiro.appReady === true) || (typeof Ember !== "undefined" && Ember.BOOTED))
+repod.psdle.config.timerID = setInterval(function(a){
+    if (
+        (typeof Ember !== "undefined" && Ember.BOOTED) &&
+        Ember.Application.NAMESPACES_BY_ID["valkyrie-storefront"]._booted
+    )
     {
         clearInterval(repod.psdle.config.timerID);
         repod.psdle.init();
     }
-
 },500);
-repod.psdle.config = {"timerID":a};
 console.log("%cPSDLE has started!", "color:#2185f4;font-size:x-large;font-weight:bold;")
 console.log("PSDLE | Ready.");
