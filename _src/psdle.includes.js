@@ -1,7 +1,7 @@
-/*! psdle 3.1.5 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-26 */
+/*! psdle 3.1.5 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-29 */
 var repod = {};
 repod.psdle = {
-    version            : "3.1.5",
+    version            : "Testing",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -187,13 +187,23 @@ repod.psdle = {
             });
         });
     },
-    generateList: function() {
+    generateList: function(entitlements) {
+        var that = this;
+
+        if (!entitlements) {
+            this.config.valkyrieInstance.lookup("service:macross-brain").macrossBrainInstance.getEntitlementStore().getAllEntitlements()
+            .then(function(entitlements) {
+                that.generateList(entitlements);
+            })
+
+            return;
+        }
+
         console.log("PSDLE | Generating download list.");
 
         this.gamelist = [];
-        var that = this;
         var i18n = this.config.valkyrieInstance.lookup('service:i18n');
-        var entitlements = this.config.valkyrieInstance.lookup("service:macross-brain").macrossBrainInstance._entitlementStore._storage._entitlementMapCache;
+        var entitlements = (entitlements || this.config.valkyrieInstance.lookup("service:macross-brain").macrossBrainInstance._entitlementStore._storage._entitlementMapCache);
         //.concat(this.e_inject_cache);
 
         $.each(entitlements, function(index,obj) {
@@ -271,7 +281,7 @@ repod.psdle = {
             }
         });
 
-        console.log("PSDLE | Finished generating download list. End result is "+this.gamelist.length+" item(s).");
+        console.log("PSDLE | Finished generating download list. End result is "+this.gamelist.length+" of "+entitlements.length+" item(s).",this.stats);
         this.postList();
     },
     determineSystem: function(HASH) {
@@ -295,15 +305,17 @@ repod.psdle = {
         if (repod.psdle.config.deep_search) { safe = !1; this.game_api.run(); }
         if (safe)                           { this.table.gen(); }
     },
+    stats: { fine: 0, generic: 0, expired: 0, service: 0, video: 0 },
     isValidContent: function(obj) {
         var exp = (obj.license) ? obj.license.expiration : obj.inactive_date,
             inf = (obj.license) ? obj.license.infinite_duration : false;
 
-        //if (obj.entitlement_type == 1 || obj.entitlement_type == 4) //Services = Ignored
-        if (!this.config.includeVideo && (obj.VUData || (obj.drm_def && obj.drm_def.contentType == "TV"))) { return 0; }
-        else if (!this.config.includeExpired && new Date(exp) < new Date() && !inf) { return 0; }
-        else if (obj.drm_def || obj.entitlement_attributes) { return 1; }
-        else { return 0; }
+
+        if (!this.config.includeVideo && (obj.VUData || (obj.drm_def && obj.drm_def.contentType == "TV"))) { this.stats.video++; return 0; }
+        else if (obj.entitlement_type == 1 || obj.entitlement_type == 4) { this.stats.service++; return 0; } //Services = Ignored
+        else if (!this.config.includeExpired && new Date(exp) < new Date() && !inf) { this.stats.expired++; return 0; }
+        else if (obj.drm_def || obj.entitlement_attributes) { this.stats.fine++; return 1; }
+        else { this.stats.generic++; return 0; }
     },
     genSysCache: function() {
         var that = this;
