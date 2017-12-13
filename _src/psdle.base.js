@@ -168,6 +168,11 @@ repod.psdle = {
                     $(document).on("click","#psdle_night",function() { that.darkCSS(); });
                     $(document).on("click","[id^=api_]",function() { if ($(this).attr("id") !== "api_entitle") { $(this).toggleClass("toggled_off"); } });
                     $(document).on("click","#inject_lang",function() { that.debug.inject_lang(); });
+                    $(document).on("click","#dump_raw",function() {
+                        that.macrossBrain(function(raw) {
+                            that.exportList.download("raw.json",JSON.stringify(raw))
+                        });
+                    });
                     $(document).on("click","#psdle_go, #gen_fake", function() {
                         that.config.deep_search = !$("#api_game").hasClass("toggled_off");
                         that.config.use_queue = !$("#api_queue").hasClass("toggled_off");
@@ -186,15 +191,17 @@ repod.psdle = {
             });
         });
     },
+    macrossBrain: function(callback) {
+        this.config.valkyrieInstance.lookup("service:macross-brain").macrossBrainInstance.getEntitlementStore().getAllEntitlements()
+        .then(function(entitlements) {
+            callback(entitlements);
+        })
+    },
     generateList: function(entitlements) {
         var that = this;
 
         if (!entitlements) {
-            this.config.valkyrieInstance.lookup("service:macross-brain").macrossBrainInstance.getEntitlementStore().getAllEntitlements()
-            .then(function(entitlements) {
-                that.generateList(entitlements);
-            })
-
+            this.macrossBrain(function(e) { that.generateList(e) })
             return;
         }
 

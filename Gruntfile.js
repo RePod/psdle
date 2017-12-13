@@ -67,7 +67,7 @@ module.exports = function(grunt) {
                 options: {
                     replacements: [{
                         pattern: /(version\s*:\s*").*?(",)/ig,
-                        replacement: '$1<%= pkg.version %>$2'
+                        replacement: '$1<%= pkg.version %> <small><%= grunt.template.today("yyyy-mm-dd") %></small>$2'
                     }]
                 }
             },
