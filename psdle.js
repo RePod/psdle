@@ -1,7 +1,7 @@
-/*! psdle 3.1.6 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-11-30 */
+/*! psdle 3.1.7 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-12-13 */
 var repod = {};
 repod.psdle = {
-    version            : "3.1.6",
+    version            : "3.1.7 <small>2017-12-13</small>",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -91,7 +91,7 @@ repod.psdle = {
             },
             use_queue       : false,
             active_consoles : {},
-            tag_line        : "<div class='psdle tagline'><span id='psdle_night'>Night Mode</span><br><a href='//repod.github.io/psdle#support' target='_blank'>Support PSDLE</a> | <a href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation' target='_blank'>Submit Bug/Translation</a></div>",
+            tag_line        : "<div class='psdle tagline'><span id='psdle_night'>Night Mode</span><br><a href='//repod.github.io/psdle#support' target='_blank'>Support PSDLE</a> | <a href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation' target='_blank'>Submit Bug/Translation</a> | <span id='dump_raw'>Dump Raw</span></div>",
             has_plus        : false,
             check_tv        : false,
             tv_url          : {
@@ -169,6 +169,11 @@ repod.psdle = {
                     $(document).on("click","#psdle_night",function() { that.darkCSS(); });
                     $(document).on("click","[id^=api_]",function() { if ($(this).attr("id") !== "api_entitle") { $(this).toggleClass("toggled_off"); } });
                     $(document).on("click","#inject_lang",function() { that.debug.inject_lang(); });
+                    $(document).on("click","#dump_raw",function() {
+                        that.macrossBrain(function(raw) {
+                            that.exportList.download("raw.json",JSON.stringify(raw))
+                        });
+                    });
                     $(document).on("click","#psdle_go, #gen_fake", function() {
                         that.config.deep_search = !$("#api_game").hasClass("toggled_off");
                         that.config.use_queue = !$("#api_queue").hasClass("toggled_off");
@@ -187,15 +192,17 @@ repod.psdle = {
             });
         });
     },
+    macrossBrain: function(callback) {
+        this.config.valkyrieInstance.lookup("service:macross-brain").macrossBrainInstance.getEntitlementStore().getAllEntitlements()
+        .then(function(entitlements) {
+            callback(entitlements);
+        })
+    },
     generateList: function(entitlements) {
         var that = this;
 
         if (!entitlements) {
-            this.config.valkyrieInstance.lookup("service:macross-brain").macrossBrainInstance.getEntitlementStore().getAllEntitlements()
-            .then(function(entitlements) {
-                that.generateList(entitlements);
-            })
-
+            this.macrossBrain(function(e) { that.generateList(e) })
             return;
         }
 
@@ -925,10 +932,10 @@ repod.psdle = {
                 return tempjson;
             },
             handle: function() {
-                $("<a>",{
-                  "download" : "psdle_"+(new Date().toLocaleString().replace(/[:\/]/g,"-"))+".json",
-                  "href" : "data:text/csv;charset=utf-8,"+encodeURIComponent(JSON.stringify(this.gen()))
-                })[0].dispatchEvent(new MouseEvent("click"));
+                repod.psdle.exportList.download(
+                 ".json",
+                 JSON.stringify(this.gen())
+                )
             }
         },
         csv: {
@@ -947,11 +954,17 @@ repod.psdle = {
             handle: function() {
                 var that = this;
 
-                $("<a>",{
-                  "download" : "psdle_"+(new Date().toLocaleString().replace(/[:\/]/g,"-"))+".csv",
-                  "href" : "data:text/csv;charset=utf-8,"+encodeURIComponent(this.gen())
-                })[0].dispatchEvent(new MouseEvent("click"));
+                repod.psdle.exportList.download(
+                    ".csv",
+                    this.gen()
+                );
             }
+        },
+        download: function(download, content) {
+            $("<a>",{
+              "download" : "psdle_"+(new Date().toLocaleString().replace(/[:\/]/g,"-"))+"_"+(download || "generic.txt"),
+              "href" : "data:text/csv;charset=utf-8,"+encodeURIComponent(content)
+            })[0].dispatchEvent(new MouseEvent("click"));
         },
         format: function(index,target,sep) {
             var item = repod.psdle.gamelist_cur[index],
