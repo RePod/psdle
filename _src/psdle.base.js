@@ -90,7 +90,7 @@ repod.psdle = {
             },
             use_queue       : false,
             active_consoles : {},
-            tag_line        : "<div class='psdle tagline'><span id='psdle_night'>Night Mode</span><br><a href='//repod.github.io/psdle#support' target='_blank'>Support PSDLE</a> | <a href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation' target='_blank'>Submit Bug/Translation</a></div>",
+            tag_line        : "<div class='psdle tagline'><span id='psdle_night'>Night Mode</span><br><a href='//repod.github.io/psdle#support' target='_blank'>Support PSDLE</a> | <a href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation' target='_blank'>Submit Bug/Translation</a> | <span id='dump_raw'>Dump Raw</span></div>",
             has_plus        : false,
             check_tv        : false,
             tv_url          : {
@@ -924,10 +924,10 @@ repod.psdle = {
                 return tempjson;
             },
             handle: function() {
-                $("<a>",{
-                  "download" : "psdle_"+(new Date().toLocaleString().replace(/[:\/]/g,"-"))+".json",
-                  "href" : "data:text/csv;charset=utf-8,"+encodeURIComponent(JSON.stringify(this.gen()))
-                })[0].dispatchEvent(new MouseEvent("click"));
+                repod.psdle.exportList.download(
+                 ".json",
+                 JSON.stringify(this.gen())
+                )
             }
         },
         csv: {
@@ -946,11 +946,17 @@ repod.psdle = {
             handle: function() {
                 var that = this;
 
-                $("<a>",{
-                  "download" : "psdle_"+(new Date().toLocaleString().replace(/[:\/]/g,"-"))+".csv",
-                  "href" : "data:text/csv;charset=utf-8,"+encodeURIComponent(this.gen())
-                })[0].dispatchEvent(new MouseEvent("click"));
+                repod.psdle.exportList.download(
+                    ".csv",
+                    this.gen()
+                );
             }
+        },
+        download: function(download, content) {
+            $("<a>",{
+              "download" : "psdle_"+(new Date().toLocaleString().replace(/[:\/]/g,"-"))+"_"+(download || "generic.txt"),
+              "href" : "data:text/csv;charset=utf-8,"+encodeURIComponent(content)
+            })[0].dispatchEvent(new MouseEvent("click"));
         },
         format: function(index,target,sep) {
             var item = repod.psdle.gamelist_cur[index],
