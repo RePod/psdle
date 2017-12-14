@@ -1,11 +1,11 @@
-/*! psdle 3.1.7 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2017-12-13 */
+/*! psdle 3.1.8 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2017-12-13 */
 // ==UserScript==
 // @author		RePod
 // @name		PSDLE for Greasemonkey
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		3.1.7
+// @version		3.1.8
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -23,10 +23,10 @@ Alternatively, reconfigure the updating settings in your Userscript manager.
 */
 
 
-/*! psdle 3.1.7 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-12-13 */
+/*! psdle 3.1.8 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-12-13 */
 var repod = {};
 repod.psdle = {
-    version            : "3.1.7 <small>2017-12-13</small>",
+    version            : "3.1.8 <small>2017-12-13</small>",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -456,8 +456,8 @@ repod.psdle = {
                 }
 
                 if (!dlQueue && repod.psdle.config.deep_search) {
-                    var categories = $("<div />", {class: "psdle_fancy_bar search options categories"}),
-                        order = ["downloadable_game","demo","add_on","avatar","application","theme","unknown"];
+                    var categories = $("<div />", {class: "psdle_fancy_bar search options categories"});
+                    var order = ["downloadable_game","demo","unlock","add_on","avatar","application","theme","unknown"];
 
                     //TO-DO: sort by order
                     $.each(repod.psdle.type_cache, function (key) {
@@ -468,8 +468,9 @@ repod.psdle = {
                             order.push(i);
                         }
                     });
+
                     $.each(order, function (i,v) {
-                       v.appendTo(categories);
+                        if (typeof(v) == "object") v.appendTo(categories);
                     });
 
                     categories.appendTo(r);
