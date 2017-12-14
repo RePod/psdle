@@ -430,8 +430,8 @@ repod.psdle = {
                 }
 
                 if (!dlQueue && repod.psdle.config.deep_search) {
-                    var categories = $("<div />", {class: "psdle_fancy_bar search options categories"}),
-                        order = ["downloadable_game","demo","add_on","avatar","application","theme","unknown"];
+                    var categories = $("<div />", {class: "psdle_fancy_bar search options categories"});
+                    var order = ["downloadable_game","demo","unlock","add_on","avatar","application","theme","unknown"];
 
                     //TO-DO: sort by order
                     $.each(repod.psdle.type_cache, function (key) {
@@ -442,8 +442,9 @@ repod.psdle = {
                             order.push(i);
                         }
                     });
+
                     $.each(order, function (i,v) {
-                       v.appendTo(categories);
+                        if (typeof(v) == "object") v.appendTo(categories);
                     });
 
                     categories.appendTo(r);
