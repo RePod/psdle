@@ -371,6 +371,9 @@ span[id^=system_],
 #export_table {
     width: 100%
 }
+#export_table th {
+    text-align: center
+}
 #export_table .orderUp {
     cursor: pointer;
     height:1em;
