@@ -370,6 +370,21 @@ span[id^=system_] {
 #export_table {
     width: 100%
 }
+#export_table .orderUp {
+    cursor: pointer;
+    height:1em;
+    border-left: 0.4em solid transparent;
+    border-right: 0.4em solid transparent;
+
+    border-bottom: 0.9em solid rgba(0,0,0,0.2);
+    display: inline-block;
+    padding: 1px;
+    margin: 0px 3px;
+}
+#export_table .orderUp:hover {
+    border-bottom-color: black;
+}
+
 /*PS+ switch     */
 
 #slider,

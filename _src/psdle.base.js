@@ -822,10 +822,12 @@ repod.psdle = {
             var that = this;
 
             //Gen input
-            var w = "<div id='export_select'><div>" + this.genTable() + "</div>";
+            var w = $("<div>", {id:"export_select"}).append(
+                        $("<div>").append(this.genTable())
+                    )
 
             //Gen output
-            w += "<br><span class='psdle_fancy_bar'><span id='export_row_del'>-</span><span id='export_row_add'>+</span></span><br><span class='psdle_fancy_bar'><span id='sel_export_view'>"+repod.psdle.lang.labels.exportView+"</span><span id='sel_export_json'>JSON</span><span id='sel_export_csv'>CSV</span>"
+            w.append($("<br><span class='psdle_fancy_bar'><span id='export_row_del'>-</span><span id='export_row_add'>+</span></span><br><span class='psdle_fancy_bar'><span id='sel_export_view'>"+repod.psdle.lang.labels.exportView+"</span><span id='sel_export_json'>JSON</span><span id='sel_export_csv'>CSV</span>"))
 
             //Generate window.
             $("<div />",{id:"export_configure",class:"cover"}).append($("<div />").append(w)).appendTo("#muh_games_container");
@@ -840,11 +842,10 @@ repod.psdle = {
             $("#export_select").off("click").on("click", function(event) { event.stopPropagation(); });
         },
         genTable: function() {
-            var table = "",
-                select = this.genSelect(),
-                max = (this.config.length || 5);
-
-            table += "<table id='export_table'><tr><th>"+repod.psdle.lang.strings.exportColumnName+"</th><th>"+repod.psdle.lang.strings.exportProperty+"</th></tr>";
+            var select = this.genSelect();
+            var max = (this.config.length || 5);
+            var table = $("<table id='export_table'><tr><th>"+repod.psdle.lang.strings.exportColumnName+"</th><th>"+repod.psdle.lang.strings.exportProperty+"</th></tr>");
+            
             for (i=0; i<max; i++) {
                 var text = (this.config[i]) ? this.config[i].name : "",
                     select2 = select.clone();
@@ -854,16 +855,23 @@ repod.psdle = {
                 }
 
                 select2 = select2[0].outerHTML;
-                table += this.genRow(text,select2);
+                table.append(this.genRow(text,select2));
             }
-            table += "</table>";
 
             return table;
         },
         genRow: function(text,select) {
             text = (text) ? text : "";
             select = (select) ? select : this.genSelect()[0].outerHTML;
-            return "<tr><td><input placeholder='...?' value='"+text+"'></td><td>"+select+"</td></tr>";
+            
+            var row = $("<tr><td><div class='orderUp'></div><input placeholder='...?' value='"+text+"'></td><td>"+select+"</td></tr>")
+            $(row).find(".orderUp").click(function() {
+                //$(this).parent().parent().clone(true).insertAfter($("#export_table tr").eq(0));
+                $(this).parent().parent().prev().before($(this).parent().parent().clone(true));
+                $(this).parent().parent().remove();
+            });
+            
+            return row;
         },
         genSelect: function() {
             var select = $("<select />");
