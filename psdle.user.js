@@ -1,11 +1,11 @@
-/*! psdle 3.1.9 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2017-12-31 */
+/*! psdle 3.2.0 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2017-12-31 */
 // ==UserScript==
 // @author		RePod
 // @name		PSDLE for Greasemonkey
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		3.1.9
+// @version		3.2.0
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -23,10 +23,10 @@ Alternatively, reconfigure the updating settings in your Userscript manager.
 */
 
 
-/*! psdle 3.1.9 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-12-31 */
+/*! psdle 3.2.0 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-12-31 */
 var repod = {};
 repod.psdle = {
-    version            : "3.1.9 <small>2017-12-31</small>",
+    version            : "3.2.0 <small>2017-12-31</small>",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -911,8 +911,11 @@ repod.psdle = {
             var row = $("<tr><td><div class='orderUp'></div><input placeholder='...?' value='"+text+"'></td><td>"+select+"</td></tr>")
             $(row).find(".orderUp").click(function() {
                 //$(this).parent().parent().clone(true).insertAfter($("#export_table tr").eq(0));
-                $(this).parent().parent().prev().before($(this).parent().parent().clone(true));
-                $(this).parent().parent().remove();
+                var target = $(this).parent().parent().prev(":not(:first-child)");
+                if (target.length > 0) {
+                    target.before($(this).parent().parent().clone(true));
+                    $(this).parent().parent().remove();
+                }
             });
 
             return row;
