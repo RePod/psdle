@@ -939,12 +939,8 @@ repod.psdle = {
         //json: function() { return (!!JSON.stringify) ? JSON.stringify(repod.psdle.gamelist_cur) : "Browser does not have JSON.stringify()!"; },
         json: {
             gen: function() {
-                var tempjson = {"columns":{},"items":[]};
                 var config = repod.psdle.exportList.config;
-
-                $.each(config, function(i,v) {
-                    tempjson.columns[v[0]] = v[1]
-                });
+                var tempjson = {"columns":config,"items":[]};
 
                 $.each(repod.psdle.gamelist_cur, function(i) {
                     var tempprop = {}, item = repod.psdle.gamelist_cur[i];
@@ -1030,7 +1026,7 @@ repod.psdle = {
 
                 $.each(this.config, function(i,v) {
                     var target = v[0];
-                    
+
                     if (v) {
                         out += that.format(index,target,sep) + sep;
                     }

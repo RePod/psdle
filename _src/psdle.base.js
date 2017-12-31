@@ -938,10 +938,8 @@ repod.psdle = {
         //json: function() { return (!!JSON.stringify) ? JSON.stringify(repod.psdle.gamelist_cur) : "Browser does not have JSON.stringify()!"; },
         json: {
             gen: function() {
-                var tempjson = {"columns":{},"items":[]};
                 var config = repod.psdle.exportList.config;
-
-                tempjson.columns = config;
+                var tempjson = {"columns":config,"items":[]};
 
                 $.each(repod.psdle.gamelist_cur, function(i) {
                     var tempprop = {}, item = repod.psdle.gamelist_cur[i];
