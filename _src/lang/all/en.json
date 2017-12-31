@@ -50,7 +50,8 @@
             "queueTo": "Download to $SYS$",
             "noTarget": "There is no available target console to send to.",
             "exportColumnName": "Column Name",
-            "exportProperty": "Property"
+            "exportProperty": "Property",
+            "exportImport": "Import"
         },
         "apis": [{
             "internalID": "api_entitle",

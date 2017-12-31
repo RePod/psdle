@@ -185,7 +185,8 @@ td:first-child {
 span#export_view,
 span[id^=dl_],
 span[id^=filter_],
-span[id^=system_] {
+span[id^=system_],
+.psdle_fancy_but {
     font-weight: 700;
     font-size: 0.9em;
     color: #fff;

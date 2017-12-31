@@ -809,13 +809,15 @@ repod.psdle = {
     exportList: {
         config: [], //Default export template.
         configure: function() {
+            $("#export_configure").remove();
+
             //TO-DO: window max-height: 80%;
             if (this.config.length == 0) { //If export template is empty, set translated defaults.
-                this.config = [
-                    {name: repod.psdle.lang.columns.name, target: "name"},
-                    {name: repod.psdle.lang.columns.platform, target: "platform"},
-                    {name: repod.psdle.lang.columns.size, target: "prettySize"},
-                    {name: repod.psdle.lang.columns.date, target: "prettyDate"}
+                this.config = [ //[target, name]
+                    ["name", repod.psdle.lang.columns.name],
+                    ["platform", repod.psdle.lang.columns.platform],
+                    ["prettySize", repod.psdle.lang.columns.size],
+                    ["prettyDate", repod.psdle.lang.columns.date]
                 ];
             }
 
@@ -827,12 +829,27 @@ repod.psdle = {
                     )
 
             //Gen output
-            w.append($("<br><span class='psdle_fancy_bar'><span id='export_row_del'>-</span><span id='export_row_add'>+</span></span><br><span class='psdle_fancy_bar'><span id='sel_export_view'>"+repod.psdle.lang.labels.exportView+"</span><span id='sel_export_json'>JSON</span><span id='sel_export_csv'>CSV</span>"))
+            w.append($("<span class='psdle_fancy_bar'><span id='export_row_del'>-</span><span id='export_row_add'>+</span></span><span id='export_import' class='psdle_fancy_but'>"+repod.psdle.lang.strings.exportImport+"</span><br><span class='psdle_fancy_bar'><span id='sel_export_view'>"+repod.psdle.lang.labels.exportView+"</span><span id='sel_export_json'>JSON</span><span id='sel_export_csv'>CSV</span>"))
 
             //Generate window.
             $("<div />",{id:"export_configure",class:"cover"}).append($("<div />").append(w)).appendTo("#muh_games_container");
 
             //Bind
+            $("#export_import").on("click", function() {
+                that.saveConfig();
+
+                var resp = prompt("",JSON.stringify(that.config))
+
+                if (resp !== null) {
+                    try {
+                        that.config = JSON.parse(resp)
+                    }
+                    catch (e) {
+                    }
+                }
+
+                that.configure();
+            });
             $("#export_row_add").off("click").on("click", function(event) { $("#export_table tbody").append(that.genRow()); }); //Add row.
             $("#export_row_del").off("click").on("click", function(event) { $("#export_table tr:gt(1)").last().remove(); }); //Remove row.
             $("#sel_export_view").off("click").on("click", function () { that.saveConfig(); that.delimited.handle(); $("#export_configure").remove(); });
@@ -845,13 +862,14 @@ repod.psdle = {
             var select = this.genSelect();
             var max = (this.config.length || 5);
             var table = $("<table id='export_table'><tr><th>"+repod.psdle.lang.strings.exportColumnName+"</th><th>"+repod.psdle.lang.strings.exportProperty+"</th></tr>");
-            
+
             for (i=0; i<max; i++) {
-                var text = (this.config[i]) ? this.config[i].name : "",
-                    select2 = select.clone();
+                var target = this.config[i][0];
+                var text = (this.config[i][1] || "");
+                var select2 = select.clone();
 
                 if (this.config[i]) {
-                    select2.find("[value="+this.config[i].target+"]").attr("selected","selected");
+                    select2.find("[value="+target+"]").attr("selected","selected");
                 }
 
                 select2 = select2[0].outerHTML;
@@ -863,14 +881,14 @@ repod.psdle = {
         genRow: function(text,select) {
             text = (text) ? text : "";
             select = (select) ? select : this.genSelect()[0].outerHTML;
-            
+
             var row = $("<tr><td><div class='orderUp'></div><input placeholder='...?' value='"+text+"'></td><td>"+select+"</td></tr>")
             $(row).find(".orderUp").click(function() {
                 //$(this).parent().parent().clone(true).insertAfter($("#export_table tr").eq(0));
                 $(this).parent().parent().prev().before($(this).parent().parent().clone(true));
                 $(this).parent().parent().remove();
             });
-            
+
             return row;
         },
         genSelect: function() {
@@ -887,10 +905,10 @@ repod.psdle = {
                 columns = [];
 
             config.each(function() {
-                columns.push({
-                    name: $(this).find("input").val(),
-                    target: $(this).find("select option:selected").val(),
-                });
+                columns.push([
+                    $(this).find("select option:selected").val(),
+                    $(this).find("input").val()
+                ]);
             });
 
             this.config = columns;
@@ -923,15 +941,13 @@ repod.psdle = {
                 var tempjson = {"columns":{},"items":[]};
                 var config = repod.psdle.exportList.config;
 
-                $.each(config, function(key,val) {
-                    tempjson.columns[val.target] = val.name
-                });
+                tempjson.columns = config;
 
                 $.each(repod.psdle.gamelist_cur, function(i) {
                     var tempprop = {}, item = repod.psdle.gamelist_cur[i];
 
-                    $.each(config, function(key,val) {
-                        tempprop[val.target] = repod.psdle.exportList.format(i,val.target,"JSONExp")
+                    $.each(config, function(i,v) {
+                        tempprop[v[0]] = repod.psdle.exportList.format(i,v[0],"JSONExp")
                     });
 
                     tempjson.items.push(tempprop);
@@ -1009,9 +1025,11 @@ repod.psdle = {
                     yes = repod.psdle.lang.strings.yes,
                     no = repod.psdle.lang.strings.no;
 
-                $.each(this.config, function(key,val) {
-                    if (val) {
-                        out += that.format(index,val.target,sep) + sep;
+                $.each(this.config, function(i,v) {
+                    var target = v[0];
+
+                    if (v) {
+                        out += that.format(index,target,sep) + sep;
                     }
                 });
 
@@ -1019,12 +1037,15 @@ repod.psdle = {
             } else if (index == -1) {
                 //Footer.
                 //To-do: Reimplement totals based on selected columns.
-                $.each(this.config, function(index,val) { out += val.target+sep; }); //Align to columns.
+                $.each(this.config, function(i,v) {
+                    var target = v[0];
+                    out += target+sep;
+                }); //Align to columns.
                 out += "\""+JSON.stringify(this.config).replace(/"/g,"'")+"\""; //JSON in extra column.
             } else {
                 //Generally the first row, but more so a catch-all that spits out column names.
-                $.each(this.config, function(index,val) {
-                    out += val.name+sep;
+                $.each(this.config, function(i,v) {
+                    out += v[1]+sep;
                 });
 
                 out += "\n";
