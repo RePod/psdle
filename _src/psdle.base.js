@@ -69,8 +69,6 @@ repod.psdle = {
             valkyrieInstance: Ember.Application.NAMESPACES_BY_ID["valkyrie-storefront"].__container__
         }
 
-        //valkAPI && alert("PSDLE detected the new Valkyrie store API.\nSupport for this is currently experimental!\nAny issues should be reported here, along with region:\nhttps://github.com/RePod/psdle/issues/40")
-
         this.config = $.extend(this.config,{
             game_page       : window.location.origin + "/" +(valkAPI ? l+"/product/" : "#!/" + l + "/cid="),
             game_api        : "https://store.playstation.com/store/api/chihiro/00_09_000/container/"+l2.slice(-1)+"/"+l2[0]+"/999/",
@@ -81,14 +79,7 @@ repod.psdle = {
             deep_waiting    : 0,
             deep_current    : 0,
             last_search     : "",
-            dlQueue         :
-            {
-                base: "/kamaji/api/chihiro/00_09_000/user/notification/download",
-                ps4: "/kamaji/api/chihiro/00_09_000/gateway/store/v1/users/me/notification/download",
-                status: "/kamaji/api/chihiro/00_09_000/user/notification/download/status",
-                status2: "/kamaji/api/chihiro/00_09_000/gateway/store/v1/users/me/notification/download/status"
-            },
-            use_queue       : false,
+            dlQueue       : false,
             active_consoles : {},
             tag_line        : "<div class='psdle tagline'><span id='psdle_night'>Night Mode</span><br><a href='//repod.github.io/psdle#support' target='_blank'>Support PSDLE</a> | <a href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation' target='_blank'>Submit Bug/Translation</a> | <span id='dump_raw'>Dump Raw</span></div>",
             has_plus        : false,
@@ -108,9 +99,6 @@ repod.psdle = {
 
         this.determineLanguage(this.config.language,true);
         this.injectCSS();
-
-        //to-do re-implement this
-        if (!this.config.valkyrie) { SonyChi_SessionManagerSingleton.getUserDevices() }
 
         this.genStartup();
         //this.genDisplay("progress",false);
@@ -147,7 +135,7 @@ repod.psdle = {
             var a = "<div id='sub_container'><a href='//repod.github.io/psdle/' target='_blank'><div class='psdle_logo'></div></a><br><small>v"+repod.psdle.version+"</small></span>";
 
             if (mode == "progress") {
-                if (that.config.use_queue) { that.dlQueue.batch.init(); }
+                if (that.config.dlQueue) { that.dlQueue.batch.init(); }
                 a += "<br><div id='psdle_progressbar'><div id='psdle_bar'>&nbsp;</div></div><br><span id='psdle_status'>"+that.lang.startup.wait+"</span>";
             } else {
                 a += "<br><br>"+that.lang.startup.apis+"<br><br><span class='psdle_fancy_bar'>";
@@ -175,7 +163,7 @@ repod.psdle = {
                     });
                     $(document).on("click","#psdle_go, #gen_fake", function() {
                         that.config.deep_search = !$("#api_game").hasClass("toggled_off");
-                        that.config.use_queue = !$("#api_queue").hasClass("toggled_off");
+                        that.config.dlQueue = !$("#api_queue").hasClass("toggled_off");
                         that.config.check_tv = ($("#api_pstv").length) ? !$("#api_pstv").hasClass("toggled_off") : false;
                         that.genDisplay("progress",($(this).attr("id") == "gen_fake")?true:false);
                     });
@@ -422,7 +410,7 @@ repod.psdle = {
                 });
                 systems.appendTo(r);
 
-                if (repod.psdle.config.use_queue) {
+                if (repod.psdle.config.dlQueue) {
                     var nid = (dlQueue) ? "dl_list" : "dl_queue",
                         tr = lang.strings[(dlQueue) ? "dlList" : "dlQueue"];
 
@@ -938,7 +926,6 @@ repod.psdle = {
             },
             destroy: function () { $(".search.export").remove(); repod.psdle.table.margin(); }
         },
-        //json: function() { return (!!JSON.stringify) ? JSON.stringify(repod.psdle.gamelist_cur) : "Browser does not have JSON.stringify()!"; },
         json: {
             gen: function() {
                 var config = repod.psdle.exportList.config;
@@ -1359,7 +1346,7 @@ repod.psdle = {
             try { if (game.plus) { plus = $("#psdleplus").clone()[0].outerHTML+" "; } } catch(e) {}
             dialog.append($("<div>", {id:"dlQAN"} ).append(plus+game.name));
 
-            if (repod.psdle.config.use_queue) {
+            if (repod.psdle.config.dlQueue) {
                 var temp = $.grep(game.platformUsable.slice(0), function(V) { return V !== "PSP" }), //Make sure we don't have PSP
                     t    = $("<div>", {id:"dlQASys"} );
 
@@ -1496,117 +1483,6 @@ repod.psdle = {
         }
     },
     debug: {
-        die: function() {
-            /* Obviously.   */ $("#muh_games_container").remove();
-            /* CSS          */ $("#psdle_css").remove();
-            /* Just 'psdle' */ delete repod.psdle;
-        },
-        inject_lang: function() {
-            var lang = prompt("Insert JSON formatted language: (current below)",JSON.stringify(repod.psdle.lang));
-
-            try {
-                lang = JSON.parse(lang);
-                repod.psdle.lang = {};
-                repod.psdle.lang = repod.psdle.lang_cache.en.us;
-                $.extend(true,repod.psdle.lang,lang);
-                repod.psdle.genDisplay("nobind");
-            } catch (e) {
-                alert(e);
-            }
-        },
-        fake_list: function() {
-            //Generate a fake download list based on currently viewable items.
-            //Dates are generated randomly.
-            //Best used on a page showing only game content.
-            if ($(".cellGridGameStandard").length > 0) {
-                $.each($(".cellGridGameStandard"), function(index) {
-                    var temp = {};
-
-                    temp.category = "unknown";
-                    temp.productID = $(this).find(".permalink").attr("href").split("cid=").pop();
-                    temp.id = temp.productID;
-                    temp.index = repod.psdle.gamelist.length + 1;
-                    temp.name = $(this).find(".cellTitle").text();
-                    temp.platform = [ $(this).find(".pforms").text().split("|").pop() ];
-
-                    //Random values
-                    temp.size = Math.floor(Math.random() * 19999994000); //Size, in bytes.
-                    temp.plus = (Math.random() < 0.5);
-                    if (temp.plus) { repod.psdle.config.has_plus = true; } //PS+
-                    min = new Date(); min.setDate(min.getDate() - 365*4); min = min.getTime(); temp.date = new Date(min + Math.random() * (Date.now() - min)).toISOString(); //Date
-
-                    temp.icon = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.productID)+"&w=42&h=42";
-
-                    temp.prettySize = formatFileSizeDisplayStr(temp.size);
-                    temp.url = repod.psdle.config.game_page+temp.productID;
-                    temp.platformUsable = temp.platform.slice(0);
-                    temp.prettyDate = convertToNumericDateSlashes(convertStrToDateObj(temp.date));
-
-                    repod.psdle.gamelist.push(temp);
-                    if (repod.psdle.config.deep_search) { repod.psdle.game_api.queue(temp.index,temp.productID); }
-                });
-                repod.psdle.postList();
-            } else {
-                alert("Not on a valid page.");
-            }
-        },
-        checkParse: function(pid) {
-            pid = (pid) ? pid : prompt("Enter (product) ID:");
-
-            $.getJSON(repod.psdle.config.game_api+pid)
-            .success(function(data) {
-                console.log(repod.psdle.game_api.parse(data));
-            })
-            .fail(function(data) {
-                console.log(data);
-            });
-        },
-        difference: function(regen) {
-            repod.psdle.gamelist_cur = $.grep(repod.psdle.gamelist,function(x) {return $.inArray(x, repod.psdle.gamelist_cur) < 0});
-            if (regen) {
-                repod.psdle.table.regen();
-            }
-        },
-        entitlement: function(input,type) {
-            //Probably want to have this store results in an array and return that instead, eventually.
-
-            input = (input) ? input : prompt("Search for:");
-            input = input.toLowerCase();
-            type = (type) ? type : "name";
-
-            $.each(gEntitlementManager.getAllEntitlements(),function(index,obj) {
-                if (repod.psdle.isValidContent(obj)) {
-                    var match = false;
-
-                    switch (type) {
-                        case "id":
-                            match = !!~obj.id.toLowerCase().indexOf(input);
-                            break;
-                        case "name":
-                        default:
-                            var name = (obj.drm_def) ? obj.drm_def.contentName : obj.game_meta.name;
-                            match = !!~name.toLowerCase().indexOf(input);
-                            break;
-                    }
-
-                    if (match) {
-                        var platform,
-                            pids = 0;
-
-                        if (obj.game_meta) {
-                            platform = ["PS4"]
-                        } else {
-                            pids = obj.drm_def.drmContents[0].platformIds;
-                            platform = repod.psdle.determineSystem(pids);
-                        }
-
-                        //Remove personal information (such as dates) and extraneous URLs.
-                        var safe = JSON.stringify(obj, function(k,v) { if(/[\d\-]+T.+Z$/.test(v) || /^http/.test(v)) { return "~" } return v; });
-                        console.log(index,platform,pids,safe)
-                    }
-                }
-            });
-        },
         injectEntitlement: function(ENTITLEMENT) {
             //ENTITLEMENT should be valid Entitlement data or an array containing multiple.
             //This should be called before generating the list as it is appended to the end of the original Entitlements list.
