@@ -12,8 +12,8 @@ Requisites
 
 Accessing Extensions
 ----
-- ![Main menu](hotdog.png?raw=true) ➤ More tools ➤ Extensions
-- chrome://extensions/
+- **≡** ➤ More tools ➤ Extensions
+- [chrome://extensions/](chrome://extensions/)
 
 Loading the unpacked Extension
 ----
@@ -28,13 +28,6 @@ Loading the unpacked Extension
 Packing the Extension
 ----
 
-1. [Access Extensions.](#accessing-extensions)
-2. Enable "*Developer mode*", if not already enabled. (upper-right corner)
-3. "*Pack extension...*"
-4. Navigate to this folder.
-5. Select the "*psdle*" folder.
-6. Submit.
-
-Private keys are not provided, and are not required.
+1. Don't pack it.
 
 **The CRX is no longer provided**, as it is irrelevant to testing.
