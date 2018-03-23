@@ -61,16 +61,11 @@ repod.psdle = {
         var that = this,
             match = window.location.pathname.match(/^\/([a-z\-]+)\//i),
             l = (match !== null && match.length > 1 ? match.pop() : "en-us").toLowerCase(),
-            l2 = l.split("-"),
-            valkAPI = (typeof window.valkyrie == "object");
-
-        this.config = {
-            valkyrie        : valkAPI,
-            valkyrieInstance: Ember.Application.NAMESPACES_BY_ID["valkyrie-storefront"].__container__
-        }
+            l2 = l.split("-");
 
         this.config = $.extend(this.config,{
-            game_page       : window.location.origin + "/" +(valkAPI ? l+"/product/" : "#!/" + l + "/cid="),
+            valkyrieInstance: Ember.Application.NAMESPACES_BY_ID["valkyrie-storefront"].__container__,
+            game_page       : window.location.origin+"/"+l+"/product/",
             game_api        : "https://store.playstation.com/store/api/chihiro/00_09_000/container/"+l2.slice(-1)+"/"+l2[0]+"/999/",
             lastsort        : "",
             lastsort_r      : false,
@@ -110,7 +105,6 @@ repod.psdle = {
             if (window.psdleSkip && window.psdleSkip == true) {
                 that.genDisplay();
             } else {
-                //startup.append("<div style='position:absolute;line-height:11px;text-shadow:-1px -1px #000,1px -1px #000,-1px 1px #000,1px 1px #000;bottom:39px;width:180px;font-size:11px'>Please leave a review<br>for the Chrome extension!<br>It's very much appreciated.</div>");
                 $("<div/>",{class:"psdle_logo startup"}).click(function() {
                     $(this).remove();
                     that.genDisplay();
@@ -128,7 +122,7 @@ repod.psdle = {
         });
 
         if (!$("#muh_games_container").length) {
-            $("body").append($("<div />",{id:"muh_games_container",class:(this.config.valkyrie?"valkyrie":"")}));
+            $("body").append($("<div />",{id:"muh_games_container",class:"valkyrie")}));
         }
 
         $("#muh_games_container").slideUp("slow", function() {
@@ -170,11 +164,12 @@ repod.psdle = {
                 }
             }
             $("#muh_games_container").html(a).slideDown("slow",function() {
-                if (mode == "progress") { if (fake_list) { that.debug.fake_list() } else { that.generateList(); }
-                } else {
-                    $("[id^=api_]").promise().done(function() {
-                        if (!that.config.valkyrie) $("[id^=api_]").tooltip({position: {my: "center top", at: "center bottom"}})
-                    });
+                if (mode == "progress") {
+                    if (fake_list) {
+                        that.debug.fake_list()
+                    } else {
+                        that.generateList();
+                    }
                 }
             });
         });
