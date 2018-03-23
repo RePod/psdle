@@ -41,6 +41,7 @@ repod.psdle = {
         this.lang = JSON.parse(a);
     },
     generateLangBox: function(e) {
+        var that = this;
         var temp = "<select id='lang_select'>";
         e = (e) ? this.determineLanguage(e) : this.determineLanguage();
         for (var i in this.lang_cache) {
@@ -52,7 +53,12 @@ repod.psdle = {
             }
         }
         temp += "</select>";
-        return temp;
+
+        return $(temp).on("change", function() {
+            that.config.language = $(this).val();
+            that.determineLanguage($(this).val(),true);
+            that.genDisplay("nobind");
+        });
     },
     config: {"timerID": 0},
     init: function() {
@@ -76,7 +82,7 @@ repod.psdle = {
             last_search     : "",
             dlQueue       : false,
             active_consoles : {},
-            tag_line        : "<div class='psdle tagline'><span id='psdle_night'>Night Mode</span><br><a href='//repod.github.io/psdle#support' target='_blank'>Support PSDLE</a> | <a href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation' target='_blank'>Submit Bug/Translation</a> | <span id='dump_raw'>Dump Raw</span></div>",
+            tag_line        : "MOVED",
             has_plus        : false,
             check_tv        : false,
             tv_url          : {
@@ -96,7 +102,6 @@ repod.psdle = {
         this.injectCSS();
 
         this.genStartup();
-        //this.genDisplay("progress",false);
     },
     genStartup: function() {
         if ($("#psdle_start").length == 0) {
@@ -112,32 +117,107 @@ repod.psdle = {
             }
         }
     },
+    container: {
+        elemID: "muh_games_container",
+        subElemID: "sub_container",
+        respawn: function(content) {
+            $("#"+this.elemID).remove(); //Temporary lazy unbind
+
+            $("body").append(
+                $("<div />",{id:this.elemID,class:"valkyrie"}).append(content)
+            );
+        },
+        darkCSS: function() {
+            $("#"+this.elemID).toggleClass("psdledark");
+        },
+        tagline: function() {
+            var that = this;
+            var t = $("<div />", {class:'psdle tagline'});
+            t.append($("<span />", {id:'psdle_night', text: "Night Mode"}).on("click", function() { that.darkCSS(); }))
+            .append("<br><a href='//repod.github.io/psdle#support' target='_blank'>Support PSDLE</a> | <a href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation' target='_blank'>Submit Bug/Translation</a> | ")
+            .append($("<span />", {id:'dump_raw', text: "Dump Raw"}).on("click", function() { 
+                repod.psdle.macrossBrain(function(raw) {
+                    repod.psdle.exportList.download("raw.json",JSON.stringify(raw))
+                });
+            }))
+            .append(" | ")
+            .append($("<span />", {id: "inject_lang", text: "Inject Language"}).on("click", function() {
+                    repod.psdle.debug.inject_lang();
+            }))
+            
+            return t;
+        },
+        startup: function() {
+            var that = this;
+            //TO-DO: Passthrough
+            var config = repod.psdle.config;
+            var lang = repod.psdle.lang;
+
+            var sub = $("<div />",{id:this.subElemID})
+            .append("<span><a href='//repod.github.io/psdle/' target='_blank'><div class='psdle_logo'></div></a><br><small>v"+repod.psdle.version+"</small></span>")
+            .append("<br><br>"+lang.startup.apis+"<br><br>");
+
+            var bar = $("<span />", {class: "psdle_fancy_bar"});
+            $.each(lang.apis, function(key,con) {
+                if (con.internalID == "api_pstv" && config.language !== "en-us") { return 0; }
+
+                $("<span />", {
+                    id: con.internalID,
+                    class: (con.internalID == "api_game" || con.disabled) ? "toggled_off" : "",
+                    "data-tooltip": con.desc.replace(/'/g, "&apos;"),
+                    text: con.name.replace(/'/g, "&apos;")
+                }).on("click", function() {
+                    if ($(this).attr("id") !== "api_entitle") $(this).toggleClass("toggled_off");
+                }).appendTo(bar)
+            });
+            
+            var goBtn = $("<span />", {id: "psdle_go", class: "psdle_btn", text: lang.startup.start}).on("click", function() {
+                config.deep_search = !$("#api_game").hasClass("toggled_off");
+                config.dlQueue = !$("#api_queue").hasClass("toggled_off");
+                config.check_tv = ($("#api_pstv").length) ? !$("#api_pstv").hasClass("toggled_off") : false;
+                
+                that.respawn(that.progress());
+            })
+
+            //There is surely a better way.
+            sub.append(bar)
+            .append("<br><br>")
+            .append(goBtn)
+            .append("<br>")
+            .append(repod.psdle.generateLangBox())
+            .append("<br><br>")
+            .append(this.tagline())
+
+            return sub;
+        },
+        progress: function() {
+            repod.psdle.generateList();            
+            
+            var sub = $("<div />",{id:this.subElemID})
+            .append($("<progress />", {id:"startup_progress"}))
+            .append("<br><span id='psdle_status'>"+repod.psdle.lang.startup.wait+"</span>");
+            
+            if (repod.psdle.config.dlQueue) { 
+                repod.psdle.dlQueue.batch.init();
+            }
+            
+            return sub;
+        }
+    },
     genDisplay: function(mode,fake_list) {
+        this.container.respawn(this.container.startup());
+        return 0;
+
         var that = this;
 
-        $(document).one("change", "#sub_container > select#lang_select", function() {
-            that.config.language = $(this).val();
-            that.determineLanguage($(this).val(),true);
-            that.genDisplay("nobind");
-        });
-
-        if (!$("#muh_games_container").length) {
-            $("body").append($("<div />",{id:"muh_games_container",class:"valkyrie")}));
-        }
-
         $("#muh_games_container").slideUp("slow", function() {
-            var a = "<div id='sub_container'><a href='//repod.github.io/psdle/' target='_blank'><div class='psdle_logo'></div></a><br><small>v"+repod.psdle.version+"</small></span>";
+            var a = "<div id='sub_container'>";
 
             if (mode == "progress") {
-                if (that.config.dlQueue) { that.dlQueue.batch.init(); }
-                a += "<br><div id='psdle_progressbar'><div id='psdle_bar'>&nbsp;</div></div><br><span id='psdle_status'>"+that.lang.startup.wait+"</span>";
+                
+                
             } else {
-                a += "<br><br>"+that.lang.startup.apis+"<br><br><span class='psdle_fancy_bar'>";
-                $.each(that.lang.apis, function(key,con) {
-                    if (con.internalID == "api_pstv" && that.config.language !== "en-us") { return 0; }
-                    var off = (con.internalID == "api_game" || con.disabled) ? "toggled_off" : "";
-                    a += "<span id='"+con.internalID+"' data-tooltip='"+con.desc.replace(/'/g, "&apos;")+"' class='"+off+"'>"+con.name.replace(/'/g, "&apos;")+"</span>";
-                });
+
                 a += "</span><br><br><span id='psdle_go' class='psdle_btn'>"+that.lang.startup.start+"</span><br>"+that.generateLangBox()+"<br><br>";
                 //Great use of appends! Not sarcasm!
                 a += $(that.config.tag_line)
@@ -149,7 +229,7 @@ repod.psdle = {
                 if (mode !== "nobind") {
                     $(document).on("click","#psdle_night",function() { that.darkCSS(); });
                     $(document).on("click","[id^=api_]",function() { if ($(this).attr("id") !== "api_entitle") { $(this).toggleClass("toggled_off"); } });
-                    $(document).on("click","#inject_lang",function() { that.debug.inject_lang(); });
+                    $(document).on("click","#inject_lang",function() { that; });
                     $(document).on("click","#dump_raw",function() {
                         that.macrossBrain(function(raw) {
                             that.exportList.download("raw.json",JSON.stringify(raw))
@@ -786,9 +866,6 @@ repod.psdle = {
         var temp = '{{{include "css/psdle.min.css"}}}';
         $("head").append('<style type="text/css">'+temp+'</style>');
     },
-    darkCSS: function() {
-        $("#muh_games_container").toggleClass("psdledark");
-    },
     exportList: {
         config: [], //Default export template.
         configure: function() {
@@ -1065,7 +1142,7 @@ repod.psdle = {
                 return 0;
             }
 
-            this.batch.splice(0,1).forEach(function(i, e) {
+            this.batch.splice(0,10).forEach(function(i, e) {
                 catalog.resolve(i.pid)
                 .then(function (data) {
                     if (data.response && data.response.status == 404) return 0;
@@ -1095,16 +1172,16 @@ repod.psdle = {
         updateBar: function() {
             var that  = this,
                 l     = this.called, //Math.abs(repod.psdle.gamelist.length - this.batch.length),
-                r     = repod.psdle.gamelist.length,
-                w     = $('#psdle_bar').width(),
-                pW    = $('#psdle_bar').parent().width(),
-                p     = Math.round(100*w/pW),
-                q     = Math.round(100*l/r);
+                r     = repod.psdle.gamelist.length;
 
-            if (100*l/r == 100) { repod.psdle.table.gen(); } //Ultimate in promise abuse technology.
-
-            if (q > p) { $("#psdle_progressbar > #psdle_bar").stop().animate({"width":q+"%"}); }
-            $("#psdle_status").text(l+" / "+r).click(that.run());
+            
+            $("#startup_progress").attr({value:l,max:r});
+            $("#psdle_status").text(l+" / "+r);
+            
+            if (l == r) {
+                $("#psdle_status").text(repod.psdle.lang.startup.wait);
+                setTimeout(function() { repod.psdle.table.gen(); }, 100);
+            }
         },
         parse: function(data) {
             var extend = {},
@@ -1495,6 +1572,19 @@ repod.psdle = {
             //if (ENTITLEMENT !== null && typeof ENTITLEMENT !== "array") { this.injectEntitlement(); }
 
             return repod.psdle.e_inject_cache.length;
+        },
+        inject_lang: function() {
+            var lang = prompt("Insert JSON formatted language: (current below)",JSON.stringify(repod.psdle.lang));
+
+            try {
+                lang = JSON.parse(lang);
+                repod.psdle.lang = {};
+                repod.psdle.lang = repod.psdle.lang_cache.en.us;
+                $.extend(true,repod.psdle.lang,lang);
+                repod.psdle.genDisplay("nobind");
+            } catch (e) {
+                alert(e);
+            }
         }
     },
     grid: {
