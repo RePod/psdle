@@ -108,11 +108,11 @@ repod.psdle = {
             var that = this;
 
             if (window.psdleSkip && window.psdleSkip == true) {
-                that.genDisplay();
+                this.container.go("startup");
             } else {
                 $("<div/>",{class:"psdle_logo startup"}).click(function() {
                     $(this).remove();
-                    that.genDisplay();
+                    that.container.go("startup");
                 }).appendTo("body");
             }
         }
@@ -120,6 +120,20 @@ repod.psdle = {
     container: {
         elemID: "muh_games_container",
         subElemID: "sub_container",
+        go: function(target) {
+            switch (target) {
+                default:
+                case "startup":
+                    this.respawn(this.startup());
+                    break;
+                case "progress":
+                    this.respawn(this.progress());
+                    break;
+                case "dlList":
+                    this.respawn(this.dlList());
+                    break;
+            }
+        },
         respawn: function(content) {
             $("#"+this.elemID).remove(); //Temporary lazy unbind
 
@@ -180,7 +194,7 @@ repod.psdle = {
                 config.dlQueue = !$("#api_queue").hasClass("toggled_off");
                 config.check_tv = ($("#api_pstv").length) ? !$("#api_pstv").hasClass("toggled_off") : false;
                 
-                that.respawn(that.progress());
+                that.go("progress");
             })
 
             //There is surely a better way.
@@ -207,57 +221,16 @@ repod.psdle = {
             }
             
             return sub;
+        },
+        dlList: function() {
+            //TO-DO: don't prep sys/prop cache on queue -> list switch back
+            repod.psdle.genSysCache();
+            repod.psdle.genPropCache();
+            repod.psdle.config.lastsort = "";
+            repod.psdle.config.lastsort_r = false;
+            
+            return repod.psdle.table.gen();
         }
-    },
-    genDisplay: function(mode,fake_list) {
-        this.container.respawn(this.container.startup());
-        return 0;
-
-        var that = this;
-
-        $("#muh_games_container").slideUp("slow", function() {
-            var a = "<div id='sub_container'>";
-
-            if (mode == "progress") {
-                
-                
-            } else {
-
-                a += "</span><br><br><span id='psdle_go' class='psdle_btn'>"+that.lang.startup.start+"</span><br>"+that.generateLangBox()+"<br><br>";
-                //Great use of appends! Not sarcasm!
-                a += $(that.config.tag_line)
-                .append(" | ")
-                .append($("<span />", {id: "inject_lang", text: "Inject Language"}))
-                [0].outerHTML;
-                a +="</div>";
-
-                if (mode !== "nobind") {
-                    $(document).on("click","#psdle_night",function() { that.darkCSS(); });
-                    $(document).on("click","[id^=api_]",function() { if ($(this).attr("id") !== "api_entitle") { $(this).toggleClass("toggled_off"); } });
-                    $(document).on("click","#inject_lang",function() { that; });
-                    $(document).on("click","#dump_raw",function() {
-                        that.macrossBrain(function(raw) {
-                            that.exportList.download("raw.json",JSON.stringify(raw))
-                        });
-                    });
-                    $(document).on("click","#psdle_go, #gen_fake", function() {
-                        that.config.deep_search = !$("#api_game").hasClass("toggled_off");
-                        that.config.dlQueue = !$("#api_queue").hasClass("toggled_off");
-                        that.config.check_tv = ($("#api_pstv").length) ? !$("#api_pstv").hasClass("toggled_off") : false;
-                        that.genDisplay("progress",($(this).attr("id") == "gen_fake")?true:false);
-                    });
-                }
-            }
-            $("#muh_games_container").html(a).slideDown("slow",function() {
-                if (mode == "progress") {
-                    if (fake_list) {
-                        that.debug.fake_list()
-                    } else {
-                        that.generateList();
-                    }
-                }
-            });
-        });
     },
     macrossBrain: function(callback) {
         this.config.valkyrieInstance.lookup("service:macross-brain").macrossBrainInstance.getEntitlementStore().getAllEntitlements()
@@ -377,7 +350,7 @@ repod.psdle = {
 
         if (repod.psdle.config.check_tv)    { safe = !1; repod.psdle.tv.init(); }
         if (repod.psdle.config.deep_search) { safe = !1; this.game_api.run(); }
-        if (safe)                           { this.table.gen(); }
+        if (safe)                           { this.container.go("dlList"); }
     },
     stats: { fine: 0, generic: 0, expired: 0, service: 0, video: 0 },
     isValidContent: function(obj) {
@@ -425,13 +398,14 @@ repod.psdle = {
     table: {
         bindSearch: function() {
             //Unbind for safety.
-            $(document).off("click",".psdle_table tbody > tr, span[id^=system_], span[id^=filter_], span[id^=dl_], th[id^=sort_], #export_view, #export_csv").off("blur","#psdle_search_text");
+            //$(document).off("click",".psdle_table tbody > tr, span[id^=system_], span[id^=filter_], span[id^=dl_], th[id^=sort_], #export_view, #export_csv").off("blur","#psdle_search_text");
             //Bind.
             $(document).keypress(function(e) { if (e.which == 13 && $("#psdle_search_text").is(":focus")) { repod.psdle.table.regen(true); } });
             $("#psdle_search_select").off("change").change(function() { repod.psdle.table.regen(true); });
-            $("span[id^=system_], span[id^=filter_]").off("click").on("click", function() { $(this).toggleClass("toggled_off"); repod.psdle.table.regen(true); });
+            //$("span[id^=system_], span[id^=filter_]").off("click").on("click", );
+            //$("#export_view").off("click").on("click", function() { repod.psdle.exportList.configure(); });
             $("th[id^=sort_]").off("click").on("click", function() { repod.psdle.sortGamelist($(this)); });
-            $("#export_view").off("click").on("click", function() { repod.psdle.exportList.configure(); });
+            
             $("#psdle_search_text").off("blur").on("blur", function() { repod.psdle.table.regen(true); });
             $("#dl_queue").one("click", function() { repod.psdle.dlQueue.generate.display(); });
             $(document).off("click", "[id^=psdle_index_]").on("click", "[id^=psdle_index_]", function(e) {
@@ -446,24 +420,24 @@ repod.psdle = {
         gen: function() {
             var that = this;
 
-            repod.psdle.genSysCache();
-            repod.psdle.genPropCache();
-            repod.psdle.config.lastsort = "";
-            repod.psdle.config.lastsort_r = false;
-
             $("#muh_games_container").css({"position":"absolute"});
-            $("#sub_container").html("")
+            
+            var sub = $("<div />", {id: repod.psdle.container.subElemID})
             .append(this.header.gen())
             .append("<div class='psdle_table'><table><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+repod.psdle.lang.columns.platform+"</th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table></div><br>"+repod.psdle.config.tag_line);
 
-            this.regen(true);
-            this.bindSearch();
+            //Move
+            //this.regen(true);
+            //this.bindSearch();
 
             console.log("PSDLE | Table generated.");
+            
+            return sub;
 
-            $("#muh_games_container").slideDown("slow").promise().done(function() {
+            //Move
+            /*$("#muh_games_container").slideDown("slow").promise().done(function() {
                 that.margin();
-            });
+            });*/
         },
         header: {
             gen: function(dlQueue) {
@@ -474,10 +448,12 @@ repod.psdle = {
             searchOptions: function(dlQueue) {
                 var r = $("<div />", {class: "search options container"}),
                     lang = repod.psdle.lang;
+                    
+                var regenFunc = function() { $(this).toggleClass("toggled_off"); repod.psdle.table.regen(true); }
 
                 if (!dlQueue) {
                     r.append($("<span />", {class: "psdle_fancy_bar"})
-                        .append($("<span />", {id: "export_view", text: lang.labels.exportView}))
+                        .append($("<span />", {id: "export_view", text: lang.labels.exportView}).on("click", function() { repod.psdle.exportList.configure(); }))
                     )
                 }
 
@@ -485,7 +461,7 @@ repod.psdle = {
                     order = ["ps1","ps2","ps3","ps4","psp","vita"];
                 $.each(order, function (i,v) {
                     if (repod.psdle.sys_cache.hasOwnProperty(v)) {
-                        $("<span />", {id: "system_"+v, text: repod.psdle.sys_cache[v]}).appendTo(systems);
+                        $("<span />", {id: "system_"+v, text: repod.psdle.sys_cache[v]}).on("click", regenFunc).appendTo(systems);
                     }
                 });
                 systems.appendTo(r);
@@ -503,7 +479,7 @@ repod.psdle = {
 
                     //TO-DO: sort by order
                     $.each(repod.psdle.type_cache, function (key) {
-                        var i = $("<span />", {id: "filter_"+key, text: (lang.categories[key] || key)})
+                        var i = $("<span />", {id: "filter_"+key, text: (lang.categories[key] || key)}).on("click", regenFunc)
                         if (order.indexOf(key) >= 0) {
                             order[order.indexOf(key)] = i;
                         } else {
@@ -1132,18 +1108,11 @@ repod.psdle = {
                 this.batch.unshift(a);
             }
         },
-        ran: false,
         run: function() {
             var that = this,
                 catalog = repod.psdle.config.valkyrieInstance.lookup('service:susuwatari');
 
             if (this.batch.length == 0) {
-                /*console.log('run called!',repod.psdle.type_cache);
-                if (!this.ran) {
-                    this.ran = true;
-                    console.log('table gen!', repod.psdle.type_cache);
-                    repod.psdle.table.gen();
-                }*/
                 return 0;
             }
 
@@ -1186,7 +1155,9 @@ repod.psdle = {
             if (l == r) {
                 $("#psdle_status").text(repod.psdle.lang.startup.wait);
                 $("#startup_progress").attr("value",null);
-                setTimeout(function() { repod.psdle.table.gen(); }, 100);
+                setTimeout(function() { 
+                    repod.psdle.container.go("dlList");
+                }, 100);
             }
         },
         parse: function(data) {
