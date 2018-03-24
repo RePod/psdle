@@ -121,27 +121,30 @@ repod.psdle = {
     container: {
         elemID: "muh_games_container",
         subElemID: "sub_container",
-        go: function(target) {
+        go: function(target,cb) {
             switch (target) {
                 default:
                 case "startup":
-                    this.respawn(this.startup());
+                    this.respawn(this.startup(),cb);
                     break;
                 case "progress":
-                    this.respawn(this.progress());
+                    this.respawn(this.progress(),cb);
                     break;
                 case "dlList":
-                    this.respawn(this.dlList());
+                    this.respawn(this.dlList().append(this.tagline()), function () { //Send callbacks
+                        repod.psdle.table.regen(true);
+                        repod.psdle.table.margin();
+                    });
                     break;
             }
         },
-        respawn: function(content) {
+        respawn: function(content,cb) {
             $("#"+this.elemID).remove(); //Temporary lazy unbind
 
             $("body").append(
                 $("<div />",{id:this.elemID,class:"valkyrie"}).append(content)
             );
-            $("#"+this.elemID).slideDown();
+            $("#"+this.elemID).slideDown("slow").promise().done(cb);
         },
         darkCSS: function() {
             $("#"+this.elemID).toggleClass("psdledark");
@@ -398,8 +401,6 @@ repod.psdle = {
     },
     table: {
         bindSearch: function() {
-            $("th[id^=sort_]").off("click").on("click", function() { repod.psdle.sortGamelist($(this)); });
-
             $(document).off("click", "[id^=psdle_index_]").on("click", "[id^=psdle_index_]", function(e) {
                 e.preventDefault();
                 if (e.shiftKey) {
@@ -416,20 +417,14 @@ repod.psdle = {
 
             var sub = $("<div />", {id: repod.psdle.container.subElemID})
             .append(this.header.gen())
-            .append("<div class='psdle_table'><table><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+repod.psdle.lang.columns.platform+"</th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table></div><br>"+repod.psdle.config.tag_line);
+            .append("<div class='psdle_table'><table><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+repod.psdle.lang.columns.platform+"</th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table></div>");
+            sub.find("th[id^=sort_]").on("click", function() { repod.psdle.sortGamelist($(this)); });
 
-            //Move
-            //this.regen(true);
-            //this.bindSearch();
+            this.bindSearch(); //TO-DO: GET IT OUT OF HERE!
 
             console.log("PSDLE | Table generated.");
 
             return sub;
-
-            //Move
-            /*$("#muh_games_container").slideDown("slow").promise().done(function() {
-                that.margin();
-            });*/
         },
         header: {
             gen: function(dlQueue) {
