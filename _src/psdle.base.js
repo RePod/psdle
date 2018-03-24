@@ -1105,7 +1105,7 @@ repod.psdle = {
                 this.batch.unshift(a);
             }
         },
-        run: function() {
+        run: function(burstThreads) {
             var that = this,
                 catalog = repod.psdle.config.valkyrieInstance.lookup('service:susuwatari');
 
@@ -1113,7 +1113,7 @@ repod.psdle = {
                 return 0;
             }
 
-            this.batch.splice(0,10).forEach(function(i, e) {
+            this.batch.splice(0, (burstThreads || 30)).forEach(function(i, e) {
                 catalog.resolve(i.pid)
                 .then(function (data) {
                     if (data.response && data.response.status == 404) return 0;
@@ -1136,7 +1136,7 @@ repod.psdle = {
                     that.called++;
                 })
                 .catch(function(e){ that.called++; repod.psdle.type_cache["unknown"] = true; })
-                .then(function() { that.run(); that.updateBar(); });
+                .then(function() { that.run(1); that.updateBar(); });
             });
         },
         called: 0,
@@ -1290,7 +1290,7 @@ repod.psdle = {
                 },
                 go: function(sys,id,auto) {
                     var cb = function() { repod.psdle.container.go("dlQueue") };
-                    
+
                     if (sys == "ps4") {
                         repod.psdle.dlQueue.batch.Kamaji.cancelPS4Download(id).then(cb);
                     } else {
@@ -1310,7 +1310,7 @@ repod.psdle = {
             },
             table: function() {
                 var temp = "";
-    
+
                 $(".psdle_table").remove();
                 $("#sub_container").append("<div class='psdle_table'><table style='display:inline-block;text-align:left'><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th>"+repod.psdle.lang.columns.platform+"</th><th> > </th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table></div>");
 
