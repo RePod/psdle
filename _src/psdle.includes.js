@@ -28,12 +28,6 @@ repod.psdle = {
             e = "en-us";
         }
 
-        if (!!this.lang.rtl && this.lang.rtl == true) {
-            $("#muh_games_container").addClass("rtl");
-        } else {
-            $("#muh_games_container").removeClass("rtl");
-        }
-
         return e;
     },
     sanitizeLanguage: function() {
@@ -142,8 +136,10 @@ repod.psdle = {
             $("#"+this.elemID).remove(); //Temporary lazy unbind
 
             $("body").append(
-                $("<div />",{id:this.elemID,class:"valkyrie "+((this.dark)?"psdledark":"")}).append(content)
-                
+                $("<div />",{id:this.elemID,class:"valkyrie"})
+                .toggleClass("psdledark", this.dark)
+                .toggleClass("rtl", (!!repod.psdle.lang.rtl && repod.psdle.lang.rtl == true))
+                .append(content)
             );
             $("#"+this.elemID).slideDown("slow").promise().done(cb);
         },
