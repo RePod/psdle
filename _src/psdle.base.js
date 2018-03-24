@@ -129,6 +129,9 @@ repod.psdle = {
                         repod.psdle.table.margin();
                     });
                     break;
+                case "dlQueue":
+                    repod.psdle.dlQueue.generate.display(); //TO-DO: Not this!
+                    break;
             }
         },
         respawn: function(content,cb) {
@@ -1282,12 +1285,18 @@ repod.psdle = {
             },
             remove: {
                 parse: function(e) {
-                    this.go($(e).children("td:eq(3)").text().replace("PS ","").toLowerCase(),repod.psdle.gamelist[Number($(e).attr("id").split("_").pop())].id);
+                    //TO-DO: Not read arbitrary data off the DOM! Possibly use data.
+                    this.go($(e).children("td:eq(3)").text(),repod.psdle.gamelist[Number($(e).attr("id").split("_").pop())].id);
                 },
                 go: function(sys,id,auto) {
-                    //Remove game from batch.
-                    //repod.psdle.dlQueue.batch.send(sys,id,true,(auto)?undefined:repod.psdle.dlQueue.batch.get())
-                    alert('DLQueue remove TO-DO');
+                    var cb = function() { repod.psdle.container.go("dlQueue") };
+                    
+                    if (sys == "ps4") {
+                        repod.psdle.dlQueue.batch.Kamaji.cancelPS4Download(id).then(cb);
+                    } else {
+                        //"PS3" or "PS Vita" only! Case-sensitive. Refer to KamajiPlatforms.
+                        repod.psdle.dlQueue.batch.Kamaji.cancelDRMDownload(sys, id).then(cb);
+                    }
                 }
             }
         },
@@ -1301,7 +1310,7 @@ repod.psdle = {
             },
             table: function() {
                 var temp = "";
-
+    
                 $(".psdle_table").remove();
                 $("#sub_container").append("<div class='psdle_table'><table style='display:inline-block;text-align:left'><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th>"+repod.psdle.lang.columns.platform+"</th><th> > </th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table></div>");
 
@@ -1310,7 +1319,7 @@ repod.psdle = {
                         $.each(repod.psdle.gamelist, function(a,b) {
                             if (items.indexOf(b.id) >= 0) {
                                 var c = {
-                                    createdTime: 0, //Find this
+                                    createdTime: "?", //Find this
                                     to_sys: sys.match(/(.*?)Downloads/).pop()
                                 }
                                 temp += repod.psdle.table_utils.gen.row(b,c);
