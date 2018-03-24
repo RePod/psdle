@@ -126,9 +126,13 @@ repod.psdle = {
             $("body").append(
                 $("<div />",{id:this.elemID,class:"valkyrie"}).append(content)
             );
+            $("#"+this.elemID).slideDown();
         },
         darkCSS: function() {
             $("#"+this.elemID).toggleClass("psdledark");
+        },
+        header: function() {
+            return "<span><a href='//repod.github.io/psdle/' target='_blank'><div class='psdle_logo'></div></a><br><small>v"+repod.psdle.version+"</small></span>";
         },
         tagline: function() {
             var that = this;
@@ -154,7 +158,7 @@ repod.psdle = {
             var lang = repod.psdle.lang;
 
             var sub = $("<div />",{id:this.subElemID})
-            .append("<span><a href='//repod.github.io/psdle/' target='_blank'><div class='psdle_logo'></div></a><br><small>v"+repod.psdle.version+"</small></span>")
+            .append(this.header())
             .append("<br><br>"+lang.startup.apis+"<br><br>");
 
             var bar = $("<span />", {class: "psdle_fancy_bar"});
@@ -194,6 +198,7 @@ repod.psdle = {
             repod.psdle.generateList();            
             
             var sub = $("<div />",{id:this.subElemID})
+            .append(this.header()+"<br>")
             .append($("<progress />", {id:"startup_progress"}))
             .append("<br><span id='psdle_status'>"+repod.psdle.lang.startup.wait+"</span>");
             
@@ -1180,6 +1185,7 @@ repod.psdle = {
             
             if (l == r) {
                 $("#psdle_status").text(repod.psdle.lang.startup.wait);
+                $("#startup_progress").attr("value",null);
                 setTimeout(function() { repod.psdle.table.gen(); }, 100);
             }
         },

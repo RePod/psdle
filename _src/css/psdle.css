@@ -42,24 +42,26 @@
     padding: 20px;
     background-color: #fff
 }
-#psdle_bar,
-.psdle_btn {
-    background-color: #2185f4
-}
-#psdle_progressbar {
-    overflow: hidden;
-    display: inline-block;
+/*Progress bar  */
+#startup_progress {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
     width: 400px;
     height: 16px;
     border: 1px solid #999;
+    overflow: hidden;
+    border-radius: 10px;
     margin: 10px;
-    border-radius: 10px
+    color: #2185f4 !important;
 }
-#psdle_bar {
-    width: 0;
-    height: 100%;
-    border-radius: 10px
+#startup_progress::-moz-progress-bar { background-color: #2185f4 !important; }
+#startup_progress::-webkit-progress-value { background-color: #2185f4 !important; }
+
+.psdle_btn {
+    background-color: #2185f4
 }
+
 .psdle_btn {
     cursor: pointer;
     border-radius: 13px;
