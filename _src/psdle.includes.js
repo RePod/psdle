@@ -58,7 +58,7 @@ repod.psdle = {
         return $(temp).on("change", function() {
             that.config.language = $(this).val();
             that.determineLanguage($(this).val(),true);
-            that.genDisplay("nobind");
+            that.container.go("startup");
         });
     },
     config: {"timerID": 0},
@@ -142,12 +142,15 @@ repod.psdle = {
             $("#"+this.elemID).remove(); //Temporary lazy unbind
 
             $("body").append(
-                $("<div />",{id:this.elemID,class:"valkyrie"}).append(content)
+                $("<div />",{id:this.elemID,class:"valkyrie "+((this.dark)?"psdledark":"")}).append(content)
+                
             );
             $("#"+this.elemID).slideDown("slow").promise().done(cb);
         },
+        dark: false,
         darkCSS: function() {
-            $("#"+this.elemID).toggleClass("psdledark");
+            this.dark = !this.dark;
+            $("#"+this.elemID).toggleClass("psdledark", this.dark);
         },
         header: function() {
             return "<span><a href='//repod.github.io/psdle/' target='_blank'><div class='psdle_logo'></div></a><br><small>v"+repod.psdle.version+"</small></span>";
