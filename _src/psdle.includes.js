@@ -154,7 +154,7 @@ repod.psdle = {
             var t = $("<div />", {class:'psdle tagline'});
             t.append($("<span />", {id:'psdle_night', text: "Night Mode"}).on("click", function() { that.darkCSS(); }))
             .append("<br><a href='//repod.github.io/psdle#support' target='_blank'>Support PSDLE</a> | <a href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation' target='_blank'>Submit Bug/Translation</a> | ")
-            .append($("<span />", {id:'dump_raw', text: "Dump Raw"}).on("click", function() { 
+            .append($("<span />", {id:'dump_raw', text: "Dump Raw"}).on("click", function() {
                 repod.psdle.macrossBrain(function(raw) {
                     repod.psdle.exportList.download("raw.json",JSON.stringify(raw))
                 });
@@ -163,7 +163,7 @@ repod.psdle = {
             .append($("<span />", {id: "inject_lang", text: "Inject Language"}).on("click", function() {
                     repod.psdle.debug.inject_lang();
             }))
-            
+
             return t;
         },
         startup: function() {
@@ -189,12 +189,12 @@ repod.psdle = {
                     if ($(this).attr("id") !== "api_entitle") $(this).toggleClass("toggled_off");
                 }).appendTo(bar)
             });
-            
+
             var goBtn = $("<span />", {id: "psdle_go", class: "psdle_btn", text: lang.startup.start}).on("click", function() {
                 config.deep_search = !$("#api_game").hasClass("toggled_off");
                 config.dlQueue = !$("#api_queue").hasClass("toggled_off");
                 config.check_tv = ($("#api_pstv").length) ? !$("#api_pstv").hasClass("toggled_off") : false;
-                
+
                 that.go("progress");
             })
 
@@ -210,17 +210,17 @@ repod.psdle = {
             return sub;
         },
         progress: function() {
-            repod.psdle.generateList();            
-            
+            repod.psdle.generateList();
+
             var sub = $("<div />",{id:this.subElemID})
             .append(this.header()+"<br>")
             .append($("<progress />", {id:"startup_progress"}))
             .append("<br><span id='psdle_status'>"+repod.psdle.lang.startup.wait+"</span>");
-            
-            if (repod.psdle.config.dlQueue) { 
+
+            if (repod.psdle.config.dlQueue) {
                 repod.psdle.dlQueue.batch.init();
             }
-            
+
             return sub;
         },
         dlList: function() {
@@ -229,7 +229,7 @@ repod.psdle = {
             repod.psdle.genPropCache();
             repod.psdle.config.lastsort = "";
             repod.psdle.config.lastsort_r = false;
-            
+
             return repod.psdle.table.gen();
         }
     },
@@ -398,16 +398,8 @@ repod.psdle = {
     },
     table: {
         bindSearch: function() {
-            //Unbind for safety.
-            $(document).off("click",".psdle_table tbody > tr, span[id^=system_], span[id^=filter_], span[id^=dl_], th[id^=sort_], #export_view, #export_csv").off("blur","#psdle_search_text");
-            //Bind.
-            $(document).keypress(function(e) { if (e.which == 13 && $("#psdle_search_text").is(":focus")) { repod.psdle.table.regen(true); } });
-            $("#psdle_search_select").off("change").change(function() { repod.psdle.table.regen(true); });
-            $("span[id^=system_], span[id^=filter_]").off("click").on("click", );
             $("th[id^=sort_]").off("click").on("click", function() { repod.psdle.sortGamelist($(this)); });
-            $("#export_view").off("click").on("click", function() { repod.psdle.exportList.configure(); });
-            $("#psdle_search_text").off("blur").on("blur", function() { repod.psdle.table.regen(true); });
-            $("#dl_queue").one("click", function() { repod.psdle.dlQueue.generate.display(); });
+
             $(document).off("click", "[id^=psdle_index_]").on("click", "[id^=psdle_index_]", function(e) {
                 e.preventDefault();
                 if (e.shiftKey) {
@@ -421,7 +413,7 @@ repod.psdle = {
             var that = this;
 
             $("#muh_games_container").css({"position":"absolute"});
-            
+
             var sub = $("<div />", {id: repod.psdle.container.subElemID})
             .append(this.header.gen())
             .append("<div class='psdle_table'><table><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+repod.psdle.lang.columns.platform+"</th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table></div><br>"+repod.psdle.config.tag_line);
@@ -431,7 +423,7 @@ repod.psdle = {
             //this.bindSearch();
 
             console.log("PSDLE | Table generated.");
-            
+
             return sub;
 
             //Move
@@ -448,12 +440,14 @@ repod.psdle = {
             searchOptions: function(dlQueue) {
                 var r = $("<div />", {class: "search options container"}),
                     lang = repod.psdle.lang;
-                    
+
                 var regenFunc = function() { $(this).toggleClass("toggled_off"); repod.psdle.table.regen(true); }
 
                 if (!dlQueue) {
                     r.append($("<span />", {class: "psdle_fancy_bar"})
-                        .append($("<span />", {id: "export_view", text: lang.labels.exportView}))
+                        .append($("<span />", {id: "export_view", text: lang.labels.exportView}).on("click", function() {
+                            repod.psdle.exportList.configure();
+                        }))
                     )
                 }
 
@@ -468,9 +462,12 @@ repod.psdle = {
 
                 if (repod.psdle.config.dlQueue) {
                     var nid = (dlQueue) ? "dl_list" : "dl_queue",
-                        tr = lang.strings[(dlQueue) ? "dlList" : "dlQueue"];
+                        n = (dlQueue) ? "dlList" : "dlQueue",
+                        tr = lang.strings[n];
 
-                    $("<span />", {class: "psdle_fancy_but", id: nid, text: tr}).appendTo(r);
+                    $("<span />", {class: "psdle_fancy_but", id: nid, text: tr}).on("click", function() {
+                        repod.psdle.container.go(n);
+                    }).appendTo(r);
                 }
 
                 if (!dlQueue && repod.psdle.config.deep_search) {
@@ -513,7 +510,7 @@ repod.psdle = {
                     $.each(keys, function (i, v) {
                         $("<option />", {value: i, text: v}).appendTo(sel);
                     })
-                    sel.appendTo(textSearch);
+                    sel.on("change", function() { repod.psdle.table.regen(true); }).appendTo(textSearch);
 
                     //Autocomplete
                     $("<input />", {
@@ -522,6 +519,10 @@ repod.psdle = {
                         type: "text",
                         list: "searchAutocomplete",
                         placeholder: lang.strings.search
+                    }).on("blur keypress", function(e) {
+                        if (e.type == "keypress" && (e.which !== 13 || !$(this).is(":focus"))) return;
+
+                        repod.psdle.table.regen(true);
                     }).appendTo(textSearch);
                     $("<datalist />", {id: "searchAutocomplete"}).appendTo(textSearch);
 
@@ -1148,14 +1149,14 @@ repod.psdle = {
                 l     = this.called, //Math.abs(repod.psdle.gamelist.length - this.batch.length),
                 r     = repod.psdle.gamelist.length;
 
-            
+
             $("#startup_progress").attr({value:l,max:r});
             $("#psdle_status").text(l+" / "+r);
-            
+
             if (l == r) {
                 $("#psdle_status").text(repod.psdle.lang.startup.wait);
                 $("#startup_progress").attr("value",null);
-                setTimeout(function() { 
+                setTimeout(function() {
                     repod.psdle.container.go("dlList");
                 }, 100);
             }
