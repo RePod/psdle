@@ -1,7 +1,7 @@
-/*! psdle 3.2.0 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2017-12-31 */
+/*! psdle 3.2.1 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-03-23 */
 var repod = {};
 repod.psdle = {
-    version            : "3.2.0 <small>2017-12-31</small>",
+    version            : "3.2.1 <small>2018-03-23</small>",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -28,12 +28,6 @@ repod.psdle = {
             e = "en-us";
         }
 
-        if (!!this.lang.rtl && this.lang.rtl == true) {
-            $("#muh_games_container").addClass("rtl");
-        } else {
-            $("#muh_games_container").removeClass("rtl");
-        }
-
         return e;
     },
     sanitizeLanguage: function() {
@@ -42,6 +36,7 @@ repod.psdle = {
         this.lang = JSON.parse(a);
     },
     generateLangBox: function(e) {
+        var that = this;
         var temp = "<select id='lang_select'>";
         e = (e) ? this.determineLanguage(e) : this.determineLanguage();
         for (var i in this.lang_cache) {
@@ -53,7 +48,12 @@ repod.psdle = {
             }
         }
         temp += "</select>";
-        return temp;
+
+        return $(temp).on("change", function() {
+            that.config.language = $(this).val();
+            that.determineLanguage($(this).val(),true);
+            that.container.go("startup");
+        });
     },
     config: {"timerID": 0},
     init: function() {
@@ -62,18 +62,11 @@ repod.psdle = {
         var that = this,
             match = window.location.pathname.match(/^\/([a-z\-]+)\//i),
             l = (match !== null && match.length > 1 ? match.pop() : "en-us").toLowerCase(),
-            l2 = l.split("-"),
-            valkAPI = (typeof window.valkyrie == "object");
-
-        this.config = {
-            valkyrie        : valkAPI,
-            valkyrieInstance: Ember.Application.NAMESPACES_BY_ID["valkyrie-storefront"].__container__
-        }
-
-        //valkAPI && alert("PSDLE detected the new Valkyrie store API.\nSupport for this is currently experimental!\nAny issues should be reported here, along with region:\nhttps://github.com/RePod/psdle/issues/40")
+            l2 = l.split("-");
 
         this.config = $.extend(this.config,{
-            game_page       : window.location.origin + "/" +(valkAPI ? l+"/product/" : "#!/" + l + "/cid="),
+            valkyrieInstance: Ember.Application.NAMESPACES_BY_ID["valkyrie-storefront"].__container__,
+            game_page       : window.location.origin+"/"+l+"/product/",
             game_api        : "https://store.playstation.com/store/api/chihiro/00_09_000/container/"+l2.slice(-1)+"/"+l2[0]+"/999/",
             lastsort        : "",
             lastsort_r      : false,
@@ -82,16 +75,9 @@ repod.psdle = {
             deep_waiting    : 0,
             deep_current    : 0,
             last_search     : "",
-            dlQueue         :
-            {
-                base: "/kamaji/api/chihiro/00_09_000/user/notification/download",
-                ps4: "/kamaji/api/chihiro/00_09_000/gateway/store/v1/users/me/notification/download",
-                status: "/kamaji/api/chihiro/00_09_000/user/notification/download/status",
-                status2: "/kamaji/api/chihiro/00_09_000/gateway/store/v1/users/me/notification/download/status"
-            },
-            use_queue       : false,
+            dlQueue       : false,
             active_consoles : {},
-            tag_line        : "<div class='psdle tagline'><span id='psdle_night'>Night Mode</span><br><a href='//repod.github.io/psdle#support' target='_blank'>Support PSDLE</a> | <a href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation' target='_blank'>Submit Bug/Translation</a> | <span id='dump_raw'>Dump Raw</span></div>",
+            tag_line        : "MOVED",
             has_plus        : false,
             check_tv        : false,
             tv_url          : {
@@ -110,87 +96,147 @@ repod.psdle = {
         this.determineLanguage(this.config.language,true);
         this.injectCSS();
 
-        //to-do re-implement this
-        if (!this.config.valkyrie) { SonyChi_SessionManagerSingleton.getUserDevices() }
-
         this.genStartup();
-        //this.genDisplay("progress",false);
     },
     genStartup: function() {
         if ($("#psdle_start").length == 0) {
             var that = this;
 
             if (window.psdleSkip && window.psdleSkip == true) {
-                that.genDisplay();
+                this.container.go("startup");
             } else {
-                //startup.append("<div style='position:absolute;line-height:11px;text-shadow:-1px -1px #000,1px -1px #000,-1px 1px #000,1px 1px #000;bottom:39px;width:180px;font-size:11px'>Please leave a review<br>for the Chrome extension!<br>It's very much appreciated.</div>");
                 $("<div/>",{class:"psdle_logo startup"}).click(function() {
                     $(this).remove();
-                    that.genDisplay();
+                    that.container.go("startup");
                 }).appendTo("body");
             }
         }
     },
-    genDisplay: function(mode,fake_list) {
-        var that = this;
-
-        $(document).one("change", "#sub_container > select#lang_select", function() {
-            that.config.language = $(this).val();
-            that.determineLanguage($(this).val(),true);
-            that.genDisplay("nobind");
-        });
-
-        if (!$("#muh_games_container").length) {
-            $("body").append($("<div />",{id:"muh_games_container",class:(this.config.valkyrie?"valkyrie":"")}));
-        }
-
-        $("#muh_games_container").slideUp("slow", function() {
-            var a = "<div id='sub_container'><a href='//repod.github.io/psdle/' target='_blank'><div class='psdle_logo'></div></a><br><small>v"+repod.psdle.version+"</small></span>";
-
-            if (mode == "progress") {
-                if (that.config.use_queue) { that.dlQueue.batch.init(); }
-                a += "<br><div id='psdle_progressbar'><div id='psdle_bar'>&nbsp;</div></div><br><span id='psdle_status'>"+that.lang.startup.wait+"</span>";
-            } else {
-                a += "<br><br>"+that.lang.startup.apis+"<br><br><span class='psdle_fancy_bar'>";
-                $.each(that.lang.apis, function(key,con) {
-                    if (con.internalID == "api_pstv" && that.config.language !== "en-us") { return 0; }
-                    var off = (con.internalID == "api_game" || con.disabled) ? "toggled_off" : "";
-                    a += "<span id='"+con.internalID+"' data-tooltip='"+con.desc.replace(/'/g, "&apos;")+"' class='"+off+"'>"+con.name.replace(/'/g, "&apos;")+"</span>";
-                });
-                a += "</span><br><br><span id='psdle_go' class='psdle_btn'>"+that.lang.startup.start+"</span><br>"+that.generateLangBox()+"<br><br>";
-                //Great use of appends! Not sarcasm!
-                a += $(that.config.tag_line)
-                .append(" | ")
-                .append($("<span />", {id: "inject_lang", text: "Inject Language"}))
-                [0].outerHTML;
-                a +="</div>";
-
-                if (mode !== "nobind") {
-                    $(document).on("click","#psdle_night",function() { that.darkCSS(); });
-                    $(document).on("click","[id^=api_]",function() { if ($(this).attr("id") !== "api_entitle") { $(this).toggleClass("toggled_off"); } });
-                    $(document).on("click","#inject_lang",function() { that.debug.inject_lang(); });
-                    $(document).on("click","#dump_raw",function() {
-                        that.macrossBrain(function(raw) {
-                            that.exportList.download("raw.json",JSON.stringify(raw))
-                        });
+    container: {
+        elemID: "muh_games_container",
+        subElemID: "sub_container",
+        go: function(target,cb) {
+            switch (target) {
+                default:
+                case "startup":
+                    this.respawn(this.startup(),cb);
+                    break;
+                case "progress":
+                    this.respawn(this.progress(),cb);
+                    break;
+                case "dlList":
+                    this.respawn(this.dlList().append(this.tagline()), function () { //Send callbacks
+                        repod.psdle.table.regen(true);
+                        repod.psdle.table.margin();
                     });
-                    $(document).on("click","#psdle_go, #gen_fake", function() {
-                        that.config.deep_search = !$("#api_game").hasClass("toggled_off");
-                        that.config.use_queue = !$("#api_queue").hasClass("toggled_off");
-                        that.config.check_tv = ($("#api_pstv").length) ? !$("#api_pstv").hasClass("toggled_off") : false;
-                        that.genDisplay("progress",($(this).attr("id") == "gen_fake")?true:false);
-                    });
-                }
+                    break;
+                case "dlQueue":
+                    repod.psdle.dlQueue.generate.display(); //TO-DO: Not this!
+                    break;
             }
-            $("#muh_games_container").html(a).slideDown("slow",function() {
-                if (mode == "progress") { if (fake_list) { that.debug.fake_list() } else { that.generateList(); }
-                } else {
-                    $("[id^=api_]").promise().done(function() {
-                        if (!that.config.valkyrie) $("[id^=api_]").tooltip({position: {my: "center top", at: "center bottom"}})
-                    });
-                }
+        },
+        respawn: function(content,cb) {
+            $("#"+this.elemID).remove(); //Temporary lazy unbind
+
+            $("body").append(
+                $("<div />",{id:this.elemID,class:"valkyrie"})
+                .toggleClass("psdledark", this.dark)
+                .toggleClass("rtl", (!!repod.psdle.lang.rtl && repod.psdle.lang.rtl == true))
+                .append(content)
+            );
+            $("#"+this.elemID).slideDown("slow").promise().done(cb);
+        },
+        dark: false,
+        darkCSS: function() {
+            this.dark = !this.dark;
+            $("#"+this.elemID).toggleClass("psdledark", this.dark);
+        },
+        header: function() {
+            return "<span><a href='//repod.github.io/psdle/' target='_blank'><div class='psdle_logo'></div></a><br><small>v"+repod.psdle.version+"</small></span>";
+        },
+        tagline: function() {
+            var that = this;
+            var t = $("<div />", {class:'psdle tagline'});
+            t.append($("<span />", {id:'psdle_night', text: "Night Mode"}).on("click", function() { that.darkCSS(); }))
+            .append("<br><a href='//repod.github.io/psdle#support' target='_blank'>Support PSDLE</a> | <a href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation' target='_blank'>Submit Bug/Translation</a> | ")
+            .append($("<span />", {id:'dump_raw', text: "Dump Raw"}).on("click", function() {
+                repod.psdle.macrossBrain(function(raw) {
+                    repod.psdle.exportList.download("raw.json",JSON.stringify(raw))
+                });
+            }))
+            .append(" | ")
+            .append($("<span />", {id: "inject_lang", text: "Inject Language"}).on("click", function() {
+                    repod.psdle.debug.inject_lang();
+            }))
+
+            return t;
+        },
+        startup: function() {
+            var that = this;
+            //TO-DO: Passthrough
+            var config = repod.psdle.config;
+            var lang = repod.psdle.lang;
+
+            var sub = $("<div />",{id:this.subElemID})
+            .append(this.header())
+            .append("<br><br>"+lang.startup.apis+"<br><br>");
+
+            var bar = $("<span />", {class: "psdle_fancy_bar"});
+            $.each(lang.apis, function(key,con) {
+                if (con.internalID == "api_pstv" && config.language !== "en-us") { return 0; }
+
+                $("<span />", {
+                    id: con.internalID,
+                    class: (con.internalID == "api_game" || con.disabled) ? "toggled_off" : "",
+                    "data-tooltip": con.desc.replace(/'/g, "&apos;"),
+                    text: con.name.replace(/'/g, "&apos;")
+                }).on("click", function() {
+                    if ($(this).attr("id") !== "api_entitle") $(this).toggleClass("toggled_off");
+                }).appendTo(bar)
             });
-        });
+
+            var goBtn = $("<span />", {id: "psdle_go", class: "psdle_btn", text: lang.startup.start}).on("click", function() {
+                config.deep_search = !$("#api_game").hasClass("toggled_off");
+                config.dlQueue = !$("#api_queue").hasClass("toggled_off");
+                config.check_tv = ($("#api_pstv").length) ? !$("#api_pstv").hasClass("toggled_off") : false;
+
+                that.go("progress");
+            })
+
+            //There is surely a better way.
+            sub.append(bar)
+            .append("<br><br>")
+            .append(goBtn)
+            .append("<br>")
+            .append(repod.psdle.generateLangBox())
+            .append("<br><br>")
+            .append(this.tagline())
+
+            return sub;
+        },
+        progress: function() {
+            repod.psdle.generateList();
+
+            var sub = $("<div />",{id:this.subElemID})
+            .append(this.header()+"<br>")
+            .append($("<progress />", {id:"startup_progress"}))
+            .append("<br><span id='psdle_status'>"+repod.psdle.lang.startup.wait+"</span>");
+
+            if (repod.psdle.config.dlQueue) {
+                repod.psdle.dlQueue.batch.init();
+            }
+
+            return sub;
+        },
+        dlList: function() {
+            //TO-DO: don't prep sys/prop cache on queue -> list switch back
+            repod.psdle.genSysCache();
+            repod.psdle.genPropCache();
+            repod.psdle.config.lastsort = "";
+            repod.psdle.config.lastsort_r = false;
+
+            return repod.psdle.table.gen();
+        }
     },
     macrossBrain: function(callback) {
         this.config.valkyrieInstance.lookup("service:macross-brain").macrossBrainInstance.getEntitlementStore().getAllEntitlements()
@@ -310,7 +356,7 @@ repod.psdle = {
 
         if (repod.psdle.config.check_tv)    { safe = !1; repod.psdle.tv.init(); }
         if (repod.psdle.config.deep_search) { safe = !1; this.game_api.run(); }
-        if (safe)                           { this.table.gen(); }
+        if (safe)                           { this.container.go("dlList"); }
     },
     stats: { fine: 0, generic: 0, expired: 0, service: 0, video: 0 },
     isValidContent: function(obj) {
@@ -357,16 +403,6 @@ repod.psdle = {
     },
     table: {
         bindSearch: function() {
-            //Unbind for safety.
-            $(document).off("click",".psdle_table tbody > tr, span[id^=system_], span[id^=filter_], span[id^=dl_], th[id^=sort_], #export_view, #export_csv").off("blur","#psdle_search_text");
-            //Bind.
-            $(document).keypress(function(e) { if (e.which == 13 && $("#psdle_search_text").is(":focus")) { repod.psdle.table.regen(true); } });
-            $("#psdle_search_select").off("change").change(function() { repod.psdle.table.regen(true); });
-            $("span[id^=system_], span[id^=filter_]").off("click").on("click", function() { $(this).toggleClass("toggled_off"); repod.psdle.table.regen(true); });
-            $("th[id^=sort_]").off("click").on("click", function() { repod.psdle.sortGamelist($(this)); });
-            $("#export_view").off("click").on("click", function() { repod.psdle.exportList.configure(); });
-            $("#psdle_search_text").off("blur").on("blur", function() { repod.psdle.table.regen(true); });
-            $("#dl_queue").one("click", function() { repod.psdle.dlQueue.generate.display(); });
             $(document).off("click", "[id^=psdle_index_]").on("click", "[id^=psdle_index_]", function(e) {
                 e.preventDefault();
                 if (e.shiftKey) {
@@ -379,24 +415,18 @@ repod.psdle = {
         gen: function() {
             var that = this;
 
-            repod.psdle.genSysCache();
-            repod.psdle.genPropCache();
-            repod.psdle.config.lastsort = "";
-            repod.psdle.config.lastsort_r = false;
-
             $("#muh_games_container").css({"position":"absolute"});
-            $("#sub_container").html("")
-            .append(this.header.gen())
-            .append("<div class='psdle_table'><table><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+repod.psdle.lang.columns.platform+"</th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table></div><br>"+repod.psdle.config.tag_line);
 
-            this.regen(true);
-            this.bindSearch();
+            var sub = $("<div />", {id: repod.psdle.container.subElemID})
+            .append(this.header.gen())
+            .append("<div class='psdle_table'><table><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+repod.psdle.lang.columns.platform+"</th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table></div>");
+            sub.find("th[id^=sort_]").on("click", function() { repod.psdle.sortGamelist($(this)); });
+
+            this.bindSearch(); //TO-DO: GET IT OUT OF HERE!
 
             console.log("PSDLE | Table generated.");
 
-            $("#muh_games_container").slideDown("slow").promise().done(function() {
-                that.margin();
-            });
+            return sub;
         },
         header: {
             gen: function(dlQueue) {
@@ -408,9 +438,13 @@ repod.psdle = {
                 var r = $("<div />", {class: "search options container"}),
                     lang = repod.psdle.lang;
 
+                var regenFunc = function() { $(this).toggleClass("toggled_off"); repod.psdle.table.regen(true); }
+
                 if (!dlQueue) {
                     r.append($("<span />", {class: "psdle_fancy_bar"})
-                        .append($("<span />", {id: "export_view", text: lang.labels.exportView}))
+                        .append($("<span />", {id: "export_view", text: lang.labels.exportView}).on("click", function() {
+                            repod.psdle.exportList.configure();
+                        }))
                     )
                 }
 
@@ -418,16 +452,19 @@ repod.psdle = {
                     order = ["ps1","ps2","ps3","ps4","psp","vita"];
                 $.each(order, function (i,v) {
                     if (repod.psdle.sys_cache.hasOwnProperty(v)) {
-                        $("<span />", {id: "system_"+v, text: repod.psdle.sys_cache[v]}).appendTo(systems);
+                        $("<span />", {id: "system_"+v, text: repod.psdle.sys_cache[v]}).on("click", regenFunc).appendTo(systems);
                     }
                 });
                 systems.appendTo(r);
 
-                if (repod.psdle.config.use_queue) {
+                if (repod.psdle.config.dlQueue) {
                     var nid = (dlQueue) ? "dl_list" : "dl_queue",
-                        tr = lang.strings[(dlQueue) ? "dlList" : "dlQueue"];
+                        n = (dlQueue) ? "dlList" : "dlQueue",
+                        tr = lang.strings[n];
 
-                    $("<span />", {class: "psdle_fancy_but", id: nid, text: tr}).appendTo(r);
+                    $("<span />", {class: "psdle_fancy_but", id: nid, text: tr}).on("click", function() {
+                        repod.psdle.container.go(n);
+                    }).appendTo(r);
                 }
 
                 if (!dlQueue && repod.psdle.config.deep_search) {
@@ -436,7 +473,7 @@ repod.psdle = {
 
                     //TO-DO: sort by order
                     $.each(repod.psdle.type_cache, function (key) {
-                        var i = $("<span />", {id: "filter_"+key, text: (lang.categories[key] || key)})
+                        var i = $("<span />", {id: "filter_"+key, text: (lang.categories[key] || key)}).on("click", regenFunc)
                         if (order.indexOf(key) >= 0) {
                             order[order.indexOf(key)] = i;
                         } else {
@@ -470,7 +507,7 @@ repod.psdle = {
                     $.each(keys, function (i, v) {
                         $("<option />", {value: i, text: v}).appendTo(sel);
                     })
-                    sel.appendTo(textSearch);
+                    sel.on("change", function() { repod.psdle.table.regen(true); }).appendTo(textSearch);
 
                     //Autocomplete
                     $("<input />", {
@@ -479,6 +516,10 @@ repod.psdle = {
                         type: "text",
                         list: "searchAutocomplete",
                         placeholder: lang.strings.search
+                    }).on("blur keypress", function(e) {
+                        if (e.type == "keypress" && (e.which !== 13 || !$(this).is(":focus"))) return;
+
+                        repod.psdle.table.regen(true);
                     }).appendTo(textSearch);
                     $("<datalist />", {id: "searchAutocomplete"}).appendTo(textSearch);
 
@@ -801,11 +842,8 @@ repod.psdle = {
     },
     injectCSS: function() {
         //CSS prefers " over ' to avoid string literal issues.
-        var temp = '.valkyrie #export_table input,.valkyrie #export_table select,.valkyrie #lang_select{height:unset;padding:unset;margin:unset;width:unset;display:unset}.psdle_logo{display:inline-block;width:84px;height:31px;background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAAAfCAYAAAEO89r4AAABaUlEQVRoge2XS27CQAyGPSVSUVErdqzpMqveiRvALnu67Gl6D+gFuAKIPgQrs0o1TJSJJ7aJBvnbRXE8f357XoCIGyTiEBFf33+BwgMpyg/eVRNSsENEpAQWMa27agL1e7JWcmCSVSG+tF6jp1D4o/qkqN8un+Bl7JpJUxP5vH38XT2T655CtEf6olKoaFLq3ElK2heRlgq//U/KKVj4rcrvs+Y+h7Z1ow2Vv9eg6A5p53MxhnI2an0vWSmW0HI2EhUTI5vSN4T2Xem0ycZRh4h7AJgOLaQLlf1ega2br3/IQlMW6TA2dYEPc2XToyZUGtbOdMs1lyX0lqeubEpvQqVp9GhsghxPOpvY8yPA1yo+MRtCh7iWfJ/j49rOpEE2QnM55h1U7/Wcox0nb+y9lqY6dzYtmgtmqDBmqDBmqDCDGcq5Ew5xCqViHSqMGSqMGSqMGSpMp6H3unloYR0qjBkqjBkqjBkqzAUtBKxj5lT3GAAAAABJRU5ErkJggg==)}.startup{z-index:9001;position:fixed;bottom:10px;left:10px;cursor:pointer;box-shadow:0 0 10px #fff}#muh_games_container{display:none;position:absolute;top:0;right:0;left:0;color:#000;z-index:9001;text-align:center}#sub_container{padding:20px;background-color:#fff}#psdle_bar,.psdle_btn{background-color:#2185f4}#psdle_progressbar{overflow:hidden;display:inline-block;width:400px;height:16px;border:1px solid #999;margin:10px;border-radius:10px}#psdle_bar{width:0;height:100%;border-radius:10px}.psdle_btn{cursor:pointer;border-radius:13px;color:#fff;padding:1px 15px;display:inline-block;margin:5px auto}.psdle.tagline{font-size:small}.psdle.tagline>a,.psdle.tagline>span{line-height:0;cursor:pointer;color:#7f6d75!important}.psdle.tagline>a:hover,.psdle.tagline>span:hover{color:inherit!important;text-decoration:underline}.search.main.container{position:fixed;left:0;top:0;width:100%;padding:15px 0;background-color:rgba(255,255,255,.8);z-index:9001}.search.input.plus{cursor:pointer!important}.search.export{display:inline;width:95%;max-width:600px}.psdle_table,table{text-align:left;display:inline-block;border-collapse:initial}th[id^=sort]{cursor:pointer}th[id^=sort]:hover{background-color:#62a5f0}th{padding:5px!important;background-color:#2185f4;color:#fff;border:none;transition:background-color .3s}tr:hover{background-color:rgba(33,133,244,.7)!important}.valkyrie td{padding:0;border:none}td a.psdle_game_link{display:block;width:100%;height:100%;color:#000;padding:8px!important}.psdle_game_icon.is_plus{background-color:#ffd10d}tr[id^=psdle_index_].is_plus td:last-child{border-right:#ffd10d 3px solid}tr:nth-child(2n){background-color:#eee}td:nth-child(n+3):nth-child(-n+7),th:nth-child(n+3):nth-child(-n+7){text-align:center;padding:0 5px!important;position:relative}td:first-child{text-align:center;position:relative}#psdle_search_select,#psdle_search_text{font-size:large;padding:5px 10px;border:1px solid #f0f0f0;display:inline-block;width:auto}#psdle_search_select{background-color:#f0f0f0;text-align:center}#psdle_search_text{font-size:large;max-width:480px;width:100%}.negate_regex{background-color:#ff8080!important;color:#fff}.psdle_fancy_bar>span,.psdle_fancy_but,span#export_view,span[id^=dl_],span[id^=filter_],span[id^=system_]{font-weight:700;font-size:.9em;color:#fff;background-color:#2185f4;display:inline-block;margin-right:2px;margin-bottom:5px;padding:1px 10px;cursor:pointer}.psdle_fancy_but{border-radius:12px}#muh_games_container:not(.rtl) .psdle_fancy_bar>span:first-of-type{border-top-left-radius:12px;border-bottom-left-radius:12px}#muh_games_container:not(.rtl) .psdle_fancy_bar>span:last-of-type{border-top-right-radius:12px;border-bottom-right-radius:12px}.toggled_off{background-color:rgba(33,133,244,.4)!important}#muh_games_container:not(.rtl) #psdle_search_select{border-radius:90px 0 0 90px}#psdle_search_text{border-radius:0 90px 90px 0}.psdle_game_icon{max-width:100%;vertical-align:middle;padding:3px;min-width:42px;min-height:42px}.psdle_sort_asc,.psdle_sort_desc{float:right;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent}.psdle_sort_asc{border-bottom:5px solid #fff}.psdle_sort_desc{border-top:5px solid #fff}#dlQARating,#dlQAStat{color:#fff;background-color:rgba(33,133,244,.8);font-size:small}#dlQueueAsk{width:400px;height:400px}#dlQAN{background-color:rgba(33,133,244,.8);padding:7px 15px;color:#fff;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}#dlQASys{position:absolute;bottom:0;padding:7px 0;color:#fff;display:table;width:100%;table-layout:fixed}#dlQASys>div{display:table-cell}#dlQASys>div>div{cursor:pointer;background-color:rgba(33,133,244,.8);border-radius:10px;padding:2px;margin:0 10px;box-shadow:0 0 30px #000;transition:background-color .5s,box-shadow .5s}#dlQASys>div>div:hover{background-color:rgba(33,133,244,1);box-shadow:0 0 30px rgba(33,133,244,1)}#dlQAStat{border-bottom-left-radius:20px;padding:0 10px 0 15px;float:right}#dlQARating{border-bottom-right-radius:20px;padding:0 15px 0 10px;float:left}.success{background-color:#237423!important}.failure{background-color:#a43636!important}#dlQueueExt{overflow:hidden;position:absolute;left:10px;right:10px;bottom:40px;font-size:.8em;background-color:rgba(33,133,244,.8);padding:10px;border-radius:9px;top:66px;text-align:left}.cover,.cover>div>div{background-size:cover}.cover{z-index:9001;position:fixed;top:0;left:0;width:100%;height:100%;display:table;background-color:rgba(0,0,0,.25);background-position:center}.cover>div{display:table-cell;vertical-align:middle;height:inherit;text-align:center}.cover>div>div{box-shadow:0 0 30px #000;display:inline-block;background-color:#fff;border-radius:20px;overflow:hidden;position:relative}#export_select{padding:10px;background-color:#fff;color:#000}#export_select>div{border-top-left-radius:10px;border-top-right-radius:10px;overflow-y:auto;overflow-x:hidden;max-height:490px}#export_table{width:100%}#export_table th{text-align:center}#export_table .orderUp{cursor:pointer;height:1em;border-left:.4em solid transparent;border-right:.4em solid transparent;border-bottom:.9em solid rgba(0,0,0,.2);display:inline-block;padding:1px;margin:0 3px}#export_table .orderUp:hover{border-bottom-color:#000}#slider,.handle{display:inline-block}#slider{vertical-align:bottom;cursor:pointer;width:30px;height:12px;border-radius:10px;border:2px solid #f0f0f0}.handle_container{text-align:center;width:100%;height:100%}.handle{width:10px;height:10px;border-radius:100%;margin:0 2px 6px;border:1px solid #fff;background-color:#85c107}[data-tooltip]{position:relative;z-index:2;cursor:pointer}[data-tooltip]:after,[data-tooltip]:before{visibility:hidden;opacity:0;pointer-events:none}[data-tooltip]:before{--width:300px;position:absolute;top:150%;left:50%;margin-left:calc(var(--width)/2*-1);padding:7px;width:var(--width);border-radius:3px;background-color:rgba(33,133,244,.9);color:#fff;content:attr(data-tooltip);text-align:center;font-size:.9em;line-height:1.2;box-shadow:0 0 10px #fff}[data-tooltip]:after{position:absolute;top:calc(150% - 5px);left:50%;margin-left:-5px;width:0;border-bottom:5px solid rgba(33,133,244,.9);border-right:5px solid transparent;border-left:5px solid transparent;content:" ";font-size:0;line-height:0}[data-tooltip]:hover:after,[data-tooltip]:hover:before{visibility:visible;opacity:1}.ui-autocomplete{z-index:9002;max-width:590px;max-height:200px;overflow-y:auto;overflow-x:hidden}.ui-menu{position:fixed;border:2px solid #f0f0f0;border-top:none;background-color:#fff}.ui-menu>.ui-menu-item *{color:#000;text-decoration:none;white-space:nowrap;text-overflow:ellipsis;cursor:pointer}.ui-menu>.ui-menu-item:nth-child(even){background-color:#e6e6e6}.ui-menu-item .ui-state-focus{display:inline-block;width:100%;color:#000;background-color:rgba(33,133,244,.7)}.psdletv{font-style:italic;font-weight:700;font-size:.6em;vertical-align:text-top;position:absolute;top:4px}.psp3{border-left:2px solid #2185f4;border-right:2px solid #2185f4}.psp2{background-color:rgba(33,133,244,.15)!important}#muh_games_container.rtl{direction:rtl}.rtl #psdle_search_select{border-radius:0 90px 90px 0}.rtl #psdle_search_text{border-radius:90px 0 0 90px}.rtl .psdle_fancy_bar span:last-of-type{border-top-left-radius:12px;border-bottom-left-radius:12px}.rtl .psdle_fancy_bar span:first-of-type{border-top-right-radius:12px;border-bottom-right-radius:12px}.rtl .psdle_table *{text-align:right}.rtl tr.is_plus[id^=psdle_index_] td:last-child{border-right:none;border-left:#ffd10d 3px solid}.psdledark #sub_container{background-color:#222;color:#e7e7e7}.psdledark a.psdle_game_link{color:#e7e7e7}.psdledark .search.main.container{background-color:rgba(34,34,34,.7)}.psdledark tr{background-color:#222}.psdledark tr:nth-child(2n){background-color:#393939}';
+        var temp = '.valkyrie #export_table input,.valkyrie #export_table select,.valkyrie #lang_select{height:unset;padding:unset;margin:unset;width:unset;display:unset}.psdle_logo{display:inline-block;width:84px;height:31px;background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAAAfCAYAAAEO89r4AAABaUlEQVRoge2XS27CQAyGPSVSUVErdqzpMqveiRvALnu67Gl6D+gFuAKIPgQrs0o1TJSJJ7aJBvnbRXE8f357XoCIGyTiEBFf33+BwgMpyg/eVRNSsENEpAQWMa27agL1e7JWcmCSVSG+tF6jp1D4o/qkqN8un+Bl7JpJUxP5vH38XT2T655CtEf6olKoaFLq3ElK2heRlgq//U/KKVj4rcrvs+Y+h7Z1ow2Vv9eg6A5p53MxhnI2an0vWSmW0HI2EhUTI5vSN4T2Xem0ycZRh4h7AJgOLaQLlf1ega2br3/IQlMW6TA2dYEPc2XToyZUGtbOdMs1lyX0lqeubEpvQqVp9GhsghxPOpvY8yPA1yo+MRtCh7iWfJ/j49rOpEE2QnM55h1U7/Wcox0nb+y9lqY6dzYtmgtmqDBmqDBmqDCDGcq5Ew5xCqViHSqMGSqMGSqMGSpMp6H3unloYR0qjBkqjBkqjBkqzAUtBKxj5lT3GAAAAABJRU5ErkJggg==)}.startup{z-index:9001;position:fixed;bottom:10px;left:10px;cursor:pointer;box-shadow:0 0 10px #fff}#muh_games_container{display:none;position:absolute;top:0;right:0;left:0;color:#000;z-index:9001;text-align:center}#sub_container{padding:20px;background-color:#fff}#startup_progress{-webkit-appearance:none;-moz-appearance:none;appearance:none;width:400px;height:16px;border:1px solid #999;overflow:hidden;border-radius:10px;margin:10px;color:#2185f4!important}#startup_progress::-moz-progress-bar{background-color:#2185f4!important}#startup_progress::-webkit-progress-value{background-color:#2185f4!important}.psdle_btn{background-color:#2185f4}.psdle_btn{cursor:pointer;border-radius:13px;color:#fff;padding:1px 15px;display:inline-block;margin:5px auto}.psdle.tagline{font-size:small}.psdle.tagline>a,.psdle.tagline>span{line-height:0;cursor:pointer;color:#7f6d75!important}.psdle.tagline>a:hover,.psdle.tagline>span:hover{color:inherit!important;text-decoration:underline}.search.main.container{position:fixed;left:0;top:0;width:100%;padding:15px 0;background-color:rgba(255,255,255,.8);z-index:9001}.search.input.plus{cursor:pointer!important}.search.export{display:inline;width:95%;max-width:600px}.psdle_table,table{text-align:left;display:inline-block;border-collapse:initial}th[id^=sort]{cursor:pointer}th[id^=sort]:hover{background-color:#62a5f0}th{padding:5px!important;background-color:#2185f4;color:#fff;border:none;transition:background-color .3s}tr:hover{background-color:rgba(33,133,244,.7)!important}.valkyrie td{padding:0;border:none}td a.psdle_game_link{display:block;width:100%;height:100%;color:#000;padding:8px!important}.psdle_game_icon.is_plus{background-color:#ffd10d}tr[id^=psdle_index_].is_plus td:last-child{border-right:#ffd10d 3px solid}tr:nth-child(2n){background-color:#eee}td:nth-child(n+3):nth-child(-n+7),th:nth-child(n+3):nth-child(-n+7){text-align:center;padding:0 5px!important;position:relative}td:first-child{text-align:center;position:relative}#psdle_search_select,#psdle_search_text{font-size:large;padding:5px 10px;border:1px solid #f0f0f0;display:inline-block;width:auto}#psdle_search_select{background-color:#f0f0f0;text-align:center}#psdle_search_text{font-size:large;max-width:480px;width:100%}.negate_regex{background-color:#ff8080!important;color:#fff}.psdle_fancy_bar>span,.psdle_fancy_but,span#export_view,span[id^=dl_],span[id^=filter_],span[id^=system_]{font-weight:700;font-size:.9em;color:#fff;background-color:#2185f4;display:inline-block;margin-right:2px;margin-bottom:5px;padding:1px 10px;cursor:pointer}.psdle_fancy_but{border-radius:12px}#muh_games_container:not(.rtl) .psdle_fancy_bar>span:first-of-type{border-top-left-radius:12px;border-bottom-left-radius:12px}#muh_games_container:not(.rtl) .psdle_fancy_bar>span:last-of-type{border-top-right-radius:12px;border-bottom-right-radius:12px}.toggled_off{background-color:rgba(33,133,244,.4)!important}#muh_games_container:not(.rtl) #psdle_search_select{border-radius:90px 0 0 90px}#psdle_search_text{border-radius:0 90px 90px 0}.psdle_game_icon{max-width:100%;vertical-align:middle;padding:3px;min-width:42px;min-height:42px}.psdle_sort_asc,.psdle_sort_desc{float:right;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent}.psdle_sort_asc{border-bottom:5px solid #fff}.psdle_sort_desc{border-top:5px solid #fff}#dlQARating,#dlQAStat{color:#fff;background-color:rgba(33,133,244,.8);font-size:small}#dlQueueAsk{width:400px;height:400px}#dlQAN{background-color:rgba(33,133,244,.8);padding:7px 15px;color:#fff;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}#dlQASys{position:absolute;bottom:0;padding:7px 0;color:#fff;display:table;width:100%;table-layout:fixed}#dlQASys>div{display:table-cell}#dlQASys>div>div{cursor:pointer;background-color:rgba(33,133,244,.8);border-radius:10px;padding:2px;margin:0 10px;box-shadow:0 0 30px #000;transition:background-color .5s,box-shadow .5s}#dlQASys>div>div:hover{background-color:rgba(33,133,244,1);box-shadow:0 0 30px rgba(33,133,244,1)}#dlQAStat{border-bottom-left-radius:20px;padding:0 10px 0 15px;float:right}#dlQARating{border-bottom-right-radius:20px;padding:0 15px 0 10px;float:left}.success{background-color:#237423!important}.failure{background-color:#a43636!important}#dlQueueExt{overflow:hidden;position:absolute;left:10px;right:10px;bottom:40px;font-size:.8em;background-color:rgba(33,133,244,.8);padding:10px;border-radius:9px;top:66px;text-align:left}.cover,.cover>div>div{background-size:cover}.cover{z-index:9001;position:fixed;top:0;left:0;width:100%;height:100%;display:table;background-color:rgba(0,0,0,.25);background-position:center}.cover>div{display:table-cell;vertical-align:middle;height:inherit;text-align:center}.cover>div>div{box-shadow:0 0 30px #000;display:inline-block;background-color:#fff;border-radius:20px;overflow:hidden;position:relative}#export_select{padding:10px;background-color:#fff;color:#000}#export_select>div{border-top-left-radius:10px;border-top-right-radius:10px;overflow-y:auto;overflow-x:hidden;max-height:490px}#export_table{width:100%}#export_table th{text-align:center}#export_table .orderUp{cursor:pointer;height:1em;border-left:.4em solid transparent;border-right:.4em solid transparent;border-bottom:.9em solid rgba(0,0,0,.2);display:inline-block;padding:1px;margin:0 3px}#export_table .orderUp:hover{border-bottom-color:#000}#slider,.handle{display:inline-block}#slider{vertical-align:bottom;cursor:pointer;width:30px;height:12px;border-radius:10px;border:2px solid #f0f0f0}.handle_container{text-align:center;width:100%;height:100%}.handle{width:10px;height:10px;border-radius:100%;margin:0 2px 6px;border:1px solid #fff;background-color:#85c107}[data-tooltip]{position:relative;z-index:2;cursor:pointer}[data-tooltip]:after,[data-tooltip]:before{visibility:hidden;opacity:0;pointer-events:none}[data-tooltip]:before{--width:300px;position:absolute;top:150%;left:50%;margin-left:calc(var(--width)/2*-1);padding:7px;width:var(--width);border-radius:3px;background-color:rgba(33,133,244,.9);color:#fff;content:attr(data-tooltip);text-align:center;font-size:.9em;line-height:1.2;box-shadow:0 0 10px #fff}[data-tooltip]:after{position:absolute;top:calc(150% - 5px);left:50%;margin-left:-5px;width:0;border-bottom:5px solid rgba(33,133,244,.9);border-right:5px solid transparent;border-left:5px solid transparent;content:" ";font-size:0;line-height:0}[data-tooltip]:hover:after,[data-tooltip]:hover:before{visibility:visible;opacity:1}.ui-autocomplete{z-index:9002;max-width:590px;max-height:200px;overflow-y:auto;overflow-x:hidden}.ui-menu{position:fixed;border:2px solid #f0f0f0;border-top:none;background-color:#fff}.ui-menu>.ui-menu-item *{color:#000;text-decoration:none;white-space:nowrap;text-overflow:ellipsis;cursor:pointer}.ui-menu>.ui-menu-item:nth-child(even){background-color:#e6e6e6}.ui-menu-item .ui-state-focus{display:inline-block;width:100%;color:#000;background-color:rgba(33,133,244,.7)}.psdletv{font-style:italic;font-weight:700;font-size:.6em;vertical-align:text-top;position:absolute;top:4px}.psp3{border-left:2px solid #2185f4;border-right:2px solid #2185f4}.psp2{background-color:rgba(33,133,244,.15)!important}#muh_games_container.rtl{direction:rtl}.rtl #psdle_search_select{border-radius:0 90px 90px 0}.rtl #psdle_search_text{border-radius:90px 0 0 90px}.rtl .psdle_fancy_bar span:last-of-type{border-top-left-radius:12px;border-bottom-left-radius:12px}.rtl .psdle_fancy_bar span:first-of-type{border-top-right-radius:12px;border-bottom-right-radius:12px}.rtl .psdle_table *{text-align:right}.rtl tr.is_plus[id^=psdle_index_] td:last-child{border-right:none;border-left:#ffd10d 3px solid}.psdledark #sub_container{background-color:#222;color:#e7e7e7}.psdledark a.psdle_game_link{color:#e7e7e7}.psdledark .search.main.container{background-color:rgba(34,34,34,.7)}.psdledark tr{background-color:#222}.psdledark tr:nth-child(2n){background-color:#393939}';
         $("head").append('<style type="text/css">'+temp+'</style>');
-    },
-    darkCSS: function() {
-        $("#muh_games_container").toggleClass("psdledark");
     },
     exportList: {
         config: [], //Default export template.
@@ -939,7 +977,6 @@ repod.psdle = {
             },
             destroy: function () { $(".search.export").remove(); repod.psdle.table.margin(); }
         },
-        //json: function() { return (!!JSON.stringify) ? JSON.stringify(repod.psdle.gamelist_cur) : "Browser does not have JSON.stringify()!"; },
         json: {
             gen: function() {
                 var config = repod.psdle.exportList.config;
@@ -1069,22 +1106,15 @@ repod.psdle = {
                 this.batch.unshift(a);
             }
         },
-        ran: false,
-        run: function() {
+        run: function(burstThreads) {
             var that = this,
                 catalog = repod.psdle.config.valkyrieInstance.lookup('service:susuwatari');
 
             if (this.batch.length == 0) {
-                /*console.log('run called!',repod.psdle.type_cache);
-                if (!this.ran) {
-                    this.ran = true;
-                    console.log('table gen!', repod.psdle.type_cache);
-                    repod.psdle.table.gen();
-                }*/
                 return 0;
             }
 
-            this.batch.splice(0,1).forEach(function(i, e) {
+            this.batch.splice(0, (burstThreads || 30)).forEach(function(i, e) {
                 catalog.resolve(i.pid)
                 .then(function (data) {
                     if (data.response && data.response.status == 404) return 0;
@@ -1107,23 +1137,26 @@ repod.psdle = {
                     that.called++;
                 })
                 .catch(function(e){ that.called++; repod.psdle.type_cache["unknown"] = true; })
-                .then(function() { that.run(); that.updateBar(); });
+                .then(function() { that.run(1); that.updateBar(); });
             });
         },
         called: 0,
         updateBar: function() {
             var that  = this,
                 l     = this.called, //Math.abs(repod.psdle.gamelist.length - this.batch.length),
-                r     = repod.psdle.gamelist.length,
-                w     = $('#psdle_bar').width(),
-                pW    = $('#psdle_bar').parent().width(),
-                p     = Math.round(100*w/pW),
-                q     = Math.round(100*l/r);
+                r     = repod.psdle.gamelist.length;
 
-            if (100*l/r == 100) { repod.psdle.table.gen(); } //Ultimate in promise abuse technology.
 
-            if (q > p) { $("#psdle_progressbar > #psdle_bar").stop().animate({"width":q+"%"}); }
-            $("#psdle_status").text(l+" / "+r).click(that.run());
+            $("#startup_progress").attr({value:l,max:r});
+            $("#psdle_status").text(l+" / "+r);
+
+            if (l == r) {
+                $("#psdle_status").text(repod.psdle.lang.startup.wait);
+                $("#startup_progress").attr("value",null);
+                setTimeout(function() {
+                    repod.psdle.container.go("dlList");
+                }, 100);
+            }
         },
         parse: function(data) {
             var extend = {},
@@ -1253,12 +1286,18 @@ repod.psdle = {
             },
             remove: {
                 parse: function(e) {
-                    this.go($(e).children("td:eq(3)").text().replace("PS ","").toLowerCase(),repod.psdle.gamelist[Number($(e).attr("id").split("_").pop())].id);
+                    //TO-DO: Not read arbitrary data off the DOM! Possibly use data.
+                    this.go($(e).children("td:eq(3)").text(),repod.psdle.gamelist[Number($(e).attr("id").split("_").pop())].id);
                 },
                 go: function(sys,id,auto) {
-                    //Remove game from batch.
-                    //repod.psdle.dlQueue.batch.send(sys,id,true,(auto)?undefined:repod.psdle.dlQueue.batch.get())
-                    alert('DLQueue remove TO-DO');
+                    var cb = function() { repod.psdle.container.go("dlQueue") };
+
+                    if (sys == "ps4") {
+                        repod.psdle.dlQueue.batch.Kamaji.cancelPS4Download(id).then(cb);
+                    } else {
+                        //"PS3" or "PS Vita" only! Case-sensitive. Refer to KamajiPlatforms.
+                        repod.psdle.dlQueue.batch.Kamaji.cancelDRMDownload(sys, id).then(cb);
+                    }
                 }
             }
         },
@@ -1281,7 +1320,7 @@ repod.psdle = {
                         $.each(repod.psdle.gamelist, function(a,b) {
                             if (items.indexOf(b.id) >= 0) {
                                 var c = {
-                                    createdTime: 0, //Find this
+                                    createdTime: "?", //Find this
                                     to_sys: sys.match(/(.*?)Downloads/).pop()
                                 }
                                 temp += repod.psdle.table_utils.gen.row(b,c);
@@ -1360,7 +1399,7 @@ repod.psdle = {
             try { if (game.plus) { plus = $("#psdleplus").clone()[0].outerHTML+" "; } } catch(e) {}
             dialog.append($("<div>", {id:"dlQAN"} ).append(plus+game.name));
 
-            if (repod.psdle.config.use_queue) {
+            if (repod.psdle.config.dlQueue) {
                 var temp = $.grep(game.platformUsable.slice(0), function(V) { return V !== "PSP" }), //Make sure we don't have PSP
                     t    = $("<div>", {id:"dlQASys"} );
 
@@ -1497,117 +1536,6 @@ repod.psdle = {
         }
     },
     debug: {
-        die: function() {
-            /* Obviously.   */ $("#muh_games_container").remove();
-            /* CSS          */ $("#psdle_css").remove();
-            /* Just 'psdle' */ delete repod.psdle;
-        },
-        inject_lang: function() {
-            var lang = prompt("Insert JSON formatted language: (current below)",JSON.stringify(repod.psdle.lang));
-
-            try {
-                lang = JSON.parse(lang);
-                repod.psdle.lang = {};
-                repod.psdle.lang = repod.psdle.lang_cache.en.us;
-                $.extend(true,repod.psdle.lang,lang);
-                repod.psdle.genDisplay("nobind");
-            } catch (e) {
-                alert(e);
-            }
-        },
-        fake_list: function() {
-            //Generate a fake download list based on currently viewable items.
-            //Dates are generated randomly.
-            //Best used on a page showing only game content.
-            if ($(".cellGridGameStandard").length > 0) {
-                $.each($(".cellGridGameStandard"), function(index) {
-                    var temp = {};
-
-                    temp.category = "unknown";
-                    temp.productID = $(this).find(".permalink").attr("href").split("cid=").pop();
-                    temp.id = temp.productID;
-                    temp.index = repod.psdle.gamelist.length + 1;
-                    temp.name = $(this).find(".cellTitle").text();
-                    temp.platform = [ $(this).find(".pforms").text().split("|").pop() ];
-
-                    //Random values
-                    temp.size = Math.floor(Math.random() * 19999994000); //Size, in bytes.
-                    temp.plus = (Math.random() < 0.5);
-                    if (temp.plus) { repod.psdle.config.has_plus = true; } //PS+
-                    min = new Date(); min.setDate(min.getDate() - 365*4); min = min.getTime(); temp.date = new Date(min + Math.random() * (Date.now() - min)).toISOString(); //Date
-
-                    temp.icon = SonyChi_SessionManagerSingleton.buildBaseImageURLForProductId(temp.productID)+"&w=42&h=42";
-
-                    temp.prettySize = formatFileSizeDisplayStr(temp.size);
-                    temp.url = repod.psdle.config.game_page+temp.productID;
-                    temp.platformUsable = temp.platform.slice(0);
-                    temp.prettyDate = convertToNumericDateSlashes(convertStrToDateObj(temp.date));
-
-                    repod.psdle.gamelist.push(temp);
-                    if (repod.psdle.config.deep_search) { repod.psdle.game_api.queue(temp.index,temp.productID); }
-                });
-                repod.psdle.postList();
-            } else {
-                alert("Not on a valid page.");
-            }
-        },
-        checkParse: function(pid) {
-            pid = (pid) ? pid : prompt("Enter (product) ID:");
-
-            $.getJSON(repod.psdle.config.game_api+pid)
-            .success(function(data) {
-                console.log(repod.psdle.game_api.parse(data));
-            })
-            .fail(function(data) {
-                console.log(data);
-            });
-        },
-        difference: function(regen) {
-            repod.psdle.gamelist_cur = $.grep(repod.psdle.gamelist,function(x) {return $.inArray(x, repod.psdle.gamelist_cur) < 0});
-            if (regen) {
-                repod.psdle.table.regen();
-            }
-        },
-        entitlement: function(input,type) {
-            //Probably want to have this store results in an array and return that instead, eventually.
-
-            input = (input) ? input : prompt("Search for:");
-            input = input.toLowerCase();
-            type = (type) ? type : "name";
-
-            $.each(gEntitlementManager.getAllEntitlements(),function(index,obj) {
-                if (repod.psdle.isValidContent(obj)) {
-                    var match = false;
-
-                    switch (type) {
-                        case "id":
-                            match = !!~obj.id.toLowerCase().indexOf(input);
-                            break;
-                        case "name":
-                        default:
-                            var name = (obj.drm_def) ? obj.drm_def.contentName : obj.game_meta.name;
-                            match = !!~name.toLowerCase().indexOf(input);
-                            break;
-                    }
-
-                    if (match) {
-                        var platform,
-                            pids = 0;
-
-                        if (obj.game_meta) {
-                            platform = ["PS4"]
-                        } else {
-                            pids = obj.drm_def.drmContents[0].platformIds;
-                            platform = repod.psdle.determineSystem(pids);
-                        }
-
-                        //Remove personal information (such as dates) and extraneous URLs.
-                        var safe = JSON.stringify(obj, function(k,v) { if(/[\d\-]+T.+Z$/.test(v) || /^http/.test(v)) { return "~" } return v; });
-                        console.log(index,platform,pids,safe)
-                    }
-                }
-            });
-        },
         injectEntitlement: function(ENTITLEMENT) {
             //ENTITLEMENT should be valid Entitlement data or an array containing multiple.
             //This should be called before generating the list as it is appended to the end of the original Entitlements list.
@@ -1625,6 +1553,19 @@ repod.psdle = {
             //if (ENTITLEMENT !== null && typeof ENTITLEMENT !== "array") { this.injectEntitlement(); }
 
             return repod.psdle.e_inject_cache.length;
+        },
+        inject_lang: function() {
+            var lang = prompt("Insert JSON formatted language: (current below)",JSON.stringify(repod.psdle.lang));
+
+            try {
+                lang = JSON.parse(lang);
+                repod.psdle.lang = {};
+                repod.psdle.lang = repod.psdle.lang_cache.en.us;
+                $.extend(true,repod.psdle.lang,lang);
+                repod.psdle.genDisplay("nobind");
+            } catch (e) {
+                alert(e);
+            }
         }
     },
     grid: {
