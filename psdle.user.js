@@ -1,11 +1,11 @@
-/*! psdle 3.2.2 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2018-03-28 */
+/*! psdle 3.2.3 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2018-03-28 */
 // ==UserScript==
 // @author		RePod
 // @name		PSDLE for Greasemonkey
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		3.2.2
+// @version		3.2.3
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -23,10 +23,10 @@ Alternatively, reconfigure the updating settings in your Userscript manager.
 */
 
 
-/*! psdle 3.2.2 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-03-28 */
+/*! psdle 3.2.3 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-03-28 */
 var repod = {};
 repod.psdle = {
-    version            : "3.2.2 <small>2018-03-28</small>",
+    version            : "3.2.3 <small>2018-03-28</small>",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -1584,6 +1584,9 @@ repod.psdle = {
 
             try {
                 lang = JSON.parse(lang);
+                if (lang.hasOwnProperty("def")) {
+                    lang = lang[lang.def];
+                }
                 repod.psdle.lang = {};
                 repod.psdle.lang = repod.psdle.lang_cache.en.us;
                 $.extend(true,repod.psdle.lang,lang);

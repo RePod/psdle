@@ -1,7 +1,7 @@
-/*! psdle 3.2.2 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-03-28 */
+/*! psdle 3.2.3 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-03-28 */
 var repod = {};
 repod.psdle = {
-    version            : "3.2.2 <small>2018-03-28</small>",
+    version            : "3.2.3 <small>2018-03-28</small>",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -1559,6 +1559,9 @@ repod.psdle = {
 
             try {
                 lang = JSON.parse(lang);
+                if (lang.hasOwnProperty("def")) {
+                    lang = lang[lang.def];
+                }
                 repod.psdle.lang = {};
                 repod.psdle.lang = repod.psdle.lang_cache.en.us;
                 $.extend(true,repod.psdle.lang,lang);
