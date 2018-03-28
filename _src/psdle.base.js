@@ -1558,6 +1558,9 @@ repod.psdle = {
 
             try {
                 lang = JSON.parse(lang);
+                if (lang.hasOwnProperty("def")) {
+                    lang = lang[lang.def];
+                }
                 repod.psdle.lang = {};
                 repod.psdle.lang = repod.psdle.lang_cache.en.us;
                 $.extend(true,repod.psdle.lang,lang);
