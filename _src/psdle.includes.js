@@ -1,7 +1,7 @@
-/*! psdle 3.2.1 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-03-23 */
+/*! psdle 3.2.1 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-03-28 */
 var repod = {};
 repod.psdle = {
-    version            : "3.2.1 <small>2018-03-23</small>",
+    version            : "Testing",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -1562,7 +1562,7 @@ repod.psdle = {
                 repod.psdle.lang = {};
                 repod.psdle.lang = repod.psdle.lang_cache.en.us;
                 $.extend(true,repod.psdle.lang,lang);
-                repod.psdle.genDisplay("nobind");
+                repod.psdle.container.go("startup");
             } catch (e) {
                 alert(e);
             }
