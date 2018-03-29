@@ -62,9 +62,10 @@ repod.psdle = {
             match = window.location.pathname.match(/^\/([a-z\-]+)\//i),
             l = (match !== null && match.length > 1 ? match.pop() : "en-us").toLowerCase(),
             l2 = l.split("-");
+        var instance = Ember.Application.NAMESPACES_BY_ID["valkyrie-storefront"].__container__;
 
         this.config = $.extend(this.config,{
-            valkyrieInstance: Ember.Application.NAMESPACES_BY_ID["valkyrie-storefront"].__container__,
+            valkyrieInstance: instance,
             game_page       : window.location.origin+"/"+l+"/product/",
             game_api        : "https://store.playstation.com/store/api/chihiro/00_09_000/container/"+l2.slice(-1)+"/"+l2[0]+"/999/",
             lastsort        : "",
@@ -79,18 +80,12 @@ repod.psdle = {
             tag_line        : "MOVED",
             has_plus        : false,
             check_tv        : false,
-            tv_url          : {
-                "en-us": atob("L2NoaWhpcm8tYXBpL3ZpZXdmaW5kZXIvVVMvZW4vMTkvU1RPUkUtTVNGNzcwMDgtUFNUVlZJVEFHQU1FUz9zaXplPTMwJnN0YXJ0PTA=")
-            },
             iconSize        : 42,
-            mobile          : false
+            mobile          : false,
+            storeURLs       : instance.lookup("service:store-root").get("user").fetchStoreUrls()._result
         });
 
         console.log("PSDLE | Config set.");
-
-        if (this.config.tv_url[this.config.language]) {
-            this.config.tv_url = this.config.tv_url[this.config.language];
-        }
 
         this.determineLanguage(this.config.language,true);
         this.injectCSS();
@@ -1485,18 +1480,57 @@ repod.psdle = {
     },
     tv: {
         url_cache: [],
+        container: "",
         init: function() {
+            var that = this;
+
             console.log("PSDLE | Starting PS TV checks.");
             $.each(repod.psdle.gamelist, function(index,val) {
                 repod.psdle.id_cache[val.productID] = {"tvcompat": false};
             });
 
-            this.fetchList();
+            this.detect(function(item) {
+                if (item !== undefined) {
+                    this.container = item;
+                } else {
+                    console.log("PSDLE | Couldn't find TV container.") //We failed!
+                }
+            });
+        },
+        detect: function (cb) {
+            //Someone's going to laugh at me when the store itself can get away with it.
+            //Return PSTV targetContainerId otherwise nothing if we cannot find it.
+            var base = repod.psdle.config.valkyrieInstance.lookup("service:storefront");
+            
+            for (var i = 0; i < base.navigation.length; i++) {
+                var route = base.navigation[i];
+                if (route.routeName === "games") { //Search for games routeName instead of assuming 0 index.
+                    for (i = 0; i < route.submenu.length; i++) {
+                        var sub = route.submenu[i];
+                        if (sub.targetContainerId.toLowerCase().indexOf("vita") > -1) { //Search for Vita
+                            for (i = 0; i < sub.items.length; i++) {
+                                var item = sub.items[i];
+                                if (item.targetContainerId.toLowerCase().indexOf("tv") > -1) { //Search for TV
+                                    cb(item.targetContainerId);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            cb(); //Didn't find anything, bail.
         },
         fetchList: function() {
             var that = this;
+            return;
+            
+            //Build URL
+            /*var url = 
+            this.container*/
 
-            $.getJSON(repod.psdle.config.tv_url,function(a) {
+            $.getJSON(url,function(a) {
                 $.each(a.links,function(c,b) {
                     that.url_cache.push(b.url/*+"?size=30&start=0"*/);
                 });
