@@ -1,4 +1,4 @@
-/*! psdle 3.2.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-03-29 */
+/*! psdle 3.2.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-03-30 */
 var repod = {};
 repod.psdle = {
     version            : "Testing",
@@ -73,12 +73,9 @@ repod.psdle = {
             lastsort_r      : false,
             language        : l,
             deep_search     : false,
-            deep_waiting    : 0,
-            deep_current    : 0,
             last_search     : "",
             dlQueue       : false,
             active_consoles : {},
-            tag_line        : "MOVED",
             has_plus        : false,
             check_tv        : false,
             iconSize        : 42,
@@ -114,16 +111,16 @@ repod.psdle = {
             switch (target) {
                 default:
                 case "startup":
-                    this.respawn(this.startup(),cb);
+                    this.respawn(this.startup());
                     break;
                 case "progress":
-                    this.respawn(this.progress(),cb);
+                    this.respawn(this.progress());
                     break;
                 case "dlList":
-                    this.respawn(this.dlList().append(this.tagline()), function () { //Send callbacks
+                    this.respawn(this.dlList().append(this.tagline()), function () {
                         repod.psdle.table.regen(true);
                         repod.psdle.table.margin();
-                    });
+                    })
                     break;
                 case "dlQueue":
                     repod.psdle.dlQueue.generate.display(); //TO-DO: Not this!
@@ -131,15 +128,26 @@ repod.psdle = {
             }
         },
         respawn: function(content,cb) {
-            $("#"+this.elemID).remove(); //Temporary lazy unbind
+            //$("#"+this.subElemID).remove(); //Temporary lazy unbind
+            var that = this;
 
-            $("body").append(
-                $("<div />",{id:this.elemID,class:"valkyrie"})
-                .toggleClass("psdledark", this.dark)
-                .toggleClass("rtl", (!!repod.psdle.lang.rtl && repod.psdle.lang.rtl == true))
+            if ($("#"+this.elemID).length == 0) {
+                $("<div />",{id:this.elemID,class:"valkyrie"}).appendTo("body")
+            }
+
+            $("#"+this.elemID)
+            .slideUp(function() {
+                $(this).children().remove();
+                $(this)
                 .append(content)
-            );
-            $("#"+this.elemID).slideDown("slow").promise().done(cb);
+                .toggleClass("psdledark", that.dark)
+                .toggleClass("rtl", (!!repod.psdle.lang.rtl && repod.psdle.lang.rtl == true))
+                .slideDown(function() {
+                    if (typeof cb == "function") {
+                        cb();
+                    }
+                });
+            })
         },
         dark: false,
         darkCSS: function() {
@@ -178,7 +186,7 @@ repod.psdle = {
 
             var bar = $("<span />", {class: "psdle_fancy_bar"});
             $.each(lang.apis, function(key,con) {
-                if (con.internalID == "api_pstv" && config.language !== "en-us") { return 0; }
+                if (con.internalID == "api_pstv" /*&& config.language !== "en-us"*/) { return 0; }
 
                 $("<span />", {
                     id: con.internalID,
@@ -195,7 +203,8 @@ repod.psdle = {
                 config.dlQueue = !$("#api_queue").hasClass("toggled_off");
                 config.check_tv = ($("#api_pstv").length) ? !$("#api_pstv").hasClass("toggled_off") : false;
 
-                that.go("progress");
+                //that.go("progress");
+                repod.psdle.generateList();
             })
 
             //There is surely a better way.
@@ -210,8 +219,6 @@ repod.psdle = {
             return sub;
         },
         progress: function() {
-            repod.psdle.generateList();
-
             var sub = $("<div />",{id:this.subElemID})
             .append(this.header()+"<br>")
             .append($("<progress />", {id:"startup_progress"}))
@@ -222,6 +229,16 @@ repod.psdle = {
             }
 
             return sub;
+        },
+        postList: function() {
+            //Currently should arrive here from repod.psdle.generateList() pr anything this calls.
+            //Sort of a mini container router.
+            var safe = !0;
+
+            if (repod.psdle.config.check_tv)    { safe = !1; repod.psdle.tv.init(); }
+            if (repod.psdle.config.deep_search) { safe = !1; repod.psdle.game_api.run(); } //Upon completion sets deep_search to false.
+            if (!safe) { this.go("progress"); }
+            else { this.go("dlList"); }
         },
         dlList: function() {
             //TO-DO: don't prep sys/prop cache on queue -> list switch back
@@ -241,6 +258,7 @@ repod.psdle = {
     },
     generateList: function(entitlements) {
         var that = this;
+        entitlements = (window.psdleEnts || entitlements);
 
         if (!entitlements) {
             this.macrossBrain(function(e) { that.generateList(e) })
@@ -330,7 +348,7 @@ repod.psdle = {
         });
 
         console.log("PSDLE | Finished generating download list. End result is "+this.gamelist.length+" of "+entitlements.length+" item(s).",this.stats);
-        this.postList();
+        repod.psdle.container.postList();
     },
     determineSystem: function(HASH) {
         var that = this,
@@ -345,13 +363,6 @@ repod.psdle = {
         });
 
         return sys;
-    },
-    postList: function() {
-        var safe = !0;
-
-        if (repod.psdle.config.check_tv)    { safe = !1; repod.psdle.tv.init(); }
-        if (repod.psdle.config.deep_search) { safe = !1; this.game_api.run(); }
-        if (safe)                           { this.container.go("dlList"); }
     },
     stats: { fine: 0, generic: 0, expired: 0, service: 0, video: 0 },
     isValidContent: function(obj) {
@@ -1137,10 +1148,8 @@ repod.psdle = {
         },
         called: 0,
         updateBar: function() {
-            var that  = this,
-                l     = this.called, //Math.abs(repod.psdle.gamelist.length - this.batch.length),
-                r     = repod.psdle.gamelist.length;
-
+            var l = this.called, //Math.abs(repod.psdle.gamelist.length - this.batch.length),
+                r = repod.psdle.gamelist.length;
 
             $("#startup_progress").attr({value:l,max:r});
             $("#psdle_status").text(l+" / "+r);
@@ -1148,10 +1157,18 @@ repod.psdle = {
             if (l == r) {
                 $("#psdle_status").text(repod.psdle.lang.startup.wait);
                 $("#startup_progress").attr("value",null);
-                setTimeout(function() {
-                    repod.psdle.container.go("dlList");
-                }, 100);
+                this.finish();
             }
+        },
+        finish: function(force) {
+            if (force !== true) {
+                if (this.called > 0 && this.called < repod.psdle.gamelist.length) { return; } //Keep waiting
+            }
+
+            setTimeout(function() {
+                repod.psdle.config.deep_search = false;
+                repod.psdle.container.postList();
+            }, 100);
         },
         parse: function(data) {
             var extend = {},
@@ -1493,9 +1510,8 @@ repod.psdle = {
             this.detect(function(item) {
                 if (item !== undefined) {
                     this.container = item;
-                    console.log('we back',item,this.url);
                 } else {
-                    //We failed!
+                    console.log("PSDLE | Couldn't find TV container.") //We failed!
                 }
             });
         },
@@ -1503,7 +1519,7 @@ repod.psdle = {
             //Someone's going to laugh at me when the store itself can get away with it.
             //Return PSTV targetContainerId otherwise nothing if we cannot find it.
             var base = repod.psdle.config.valkyrieInstance.lookup("service:storefront");
-            
+
             for (var i = 0; i < base.navigation.length; i++) {
                 var route = base.navigation[i];
                 if (route.routeName === "games") { //Search for games routeName instead of assuming 0 index.
@@ -1526,12 +1542,13 @@ repod.psdle = {
         },
         fetchList: function() {
             var that = this;
-            
-            //Build URL
-            var url = 
-            this.container
+            return;
 
-            $.getJSON(this.url,function(a) {
+            //Build URL
+            /*var url =
+            this.container*/
+
+            $.getJSON(url,function(a) {
                 $.each(a.links,function(c,b) {
                     that.url_cache.push(b.url/*+"?size=30&start=0"*/);
                 });
