@@ -77,7 +77,6 @@ repod.psdle = {
             last_search     : "",
             dlQueue       : false,
             active_consoles : {},
-            tag_line        : "MOVED",
             has_plus        : false,
             check_tv        : false,
             iconSize        : 42,
