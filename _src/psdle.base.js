@@ -229,15 +229,25 @@ repod.psdle = {
 
             return sub;
         },
-        postList: function() {
-            //Currently should arrive here from repod.psdle.generateList() pr anything this calls.
-            //Sort of a mini container router.
-            var safe = !0;
+        postRuns: {},
+        postList: function(result) {
+            //Currently should arrive here from repod.psdle.generateList() or anything this calls.
+            //Mini router for the progress container. result should be the feature ran returning its name (hardcoded, nice!).
+            if (result) { this.postRuns[result] = true; }
 
-            if (repod.psdle.config.check_tv)    { safe = !1; repod.psdle.tv.init(); }
-            if (repod.psdle.config.deep_search) { safe = !1; repod.psdle.game_api.run(); } //Upon completion sets deep_search to false.
-            if (!safe) { this.go("progress"); }
-            else { this.go("dlList"); }
+            if (repod.psdle.config.check_tv && this.postRuns.tv !== true) {
+                this.go("progress");
+                repod.psdle.tv.init();
+                return;
+            }
+
+            if (repod.psdle.config.deep_search && this.postRuns.catalog !== true) {
+                this.go("progress");
+                repod.psdle.game_api.run();
+                return;
+            }
+
+            this.go("dlList");
         },
         dlList: function() {
             //TO-DO: don't prep sys/prop cache on queue -> list switch back
@@ -1100,6 +1110,7 @@ repod.psdle = {
     },
     game_api: {
         batch: [],
+        called: 0, //Catalog threads completed (success or not)
         queue: function(index,pid) {
             var that = this,
                 a    = {pid:pid,index:index};
@@ -1117,6 +1128,7 @@ repod.psdle = {
 
             if (this.batch.length == 0) {
                 return 0;
+                this.finish();
             }
 
             this.batch.splice(0, (burstThreads || 30)).forEach(function(i, e) {
@@ -1145,9 +1157,8 @@ repod.psdle = {
                 .then(function() { that.run(1); that.updateBar(); });
             });
         },
-        called: 0,
         updateBar: function() {
-            var l = this.called, //Math.abs(repod.psdle.gamelist.length - this.batch.length),
+            var l = this.called,
                 r = repod.psdle.gamelist.length;
 
             $("#startup_progress").attr({value:l,max:r});
@@ -1165,8 +1176,7 @@ repod.psdle = {
             }
 
             setTimeout(function() {
-                repod.psdle.config.deep_search = false;
-                repod.psdle.container.postList();
+                repod.psdle.container.postList("catalog");
             }, 100);
         },
         parse: function(data) {
