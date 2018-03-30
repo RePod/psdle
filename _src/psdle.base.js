@@ -177,7 +177,7 @@ repod.psdle = {
 
             var bar = $("<span />", {class: "psdle_fancy_bar"});
             $.each(lang.apis, function(key,con) {
-                if (con.internalID == "api_pstv" && config.language !== "en-us") { return 0; }
+                if (con.internalID == "api_pstv" /*&& config.language !== "en-us"*/) { return 0; }
 
                 $("<span />", {
                     id: con.internalID,
