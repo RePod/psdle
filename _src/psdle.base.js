@@ -1162,7 +1162,7 @@ repod.psdle = {
                 r = repod.psdle.gamelist.length;
 
             $("#startup_progress").attr({value:l,max:r});
-            $("#psdle_status").text(l+" / "+r);
+            $("#psdle_status").text(repod.psdle.lang.startup.wait).append($("<br />")).append(l+" / "+r); //Slow, but scared of .html for translations.
 
             if (l == r) {
                 $("#psdle_status").text(repod.psdle.lang.startup.wait);
