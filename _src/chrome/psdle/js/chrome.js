@@ -1,3 +1,4 @@
+//TO-DO: Remove Firefox conditionals and match Chrome usage if possible.
 function isFirefox() {
     return typeof InstallTrigger !== 'undefined';
 }
@@ -28,10 +29,10 @@ function inject(url,remote) {
 
 inject("js/psdleChromium.js");
 function init(fallback) {
-    if (isFirefox() && fallback !== true) {
+    /*if (isFirefox() && fallback !== true) {
         inject("//repod.github.io/psdle/psdle.min.js",true);
-    } else {
+    } else {*/
         inject("js/psdle.js");
-    }
+    //}
 }
 init()
