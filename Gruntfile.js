@@ -56,7 +56,6 @@ module.exports = function(grunt) {
                 command: 'call _src/chrome/deploy.bat',
                 exitCode: [0,1]
             },
-            firefox_clean: 'call _src/chrome/ffclean.bat',
             deploy: 'deploy-sync.bat'
         },
         'string-replace': {
@@ -87,16 +86,6 @@ module.exports = function(grunt) {
                 }
             }
         },
-        webext_builder: {
-            firefox_sign: {
-                targets: ['firefox-xpi'],
-                "jwtIssuer": process.env.psdleSignIssuer,
-                "jwtSecret": process.env.psdleSignSecret,
-                files: {
-                    ".": ["_src/chrome/psdle/"]
-                }
-            }
-        },
         'concat-json': {
             lang: {
                 cwd: "_src/lang/all",
@@ -112,7 +101,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-string-replace');
-    grunt.loadNpmTasks('grunt-webext-builder');
     grunt.loadNpmTasks('grunt-exec');
     grunt.loadNpmTasks('grunt-concat-json');
 
@@ -125,12 +113,6 @@ module.exports = function(grunt) {
         ])
     });
     grunt.registerTask('chrome', ['exec:chrome2']);
-    grunt.registerTask('firefox', 'Create and sign Firefox extension.', function() {
-        grunt.task.run([
-            'webext_builder:firefox_sign',
-            'exec:firefox_clean'
-        ]);
-    });
     grunt.registerTask('release', 'Generate PSDLE release, compiles first.', function() {
         grunt.task.run([
             'compile',
@@ -139,13 +121,11 @@ module.exports = function(grunt) {
             'uglify:release',   //Minified
             'copy:chrome',
             'concat:userscript', //Userscript
-            'exec:chrome', //Chrome
-            'firefox' //We just don't know (last because may fail and at worst breaks deploy)
+            'exec:chrome' //Chrome + Firefox
        ]);
     });
     grunt.registerTask('deploy', 'Run release then deploy script.', function() {
         grunt.task.run([
-            'exec:firefox_clean',
             'chrome',
             'exec:deploy'
         ])
