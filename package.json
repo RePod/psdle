@@ -25,7 +25,6 @@
     "grunt-includes": "^1.0.0",
     "grunt-run-executables": "0.0.2",
     "grunt-string-replace": "^1.3.1",
-    "grunt-webext-builder": "^0.1.0",
     "install": "^0.10.4"
   },
   "dependencies": {}
