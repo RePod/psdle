@@ -24,10 +24,5 @@
         "16": "icons/icon32.png",
         "48": "icons/icon64.png",
         "128": "icons/icon128.png"
-    },
-    "applications": {
-        "gecko": {
-            "update_url": "https://repod.github.io/psdle/xpi.json"
-        }
     }
 }
