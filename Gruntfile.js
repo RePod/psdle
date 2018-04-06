@@ -51,8 +51,8 @@ module.exports = function(grunt) {
             }
         },
         exec: {
-            chrome: 'call _src/chrome/7-Zip.bat',
-            chrome2: {
+            chrome_zip: 'call _src/chrome/7-Zip.bat',
+            chrome_deploy: {
                 command: 'call _src/chrome/deploy.bat',
                 exitCode: [0,1]
             },
@@ -112,7 +112,7 @@ module.exports = function(grunt) {
             'string-replace:compile'
         ])
     });
-    grunt.registerTask('chrome', ['exec:chrome2']);
+    grunt.registerTask('chrome', ['exec:chrome_deploy']);
     grunt.registerTask('release', 'Generate PSDLE release, compiles first.', function() {
         grunt.task.run([
             'compile',
@@ -121,7 +121,7 @@ module.exports = function(grunt) {
             'uglify:release',   //Minified
             'copy:chrome',
             'concat:userscript', //Userscript
-            'exec:chrome' //Chrome + Firefox
+            'exec:chrome_zip' //Chrome + Firefox
        ]);
     });
     grunt.registerTask('deploy', 'Run release then deploy script.', function() {
