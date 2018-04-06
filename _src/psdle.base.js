@@ -154,7 +154,8 @@ repod.psdle = {
             $("#"+this.elemID).toggleClass("psdledark", this.dark);
         },
         header: function() {
-            return "<span><a href='//repod.github.io/psdle/' target='_blank'><div class='psdle_logo'></div></a><br><small>v"+repod.psdle.version+"</small></span>";
+            return "<div class='amopromo'><a href='https://addons.mozilla.org/firefox/addon/psdleforfirefox/' target='_blank'><span class='psdle_btn'>PSDLE is now available on Firefox Add-Ons!</span></a><br><div>Old Firefox extension users please switch to keep getting updates!</div></div>"
+            + "<span><a href='//repod.github.io/psdle/' target='_blank'><div class='psdle_logo'></div></a><br><small>v"+repod.psdle.version+"</small></span>";
         },
         tagline: function() {
             var that = this;

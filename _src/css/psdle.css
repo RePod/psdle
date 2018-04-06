@@ -1,5 +1,23 @@
 /* Prefer using " over ' and escaping otherwise due to the CSS injection in base. See base for extra details. */
 
+/* AMO Promo CSS, remove when done. */
+div.amopromo {
+    margin-bottom: 1em;
+}
+div.amopromo a, div.amopromo a:hover {
+    text-decoration: unset;
+    color: unset;
+}
+div.amopromo .psdle_btn {
+    margin: unset;
+}
+div.amopromo .psdle_btn:hover {
+    margin: unset;
+}
+div.amopromo > div {
+    font-size: small;
+}
+
 /* Undo Valkyrie overrides, in a NON-GREEDY WAY */
 
 .valkyrie #lang_select,
