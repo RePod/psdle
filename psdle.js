@@ -1,7 +1,7 @@
-/*! psdle 3.2.7 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-04-05 */
+/*! psdle 3.2.8 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-04-06 */
 var repod = {};
 repod.psdle = {
-    version            : "3.2.7 <small>2018-04-05</small>",
+    version            : "3.2.8 <small>2018-04-06</small>",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
