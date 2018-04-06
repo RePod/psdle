@@ -21,6 +21,23 @@ body { padding-top:70px; padding-bottom:300px; min-height: 100%; position: relat
   overflow:auto;
   padding-bottom:200px; /* this needs to be bigger than footer height*/
 }
+#method_extension .exts {
+    display: flex;
+}
+#method_extension .exts a {
+    flex: 1 1 50%;
+    display: inline-block;
+    border-radius: .25em;
+    margin: 0.5% 3%;
+}
+#method_extension .exts a:hover {
+    background-color: rgba(13,52,96,0.15);
+}
+@media screen and (max-width: 480px) {
+    #method_extension .exts {
+        flex-direction: column; 
+    }
+}
 
 .firefox-ext {
     max-width: 100%;
