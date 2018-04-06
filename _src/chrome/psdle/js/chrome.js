@@ -1,8 +1,3 @@
-//TO-DO: Remove Firefox conditionals and match Chrome usage if possible.
-function isFirefox() {
-    return typeof InstallTrigger !== 'undefined';
-}
-
 chrome.runtime.onMessage.addListener(
     function(request,sender,sendResponse) {
         if (request.alive == "y") {
@@ -12,27 +7,21 @@ chrome.runtime.onMessage.addListener(
     }
 );
 
-function inject(url,remote) {
-    console.info("PSDLE Chrome | ",isFirefox(),remote,url);
+function spawn(url) {
+    console.info("PSDLE Chrome | ",url);
     var s = document.createElement('script');
     s.type = 'text/javascript';
     s.onload = function() { 
         this.parentNode.removeChild(this);
     };
     s.onerror = function(e) {
-        console.info("PSDLE Chrome | Failed to fetch remote PSDLE, using local.");
-        init(true);
+        console.warn("PSDLE Chrome | Something broke. ",url); 
     };
-    s.src = (remote) ? url : chrome.extension.getURL(url);
+    s.src = chrome.extension.getURL(url);
     (document.head||document.documentElement).appendChild(s);
 }
 
-inject("js/psdleChromium.js");
-function init(fallback) {
-    /*if (isFirefox() && fallback !== true) {
-        inject("//repod.github.io/psdle/psdle.min.js",true);
-    } else {*/
-        inject("js/psdle.js");
-    //}
-}
-init()
+(()=>{
+    spawn("js/psdleChromium.js");
+    spawn("js/psdle.js");
+})()
