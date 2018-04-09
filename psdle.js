@@ -1,7 +1,7 @@
-/*! psdle 3.2.8 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-04-06 */
+/*! psdle 3.2.9 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-04-09 */
 var repod = {};
 repod.psdle = {
-    version            : "3.2.8 <small>2018-04-06</small>",
+    version            : "3.2.9 <small>2018-04-09</small>",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -225,10 +225,6 @@ repod.psdle = {
             .append($("<progress />", {id:"startup_progress"}))
             .append("<br><span id='psdle_status'>"+repod.psdle.lang.startup.wait+"</span>");
 
-            if (repod.psdle.config.dlQueue) {
-                repod.psdle.dlQueue.batch.init();
-            }
-
             return sub;
         },
         postRuns: {},
@@ -247,6 +243,10 @@ repod.psdle = {
                 this.go("progress");
                 repod.psdle.game_api.run();
                 return;
+            }
+
+            if (repod.psdle.config.dlQueue) {
+                repod.psdle.dlQueue.batch.init();
             }
 
             this.go("dlList");

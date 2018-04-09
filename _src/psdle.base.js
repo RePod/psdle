@@ -224,10 +224,6 @@ repod.psdle = {
             .append($("<progress />", {id:"startup_progress"}))
             .append("<br><span id='psdle_status'>"+repod.psdle.lang.startup.wait+"</span>");
 
-            if (repod.psdle.config.dlQueue) {
-                repod.psdle.dlQueue.batch.init();
-            }
-
             return sub;
         },
         postRuns: {},
@@ -246,6 +242,10 @@ repod.psdle = {
                 this.go("progress");
                 repod.psdle.game_api.run();
                 return;
+            }
+
+            if (repod.psdle.config.dlQueue) {
+                repod.psdle.dlQueue.batch.init();
             }
 
             this.go("dlList");
