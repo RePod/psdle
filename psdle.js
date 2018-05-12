@@ -1,7 +1,7 @@
-/*! psdle 3.2.9 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-04-09 */
+/*! psdle 3.3.0 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-05-11 */
 var repod = {};
 repod.psdle = {
-    version            : "3.2.9 <small>2018-04-09</small>",
+    version            : "3.3.0 <small>2018-05-11</small>",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -780,12 +780,14 @@ repod.psdle = {
                     }
                 }
 
-                if ($(".search.input.plus").prop("checked")) {
-                    a = val.plus == true;
-                } else if ($(".search.input.plus").prop("indeterminate")) {
-                } else if (!$(".search.input.plus").prop("checked")) {
-                    a = !(val.plus == true);
-                }
+				if (a == true) {
+					if ($(".search.input.plus").prop("checked")) {
+						a = val.plus == true;
+					} else if ($(".search.input.plus").prop("indeterminate")) {
+					} else if (!$(".search.input.plus").prop("checked")) {
+						a = !(val.plus == true);
+					}
+				}
 
                 if (a == true) {
                     that.gamelist_cur.push(val);

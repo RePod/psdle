@@ -1,11 +1,11 @@
-/*! psdle 3.2.9 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2018-04-09 */
+/*! psdle 3.3.0 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2018-05-11 */
 // ==UserScript==
 // @author		RePod
 // @name		PSDLE for Greasemonkey
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		3.2.9
+// @version		3.3.0
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -23,10 +23,10 @@ Alternatively, reconfigure the updating settings in your Userscript manager.
 */
 
 
-/*! psdle 3.2.9 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-04-09 */
+/*! psdle 3.3.0 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-05-11 */
 var repod = {};
 repod.psdle = {
-    version            : "3.2.9 <small>2018-04-09</small>",
+    version            : "3.3.0 <small>2018-05-11</small>",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -805,12 +805,14 @@ repod.psdle = {
                     }
                 }
 
-                if ($(".search.input.plus").prop("checked")) {
-                    a = val.plus == true;
-                } else if ($(".search.input.plus").prop("indeterminate")) {
-                } else if (!$(".search.input.plus").prop("checked")) {
-                    a = !(val.plus == true);
-                }
+				if (a == true) {
+					if ($(".search.input.plus").prop("checked")) {
+						a = val.plus == true;
+					} else if ($(".search.input.plus").prop("indeterminate")) {
+					} else if (!$(".search.input.plus").prop("checked")) {
+						a = !(val.plus == true);
+					}
+				}
 
                 if (a == true) {
                     that.gamelist_cur.push(val);
