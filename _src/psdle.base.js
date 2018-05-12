@@ -779,14 +779,14 @@ repod.psdle = {
                     }
                 }
 
-				if (a == true) {
-					if ($(".search.input.plus").prop("checked")) {
-						a = val.plus == true;
-					} else if ($(".search.input.plus").prop("indeterminate")) {
-					} else if (!$(".search.input.plus").prop("checked")) {
-						a = !(val.plus == true);
-					}
-				}
+                if (a == true) {
+                    if ($(".search.input.plus").prop("checked")) {
+                        a = val.plus == true;
+                    } else if ($(".search.input.plus").prop("indeterminate")) {
+                    } else if (!$(".search.input.plus").prop("checked")) {
+                        a = !(val.plus == true);
+                    }
+                }
 
                 if (a == true) {
                     that.gamelist_cur.push(val);
