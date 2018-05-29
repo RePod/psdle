@@ -68,6 +68,8 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12" style='text-align:center'>
+                    <noscript>JavaScript is not enabled. It's not required but recommended.<br>
+                    Google Analytics via JavaScript is also used (if possible), read privacy policy below for more info.<br><br></noscript>
                     <div class="hidden-md hidden-lg">
                         <a id="imgur_album" href="//imgur.com/a/GD3Eb" target="_blank"><button class="btn btn-primary btn-block"><i class="fa fa-image fa-fw"></i> View screenshots on Imgur!</button></a>
                     </div>
@@ -134,9 +136,9 @@
                         <label class="btn btn-primary btn-block" data-target="#method_source"><input type="radio"/>Source</label>
                     </div>
                     <div id="method_holder" class="accordion-group" style='margin-top:.8em'>
-                        <div id='method_direct' class="collapse in">
+                        <div id='method_direct' class="in">
                             <div class="label label-primary method_info">
-                                Most reliable method, the ultimate last resort.
+                                Direct: Ultimate last resort, should work 99% of the time.
                             </div>
                             <ol>
                                 <li>Copy the following to your clipboard:</li>
@@ -152,7 +154,10 @@
                                 <li>PSDLE should activate.</li>
                             </ol>
                         </div>
-                        <div id='method_userscript' class="collapse">
+                        <div id='method_userscript' class="in">
+                             <div class="label label-primary method_info">
+                                Userscript: Run a saved, local version. Automaticlly updates.
+                            </div>
                             <ol>
                                 <li>Install <a href="https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/" target="_blank">Greasemonkey</a> <small>(<i class="fa fa-firefox"></i> Firefox)</small>, <a href="https://chrome.google.com/webstore/detail/violentmonkey/jinjaccalgkegednnccohejagnlnfdag" target="_blank">Violentmonkey</a> <small>(<i class="fa fa-chrome"></i> Chrome)</small>, or equivalent.</li>
                                 <li>Install the <a id="inline_userscript" href="psdle.user.js">PSDLE userscript</a>.</li>
@@ -160,10 +165,10 @@
                                 <li>PSDLE should activate automatically.</li>
                             </ol>
                         </div>
-                        <div id='method_bookmarklet' class="collapse">
+                        <div id='method_bookmarklet' class="in">
                             <div class="label label-primary method_info">
                                 <!-- <i class="fa fa-info fa-fw" style="float:left;"></i> -->
-                                This method requests the file from this site (hosted by GitHub) when used.
+                                Bookmarklet: Same as Direct, but ran from a bookmark.
                             </div>
                             <ol>
                                 <li>Bookmark this link: <a id="inline_bookmarklet" href="javascript:$.getScript('//repod.github.io/psdle/psdle.min.js');void(0);"><button class='btn btn-primary btn-xs'>Run PSDLE</button></a>
@@ -173,9 +178,9 @@
                             </ol>
                             <small>Some browsers (like Android Chrome) may refuse to execute this from bookmarks. If this is the case, copypasting the bookmark's URL into the address bar manually and prepending <strong>javascript:</strong> should also work, similar to the Direct method.</small><br><br>
                         </div>
-                        <div id='method_extension' class="collapse text-center">
+                        <div id='method_extension' class="in text-center">
                             <div class="label label-primary method_info">
-                                Unless otherwise noted, the following are for desktop browsers.
+                                Extension: Same as Userscript but cooler.
                             </div>
                             <div class='exts'>
                                 <a href="https://chrome.google.com/webstore/detail/psdle/jdjhhapoddhnimgdemnpbfagndcnmhii">
@@ -187,7 +192,7 @@
                             </div>
                             <small>Reviews of all kinds are appreciated!</small><br>
                         </div>
-                        <div id='method_source' class="collapse text-center">
+                        <div id='method_source' class="in text-center">
                             <div class="label label-primary method_info">
                                 For advanced users and conspiracy theorists only!
                             </div>
@@ -216,7 +221,7 @@
                     PSDLE does not and will not ask for your login credentials, as they are not needed to function, but does require an account to be signed in.<br>
                     When signed in, an account's Entitlement (game) data is available and used to generate the list.
                     <br><br>
-                    <div id="paq_container" class="collapse">
+                    <div id="paq_container">
                         <ul>
                             <li><a href="#paq1">Can I select which specific console I send items to for the download queue?</a></li>
                             <li><a href="#paq2">Sending items to the download queue is failing, despite working (minutes) before?</a></li>
@@ -336,7 +341,7 @@
                     </p>
                     <strong>Opting Out:</strong>
                     <p>
-                    If this policy is not to your liking, but you wish to continue using this page (not PSDLE) you may do so with <a href="//tools.google.com/dlpage/gaoptout">this add-on provided by Google.</a> or blocking Google Analytics outright with your preferred method such as an adblocker's privacy rules list.<br>
+                    If this policy is not to your liking, but you wish to continue using this page (not PSDLE) you may do so with <a href="//tools.google.com/dlpage/gaoptout">this add-on provided by Google</a> or blocking Google Analytics outright with your preferred method such as an adblocker's privacy rules list.<br>
                     If the opt-out procedure is not to your liking I would advise ceasing use of this webpage completely.
                     </p>
                     <br>
@@ -370,7 +375,7 @@
                         <h3 id="promo"><i class="fa fa-share fa-fw"></i> Promotional Material</h3>
                     </div>
                     <strong><a href="favicon.png">Favicon (16x16)</a></strong><br>
-                    Logo: <strong><a href="logo/1_psdle_do_not_even.png">22x8</a></strong> - <strong><a href="logo/2_psdle_tiny.png">42x16</a></strong> - <strong><a href="logo/3_psdle_mini.png">84x31</a></strong> - <strong><a href="logo/4_psdle.png">167x62</a></strong> - <strong><a href="logo/5_psdle_big.png">1670x620</a></strong> <small>(<abbr title="Please don't.">Contact for larger resolutions</abbr>)</small><br>
+                    Logo: <strong><a href="logo/1_psdle_do_not_even.png">22x8</a></strong> - <strong><a href="logo/2_psdle_tiny.png">42x16</a></strong> - <strong><a href="logo/3_psdle_mini.png">84x31</a></strong> - <strong><a href="logo/4_psdle.png">167x62</a></strong> - <strong><a href="logo/5_psdle_big.png">1670x620</a></strong> - <strong><a href="logo/psdle.svg">SVG</a></strong>
                     <br>
                     Please do not modify the logo but feel free to resize it as needed!<br>
                     While the screenshots provided are also available to use, I would prefer using your own.

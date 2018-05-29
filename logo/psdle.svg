@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg id="svg4229" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="62px" width="167px" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="0 0 167 62">
+ <g id="g4233">
+  <path id="path4235" fill="#2185f4" d="m166 40.05h-30.1q-0.4 0-0.7 0.25-0.3 0.3-0.3 0.7v0.05q0 0.4 0.3 0.65l0.7 0.3h30.1v19h-45-15-45-45-15v-60h45 45 15 15 45v39.05m-60-39.05v60-60m15 60v-60 60m-75-60v40h-30v20-20h30v-40m15 60v-40h30v-20 20h-30v40"/>
+  <path id="path4237" fill="#fff" d="m166 40.05v1.95h-30.1l-0.7-0.3q-0.3-0.25-0.3-0.65v-0.05q0-0.4 0.3-0.7 0.3-0.25 0.7-0.25h30.1"/>
+  <path id="path4239" stroke-linejoin="round" d="m166 42v-1.95m0 1.95v19h-45-15-45-45-15v-60h45 45 15 15 45v39.05m-75-39.05v20h-30v40m-45 0v-20h30v-40m75 0v60m-15 0v-60" stroke="#fff" stroke-linecap="round" stroke-width="2" fill="none"/>
+  <circle id="path4401" cx="135.87" cy="41.024" r="0.975" fill="#fff"/>
+ </g>
+</svg>
