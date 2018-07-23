@@ -154,8 +154,7 @@ repod.psdle = {
             $("#"+this.elemID).toggleClass("psdledark", this.dark);
         },
         header: function() {
-            return "<div class='amopromo'><a href='https://addons.mozilla.org/firefox/addon/psdleforfirefox/' target='_blank'><span class='psdle_btn'>PSDLE is now available on Firefox Add-Ons!</span></a><br><div>Old Firefox extension users please switch to keep getting updates!</div></div>"
-            + "<span><a href='//repod.github.io/psdle/' target='_blank'><div class='psdle_logo'></div></a><br><small>v"+repod.psdle.version+"</small></span>";
+            return "<span><a href='//repod.github.io/psdle/' target='_blank'><div class='psdle_logo'></div></a><br><small>v"+repod.psdle.version+"</small></span>";
         },
         tagline: function() {
             var that = this;
@@ -465,7 +464,7 @@ repod.psdle = {
                 }
 
                 var systems = $("<span />", {class: "psdle_fancy_bar search options system"}),
-                    order = ["ps1","ps2","ps3","ps4","psp","vita"];
+                    order = ["ps1","ps2","ps3","ps4","vr","psp","vita"];
                 $.each(order, function (i,v) {
                     if (repod.psdle.sys_cache.hasOwnProperty(v)) {
                         $("<span />", {id: "system_"+v, text: repod.psdle.sys_cache[v]}).on("click", regenFunc).appendTo(systems);
@@ -854,6 +853,7 @@ repod.psdle = {
         if (sys == "PS3 PSP PS Vita" || sys == "PS3 PSP" || sys == "PS Vita PSP" || sys.indexOf("PSP") > -1) { sys = "PSP"; }
         else if (sys == "PS3 PS Vita" || sys.indexOf("PS Vita") > -1) { sys = "PS Vita"; }
         else if (sys == "PS3" || sys.indexOf("PS3") > -1) { sys = "PS3"; } //The exception nobody expected, for games that return "PS3 PS4"
+        else if (sys == "PS VR" || sys.indexOf("PS VR") > -1) { sys = "PS VR"; }
         else if (sys == "PS4" || sys.indexOf("PS4") > -1) { sys = "PS4"; } //What could this possibly break?
 
         return sys;
@@ -1193,31 +1193,28 @@ repod.psdle = {
                 }
             });
 
-            if (data.mediaList) {
-                extend.images = [];
-                extend.videos = [];
-
-                var regexImg = new RegExp('\\.(png|jpg)$','i'),
-                    regexVid = new RegExp('\\.mp4$','i'),
-                    media = []
-                    .concat(data.mediaList.screenshots)
-                    .concat(data.mediaList.promo.images)
-                    .concat(data.mediaList.promo.videos);
-
-                $.each(media, function(i,v) {
-                    if (regexImg.test(v.url)) { extend.images.push(v.url); }
-                    else if (regexVid.test(v.url.split("?")[0])) { extend.videos.push(v.url); }
-                });
-
+            //Determine VR.
+            if (data.psVrCompatibility == "required") {
+                extend.platform = ["PS VR"];
             }
 
+            //Images and videos.
+            if (data.mediaList) {
+                extend.images = data.mediaList.screenshots /*data.mediaList.promo.images*/
+                .map(function(k){ return k.url }).filter(function(url){ return /\.(png|jpg)$/i.test(url) })
+
+                //extend.videos = data.mediaList.promo.videos
+                //.map(k => k.url).filter(url => /\.mp4$/i.test(url))
+            }
+
+            //Everything else.
             extend.baseGame = (data.name || undefined)
             extend.category = (data.topCategory || "unknown");
             extend.description = (data.longDescription || undefined)
             extend.displayPrice = ((data.mbSkus && data.mbSkus[0] && data.mbSkus[0].display_price) || undefined)
             //extend.metadata = (data.metadata || undefined)
             extend.publisher = (data.providerName || undefined)
-            extend.rating = ((data.starRating && data.starRating.score) || undefined)
+            extend.rating = (data.starRating) ? [data.starRating.score, data.starRating.total] : undefined;
             extend.releaseDate = (data.releaseDate || undefined) //TO-DO: prettify?
             //if (data.age_limit && data.content_rating) { extend.ageLimit = data.content_rating.rating_system + " " + data.age_limit; }
 
@@ -1441,7 +1438,10 @@ repod.psdle = {
                 dialog.append(t);
             }
 
-            try { if (game.rating) { var star = $("<div>", {class:"star-rating rater-0 ratingStarGeneric star-rating-applied star-rating-readonly star-rating-on",style:"display:inline-block !important;float:none !important;vertical-align:text-top"} ).append($("<a>",{text:""}))[0].outerHTML; dialog.append($("<div>", {id:"dlQARating"} ).append(star+" "+game.rating+" / 5")); } } catch (e) { }
+            if (game.rating) {
+                var star = $("<div>", {class:"fa fa-star"})[0].outerHTML;
+                dialog.append($("<div>", {id:"dlQARating"} ).append(star+" "+game.rating[0]+" / 5 ("+game.rating[1]+")")); 
+            }
 
             dialog.append($("<div>", {id:"dlQAStat",html:repod.psdle.safeGuessSystem(game.platform)+" | <div style='display:inline'>"+game.prettySize+"</div> | "+game.prettyDate} ));
 
