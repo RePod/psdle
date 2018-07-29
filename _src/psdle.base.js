@@ -1066,9 +1066,10 @@ repod.psdle = {
                     if (typeof temp == "object") { temp = (toJSON) ? temp : JSON.stringify(temp).replace(/"/g,"'"); }
                     if (typeof temp == "string") {
                         temp = temp.replace(/([\r\n]+?)/gm," "); //Remove linefeeds
-
-                        if (temp.indexOf('"') > -1) {
-                            temp = '"'+temp.replace(/"/g,'""')+'"'; //Escape dquotes
+                        temp = temp.replace(/"/g,'""'); //Escape dquotes
+    
+                        if (temp.indexOf(sep) > -1 || temp.indexOf('"') > -1) {
+                            temp = '"'+temp+'"';
                         }
                     }
 
