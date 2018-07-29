@@ -401,7 +401,7 @@ repod.psdle = {
         var that = this,
             bad = ["metadata"]; //Stuff we don't handle yet or want being exported.
 
-        this.prop_cache = [];
+        this.prop_cache = ["empty"]; //Start with empty prop.
 
         $.each(this.gamelist, function(i,c) {
             $.each(c, function(key) {
@@ -1055,6 +1055,7 @@ repod.psdle = {
 
             switch (target) {
                 //Exceptions.
+                case "empty": return ""; break;
                 case "category": return (repod.psdle.lang.categories[item.category] || item.category); break;
                 case "platform": return repod.psdle.safeGuessSystem(item.platform); break;
                 case "vitaCompat": return ($.inArray("PS Vita",item.platformUsable) > -1) ? yes : no; break;
