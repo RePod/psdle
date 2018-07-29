@@ -1,7 +1,7 @@
-/*! psdle 3.3.2 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-07-23 */
+/*! psdle 3.3.2 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-07-29 */
 var repod = {};
 repod.psdle = {
-    version            : "3.3.2 <small>2018-07-23</small>",
+    version            : "3.3.2 <small>2018-07-29</small>",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -402,7 +402,7 @@ repod.psdle = {
         var that = this,
             bad = ["metadata"]; //Stuff we don't handle yet or want being exported.
 
-        this.prop_cache = [];
+        this.prop_cache = ["empty"]; //Start with empty prop.
 
         $.each(this.gamelist, function(i,c) {
             $.each(c, function(key) {
@@ -1056,6 +1056,7 @@ repod.psdle = {
 
             switch (target) {
                 //Exceptions.
+                case "empty": return ""; break;
                 case "category": return (repod.psdle.lang.categories[item.category] || item.category); break;
                 case "platform": return repod.psdle.safeGuessSystem(item.platform); break;
                 case "vitaCompat": return ($.inArray("PS Vita",item.platformUsable) > -1) ? yes : no; break;
@@ -1065,8 +1066,16 @@ repod.psdle = {
                     if (!temp) break;
                     if (typeof temp == "boolean") { temp = (temp) ? yes : no }
                     if (typeof temp == "object") { temp = (toJSON) ? temp : JSON.stringify(temp).replace(/"/g,"'"); }
-                    if (typeof temp == "string") { temp = temp.replace(/([\r\n]+?)/gm," "); }
-                    return (typeof temp == "string" && temp.indexOf(sep) > -1) ? "\""+temp+"\"" : temp;
+                    if (typeof temp == "string") {
+                        temp = temp.replace(/([\r\n]+?)/gm," "); //Remove linefeeds
+                        temp = temp.replace(/"/g,'""'); //Escape dquotes
+    
+                        if (temp.indexOf(sep) > -1 || temp.indexOf('"') > -1) {
+                            temp = '"'+temp+'"';
+                        }
+                    }
+
+                    return temp
                     break;
             }
 
@@ -1441,7 +1450,7 @@ repod.psdle = {
 
             if (game.rating) {
                 var star = $("<div>", {class:"fa fa-star"})[0].outerHTML;
-                dialog.append($("<div>", {id:"dlQARating"} ).append(star+" "+game.rating[0]+" / 5 ("+game.rating[1]+")")); 
+                dialog.append($("<div>", {id:"dlQARating"} ).append(star+" "+game.rating[0]+" / 5 ("+game.rating[1]+")"));
             }
 
             dialog.append($("<div>", {id:"dlQAStat",html:repod.psdle.safeGuessSystem(game.platform)+" | <div style='display:inline'>"+game.prettySize+"</div> | "+game.prettyDate} ));
