@@ -1064,8 +1064,15 @@ repod.psdle = {
                     if (!temp) break;
                     if (typeof temp == "boolean") { temp = (temp) ? yes : no }
                     if (typeof temp == "object") { temp = (toJSON) ? temp : JSON.stringify(temp).replace(/"/g,"'"); }
-                    if (typeof temp == "string") { temp = temp.replace(/([\r\n]+?)/gm," "); }
-                    return (typeof temp == "string" && temp.indexOf(sep) > -1) ? "\""+temp+"\"" : temp;
+                    if (typeof temp == "string") {
+                        temp = temp.replace(/([\r\n]+?)/gm," "); //Remove linefeeds
+
+                        if (temp.indexOf('"') > -1) {
+                            temp = '"'+temp.replace(/"/g,'""')+'"'; //Escape dquotes
+                        }
+                    }
+
+                    return temp
                     break;
             }
 
@@ -1440,7 +1447,7 @@ repod.psdle = {
 
             if (game.rating) {
                 var star = $("<div>", {class:"fa fa-star"})[0].outerHTML;
-                dialog.append($("<div>", {id:"dlQARating"} ).append(star+" "+game.rating[0]+" / 5 ("+game.rating[1]+")")); 
+                dialog.append($("<div>", {id:"dlQARating"} ).append(star+" "+game.rating[0]+" / 5 ("+game.rating[1]+")"));
             }
 
             dialog.append($("<div>", {id:"dlQAStat",html:repod.psdle.safeGuessSystem(game.platform)+" | <div style='display:inline'>"+game.prettySize+"</div> | "+game.prettyDate} ));

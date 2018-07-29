@@ -1,7 +1,7 @@
-/*! psdle 3.3.2 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-07-23 */
+/*! psdle 3.3.2 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-07-29 */
 var repod = {};
 repod.psdle = {
-    version            : "3.3.2 <small>2018-07-23</small>",
+    version            : "Testing",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -1065,8 +1065,15 @@ repod.psdle = {
                     if (!temp) break;
                     if (typeof temp == "boolean") { temp = (temp) ? yes : no }
                     if (typeof temp == "object") { temp = (toJSON) ? temp : JSON.stringify(temp).replace(/"/g,"'"); }
-                    if (typeof temp == "string") { temp = temp.replace(/([\r\n]+?)/gm," "); }
-                    return (typeof temp == "string" && temp.indexOf(sep) > -1) ? "\""+temp+"\"" : temp;
+                    if (typeof temp == "string") {
+                        temp = temp.replace(/([\r\n]+?)/gm," "); //Remove linefeeds
+
+                        if (temp.indexOf('"') > -1) {
+                            temp = '"'+temp.replace(/"/g,'""')+'"'; //Escape dquotes
+                        }
+                    }
+
+                    return temp
                     break;
             }
 
@@ -1441,7 +1448,7 @@ repod.psdle = {
 
             if (game.rating) {
                 var star = $("<div>", {class:"fa fa-star"})[0].outerHTML;
-                dialog.append($("<div>", {id:"dlQARating"} ).append(star+" "+game.rating[0]+" / 5 ("+game.rating[1]+")")); 
+                dialog.append($("<div>", {id:"dlQARating"} ).append(star+" "+game.rating[0]+" / 5 ("+game.rating[1]+")"));
             }
 
             dialog.append($("<div>", {id:"dlQAStat",html:repod.psdle.safeGuessSystem(game.platform)+" | <div style='display:inline'>"+game.prettySize+"</div> | "+game.prettyDate} ));
