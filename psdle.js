@@ -1,7 +1,7 @@
-/*! psdle 3.3.3 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-07-29 */
+/*! psdle 3.3.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-07-29 */
 var repod = {};
 repod.psdle = {
-    version            : "3.3.3 <small>2018-07-29</small>",
+    version            : "3.3.4 <small>2018-07-29</small>",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -155,7 +155,8 @@ repod.psdle = {
             $("#"+this.elemID).toggleClass("psdledark", this.dark);
         },
         header: function() {
-            return "<span><a href='//repod.github.io/psdle/' target='_blank'><div class='psdle_logo'></div></a><br><small>v"+repod.psdle.version+"</small></span>";
+            return "<div class='amopromo'><a href='https://goo.gl/forms/4LQrF1KcgvP8WiA92' target='_blank'><span class='psdle_btn'>PSDLE User Survey</span></a><br><div>Let your voice be heard!</div></div>"
+                    + "<span><a href='//repod.github.io/psdle/' target='_blank'><div class='psdle_logo'></div></a><br><small>v"+repod.psdle.version+"</small></span>";
         },
         tagline: function() {
             var that = this;
@@ -1641,23 +1642,6 @@ repod.psdle = {
                 repod.psdle.container.go("startup");
             } catch (e) {
                 alert(e);
-            }
-        }
-    },
-    grid: {
-        generate: {
-            cell: function(index) {
-                var item = repod.psdle.gamelist[index],
-                    out  = $("<div>",{class:"cell"})
-
-                .append($("<img>",{class:"cell_icon",src:item.icon.replace(/(w|h)=\d+/g,"$1=124")}))
-                .append($("<div>",{class:"title psdle_blue",text:item.name}))
-                .append($("<div>",{class:"top"}).append(
-                    $("<div>",{class:"psdle_blue",text:repod.psdle.safeGuessSystem(item.platform)+" | "+item.prettySize})
-                ))
-                .append($("<div>",{class:"date psdle_blue",text:item.prettyDate}))
-
-                return out[0].outerHTML;
             }
         }
     }
