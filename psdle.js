@@ -1,7 +1,7 @@
-/*! psdle 3.3.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-07-29 */
+/*! psdle 3.3.5 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-11-09 */
 var repod = {};
 repod.psdle = {
-    version            : "3.3.4 <small>2018-07-29</small>",
+    version            : "3.3.5 <small>2018-11-09</small>",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -1003,9 +1003,9 @@ repod.psdle = {
                 var tempjson = {"columns":config,"items":[]};
 
                 $.each(repod.psdle.gamelist_cur, function(i) {
-                    var tempprop = {}, item = repod.psdle.gamelist_cur[i];
+                    var tempprop = {};
 
-                    $.each(config, function(i,v) {
+                    $.each(config, function(j,v) {
                         tempprop[v[0]] = repod.psdle.exportList.format(i,v[0],"JSONExp")
                     });
 
