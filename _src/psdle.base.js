@@ -1002,9 +1002,9 @@ repod.psdle = {
                 var tempjson = {"columns":config,"items":[]};
 
                 $.each(repod.psdle.gamelist_cur, function(i) {
-                    var tempprop = {}, item = repod.psdle.gamelist_cur[i];
+                    var tempprop = {};
 
-                    $.each(config, function(i,v) {
+                    $.each(config, function(j,v) {
                         tempprop[v[0]] = repod.psdle.exportList.format(i,v[0],"JSONExp")
                     });
 
