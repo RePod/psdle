@@ -1,7 +1,7 @@
-/*! psdle 3.3.5 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-11-09 */
+/*! psdle 3.3.7 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-12-03 */
 var repod = {};
 repod.psdle = {
-    version            : "3.3.5 <small>2018-11-09</small>",
+    version            : "3.3.7 <small>2018-12-03</small>",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -749,8 +749,8 @@ repod.psdle = {
                     } else { a = false; }
                     break;
                 case "genre":
-                    if (val.metadata && val.metadata.genre) {
-                        t = val.metadata.genre.values.join(",");
+                    if (val.genre) {
+                        t = val.genre.join(",");
                     } else { a = false; }
                     break;
                 case "base":
@@ -1219,14 +1219,15 @@ repod.psdle = {
             }
 
             //Everything else.
-            extend.baseGame = (data.name || undefined)
-            extend.category = (data.topCategory || "unknown");
-            extend.description = (data.longDescription || undefined)
-            extend.displayPrice = ((data.mbSkus && data.mbSkus[0] && data.mbSkus[0].display_price) || undefined)
+            extend.baseGame = data.name || undefined
+            extend.category = data.topCategory || "unknown"
+            extend.description = data.longDescription || undefined
+            extend.displayPrice = (data.mbSkus && data.mbSkus[0] && data.mbSkus[0].display_price) || undefined
             //extend.metadata = (data.metadata || undefined)
-            extend.publisher = (data.providerName || undefined)
-            extend.rating = (data.starRating) ? [data.starRating.score, data.starRating.total] : undefined;
-            extend.releaseDate = (data.releaseDate || undefined) //TO-DO: prettify?
+            extend.publisher = data.providerName || undefined
+            extend.rating = data.starRating ? [data.starRating.score, data.starRating.total] : undefined;
+            extend.releaseDate = data.releaseDate || undefined //TO-DO: prettify?
+            extend.genre = (data.genres.length > 0 && data.genres.sort()) || undefined //TO-DO: aaaaaaaaa
             //if (data.age_limit && data.content_rating) { extend.ageLimit = data.content_rating.rating_system + " " + data.age_limit; }
 
             return extend;
