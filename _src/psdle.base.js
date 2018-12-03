@@ -748,8 +748,8 @@ repod.psdle = {
                     } else { a = false; }
                     break;
                 case "genre":
-                    if (val.metadata && val.metadata.genre) {
-                        t = val.metadata.genre.values.join(",");
+                    if (val.genre) {
+                        t = val.genre.join(",");
                     } else { a = false; }
                     break;
                 case "base":
@@ -1226,6 +1226,7 @@ repod.psdle = {
             extend.publisher = (data.providerName || undefined)
             extend.rating = (data.starRating) ? [data.starRating.score, data.starRating.total] : undefined;
             extend.releaseDate = (data.releaseDate || undefined) //TO-DO: prettify?
+            extend.genre = (data.genres.sort() || undefined) //TO-DO: aaaaaaaaa
             //if (data.age_limit && data.content_rating) { extend.ageLimit = data.content_rating.rating_system + " " + data.age_limit; }
 
             return extend;
