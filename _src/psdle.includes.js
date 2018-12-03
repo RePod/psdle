@@ -1,7 +1,7 @@
 /*! psdle 3.3.6 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2018-12-03 */
 var repod = {};
 repod.psdle = {
-    version            : "3.3.6 <small>2018-12-03</small>",
+    version            : "Testing",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -1219,15 +1219,15 @@ repod.psdle = {
             }
 
             //Everything else.
-            extend.baseGame = (data.name || undefined)
-            extend.category = (data.topCategory || "unknown");
-            extend.description = (data.longDescription || undefined)
-            extend.displayPrice = ((data.mbSkus && data.mbSkus[0] && data.mbSkus[0].display_price) || undefined)
+            extend.baseGame = data.name || undefined
+            extend.category = data.topCategory || "unknown"
+            extend.description = data.longDescription || undefined
+            extend.displayPrice = (data.mbSkus && data.mbSkus[0] && data.mbSkus[0].display_price) || undefined
             //extend.metadata = (data.metadata || undefined)
-            extend.publisher = (data.providerName || undefined)
-            extend.rating = (data.starRating) ? [data.starRating.score, data.starRating.total] : undefined;
-            extend.releaseDate = (data.releaseDate || undefined) //TO-DO: prettify?
-            extend.genre = (data.genres.sort() || undefined) //TO-DO: aaaaaaaaa
+            extend.publisher = data.providerName || undefined
+            extend.rating = data.starRating ? [data.starRating.score, data.starRating.total] : undefined;
+            extend.releaseDate = data.releaseDate || undefined //TO-DO: prettify?
+            extend.genre = (data.genres.length > 0 && data.genres.sort()) || undefined //TO-DO: aaaaaaaaa
             //if (data.age_limit && data.content_rating) { extend.ageLimit = data.content_rating.rating_system + " " + data.age_limit; }
 
             return extend;
