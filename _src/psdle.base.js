@@ -445,6 +445,71 @@ repod.psdle = {
             return sub;
         },
         header: {
+            newSearch: {
+                gen: function() {
+                    var r = $("<div />", {class: "search options container"}),
+                        lang = repod.psdle.lang;
+
+                    //Automatically spawn system filters, maybe make a special *?
+                    var sys = this.helpers.auto_systems(this.children.filter); //Is this a bad idea?
+                    $.each(sys, function (i,v) {
+                        r.append(v);
+                    })
+
+                    r.append(this.children.input());
+
+                    return r;
+                },
+                helpers: {
+                    auto_systems: function(filter) {
+                        var sysCache = repod.psdle.sys_cache,
+                            order = ["ps1","ps2","ps3","ps4","vr","psp","vita"],
+                            filterSystems = [];
+
+                        $.each(order, function (i,v) {
+                            if (sysCache.hasOwnProperty(v)) {
+                                filterSystems.push(filter(sysCache[v],"system"));
+                            }
+                        });
+
+                        return filterSystems;
+                    },
+                    auto_categories: function(filter) {
+                        
+                    }
+                },
+                bind: function() {
+
+                },
+                children: {
+                    input: function() {
+                        var that = this;
+
+                        return $("<input />", {class: "search options syntax"}).on("keypress", function(i) {
+                            if (i.keyCode == 13) {
+                                i.target.before(that.filter(i.target.value));
+                                //TO-DO: rechecks
+                            }
+                        })
+                    },
+                    filter: function(value,type) {
+                        var fContainer = $("<div />", {class: "search options filter"});
+                        
+                        if (type) {
+                            fContainer.addClass(type)
+                        }
+                        
+                        var fClose = $("<div />", {class: "search options filter close", text: "X"}).on("click", function(i) {
+                            i.target.parentNode.remove();
+                            //TO-DO: rechecks
+                        });
+                        var fText = $("<span />", {class: "search options filter value", text: value});
+
+
+                        return fContainer.prepend(fClose).append(fText)[0];
+                    }
+                }
+            },
             gen: function(dlQueue) {
                 return $("<div />", {class: "search main container"})
                     .append(this.searchOptions(dlQueue))
@@ -1069,7 +1134,7 @@ repod.psdle = {
                     if (typeof temp == "string") {
                         temp = temp.replace(/([\r\n]+?)/gm," "); //Remove linefeeds
                         temp = temp.replace(/"/g,'""'); //Escape dquotes
-    
+
                         if (temp.indexOf(sep) > -1 || temp.indexOf('"') > -1) {
                             temp = '"'+temp+'"';
                         }
