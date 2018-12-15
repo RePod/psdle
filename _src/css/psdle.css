@@ -104,6 +104,32 @@ div.amopromo > div {
     text-decoration: underline;
 }
 
+/* New search */
+.search.options.filter.container {
+    display: inline-block;
+    background-color: #2185f4;
+    color: #fff;
+    margin: 0px 0.3em;
+    cursor: default;
+}
+.search.options.filter.container .value {
+    display: inline-block;
+    padding: 0 0.2em;
+    text-align: center;
+}
+.search.options.filter.container.system .value {
+    background-color: red;
+}
+.search.options.filter.close {
+    display: inline-block;
+    color: #fff;
+    padding: 0px 0.3em;
+    cursor: pointer;
+}
+.search.options.filter.close:hover {
+  background-color:rgba(255,51,0,0.8)
+}
+
 /*Search options */
 
 .search.main.container {
