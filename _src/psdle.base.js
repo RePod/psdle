@@ -1269,7 +1269,9 @@ repod.psdle = {
             });
 
             //Determine VR.
-            if (data.psVrCompatibility == "required") {
+            if (data.psVrCompatibility == "required" ||
+                (data.metadata && data.metadata.cn_vrRequired && data.metadata.cn_vrRequired.values[0] == true)
+            ) {
                 extend.platform = ["PS VR"];
             }
 
