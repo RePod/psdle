@@ -445,18 +445,24 @@ repod.psdle = {
             return sub;
         },
         header: {
-            newSearch: {
+            newSearch: { //Keep around to potentially repurpose.
                 gen: function() {
-                    var r = $("<div />", {class: "search options container"}),
-                        lang = repod.psdle.lang;
+                    var r = $("<div />", {class: "search options container"});
 
                     //Automatically spawn system filters, maybe make a special *?
                     var sys = this.helpers.auto_systems(this.children.filter); //Is this a bad idea?
                     $.each(sys, function (i,v) {
                         r.append(v);
                     })
+                    
+                    if (repod.psdle.config.deep_search) {
+                        var cats = this.helpers.auto_categories(this.children.filter); //Is this a bad idea?
+                        $.each(cats, function (i,v) {
+                            r.append(v);
+                        })
+                    }
 
-                    r.append(this.children.input());
+                    r.prepend(this.children.input());
 
                     return r;
                 },
@@ -468,14 +474,28 @@ repod.psdle = {
 
                         $.each(order, function (i,v) {
                             if (sysCache.hasOwnProperty(v)) {
-                                filterSystems.push(filter(sysCache[v],"system"));
+                                filterSystems.push(filter(sysCache[v],{type:"system"}));
                             }
                         });
 
                         return filterSystems;
                     },
                     auto_categories: function(filter) {
-                        
+                        var lang = repod.psdle.lang,
+                            typeCache = repod.psdle.type_cache,
+                            filterCache = ["downloadable_game","demo","unlock","add_on","avatar","application","theme","unknown"];
+                            
+                        $.each(typeCache, function (key) {
+                            var item = filter((lang.categories[key] || key), {type:"category", target: key})
+                            
+                            if (filterCache.indexOf(key) >= 0) {
+                                filterCache[filterCache.indexOf(key)] = item;
+                            } else {
+                                filterCache.push(item);
+                            }
+                        });
+
+                        return filterCache;
                     }
                 },
                 bind: function() {
@@ -487,24 +507,23 @@ repod.psdle = {
 
                         return $("<input />", {class: "search options syntax"}).on("keypress", function(i) {
                             if (i.keyCode == 13) {
-                                i.target.before(that.filter(i.target.value));
+                                $(i.target.parentNode).append(that.filter(i.target.value));
                                 //TO-DO: rechecks
                             }
                         })
                     },
-                    filter: function(value,type) {
-                        var fContainer = $("<div />", {class: "search options filter"});
+                    filter: function(value,data) {
+                        var fContainer = $("<div />", {class: "search options filter container"});
                         
-                        if (type) {
-                            fContainer.addClass(type)
+                        if (data && data.type) {
+                            fContainer.addClass(data.type);
                         }
                         
                         var fClose = $("<div />", {class: "search options filter close", text: "X"}).on("click", function(i) {
                             i.target.parentNode.remove();
                             //TO-DO: rechecks
                         });
-                        var fText = $("<span />", {class: "search options filter value", text: value});
-
+                        var fText = $("<div />", {class: "search options filter value", text: value});
 
                         return fContainer.prepend(fClose).append(fText)[0];
                     }
@@ -512,6 +531,7 @@ repod.psdle = {
             },
             gen: function(dlQueue) {
                 return $("<div />", {class: "search main container"})
+                    //.append(this.newSearch.gen())
                     .append(this.searchOptions(dlQueue))
                     .append(this.stats(dlQueue))
             },

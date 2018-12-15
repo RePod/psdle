@@ -105,6 +105,15 @@ div.amopromo > div {
 }
 
 /* New search */
+.search.options.syntax {
+    display: block;
+    text-align: center;
+    width: 500px;
+    margin: auto;
+    margin-bottom: 1em;
+    border: none;
+    border-bottom: 1px solid black;
+}
 .search.options.filter.container {
     display: inline-block;
     background-color: #2185f4;
@@ -120,6 +129,9 @@ div.amopromo > div {
 .search.options.filter.container.system .value {
     background-color: red;
 }
+.search.options.filter.container.category .value {
+    background-color: green;
+}
 .search.options.filter.close {
     display: inline-block;
     color: #fff;
@@ -128,6 +140,9 @@ div.amopromo > div {
 }
 .search.options.filter.close:hover {
   background-color:rgba(255,51,0,0.8)
+}
+.search.options.container {
+    margin-bottom:20px;
 }
 
 /*Search options */
