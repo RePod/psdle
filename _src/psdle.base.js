@@ -137,6 +137,7 @@ repod.psdle = {
             $("#"+this.elemID)
             .slideUp(function() {
                 $(this).children().remove();
+
                 $(this)
                 .append(content)
                 .toggleClass("psdledark", that.dark)
@@ -258,6 +259,77 @@ repod.psdle = {
             repod.psdle.config.lastsort_r = false;
 
             return repod.psdle.table.gen();
+        },
+        menu: {
+            gen: function(menu) {
+                    var r = $("<div />", {class: "menu"});
+
+                    r.append(this.dlList())
+
+                    return r;
+            },
+            dlList: function() {
+                var lang = repod.psdle.lang,
+                    r = $("<div />", {text: lang.labels.exportView});
+                //$("<div />", {text: "Queue"}).appendTo(r);
+
+                var groups = [this.helpers.auto_systems()];
+                if (repod.psdle.config.deep_search) {
+                    groups.push(this.helpers.auto_categories())
+                }
+
+                $.each(groups, function (i,v) {
+                    var group = $("<fieldset />");
+
+                    $.each(v, function (j,w) {
+                        group.append(w);
+                    });
+
+                    group.appendTo(r);
+                });
+
+                return r;
+            },
+            helpers: {
+                genCheckbox: function(cbName,cbValue,cbLabel) {
+                    return $("<label />", {text: cbLabel}).prepend(
+                        $("<input />", {type: "checkbox", checked: "checked", name: cbName, value: cbValue})
+                    );
+                },
+                auto_systems: function() {
+                    var that = this,
+                        sysCache = repod.psdle.sys_cache,
+                        order = ["ps1","ps2","ps3","ps4","vr","psp","vita"],
+                        filterSystems = [];
+
+                    $.each(order, function (i,v) {
+                        if (sysCache.hasOwnProperty(v)) {
+                            filterSystems.push(that.genCheckbox("system",v,sysCache[v]));
+                        }
+                    });
+
+                    return filterSystems;
+                },
+                auto_categories: function() {
+                    var that = this,
+                        lang = repod.psdle.lang,
+                        typeCache = repod.psdle.type_cache,
+                        filterCache = ["downloadable_game","demo","unlock","add_on","avatar","application","theme","unknown"],
+                        tempCache = [];
+
+                    $.each(typeCache, function (key) {
+                        var item = that.genCheckbox("category",key,(lang.categories[key] || key))
+
+                        if (filterCache.indexOf(key) >= 0) {
+                            filterCache[filterCache.indexOf(key)] = item;
+                        } else {
+                            tempCache.push(item); //TO-DO: Sort based on label.
+                        }
+                    });
+
+                    return filterCache.concat(tempCache);
+                }
+            }
         }
     },
     macrossBrain: function(callback) {
@@ -454,7 +526,7 @@ repod.psdle = {
                     $.each(sys, function (i,v) {
                         r.append(v);
                     })
-                    
+
                     if (repod.psdle.config.deep_search) {
                         var cats = this.helpers.auto_categories(this.children.filter); //Is this a bad idea?
                         $.each(cats, function (i,v) {
@@ -484,10 +556,10 @@ repod.psdle = {
                         var lang = repod.psdle.lang,
                             typeCache = repod.psdle.type_cache,
                             filterCache = ["downloadable_game","demo","unlock","add_on","avatar","application","theme","unknown"];
-                            
+
                         $.each(typeCache, function (key) {
                             var item = filter((lang.categories[key] || key), {type:"category", target: key})
-                            
+
                             if (filterCache.indexOf(key) >= 0) {
                                 filterCache[filterCache.indexOf(key)] = item;
                             } else {
@@ -514,11 +586,11 @@ repod.psdle = {
                     },
                     filter: function(value,data) {
                         var fContainer = $("<div />", {class: "search options filter container"});
-                        
+
                         if (data && data.type) {
                             fContainer.addClass(data.type);
                         }
-                        
+
                         var fClose = $("<div />", {class: "search options filter close", text: "X"}).on("click", function(i) {
                             i.target.parentNode.remove();
                             //TO-DO: rechecks
@@ -985,7 +1057,7 @@ repod.psdle = {
 
                 if (resp !== null) {
                     try {
-                        that.config = JSON.parse(resp)
+                        that.config = JSON.parse(resp).filter(key => repod.psdle.prop_cache.indexOf(key[0]) > -1);
                     }
                     catch (e) {
                     }
