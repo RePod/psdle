@@ -1,7 +1,7 @@
-/*! psdle 3.3.7 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2019-01-04 */
+/*! psdle 3.3.8 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2019-02-13 */
 var repod = {};
 repod.psdle = {
-    version            : "Testing",
+    version            : "3.3.8 <small>2019-02-13</small>",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -156,8 +156,8 @@ repod.psdle = {
             $("#"+this.elemID).toggleClass("psdledark", this.dark);
         },
         header: function() {
-            return "<div class='amopromo'><a href='https://goo.gl/forms/4LQrF1KcgvP8WiA92' target='_blank'><span class='psdle_btn'>PSDLE User Survey</span></a><br><div>Let your voice be heard!</div></div>"
-                    + "<span><a href='//repod.github.io/psdle/' target='_blank'><div class='psdle_logo'></div></a><br><small>v"+repod.psdle.version+"</small></span>";
+            //"<div class='amopromo'><a href='https://goo.gl/forms/4LQrF1KcgvP8WiA92' target='_blank'><span class='psdle_btn'>PSDLE User Survey</span></a><br><div>Let your voice be heard!</div></div>"
+            return "<span><a href='//repod.github.io/psdle/' target='_blank'><div class='psdle_logo'></div></a><br><small>v"+repod.psdle.version+"</small></span>";
         },
         tagline: function() {
             var that = this;
@@ -1058,7 +1058,11 @@ repod.psdle = {
 
                 if (resp !== null) {
                     try {
-                        that.config = JSON.parse(resp).filter(key => repod.psdle.prop_cache.indexOf(key[0]) > -1);
+                        that.config = JSON.parse(resp).filter(function(key) {
+                            var valid = repod.psdle.prop_cache.indexOf(key[0]) > -1;
+                            !valid && console.warn(key);
+                            return valid;
+                        });
                     }
                     catch (e) {
                     }
