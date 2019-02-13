@@ -1057,7 +1057,11 @@ repod.psdle = {
 
                 if (resp !== null) {
                     try {
-                        that.config = JSON.parse(resp).filter(key => repod.psdle.prop_cache.indexOf(key[0]) > -1);
+                        that.config = JSON.parse(resp).filter(function(key) {
+                            var valid = repod.psdle.prop_cache.indexOf(key[0]) > -1;
+                            !valid && console.warn(key);
+                            return valid;
+                        });
                     }
                     catch (e) {
                     }
