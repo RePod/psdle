@@ -286,8 +286,8 @@ span[id^=system_],
     max-width: 100%;
     vertical-align: middle;
     padding: 3px;
-    min-width: 42px;
-    min-height: 42px
+    width: 42px;
+    height: 42px
 }
 /*Sorting        */
 
