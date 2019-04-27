@@ -351,8 +351,7 @@ repod.psdle = {
 
         this.gamelist = [];
         var i18n = this.config.valkyrieInstance.lookup('service:i18n');
-        var entitlements = (entitlements || this.config.valkyrieInstance.lookup("service:macross-brain").macrossBrainInstance._entitlementStore._storage._entitlementMapCache);
-        //.concat(this.e_inject_cache);
+        var entitlements = (entitlements || this.config.valkyrieInstance.lookup("service:macross-brain").macrossBrainInstance._entitlementStore._storage._entitlementMapCache).concat(this.e_inject_cache);
 
         $.each(entitlements, function(index,obj) {
             if (that.isValidContent(obj)) { //Determine if game content.
