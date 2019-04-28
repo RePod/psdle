@@ -213,11 +213,11 @@ td:nth-child(n+3):nth-child(-n+7),
 th:nth-child(n+3):nth-child(-n+7) {
     text-align: center;
     padding: 0 5px !important;
-    position: relative
+    /*position: relative*/
 }
 td:first-child {
     text-align: center;
-    position: relative
+    /*position: relative*/
 }
 /*Search buttons */
 

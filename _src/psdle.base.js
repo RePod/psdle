@@ -836,20 +836,31 @@ repod.psdle = {
                 $("#psdle_index_"+index+" .psdle_game_icon").attr("src",this.toSize(repod.psdle.gamelist[index].icon));
             },
             smartScroll: function() {
-                var padding = 5,
-                    low     = window.scrollY,
-                    high    = low + window.innerHeight,
-                    that    = this,
-                    t       = $("[id^=psdle_index_]").filter(function(a) { var pos = $(this).offset().top; if (pos >= low && pos <= high) { return 1; } }).filter(":first, :last"),
-                    first   = ($(t[0]).index() - padding <= 0) ? 0 : $(t[0]).index() - padding,
-                    last    = $(t[1]).index() + padding;
+                var that    = this;
+                var padding = 10;
+                var low     = window.scrollY;
+                var high    = low + window.innerHeight;
+                var t       = [];
 
-                $("[id^=psdle_index_]").slice(first,last).not(".go_icon").each(function(a) {
-                    $(this).addClass("go_icon");
-                    var b = this;
-                    setTimeout(function() {
-                        that.validate($(b).attr("id").split("_").pop());
-                    }, a*50);
+                $("[id^=psdle_index_]").filter(function(index, item) {
+                  return index % padding === 0
+                })
+                .each(function(i, item) {
+                  var pos = $(item).offset().top;
+
+                  if (pos > high) { return false; }
+                  if (pos >= low) {
+                    t.push(item)
+                  }
+                });
+
+                var first = Math.max(0,$(t[0]).index() - padding);
+                var last  = $(t.pop()).index() + padding;
+
+                $("[id^=psdle_index_]").slice(first,last).each(function(a) {
+                    if ($(this).data("icon") === 1) return;
+                    $(this).data("icon", 1);
+                    that.validate($(this).attr("id").split("_").pop());
                 });
             }
         }
