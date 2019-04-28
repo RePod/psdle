@@ -502,8 +502,6 @@ repod.psdle = {
         gen: function() {
             var that = this;
 
-            $("#muh_games_container").css({"position":"absolute"});
-
             var sub = $("<div />", {id: repod.psdle.container.subElemID})
             .append(this.header.gen())
             .append("<div class='psdle_table'><table><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name'>"+repod.psdle.lang.columns.name+"</th><th title='Approximate, check store page for all supported platforms.'>"+repod.psdle.lang.columns.platform+"</th><th id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table></div>");
@@ -760,7 +758,7 @@ repod.psdle = {
                 
                 //CHROME: Hacked in (for now) flexbox for performance testing
                 $.each(repod.psdle.gamelist_cur,function (a,val) {
-                    temp += `<div class="row"><span><img src="" /></span><span class="title">${val.name}</span><span class="platform">${val.platform[0]}</span><span class="size">${val.prettySize}</span><span class="date">${val.prettyDate}</span></div>`
+                    temp += `<div class="row" id="psdle_index_${val.index -1}"><span><img src="" class="psdle_game_icon" /></span><span class="title">${val.name}</span><span class="platform">${val.platform[0]}</span><span class="size">${val.prettySize}</span><span class="date">${val.prettyDate}</span></div>`
                 });
 
                 $(".search.stats.all.current").text(repod.psdle.gamelist_cur.length)
@@ -791,14 +789,14 @@ repod.psdle = {
             this.regen(true);
         },
         margin: function() {
-            $(".psdle_table").animate({"margin-top": $(".search.main.container").outerHeight() - $("#sub_container").css("padding-top").replace("px","")+"px"});
+            $(".psdle_table").css({"margin-top": $(".search.main.container").outerHeight() - $("#sub_container").css("padding-top").replace("px","")+"px"});
             this.icons.smartScroll();
         },
         icons: {
             select: function(type) {
                 var that = this;
 
-                $(document).off("scroll").on("scroll",function() {
+                $("#muh_games_container").off("scroll").on("scroll",function() {
                     that.smartScroll();
                 });
                 this.smartScroll();
