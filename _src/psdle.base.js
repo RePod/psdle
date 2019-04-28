@@ -750,13 +750,18 @@ repod.psdle = {
 
                 repod.psdle.exportList.delimited.destroy();
 
-                $.each(repod.psdle.gamelist_cur,function (a,val) {
+                /*$.each(repod.psdle.gamelist_cur,function (a,val) {
                     if (val.plus) {
                         plus++;
                     }
                     temp += repod.psdle.table_utils.gen.row(val);
                 });
-                temp += repod.psdle.table_utils.gen.totals();
+                temp += repod.psdle.table_utils.gen.totals();*/
+                
+                //CHROME: Hacked in (for now) flexbox for performance testing
+                $.each(repod.psdle.gamelist_cur,function (a,val) {
+                    temp += `<div class="row"><span><img src="" /></span><span class="title">${val.name}</span><span class="platform">${val.platform[0]}</span><span class="size">${val.prettySize}</span><span class="date">${val.prettyDate}</span></div>`
+                });
 
                 $(".search.stats.all.current").text(repod.psdle.gamelist_cur.length)
                 $(".search.stats.all.total").text(repod.psdle.gamelist.length)
@@ -777,7 +782,7 @@ repod.psdle = {
                 } else {
                     $("#psdleplus").css($(".headerUserInfo.cart").css(["background-image","background-repeat"])).css({"height":"14px","width":"14px","background-position":"left -5px"});
                 }*/
-                $(".psdle_table tbody").html(temp);
+                $(".psdle_table").html(temp);
 
                 this.icons.select();
             }
@@ -1029,6 +1034,8 @@ repod.psdle = {
     injectCSS: function() {
         //CSS prefers " over ' to avoid string literal issues.
         var temp = '{{{include "css/psdle.min.css"}}}';
+        //CHROME: flexbox css
+        temp += '.row{display:flex;align-items:center;cursor:pointer}.row:hover{background-color:red!important}.row>*{padding:5px}.row img{height:42px;width:42px;flex:0 1 42px}.row .title{flex:1 1}.row .platform,.row .size,.row. .date{flex:0 1}.row:nth-child(2n){background-color:#eee}';
         $("head").append('<style type="text/css">'+temp+'</style>');
     },
     exportList: {
