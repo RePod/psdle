@@ -209,16 +209,14 @@ tr[id^=psdle_index_].is_plus td:last-child {
 tr:nth-child(2n) {
     background-color: #EEE
 }
-td:nth-child(n+3):nth-child(-n+7),
-th:nth-child(n+3):nth-child(-n+7) {
-    text-align: center;
-    padding: 0 5px !important;
-    /*position: relative*/
+td {
+  text-align: center;
 }
-td:first-child {
-    text-align: center;
-    /*position: relative*/
+th:nth-child(2),
+td:nth-child(2) {
+  text-align:left !important;
 }
+
 /*Search buttons */
 
 #psdle_search_select,
