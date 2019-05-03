@@ -139,7 +139,7 @@
                     <div id="method_holder" class="accordion-group" style='margin-top:.8em'>
                         <div id='method_direct' class="in">
                             <div class="label label-primary method_info">
-                                Direct: Ultimate last resort, should work 99% of the time.
+                                Direct: Ultimate last resort.
                             </div>
                             <ol>
                                 <li>Copy the following to your clipboard:</li>
@@ -154,12 +154,12 @@
                                 <li>Submit.</li>
                                 <li>PSDLE should activate.</li>
                             </ol>
-                            <small>Browsers are starting to tighten security around running Javascript from the address bar so if Direct does not work make sure to try other methods. Bookmarklet is the next step up, followed by Userscript then extensions.</small>
+                            <small>If Direct does not work try other methods. Bookmarklet is the next step, followed by Userscript then extensions. Pasting the above line into your browser's console is also viable but not recommended.</small>
                         </div>
                         <div id='method_bookmarklet' class="in">
                             <div class="label label-primary method_info">
                                 <!-- <i class="fa fa-info fa-fw" style="float:left;"></i> -->
-                                Bookmarklet: Same as Direct, but ran from a bookmark.
+                                Bookmarklet: Same as Direct, but from a bookmark.
                             </div>
                             <ol>
                                 <li>Bookmark this link: <a id="inline_bookmarklet" href="javascript:$.getScript('//repod.github.io/psdle/psdle.min.js');void(0);"><button class='btn btn-primary btn-xs'>Run PSDLE</button></a>
@@ -167,7 +167,7 @@
                                 <li>Select the bookmark from your bookmarks.</li>
                                 <li>PSDLE should activate.</li>
                             </ol>
-                            <small>Some browsers (like Android Chrome) may refuse to execute this from bookmarks. If this is the case, copypasting the bookmark's URL into the address bar manually and prepending <strong>javascript:</strong> should also work, similar to the Direct method.</small><br><br>
+                            <small>Some browsers (like Android Chrome) may refuse to execute this from bookmarks.</small><br><br>
                         </div>
                         <div id='method_userscript' class="in">
                              <div class="label label-primary method_info">
@@ -184,7 +184,8 @@
                         </div>
                         <div id='method_extension' class="in text-center">
                             <div class="label label-primary method_info">
-                                Extension: Same as Userscript but cooler.
+                                Extension: Same as Userscript but cooler.<br>
+                                Probably almost always works, sometimes.
                             </div>
                             <div class='exts'>
                                 <a href="https://chrome.google.com/webstore/detail/psdle/jdjhhapoddhnimgdemnpbfagndcnmhii">
