@@ -131,8 +131,8 @@
                     </div>
                     <div id='method_select' class="btn-group input-group btn-group-justified" data-toggle="buttons">
                         <label class="btn btn-primary active btn-block" data-target="#method_direct"><input type="radio"/>Direct</label>
-                        <label class="btn btn-primary btn-block" data-target="#method_userscript"><input type="radio"/>Userscript</label>
                         <label class="btn btn-primary btn-block" data-target="#method_bookmarklet"><input type="radio"/><!--<i class="fa fa-mobile fa-fw"></i>-->Bookmarklet</label>
+                        <label class="btn btn-primary btn-block" data-target="#method_userscript"><input type="radio"/>Userscript</label>
                         <label class="btn btn-primary btn-block" data-target="#method_extension"><input type="radio"/>Extension</label>
                         <label class="btn btn-primary btn-block" data-target="#method_source"><input type="radio"/>Source</label>
                     </div>
@@ -154,19 +154,7 @@
                                 <li>Submit.</li>
                                 <li>PSDLE should activate.</li>
                             </ol>
-                        </div>
-                        <div id='method_userscript' class="in">
-                             <div class="label label-primary method_info">
-                                Userscript: Run a saved, local version. Automaticlly updates.
-                            </div>
-                            <ol>
-                                <!-- https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/ -->
-                                <li>Install Violentmonkey</a> (<a href="https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/" target="_blank"><i class="fa fa-firefox"></i> Firefox</a>, <a href="https://chrome.google.com/webstore/detail/violentmonkey/jinjaccalgkegednnccohejagnlnfdag" target="_blank"><i class="fa fa-chrome"></i> Chrome</a>), or equivalent.</li>
-                                    <ul><li><small>Traditional Greasemonkey for Firefox has an <a href="https://github.com/RePod/psdle/issues/60" target="_blank">issue</a>.</small></li></ul>
-                                <li>Install the <a id="inline_userscript" href="psdle.user.js">PSDLE userscript</a>.</li>
-                                <li>Navigate to the online store.</li>
-                                <li>PSDLE should activate automatically.</li>
-                            </ol>
+                            <small>Browsers are starting to tighten security around running Javascript from the address bar so if Direct does not work make sure to try other methods. Bookmarklet is the next step up, followed by Userscript then extensions.</small>
                         </div>
                         <div id='method_bookmarklet' class="in">
                             <div class="label label-primary method_info">
@@ -180,6 +168,19 @@
                                 <li>PSDLE should activate.</li>
                             </ol>
                             <small>Some browsers (like Android Chrome) may refuse to execute this from bookmarks. If this is the case, copypasting the bookmark's URL into the address bar manually and prepending <strong>javascript:</strong> should also work, similar to the Direct method.</small><br><br>
+                        </div>
+                        <div id='method_userscript' class="in">
+                             <div class="label label-primary method_info">
+                                Userscript: Run a saved, local version. Automatically updates.
+                            </div>
+                            <ol>
+                                <!-- https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/ -->
+                                <li>Install Violentmonkey</a> (<a href="https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/" target="_blank"><i class="fa fa-firefox"></i> Firefox</a>, <a href="https://chrome.google.com/webstore/detail/violentmonkey/jinjaccalgkegednnccohejagnlnfdag" target="_blank"><i class="fa fa-chrome"></i> Chrome</a>), or equivalent.</li>
+                                    <ul><li><small>Traditional Greasemonkey for Firefox has an <a href="https://github.com/RePod/psdle/issues/60" target="_blank">issue</a>.</small></li></ul>
+                                <li>Install the <a id="inline_userscript" href="psdle.user.js">PSDLE userscript</a>.</li>
+                                <li>Navigate to the online store.</li>
+                                <li>PSDLE should activate automatically.</li>
+                            </ol>
                         </div>
                         <div id='method_extension' class="in text-center">
                             <div class="label label-primary method_info">
