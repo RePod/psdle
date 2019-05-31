@@ -1038,11 +1038,11 @@ repod.psdle = {
 
             //TO-DO: window max-height: 80%;
             if (this.config.length == 0) { //If export template is empty, set translated defaults.
-                this.config = [ //[target, name]
-                    ["name", repod.psdle.lang.columns.name],
-                    ["platform", repod.psdle.lang.columns.platform],
-                    ["prettySize", repod.psdle.lang.columns.size],
-                    ["prettyDate", repod.psdle.lang.columns.date]
+                this.config = [ //{property, title}
+                    {"property": "name", "title": repod.psdle.lang.columns.name},
+                    {"property": "platform", "title": repod.psdle.lang.columns.platform},
+                    {"property": "prettySize", "title": repod.psdle.lang.columns.size},
+                    {"property": "prettyDate", "title": repod.psdle.lang.columns.date}
                 ];
             }
 
@@ -1068,7 +1068,7 @@ repod.psdle = {
                 if (resp !== null) {
                     try {
                         that.config = JSON.parse(resp).filter(function(key) {
-                            var valid = repod.psdle.prop_cache.indexOf(key[0]) > -1;
+                            var valid = repod.psdle.prop_cache.indexOf(key.property) > -1;
                             !valid && console.warn(key);
                             return valid;
                         });
@@ -1093,8 +1093,8 @@ repod.psdle = {
             var table = $("<table id='export_table'><tr><th>"+repod.psdle.lang.strings.exportColumnName+"</th><th>"+repod.psdle.lang.strings.exportProperty+"</th></tr>");
 
             for (i=0; i<max; i++) {
-                var target = this.config[i][0];
-                var text = (this.config[i][1] || "");
+                var target = this.config[i].property;
+                var text = (this.config[i].title || "");
                 var select2 = select.clone();
 
                 if (this.config[i]) {
@@ -1137,10 +1137,10 @@ repod.psdle = {
                 columns = [];
 
             config.each(function() {
-                columns.push([
-                    $(this).find("select option:selected").val(),
-                    $(this).find("input").val()
-                ]);
+                columns.push({
+                    "property": $(this).find("select option:selected").val(),
+                    "title": $(this).find("input").val()
+                });
             });
 
             this.config = columns;
@@ -1176,7 +1176,7 @@ repod.psdle = {
                     var tempprop = {};
 
                     $.each(config, function(j,v) {
-                        tempprop[v[0]] = repod.psdle.exportList.format(i,v[0],"JSONExp")
+                        tempprop[v.property] = repod.psdle.exportList.format(i,v.property,"JSONExp")
                     });
 
                     tempjson.items.push(tempprop);
@@ -1264,7 +1264,7 @@ repod.psdle = {
                     no = repod.psdle.lang.strings.no;
 
                 $.each(this.config, function(i,v) {
-                    var target = v[0];
+                    var target = v.property;
 
                     if (v) {
                         out += that.format(index,target,sep) + sep;
@@ -1276,14 +1276,14 @@ repod.psdle = {
                 //Footer.
                 //To-do: Reimplement totals based on selected columns.
                 $.each(this.config, function(i,v) {
-                    var target = v[0];
+                    var target = v.property;
                     out += target+sep;
                 }); //Align to columns.
                 out += "\""+JSON.stringify(this.config).replace(/"/g,"'")+"\""; //JSON in extra column.
             } else {
                 //Generally the first row, but more so a catch-all that spits out column names.
                 $.each(this.config, function(i,v) {
-                    out += v[1]+sep;
+                    out += v.title + sep;
                 });
 
                 out += "\n";
