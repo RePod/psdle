@@ -1,7 +1,7 @@
 /*! psdle 3.3.12 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2019-05-31 */
 var repod = {};
 repod.psdle = {
-    version            : "Testing",
+    version            : "3.3.12 <small>2019-05-31</small>",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -1281,7 +1281,7 @@ repod.psdle = {
                     out += target+sep;
                 }); //Align to columns.
                 out += "\""+JSON.stringify(this.config).replace(/"/g,"'")+"\""+sep; //JSON in extra column.
-                out += repod.psdle.version;
+                out += repod.psdle.version+sep;
             } else {
                 //Generally the first row, but more so a catch-all that spits out column names.
                 $.each(this.config, function(i,v) {
