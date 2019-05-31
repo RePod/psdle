@@ -1,6 +1,6 @@
 ---
 name: 'Bug report: Importing and Exporting'
-about: Create a report to help us improve
+about: Problems importing/exporting to third party software.
 title: I submitted an issue without erasing the default title
 labels: ''
 assignees: ''
