@@ -1170,7 +1170,7 @@ repod.psdle = {
         json: {
             gen: function() {
                 var config = repod.psdle.exportList.config;
-                var tempjson = {"columns":config,"items":[]};
+                var tempjson = {"version":repod.psdle.version,"columns":config,"items":[]};
 
                 $.each(repod.psdle.gamelist_cur, function(i) {
                     var tempprop = {};
@@ -1279,7 +1279,8 @@ repod.psdle = {
                     var target = v.property;
                     out += target+sep;
                 }); //Align to columns.
-                out += "\""+JSON.stringify(this.config).replace(/"/g,"'")+"\""; //JSON in extra column.
+                out += "\""+JSON.stringify(this.config).replace(/"/g,"'")+"\""+sep; //JSON in extra column.
+                out += repod.psdle.version+sep;
             } else {
                 //Generally the first row, but more so a catch-all that spits out column names.
                 $.each(this.config, function(i,v) {
