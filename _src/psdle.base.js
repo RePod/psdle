@@ -1,6 +1,7 @@
 var repod = {};
 repod.psdle = {
     version            : "Testing",
+    versiondate        : "Infinity",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -156,7 +157,7 @@ repod.psdle = {
         },
         header: function() {
             //"<div class='amopromo'><a href='https://goo.gl/forms/4LQrF1KcgvP8WiA92' target='_blank'><span class='psdle_btn'>PSDLE User Survey</span></a><br><div>Let your voice be heard!</div></div>"
-            return "<span><a href='//repod.github.io/psdle/' target='_blank'><div class='psdle_logo'></div></a><br><small>v"+repod.psdle.version+"</small></span>";
+            return "<span><a href='//repod.github.io/psdle/' target='_blank'><div class='psdle_logo'></div></a><br><small>v"+repod.psdle.version+" <small>"+repod.psdle.versiondate+"</small></small></span>";
         },
         tagline: function() {
             var that = this;
@@ -1170,7 +1171,11 @@ repod.psdle = {
         json: {
             gen: function() {
                 var config = repod.psdle.exportList.config;
-                var tempjson = {"version":repod.psdle.version,"columns":config,"items":[]};
+                var tempjson = {
+                    "version": repod.psdle.version,
+                    "columns": config,
+                    "items": []
+                };
 
                 $.each(repod.psdle.gamelist_cur, function(i) {
                     var tempprop = {};
