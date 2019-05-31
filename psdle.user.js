@@ -1,11 +1,11 @@
-/*! psdle 3.3.12 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2019-05-31 */
+/*! psdle 3.3.13 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2019-05-31 */
 // ==UserScript==
 // @author		RePod
 // @name		PSDLE for Greasemonkey
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		3.3.12
+// @version		3.3.13
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -23,10 +23,11 @@ Alternatively, reconfigure the updating settings in your Userscript manager.
 */
 
 
-/*! psdle 3.3.12 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2019-05-31 */
+/*! psdle 3.3.13 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2019-05-31 */
 var repod = {};
 repod.psdle = {
-    version            : "3.3.12 <small>2019-05-31</small>",
+    version            : "3.3.13",
+    versiondate        : "2019-05-31",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -182,7 +183,7 @@ repod.psdle = {
         },
         header: function() {
             //"<div class='amopromo'><a href='https://goo.gl/forms/4LQrF1KcgvP8WiA92' target='_blank'><span class='psdle_btn'>PSDLE User Survey</span></a><br><div>Let your voice be heard!</div></div>"
-            return "<span><a href='//repod.github.io/psdle/' target='_blank'><div class='psdle_logo'></div></a><br><small>v"+repod.psdle.version+"</small></span>";
+            return "<span><a href='//repod.github.io/psdle/' target='_blank'><div class='psdle_logo'></div></a><br><small>v"+repod.psdle.version+" <small>"+repod.psdle.versiondate+"</small></small></span>";
         },
         tagline: function() {
             var that = this;
@@ -1196,7 +1197,11 @@ repod.psdle = {
         json: {
             gen: function() {
                 var config = repod.psdle.exportList.config;
-                var tempjson = {"version":repod.psdle.version,"columns":config,"items":[]};
+                var tempjson = {
+                    "version": repod.psdle.version,
+                    "columns": config,
+                    "items": []
+                };
 
                 $.each(repod.psdle.gamelist_cur, function(i) {
                     var tempprop = {};
