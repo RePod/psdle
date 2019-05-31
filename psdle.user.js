@@ -1,11 +1,11 @@
-/*! psdle 3.3.11 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2019-05-30 */
+/*! psdle 3.3.12 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2019-05-31 */
 // ==UserScript==
 // @author		RePod
 // @name		PSDLE for Greasemonkey
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		3.3.11
+// @version		3.3.12
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -23,10 +23,10 @@ Alternatively, reconfigure the updating settings in your Userscript manager.
 */
 
 
-/*! psdle 3.3.11 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2019-05-30 */
+/*! psdle 3.3.12 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2019-05-31 */
 var repod = {};
 repod.psdle = {
-    version            : "3.3.11 <small>2019-05-30</small>",
+    version            : "3.3.12 <small>2019-05-31</small>",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -1196,7 +1196,7 @@ repod.psdle = {
         json: {
             gen: function() {
                 var config = repod.psdle.exportList.config;
-                var tempjson = {"columns":config,"items":[]};
+                var tempjson = {"version":repod.psdle.version,"columns":config,"items":[]};
 
                 $.each(repod.psdle.gamelist_cur, function(i) {
                     var tempprop = {};
@@ -1305,7 +1305,8 @@ repod.psdle = {
                     var target = v.property;
                     out += target+sep;
                 }); //Align to columns.
-                out += "\""+JSON.stringify(this.config).replace(/"/g,"'")+"\""; //JSON in extra column.
+                out += "\""+JSON.stringify(this.config).replace(/"/g,"'")+"\""+sep; //JSON in extra column.
+                out += repod.psdle.version+sep;
             } else {
                 //Generally the first row, but more so a catch-all that spits out column names.
                 $.each(this.config, function(i,v) {
