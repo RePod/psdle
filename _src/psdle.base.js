@@ -1220,7 +1220,7 @@ repod.psdle = {
         },
         download: function(download, content) {
             $("<a>",{
-              "download" : "psdle_"+(new Date().toLocaleString().replace(/[:\/]/g,"-"))+"_"+(download || "generic.txt"),
+              "download" : "psdle_"+(new Date().toISOString())+"_"+(download || "generic.txt"),
               "href" : "data:text/csv;charset=utf-8,"+encodeURIComponent(content)
             })[0].dispatchEvent(new MouseEvent("click"));
         },
