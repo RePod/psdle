@@ -1219,10 +1219,14 @@ repod.psdle = {
             }
         },
         download: function(download, content) {
+            var blob = new Blob([content], {type: "octet/stream"});
+            
             $("<a>",{
               "download" : "psdle_"+(new Date().toISOString())+"_"+(download || "generic.txt"),
-              "href" : "data:text/csv;charset=utf-8,"+encodeURIComponent(content)
+              "href" : window.URL.createObjectURL(blob)
             })[0].dispatchEvent(new MouseEvent("click"));
+            
+            window.URL.revokeObjectURL(blob);
         },
         format: function(index,target,sep) {
             var item = repod.psdle.gamelist_cur[index],
