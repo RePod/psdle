@@ -166,7 +166,7 @@ repod.psdle = {
             .append("<br><a href='//repod.github.io/psdle#support' target='_blank'>Support PSDLE</a> | <a href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation' target='_blank'>Submit Bug/Translation</a> | ")
             .append($("<span />", {id:'dump_raw', text: "Dump Raw"}).on("click", function() {
                 repod.psdle.macrossBrain(function(raw) {
-                    repod.psdle.exportList.download("raw.json",JSON.stringify(raw))
+                    repod.psdle.exportList.download("_raw.json",JSON.stringify(raw))
                 });
             }))
             .append(" | ")
@@ -1222,7 +1222,7 @@ repod.psdle = {
             var blob = new Blob([content], {type: "octet/stream"});
             
             $("<a>",{
-              "download" : "psdle_"+(new Date().toISOString())+"_"+(download || "generic.txt"),
+              "download" : "psdle_"+(new Date().toISOString())+(download || "_generic.txt"),
               "href" : window.URL.createObjectURL(blob)
             })[0].dispatchEvent(new MouseEvent("click"));
             
