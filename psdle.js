@@ -1,8 +1,8 @@
-/*! psdle 3.3.13 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2019-05-31 */
+/*! psdle 3.3.14 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2019-06-30 */
 var repod = {};
 repod.psdle = {
-    version            : "3.3.13",
-    versiondate        : "2019-05-31",
+    version            : "3.3.14",
+    versiondate        : "2019-06-30",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -1220,10 +1220,14 @@ repod.psdle = {
             }
         },
         download: function(download, content) {
+            var blob = new Blob([content], {type: "octet/stream"});
+            
             $("<a>",{
-              "download" : "psdle_"+(new Date().toLocaleString().replace(/[:\/]/g,"-"))+"_"+(download || "generic.txt"),
-              "href" : "data:text/csv;charset=utf-8,"+encodeURIComponent(content)
+              "download" : "psdle_"+(new Date().toISOString())+"_"+(download || "generic.txt"),
+              "href" : window.URL.createObjectURL(blob)
             })[0].dispatchEvent(new MouseEvent("click"));
+            
+            window.URL.revokeObjectURL(blob);
         },
         format: function(index,target,sep) {
             var item = repod.psdle.gamelist_cur[index],
