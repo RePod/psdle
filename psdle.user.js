@@ -1,11 +1,11 @@
-/*! psdle 3.3.15 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2019-06-30 */
+/*! psdle 3.3.16 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2019-08-30 */
 // ==UserScript==
 // @author		RePod
 // @name		PSDLE for Greasemonkey
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		3.3.15
+// @version		3.3.16
 // @include		/https://store.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
@@ -23,11 +23,11 @@ Alternatively, reconfigure the updating settings in your Userscript manager.
 */
 
 
-/*! psdle 3.3.15 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2019-06-30 */
+/*! psdle 3.3.16 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2019-08-30 */
 var repod = {};
 repod.psdle = {
-    version            : "3.3.15",
-    versiondate        : "2019-06-30",
+    version            : "3.3.16",
+    versiondate        : "2019-08-30",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -520,7 +520,7 @@ repod.psdle = {
             $(document).off("click", "[id^=psdle_index_]").on("click", "[id^=psdle_index_]", function(e) {
                 e.preventDefault();
                 if (e.shiftKey) {
-                    repod.psdle.dlQueue.batch.add.auto(this);
+                    repod.psdle.dlQueue.batch.auto(this);
                 } else {
                     repod.psdle.dlQueue.batch.add.ask(this);
                 }
@@ -1457,7 +1457,7 @@ repod.psdle = {
                     that.Kamaji.enableDownloadStatusPolling();
                 })
             },
-            send: function(index,sys) {
+            send: function(index,sys,e) {
                 var that = this,
                     Kamaji = this.Kamaji,
                     KPlatforms = require("valkyrie-storefront/utils/const").default.KamajiPlatforms,
@@ -1467,7 +1467,8 @@ repod.psdle = {
 
                 switch (sys) {
                     case 'ps4':
-                        Kamaji.startPS4Download(id)
+                        Kamaji.startPS4Download(id);
+                        e && $(e).css({"background-color":"green"})
                         break;
                     case 'ps3':
                     case 'vita':
@@ -1476,6 +1477,7 @@ repod.psdle = {
                         Kamaji.startDRMDownload(KPlatforms[sys], id).then(function(a) {
                             that.recordProcess()
                         })
+                        e && $(e).css({"background-color":"green"})
                         break;
                     default:
                         break;
@@ -1501,27 +1503,30 @@ repod.psdle = {
                     //See notes for determining active consoles, probably the way to go.
                     repod.psdle.newbox.open($(e).attr("id").split("_").pop());
                 },
-                auto: function(e) {
-                    var index = (isNaN(e)) ? Number($(e).attr("id").split("_").pop()) : Number(e), //Target index to read from.
-                        active = repod.psdle.config.active_consoles,
-                        item = repod.psdle.gamelist[index];
+                go: function(e) {
+                    repod.psdle.dlQueue.batch.send($(e).attr("id").split("_")[2],$(e).attr("id").split("_")[1])
+                }
+            },
+            auto: function(e) {
+                var index = (isNaN(e)) ? Number($(e).attr("id").split("_").pop()) : Number(e), //Target index to read from.
+                    active = repod.psdle.config.active_consoles,
+                    item = repod.psdle.gamelist[index];
 
-                    //Determine target queue based on assumed intent and priority. For instance: PSP/Vita to Vita. If no Vita, to PS3. Otherwise give up.
-                    var sys = item.platformUsable;
-                    if ($.inArray("PS Vita", sys) >= 0) { sys = (active.vita) ? "vita" : (active.ps3) ? "ps3" : false; }
-                    else if ($.inArray("PS3", sys) >= 0 || $.inArray("PSP", sys) >= 0) { sys = (active.ps3) ? "ps3" : false; }
-                    else if ($.inArray("PS4", sys) >= 0) { sys = (active.ps4) ? "ps4" : false; }
+                //Determine target queue based on assumed intent and priority. For instance: PSP/Vita to Vita. If no Vita, to PS3. Otherwise give up.
+                var sys = item.platformUsable;
+                if ($.inArray("PS Vita", sys) >= 0) { sys = (active.vita) ? "vita" : (active.ps3) ? "ps3" : false; }
+                else if ($.inArray("PS3", sys) >= 0 || $.inArray("PSP", sys) >= 0) { sys = (active.ps3) ? "ps3" : false; }
+                else if ($.inArray("PS4", sys) >= 0) { sys = (active.ps4) ? "ps4" : false; }
 
-                    if (sys == false) {
-                        alert(repod.psdle.lang.strings.noTarget);
+                if (sys == false) {
+                    alert(repod.psdle.lang.strings.noTarget);
+                } else {
+                    if ($(e).data("queued")) {
+                        $(e).removeData("queued").animate({"background-color":""});
+                        this.remove.go(sys,item.id,true);
                     } else {
-                        if ($(e).data("queued")) {
-                            $(e).removeData("queued").animate({"background-color":""});
-                            repod.psdle.dlQueue.batch.remove.go(sys,item.id,true);
-                        } else {
-                            $(e).data("queued", true);
-                            this.parse(index,sys,e);
-                        }
+                        $(e).data("queued", true);
+                        this.send(index,sys,e);
                     }
                 }
             },
@@ -1706,7 +1711,7 @@ repod.psdle = {
                     });
 
                     $("div[id^=dla_]:not('.toggled_off')").on("click", function() {
-                        repod.psdle.dlQueue.batch.send($(this).attr("id").split("_")[2],$(this).attr("id").split("_")[1]);
+                        repod.psdle.dlQueue.batch.add.go(this);
                     });
                     break;
 
