@@ -1,0 +1,75 @@
+{
+	"def": "pl",
+	"pl": {
+		"local": "Polski",
+		"startup": {
+			"apis": "Zaznacz wybrane opcje; najedź kursorem, aby uzyskać więcej szczegółów.<br>Niektóre opcje nie mogą być odznaczone.",
+			"wait": "Proszę czekać.",
+			"start": "Start"
+		},
+		"columns": {
+			"icon": "Ikona",
+			"name": "Nazwa",
+			"platform": "Platforma",
+			"size": "Rozmiar",
+			"date": "Data"
+		},
+		"labels": {
+			"exportView": "Eksportuj",
+			"page": "Strona"
+		},
+		"categories": {
+			"downloadable_game": "Gry",
+			"demo": "Dema",
+			"add_on": "Dodatki",
+			"unlock": "Odblokowane",
+			"unlock_key": "Kody",
+			"avatar": "Awatary",
+			"theme": "Motywy",
+			"other": "inne",
+			"other_game_related": "inne_związane_z_grami",
+			"game_content": "zawartość_gry",
+			"tumbler_index": "znacznik",
+			"home": "dom",
+			"ungrouped_game": "nieprzypisana_gra",
+			"promo_content": "zawartość_promocyjna",
+			"beta": "Bety",
+			"application": "Aplikacje",
+			"extras": "Zawartość dodatkowa",
+			"unknown": "Nieznane"
+		},
+		"strings": {
+			"delimiter": "Wstaw separator:",
+			"yes": "Tak",
+			"no": "Nie",
+			"search": "Szukaj",
+			"dlQueue": "Kolejka",
+			"dlList": "Lista",
+			"plus": "Zmień widoczność tytułów PS+.",
+			"queueAll": "Wszystko",
+			"queueTo": "Pobierz do $SYS$",
+			"noTarget": "Nie ma dostępnej konsoli, do której można by wysłać zawartość.",
+			"exportColumnName": "Nazwa Kolumny",
+			"exportProperty": "Własność",
+			"exportImport": "Importuj"
+		},
+		"apis": [{
+			"internalID": "api_entitle",
+			"name": "Historia Zakupów",
+			"desc": "Nie może być odznaczona. Historia zakupów zostanie użyta do stworzenia listy objektów do pobrania i określenia, czy jest to zawartość z PS+."
+		}, {
+			"internalID": "api_game",
+			"name": "Katalog",
+			"desc": "Zaznaczenie umożliwi podanie dodatkowych informacji, w tym kategorii. Zwiększa czas potrzebny na utworzenie listy."
+		}, {
+			"internalID": "api_queue",
+			"name": "Kolejka pobierania",
+			"desc": "Umożliwia dodawanie i usuwanie objektów z kolejki pobierania. Odczytuje informacje o stanie kolejki i sprawdza, czy kosola jest aktywna."
+		}, {
+			"internalID": "api_pstv",
+			"name": "PS TV",
+			"desc": "Wykrywanie tytułów kompatybilnych z PS TV. Dostępne wyłącznie na stronie w języku \"en - us\" (nie w języku PSDLE).",
+			"disabled": true
+		}]
+	}
+}
