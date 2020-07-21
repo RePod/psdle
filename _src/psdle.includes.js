@@ -362,8 +362,8 @@ repod.psdle = {
                 var temp = {};
 
                 //Constants/pre-determined.
-                temp.indexPSDLE = ++validContent;
                 temp.indexRaw   = ++index;
+                temp.indexValid = ++validContent;
                 temp.productID  = obj.product_id;
                 temp.id         = obj.id;
                 if (that.config.deep_search) { temp.category = "unknown"; }
