@@ -1,8 +1,8 @@
-/*! psdle 3.3.17 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2020-02-03 */
+/*! psdle 3.3.17 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2020-07-21 */
 var repod = {};
 repod.psdle = {
-    version            : "3.3.17",
-    versiondate        : "2020-02-03",
+    version            : "Testing",
+    versiondate        : "Infinity",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -81,7 +81,8 @@ repod.psdle = {
             check_tv        : false,
             iconSize        : 42,
             mobile          : false,
-            storeURLs       : instance.lookup("service:store-root").get("user").fetchStoreUrls()._result
+            storeURLs       : instance.lookup("service:store-root").get("user").fetchStoreUrls()._result,
+            includeExpired  : false
         });
 
         console.log("PSDLE | Config set.");
@@ -354,15 +355,18 @@ repod.psdle = {
         this.gamelist = [];
         var i18n = this.config.valkyrieInstance.lookup('service:i18n');
         var entitlements = (entitlements || this.config.valkyrieInstance.lookup("service:macross-brain").macrossBrainInstance._entitlementStore._storage._entitlementMapCache).concat(this.e_inject_cache);
+        var validContent = 0;
 
         $.each(entitlements, function(index,obj) {
             if (that.isValidContent(obj)) { //Determine if game content.
                 var temp = {};
 
                 //Constants/pre-determined.
+                temp.indexPSDLE = ++validContent;
+                temp.indexRaw   = ++index;
+                temp.productID  = obj.product_id;
+                temp.id         = obj.id;
                 if (that.config.deep_search) { temp.category = "unknown"; }
-                temp.productID = obj.product_id;
-                temp.id        = obj.id;
                 if (!that.pid_cache[temp.productID]) { that.pid_cache[temp.productID] = 1; } else { that.pid_cache[temp.productID]++; }
 
                 if (obj.entitlement_attributes) {
@@ -397,7 +401,8 @@ repod.psdle = {
                 temp.date           = obj.active_date;
                 var tempDate = new Date(temp.date);
                 var toPrettyDate = {mm:tempDate.getMonth()+1, dd:tempDate.getDate(), yyyy:tempDate.getFullYear()};
-                temp.prettyDate     = i18n.t("c.format.numericDateSlashes",toPrettyDate).string
+                temp.prettyDate     = i18n.t("c.format.numericDateSlashes",toPrettyDate).string;
+                temp.dateUnix       = tempDate.getTime();
 
                 var tempSize        = require("valkyrie-storefront/utils/download").default.getFormattedFileSize(temp.size);
                 temp.prettySize     = (temp.size === 0) ? "N/A" : i18n.t("c.page.details.drmDetails."+tempSize.unit,{val: tempSize.value}).string;
@@ -455,7 +460,7 @@ repod.psdle = {
 
         if (!this.config.includeVideo && (obj.VUData || (obj.drm_def && obj.drm_def.contentType == "TV"))) { this.stats.video++; return 0; }
         else if (obj.entitlement_type == 1 || obj.entitlement_type == 4) { this.stats.service++; return 0; } //Services = Ignored
-        else if (!this.config.includeExpired && new Date(exp) < new Date() && !inf) { this.stats.expired++; return 0; }
+        else if (inf == false && this.config.includeExpired !== true && new Date(exp) < new Date()) { this.stats.expired++; return 0; }
         else if (obj.drm_def || obj.entitlement_attributes) { this.stats.fine++; return 1; }
         else { this.stats.generic++; return 0; }
     },
