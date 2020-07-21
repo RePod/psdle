@@ -80,7 +80,8 @@ repod.psdle = {
             check_tv        : false,
             iconSize        : 42,
             mobile          : false,
-            storeURLs       : instance.lookup("service:store-root").get("user").fetchStoreUrls()._result
+            storeURLs       : instance.lookup("service:store-root").get("user").fetchStoreUrls()._result,
+            includeExpired  : false
         });
 
         console.log("PSDLE | Config set.");
@@ -457,7 +458,7 @@ repod.psdle = {
 
         if (!this.config.includeVideo && (obj.VUData || (obj.drm_def && obj.drm_def.contentType == "TV"))) { this.stats.video++; return 0; }
         else if (obj.entitlement_type == 1 || obj.entitlement_type == 4) { this.stats.service++; return 0; } //Services = Ignored
-        else if (!this.config.includeExpired && new Date(exp) < new Date() && !inf) { this.stats.expired++; return 0; }
+        else if (inf == false && this.config.includeExpired !== true && new Date(exp) < new Date()) { this.stats.expired++; return 0; }
         else if (obj.drm_def || obj.entitlement_attributes) { this.stats.fine++; return 1; }
         else { this.stats.generic++; return 0; }
     },
