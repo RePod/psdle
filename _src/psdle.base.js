@@ -353,15 +353,18 @@ repod.psdle = {
         this.gamelist = [];
         var i18n = this.config.valkyrieInstance.lookup('service:i18n');
         var entitlements = (entitlements || this.config.valkyrieInstance.lookup("service:macross-brain").macrossBrainInstance._entitlementStore._storage._entitlementMapCache).concat(this.e_inject_cache);
+        var validContent = 0;
 
         $.each(entitlements, function(index,obj) {
             if (that.isValidContent(obj)) { //Determine if game content.
                 var temp = {};
 
                 //Constants/pre-determined.
+                temp.indexPSDLE = ++validContent;
+                temp.indexRaw   = ++index;
+                temp.productID  = obj.product_id;
+                temp.id         = obj.id;
                 if (that.config.deep_search) { temp.category = "unknown"; }
-                temp.productID = obj.product_id;
-                temp.id        = obj.id;
                 if (!that.pid_cache[temp.productID]) { that.pid_cache[temp.productID] = 1; } else { that.pid_cache[temp.productID]++; }
 
                 if (obj.entitlement_attributes) {
