@@ -1577,7 +1577,7 @@ repod.psdle = {
         gen: {
             row: function(val,dlQueue) {
                 var u = repod.psdle.config.game_page+val.id,
-                    pg = 50, //(page sizes between desktop/mobile, mobile can't hover anyway)
+                    pg = 24, //(page sizes between desktop/mobile, mobile can't hover anyway)
                     icon = (val.safe_icon) ? val.icon : "",
                     is_plus = (val.plus) ? "is_plus" : "",
                     sys = repod.psdle.safeGuessSystem(val.platform),
