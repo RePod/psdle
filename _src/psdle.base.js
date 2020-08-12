@@ -425,14 +425,21 @@ repod.psdle = {
                 delete that.pid_cache[i]
             }
         })
+        
+        //Side effect of adapting to mobile and future changes.
+        //.create() so we're not required to be on the download list. .destroy() after.
+        var downloadListController = require("valkyrie-storefront/pods/download/list/controller").default.create();
 
         $.each(this.gamelist,function(a,b) {
             that.gamelist[a].index = a+1;
+            that.gamelist[a].dlListPage = Math.ceil(that.gamelist[a].index  / downloadListController.pageSize);
 
             if (that.config.deep_search) {
                 that.game_api.queue(a+1,((that.pid_cache[b.productID] > 1)?b.id:b.productID));
             }
         });
+        
+        downloadListController.destroy(); //Sure why not.
 
         console.log("PSDLE | Finished generating download list. End result is "+this.gamelist.length+" of "+entitlements.length+" item(s).",this.stats);
         repod.psdle.container.postList();
@@ -1577,13 +1584,12 @@ repod.psdle = {
         gen: {
             row: function(val,dlQueue) {
                 var u = repod.psdle.config.game_page+val.id,
-                    pg = 24, //(page sizes between desktop/mobile, mobile can't hover anyway)
                     icon = (val.safe_icon) ? val.icon : "",
                     is_plus = (val.plus) ? "is_plus" : "",
                     sys = repod.psdle.safeGuessSystem(val.platform),
                     //style='background-image:url(\""+bg+"\")' bg = (val.images && val.images.length > 0) ? val.images[0] : "",
                     iS = repod.psdle.config.iconSize+"px",
-                    temp = "<tr id='psdle_index_"+(val.index -1)+"' class='"+is_plus+"'><td style='max-width:"+iS+";max-height:"+iS+";'><a target='_blank' href='"+val.url+"'><img title='"+repod.psdle.lang.labels.page+" #"+Math.ceil(val.index/pg)+"' class='psdle_game_icon "+is_plus+"' /></a>"+"</td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+val.name+"</a></td>";
+                    temp = "<tr id='psdle_index_"+(val.index -1)+"' class='"+is_plus+"'><td style='max-width:"+iS+";max-height:"+iS+";'><a target='_blank' href='"+val.url+"'><img title='"+repod.psdle.lang.labels.page+" "+val.dlListPage+"' class='psdle_game_icon "+is_plus+"' /></a>"+"</td><td><a class='psdle_game_link' target='_blank' href='"+u+"'>"+val.name+"</a></td>";
 
                 var can_vita = (sys == "PS Vita") ? false : ($.inArray("PS Vita",val.platformUsable) > -1) ? true : false;
                 can_vita = (can_vita) ? "class='psp2'" : "";
