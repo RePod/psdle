@@ -398,10 +398,10 @@ repod.psdle = {
                 ];
 
                 temp.date           = obj.active_date;
-                var tempDate = new Date(temp.date);
-                var toPrettyDate = {mm:tempDate.getMonth()+1, dd:tempDate.getDate(), yyyy:tempDate.getFullYear()};
+                var tempDate        = new Date(temp.date);
+                var toPrettyDate    = {mm:tempDate.getMonth()+1, dd:tempDate.getDate(), yyyy:tempDate.getFullYear()};
                 temp.prettyDate     = i18n.t("c.format.numericDateSlashes",toPrettyDate).string;
-                temp.dateUnix       = tempDate.getTime();
+                temp.dateUnix       = tempDate.getTime() / 1000;
 
                 var tempSize        = require("valkyrie-storefront/utils/download").default.getFormattedFileSize(temp.size);
                 temp.prettySize     = (temp.size === 0) ? "N/A" : i18n.t("c.page.details.drmDetails."+tempSize.unit,{val: tempSize.value}).string;
