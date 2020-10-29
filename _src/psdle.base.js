@@ -537,61 +537,7 @@ repod.psdle = {
     css: function() {
         var style = document.createElement('style')
         style.type = 'text/css'
-        style.innerHTML = `
-.psdle {
-    --blue: #2185f4; /* Iconic. */
-    --darker-blue: #063f7e;
-    --bg-hover-filters: #e8e8e8; /* .collection-filter__label */
-    --psdle-logo-clear: url("data:image/webp;base64,UklGRnIAAABXRUJQVlA4TGUAAAAvU4AHEC9ApG1T/27Hzm6DINum/pwjuMAFBEX/R0OQbTOk+dMM4QYP8H8MbVsBRZEkNXMOAiAACUjAv6wMr3tG9H8Ckn3bhE1lUwEFhE0Nr2LzH4TNGLN5v5VtPgibV5YaT27fVgA=");
-}
-
-.psdle-logo {
-    margin: 0 auto;
-    display: block;
-    width: 84px;
-    height: 31px;
-    background-image: var(--psdle-logo-clear);
-    background-color: var(--blue);
-}
-
-.psdle-filter-button {
-    cursor: pointer
-}
-
-#psdle-filter-section-export {
-  text-align: center;
-  overflow: hidden;
-  background-color: var(--bg-1);
-}
-
-#psdle-filter-section-export input { cursor:text }
-#psdle-filter-section-export select {
-    border-style: solid;
-    border: none;
-    background-color: var(--bg-1);
-    border-bottom: 0.0625rem solid #dedede;
-}
-#psdle-filter-section-export select option { background-color: white }
-
-#psdle-filter-section-export select,
-#psdle-filter-section-export input {
-    width: 100%;
-    padding: 8px 16px;
-}
-
-#psdle-filter-section-export select:hover,
-#psdle-filter-section-export input:hover {
-    background-color: var(--bg-hover-filters)
-}
-#psdle-filter-section-export button {
-  padding: 0.2rem 0.3rem;
-  margin: 0.3rem
-}
-#psdle-filter-section-export button:hover {
-  color: var(--blue);
-  background-color: var(--bg-hover-filters)
-}
-`
+        style.innerHTML = `{{{include "css/psdle.min.css"}}}`
         document.getElementsByTagName('head')[0].appendChild(style)
     }
 }
