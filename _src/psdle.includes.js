@@ -2,7 +2,7 @@
 var repod = {}
 repod.psdle = {
     config: {
-        version: "4.0.1",
+        version: "4.Testing",
         versionDate: "202X-Infinity-39"
     },
     init: function() {
@@ -10,7 +10,6 @@ repod.psdle = {
             root: repod.psdle,
             userData: {},
             gameList: Object.entries(__NEXT_DATA__.props.apolloState.ROOT_QUERY).filter(i=>i[0].startsWith("purchasedTitlesRetrieve"))[0][1].games,
-            catalogCache: {},
             locale: __NEXT_DATA__.props.appProps.session.userData.locale,
             gqlHost: __NEXT_DATA__.runtimeConfig.service.gqlBrowser.host,
             DOMElements: {
@@ -18,6 +17,8 @@ repod.psdle = {
                 filterExportContainer: "psdle-filter-section-export",
                 filterExportSelects: "psdle-filter-export-selects"
             },
+            catalogCache: {},
+            catalogProps: [],
         })
 
         this.caches.props(this.config)
@@ -34,18 +35,27 @@ repod.psdle = {
             //Populate property cache.
             let customProps = ['empty','sortedIndex']
             let excludeProps = ['__typename','webctas','conceptId']
+
             Object.assign(config, {
                 propCache: config.gameList.map(i => Object.keys(i)).reduce((i, itemKeys) => itemKeys).concat(customProps)
             })
 
             if (Object.keys(config.catalogCache).length > 0) {
-                let includeProps = ['price']
+                let customProps = ['price']
                 let catalogProps = Object.entries(config.catalogCache)
                 .filter(data => data[1] !== null)
                 .reduce((a,b) => Object.keys(b[1]))
-                .concat(includeProps)
+                .concat(customProps)
 
+                config.catalogProps = catalogProps
                 config.propCache = config.propCache.concat(catalogProps)
+            } else {
+                //Preserve props that don't exist yet.
+                let importedProps = config.userData.exports
+                .map(e => e.property)
+                .filter(e => config.propCache.indexOf(e) < 0)
+
+                config.catalogProps = importedProps
             }
 
             config.propCache = config.propCache.filter(item => excludeProps.indexOf(item) < 0).sort()
@@ -258,8 +268,8 @@ repod.psdle = {
                 var el = document.createElement("select")
                 el.onchange = (e => this.saveOptions(config, e))
 
-                //Iterate over a prop cache.
-                config.propCache.forEach(function(prop) {
+                config.propCache.concat(config.catalogProps)
+                .forEach(function(prop) {
                     var elOption = document.createElement("option")
                     elOption.value = prop
                     elOption.text = prop
@@ -317,6 +327,16 @@ repod.psdle = {
                 return config.userData.exports
             },
             generate: function(config, download) {
+                //Verify if attempting to export keys that don't exist (typically Catalog)
+                if (Object.keys(config.catalogCache).length == 0) {
+                    let catalogProps = config.catalogProps
+
+                    if (catalogProps.length > 0) {
+                        if (!confirm("The following properties may not currently exist and could export as nothing, continue?\nThese may require running Catalog first.\n\n" + catalogProps.join(" ")))
+                            return
+                    }
+                }
+
                 if (download == "CSV") {
                     this.present(config, this.format.csv.build(config, this.format.helpers), ".csv")
                 }
