@@ -1,9 +1,9 @@
-/*! psdle 3.3.18 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2020-10-29 */
+/*! psdle 4.0.1 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2020-10-29 */
 var repod = {}
 repod.psdle = {
     config: {
-        version: "4.0.Testing",
-        versionDate: "2020-Infinity-39"
+        version: "4.0.1",
+        versionDate: "202X-Infinity-39"
     },
     init: function() {
         Object.assign(this.config, {

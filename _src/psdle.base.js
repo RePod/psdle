@@ -1,8 +1,8 @@
 var repod = {}
 repod.psdle = {
     config: {
-        version: "4.0.Testing",
-        versionDate: "2020-Infinity-39"
+        version: "4.Testing",
+        versionDate: "202X-Infinity-39"
     },
     init: function() {
         Object.assign(this.config, {
