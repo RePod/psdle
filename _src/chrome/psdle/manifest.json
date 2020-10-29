@@ -14,7 +14,7 @@
         "default_title": "__MSG_pageActionRun__"
     },
     "permissions": [
-        "tabs", "activeTab", "https://store.playstation.com/*"
+        "tabs", "activeTab", "https://store.playstation.com/*", "https://library.playstation.com/*"
     ],
     "background": {
         "scripts": ["js/background.js"]
