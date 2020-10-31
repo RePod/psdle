@@ -1,4 +1,4 @@
-/*! psdle 4.0.1 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2020-10-29 */
+/*! psdle 4.0.1 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2020-10-30 */
 var repod = {}
 repod.psdle = {
     config: {
@@ -19,13 +19,146 @@ repod.psdle = {
             },
             catalogCache: {},
             catalogProps: [],
+            catalogDatabase: this.database
         })
 
-        this.caches.props(this.config)
         this.userData.init(this.config)
+        this.caches.props(this.config)
+
+        if (this.config.userData.catalog) {
+            this.api.init(this.config)
+        }
 
         this.css()
         this.generate.filters.section(this.config)
+    },
+    database: {
+        version: 1,
+        name: "PSDLECatalogCache",
+        db: {},
+        init: async function(config, callback) {
+            var persist = await this.persist()
+
+            if (persist) {
+                config.userData.catalog = true
+                config.root.userData.save(config)
+
+                this.create.db(config, callback)
+            } else {
+                //Temporary would defeat the purpose.
+            }
+        },
+        persist: function() {
+            if (navigator.storage && navigator.storage.persist) {
+                return navigator.storage.persist().then(function(persistent) {
+                    return persistent
+                })
+            }
+
+            return false
+        },
+        drop: function() {
+            this.db.close()
+
+            var dropDatabase = window.indexedDB.deleteDatabase(this.name)
+            dropDatabase.onsuccess = (e => console.log(e))
+            dropDatabase.onerror = (e => console.error(e))
+            location.reload()
+        },
+        create: {
+            db: function(config, callback) {
+                var db = window.indexedDB.open(
+                    config.catalogDatabase.name,
+                    config.catalogDatabase.version
+                )
+
+                db.onerror = (e => console.error(e))
+                db.onupgradeneeded = function(e) {
+                    config.catalogDatabase.db = db.result
+                    config.catalogDatabase.create.upgrade(config, e, db.result)
+                }
+                db.onsuccess = function(e) {
+                    config.catalogDatabase.db = db.result
+                    callback()
+                }
+            },
+            upgrade: function(config, e, db) {
+                //TO-DO.
+                //config.catalogDatabase.drop()
+                this.objectStore(config, db)
+            },
+            objectStore: function(config, db) {
+                var db = db.createObjectStore("cache", { keyPath: "id" })
+                db.createIndex("ID", "id", {unique: true})
+
+                db.transaction.oncomplete = (e => console.log(e))
+                db.transaction.onerror = (e => console.log(e))
+            }
+        },
+        transact: {
+            get: function(config, type) {
+                return config.catalogDatabase.db.transaction("cache", type)
+            },
+            dumpCacheToDB: function(config, callback, backToCache) {
+                var db = this.get(config, "readwrite")
+                var store = db.objectStore("cache")
+
+                db.oncomplete = function(e) {
+                    if (backToCache) {
+                        config.catalogDatabase.transact.dumpDBToCache(config, callback)
+                    } else {
+                        callback(e)
+                    }
+                }
+                db.onerror = (e => console.log(e))
+
+                for (var [id, json] of Object.entries(config.catalogCache)) {
+                    store.put({"id": id, "json": json})
+                }
+            },
+            dumpDBToCache: function(config, callback) {
+                var db = this.get(config)
+                var store = db.objectStore("cache")
+                var readOut = {}
+
+                db.oncomplete = (e => callback(e))
+                db.onerror = (e => console.log(e))
+
+                store.openCursor().onsuccess = function(event) {
+                    var cursor = event.target.result
+                    if (cursor) {
+                        readOut[cursor.key] = cursor.value.json
+                        cursor.continue()
+                    }
+                    else {
+                        config.catalogCache = Object.assign({}, readOut)
+                    }
+                }
+            },
+            getNewIDs: function(config, callback) {
+                var games = config.gameList.map(e=>e.entitlementId)
+                var db = this.get(config, "readonly")
+                var store = db.objectStore("cache")
+                var readOut = []
+
+                //db.oncomplete = (e => console.log(e))
+                db.onerror = (e => console.log(e))
+
+                store.openCursor().onsuccess = function(event) {
+                    var cursor = event.target.result
+                    if (cursor) {
+                        readOut.push(cursor.key)
+                        cursor.continue()
+                    }
+                    else {
+                        var newIDs = games.filter(e => readOut.indexOf(e) < 0)
+                        console.debug(newIDs)
+
+                        callback(newIDs)
+                    }
+                }
+            },
+        }
     },
     caches: {
         regen: function(config, target) {
@@ -68,6 +201,7 @@ repod.psdle = {
     userData: {
         key: "PSDLEuserData",
         defaults: {
+            catalog: false,
             exports: [
                 {"property": "name", "title": "Name"},
                 {"property": "platform", "title": "Platform"},
@@ -151,6 +285,7 @@ repod.psdle = {
                 var logo = document.createElement("div")
                 logo.classList.add("psdle", "psdle-logo")
                 logo.title = `${config.version} ${config.versionDate}`
+                logo.onclick = (() => config.root.api.init(config))
 
                 return logo
             },
@@ -268,8 +403,7 @@ repod.psdle = {
                 var el = document.createElement("select")
                 el.onchange = (e => this.saveOptions(config, e))
 
-                config.propCache.concat(config.catalogProps)
-                .forEach(function(prop) {
+                config.propCache.forEach(function(prop) {
                     var elOption = document.createElement("option")
                     elOption.value = prop
                     elOption.text = prop
@@ -469,14 +603,32 @@ repod.psdle = {
             cur: 0,
             total: 0
         },
-        catalog: async function(config) {
+        init: async function(config) {
+            var persistDB = await config.catalogDatabase.persist()
+
+            if (persistDB) {
+                config.catalogDatabase.init(config, (() => this.fetchIDs(config)))
+            } else {
+                this.catalog(config)
+            }
+        },
+        fetchIDs: function(config) {
+            config.catalogDatabase.transact.getNewIDs(
+                config, ((e) => this.catalog(config, e))
+            )
+        },
+        catalog: async function(config, newIDs) {
+            var target = (newIDs || config.gameList.map(e => e.entitlementId))
             var process = this.process
-            process.total = config.gameList.length
+            process.total = target.length
             this.customQueries.catalog.hash = await this.hash(this.customQueries.catalog.query)
 
-            for (let id of config.gameList.map(e=>e.entitlementId)) {
+            if (target.length == 0) {
+                this.finish(config)
+                return
+            }
 
-
+            for (let id of target) {
                 this.call(
                     config,
                     "catalog",
@@ -491,9 +643,21 @@ repod.psdle = {
                     document.querySelector(".psdle-logo").style.background = `var(--psdle-logo-clear), linear-gradient(to right, var(--blue) ${p}%, var(--darker-blue) ${p}%)`
 
                     if (process.cur == process.total) {
-                        config.root.caches.props(config)
+                        config.root.api.finish(config)
                     }
                 })
+            }
+        },
+        finish: async function(config) {
+            var persistDB = await config.catalogDatabase.persist()
+            if (persistDB) {
+                config.catalogDatabase.transact.dumpCacheToDB(
+                    config,
+                    (function() { config.root.caches.props(config) }),
+                    true
+                )
+            } else {
+                config.root.caches.props(config)
             }
         },
         call: function(config, custom, variables) {
