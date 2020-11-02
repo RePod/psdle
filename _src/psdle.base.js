@@ -701,7 +701,7 @@ repod.psdle = {
         },
         customQueries: {
             catalog: {
-                query: `query queryRetrieveTelemetryDataPDPProduct($productId: String!) {\n  productRetrieve(productId: $productId) {\n    ... productFragment\n  }\n}\n  fragment productFragment on Product {\n    id\n    name\n    publisherName\n    topCategory\n    releaseDate\n    descriptions {\n        type\n        value\n    }\n    compatibilityNotices {\n        type\n        value\n    }\n    edition {\n      name\n    }\n    defaultSku {\n      id\n      name\n    }\n    skus {\n      id\n    }\n    contentRating {\n      name\n    }\n    localizedGenres {\n        value\n    }\n    webctas {\n      price {\n        basePrice\n        discountedPrice\n        serviceBranding\n      }\n    }\n  }`,
+                query: `query queryRetrieveTelemetryDataPDPProduct($productId: String!) {\n  productRetrieve(productId: $productId) {\n    ... productFragment\n  }\n}\nfragment productFragment on Product {\n  id\n  name\n  publisherName\n  topCategory\n  releaseDate\n  descriptions {\n    type\n    value\n  }\n  compatibilityNotices {\n    type\n    value\n  }\n  media {\n    type\n    url\n    role\n  }\n  edition {\n    name\n  }\n  defaultSku {\n    id\n    name\n    type\n  }\n  skus {\n    id\n  }\n  contentRating {\n    name\n  }\n  localizedStoreDisplayClassification\n  localizedGenres {\n    value\n  }\n  price {\n    basePrice\n    discountedPrice\n    serviceBranding\n  }\n}`,
                 hash: "" //COULD precalculate this, but effort.
             }
         },
