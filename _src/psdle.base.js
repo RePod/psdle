@@ -82,8 +82,10 @@ repod.psdle = {
                 }
             },
             upgrade: function(config, e, db) {
-                //TO-DO.
-                //config.catalogDatabase.drop()
+                if (e.oldVersion < config.catalogDatabase.version) {
+                    db.deleteObjectStore("cache")
+                }
+
                 this.objectStore(config, db)
             },
             objectStore: function(config, db) {
@@ -495,7 +497,7 @@ repod.psdle = {
                                         prop = prop.filter(e => e.type=="LONG").pop().value
                                     }
                                     if (userProp == "price") {
-                                        prop = config.catalogCache[itemKeys.entitlementId].webctas[0].price.basePrice
+                                        prop = config.catalogCache[itemKeys.entitlementId].price.basePrice
                                     }
                                     if (userProp == "image") {
                                         prop = prop.url

@@ -1,4 +1,4 @@
-/*! psdle 4.0.1 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2020-10-30 */
+/*! psdle 4.0.1 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2020-11-02 */
 var repod = {}
 repod.psdle = {
     config: {
@@ -83,8 +83,10 @@ repod.psdle = {
                 }
             },
             upgrade: function(config, e, db) {
-                //TO-DO.
-                //config.catalogDatabase.drop()
+                if (e.oldVersion < config.catalogDatabase.version) {
+                    db.deleteObjectStore("cache")
+                }
+
                 this.objectStore(config, db)
             },
             objectStore: function(config, db) {
@@ -496,7 +498,7 @@ repod.psdle = {
                                         prop = prop.filter(e => e.type=="LONG").pop().value
                                     }
                                     if (userProp == "price") {
-                                        prop = config.catalogCache[itemKeys.entitlementId].webctas[0].price.basePrice
+                                        prop = config.catalogCache[itemKeys.entitlementId].price.basePrice
                                     }
                                     if (userProp == "image") {
                                         prop = prop.url
@@ -702,7 +704,7 @@ repod.psdle = {
         },
         customQueries: {
             catalog: {
-                query: `query queryRetrieveTelemetryDataPDPProduct($productId: String!) {\n  productRetrieve(productId: $productId) {\n    ... productFragment\n  }\n}\n  fragment productFragment on Product {\n    id\n    name\n    publisherName\n    topCategory\n    releaseDate\n    descriptions {\n        type\n        value\n    }\n    compatibilityNotices {\n        type\n        value\n    }\n    edition {\n      name\n    }\n    defaultSku {\n      id\n      name\n    }\n    skus {\n      id\n    }\n    contentRating {\n      name\n    }\n    localizedGenres {\n        value\n    }\n    webctas {\n      price {\n        basePrice\n        discountedPrice\n        serviceBranding\n      }\n    }\n  }`,
+                query: `query queryRetrieveTelemetryDataPDPProduct($productId: String!) {\n  productRetrieve(productId: $productId) {\n    ... productFragment\n  }\n}\nfragment productFragment on Product {\n  id\n  name\n  publisherName\n  topCategory\n  releaseDate\n  descriptions {\n    type\n    value\n  }\n  compatibilityNotices {\n    type\n    value\n  }\n  media {\n    type\n    url\n    role\n  }\n  edition {\n    name\n  }\n  defaultSku {\n    id\n    name\n    type\n  }\n  skus {\n    id\n  }\n  contentRating {\n    name\n  }\n  localizedStoreDisplayClassification\n  localizedGenres {\n    value\n  }\n  price {\n    basePrice\n    discountedPrice\n    serviceBranding\n  }\n}`,
                 hash: "" //COULD precalculate this, but effort.
             }
         },
