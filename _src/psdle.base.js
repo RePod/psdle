@@ -25,9 +25,9 @@ repod.psdle = {
         this.css()
         this.userData.init(this.config)
         this.reactisms.init(this.config)
-        this.postInit(this.config)
+        this.reactisms.stateChange.callback(this.config)
     },
-    postInit: async function(config, fromPageChange) {
+    postInit: async function(config) {
         //But also on page changes.
 
         //Fetch games.
@@ -198,13 +198,14 @@ repod.psdle = {
             waitForPage: function(config, callback) {
                 this.timer = setInterval(function() {
                     if (document.querySelector(config.DOMElements.collectionFilter) == null) {
+                        console.log('PSDLE casts "Spin Wheels" on', location.href)
                         return
                     }
 
                     clearInterval(config.root.reactisms.stateChange.timer)
 
-                    callback(config, true)
-                }, 50)
+                    callback(config)
+                }, 125)
             }
         }
     },
@@ -805,5 +806,4 @@ repod.psdle = {
     }
 }
 
-//Find a ready state.
 repod.psdle.init()
