@@ -1,4 +1,4 @@
-/*! psdle 4.0.1 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2020-11-02 */
+/*! psdle 4.0.1 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2020-11-10 */
 var repod = {}
 repod.psdle = {
     config: {
@@ -9,28 +9,38 @@ repod.psdle = {
         Object.assign(this.config, {
             root: repod.psdle,
             userData: {},
-            gameList: Object.entries(__NEXT_DATA__.props.apolloState.ROOT_QUERY).filter(i=>i[0].startsWith("purchasedTitlesRetrieve"))[0][1].games,
+            gameList: [],
             locale: __NEXT_DATA__.props.appProps.session.userData.locale,
             gqlHost: __NEXT_DATA__.runtimeConfig.service.gqlBrowser.host,
             DOMElements: {
-                collectionFilter: document.querySelector(".collection-filter.psw-grid-container"),
+                collectionFilter: ".collection-filter.psw-grid-container",
                 filterExportContainer: "psdle-filter-section-export",
                 filterExportSelects: "psdle-filter-export-selects"
             },
+            propCache: [],
             catalogCache: {},
             catalogProps: [],
             catalogDatabase: this.database
         })
 
-        this.userData.init(this.config)
-        this.caches.props(this.config)
-
-        if (this.config.userData.catalog) {
-            this.api.init(this.config)
-        }
-
         this.css()
-        this.generate.filters.section(this.config)
+        this.userData.init(this.config)
+        this.reactisms.init(this.config)
+        this.postInit(this.config)
+    },
+    postInit: async function(config, fromPageChange) {
+        //But also on page changes.
+
+        //Fetch games.
+        config.gameList = await this.api.games(config, this.reactisms.getCurrentPage())
+
+        this.generate.filters.section(config)
+
+        this.caches.props(config)
+
+        if (config.userData.catalog) {
+            this.api.init(config)
+        }
     },
     database: {
         version: 1,
@@ -83,7 +93,7 @@ repod.psdle = {
                 }
             },
             upgrade: function(config, e, db) {
-                if (e.oldVersion < config.catalogDatabase.version) {
+                if (e.oldVersion > 0 && e.oldVersion < config.catalogDatabase.version) {
                     db.deleteObjectStore("cache")
                 }
 
@@ -154,12 +164,49 @@ repod.psdle = {
                     }
                     else {
                         var newIDs = games.filter(e => readOut.indexOf(e) < 0)
-                        console.debug(newIDs)
+                        console.debug("Catalog new IDs:", newIDs)
 
                         callback(newIDs)
                     }
                 }
             },
+        }
+    },
+    reactisms: {
+        init: function(config) {
+            this.stateChange.newPushState(config)
+        },
+        getCurrentPage: function(config) {
+            //Remove leading slash. Overkill regex just in case.
+            return (this.stateChange.tracked || location.pathname).replace(/^\//, "")
+        },
+        stateChange: {
+            tracked: "",
+            timer: 0,
+            orgPushState: window.history.pushState,
+            newPushState: function(config) {
+                (function(config, orgPushState, callback) {
+                    window.history.pushState = function() {
+                        orgPushState.apply(this, arguments)
+                        callback.bind(config.root.reactisms.stateChange)(config, arguments)
+                    }
+                })(config, this.orgPushState, this.callback)
+            },
+            callback: function(config, args) {
+                this.tracked = location.pathname
+                this.waitForPage(config, config.root.postInit.bind(config.root))
+            },
+            waitForPage: function(config, callback) {
+                this.timer = setInterval(function() {
+                    if (document.querySelector(config.DOMElements.collectionFilter) == null) {
+                        return
+                    }
+
+                    clearInterval(config.root.reactisms.stateChange.timer)
+
+                    callback(config, true)
+                }, 50)
+            }
         }
     },
     caches: {
@@ -176,7 +223,7 @@ repod.psdle = {
             })
 
             if (Object.keys(config.catalogCache).length > 0) {
-                let customProps = ['price']
+                let customProps = [] //['price']
                 let catalogProps = Object.entries(config.catalogCache)
                 .filter(data => data[1] !== null)
                 .reduce((a,b) => Object.keys(b[1]))
@@ -185,7 +232,7 @@ repod.psdle = {
                 config.catalogProps = catalogProps
                 config.propCache = config.propCache.concat(catalogProps)
             } else {
-                //Preserve props that don't exist yet.
+                //Preserve props that don't exist yet. Does not include imports.
                 let importedProps = config.userData.exports
                 .map(e => e.property)
                 .filter(e => config.propCache.indexOf(e) < 0)
@@ -193,7 +240,19 @@ repod.psdle = {
                 config.catalogProps = importedProps
             }
 
-            config.propCache = config.propCache.filter(item => excludeProps.indexOf(item) < 0).sort()
+            //Dedupe and remove excluded props.
+            config.propCache = config.propCache
+            .filter(function(item,i) {
+                var dupeCheck = config.propCache.indexOf(item) == i
+
+                if (!dupeCheck) {
+                    console.warn("Dupe in propCache:", item)
+                }
+
+                return dupeCheck
+            })
+            .filter(item => excludeProps.indexOf(item) < 0)
+            .sort()
 
             if (Object.keys(config.catalogCache).length > 0) {
                 config.root.exportView.section.refresh(config)
@@ -218,7 +277,7 @@ repod.psdle = {
         save: function(config) {
             localStorage.setItem(this.key, JSON.stringify(config.userData))
 
-            console.debug(localStorage.getItem(this.key))
+            console.debug("Saved userData:", localStorage.getItem(this.key))
         },
         load: function(config) {
             if (!localStorage.hasOwnProperty(this.key)) {
@@ -276,7 +335,7 @@ repod.psdle = {
                     true
                 )
 
-                config.DOMElements.collectionFilter.prepend(
+                document.querySelector(config.DOMElements.collectionFilter).prepend(
                     psdleLogo,
                     exportButton,
                     exportSection
@@ -619,11 +678,17 @@ repod.psdle = {
                 config, ((e) => this.catalog(config, e))
             )
         },
+        games: function(config, currentPage) {
+            //Currently only recents and plus, so hard assume purchasedTitlesRetrieve. Regret later.
+            return this.fetch(config, currentPage)
+            .then(r => r.json())
+            .then(data => data.data.purchasedTitlesRetrieve.games)
+        },
         catalog: async function(config, newIDs) {
             var target = (newIDs || config.gameList.map(e => e.entitlementId))
             var process = this.process
             process.total = target.length
-            this.customQueries.catalog.hash = await this.hash(this.customQueries.catalog.query)
+            this.queries.catalog.hash = await this.hash(this.queries.catalog.query)
 
             if (target.length == 0) {
                 this.finish(config)
@@ -631,11 +696,7 @@ repod.psdle = {
             }
 
             for (let id of target) {
-                this.call(
-                    config,
-                    "catalog",
-                    {"productId": id},
-                )
+                this.call(config, "catalog", {"productId": id})
                 .then(r => r.json())
                 .then(function(data) {
                     process.cur += 1
@@ -662,27 +723,17 @@ repod.psdle = {
                 config.root.caches.props(config)
             }
         },
-        call: function(config, custom, variables) {
+        call: function(config, fetchName, variables) {
             return this.fetch(
                 config,
-                custom,
+                fetchName,
                 variables
             )
         },
-        fetch: function(config, custom, variables) {
+        fetch: function(config, fetchName, variables) {
             //query = (query || this.queries[operationName])
-            var customQuery = this.customQueries[custom]
 
-            var gqlRequest = {
-                query: customQuery.query,
-                variables: variables,
-                extensions: {
-                    persistedQuery: {
-                        version: 1,
-                        sha256Hash: customQuery.hash
-                    }
-                }
-            }
+            var gqlRequest = this.buildGQLQuery(config, fetchName, variables)
 
             //Might as well since we're already here.
             var queryParams = Object.entries(gqlRequest).filter(e => e[0] !== 'query').map(e =>
@@ -691,7 +742,7 @@ repod.psdle = {
 
             return fetch(`${config.gqlHost}/op?${queryParams}`, {
                 method: 'POST',
-                credentials: 'same-origin',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
@@ -702,16 +753,42 @@ repod.psdle = {
                 )
             })
         },
-        customQueries: {
-            catalog: {
-                query: `query queryRetrieveTelemetryDataPDPProduct($productId: String!) {\n  productRetrieve(productId: $productId) {\n    ... productFragment\n  }\n}\nfragment productFragment on Product {\n  id\n  name\n  publisherName\n  topCategory\n  releaseDate\n  descriptions {\n    type\n    value\n  }\n  compatibilityNotices {\n    type\n    value\n  }\n  media {\n    type\n    url\n    role\n  }\n  edition {\n    name\n  }\n  defaultSku {\n    id\n    name\n    type\n  }\n  skus {\n    id\n  }\n  contentRating {\n    name\n  }\n  localizedStoreDisplayClassification\n  localizedGenres {\n    value\n  }\n  price {\n    basePrice\n    discountedPrice\n    serviceBranding\n  }\n}`,
-                hash: "" //COULD precalculate this, but effort.
+        buildGQLQuery: function(config, fetchName, variables) {
+            var gqlQuery = this.queries[fetchName]
+            var gqlRequest = {
+                variables: (variables && Object.keys(variables).length > 0 ? variables : gqlQuery.variables),
+                extensions: {
+                    persistedQuery: {
+                        version: 1,
+                        sha256Hash: gqlQuery.hash
+                    }
+                }
             }
+
+            if (gqlQuery.query) {
+                gqlRequest.query = gqlQuery.query
+            } else {
+                gqlRequest.operationName = gqlQuery.operationName
+            }
+
+            return gqlRequest
         },
         queries: {
-            //Spooky not quite black box functions and persistent hashes for GQL.
-            "productRetrieveForCtasWithPrice": "8532da7eda369efdad054ca8f885394a2d0c22d03c5259a422ae2bb3b98c5c99",
-            "productRetrieveForUpsellWithCtas": "7d46a3b7949a7a980a04213ba6355c72b3713cb96f2e3cb077f318883fa3092b"
+            "recently-purchased": {
+                operationName: "getPurchasedGameList",
+                variables: {"isActive":true,"platform":["ps4","ps5"],"size":1000,"sortBy":"ACTIVE_DATE","sortDirection":"desc","subscriptionService":"NONE"},
+                hash: "00694ada3d374422aa34564e91a0589f23c5f52e0e9a703b19d065dedceb3496"
+            },
+            "ps-plus": {
+                operationName: "getPurchasedGameList",
+                variables: {"platform":["ps4","ps5"],"size":1000,"sortBy":"ACTIVE_DATE","sortDirection":"desc","subscriptionService":"PS_PLUS"},
+                hash: "00694ada3d374422aa34564e91a0589f23c5f52e0e9a703b19d065dedceb3496"
+            },
+            catalog: {
+                query: `query queryRetrieveTelemetryDataPDPProduct($productId: String!) {\n  productRetrieve(productId: $productId) {\n    ... productFragment\n  }\n}\nfragment productFragment on Product {\n  id\n  name\n  publisherName\n  topCategory\n  releaseDate\n  descriptions {\n    type\n    value\n  }\n  compatibilityNotices {\n    type\n    value\n  }\n  media {\n    type\n    url\n    role\n  }\n  edition {\n    name\n  }\n  defaultSku {\n    id\n    name\n    type\n  }\n  skus {\n    id\n  }\n  contentRating {\n    name\n  }\n  localizedStoreDisplayClassification\n  localizedGenres {\n    value\n  }\n  price {\n    basePrice\n    discountedPrice\n    serviceBranding\n  }\n}`,
+                variables: "",
+                hash: "" //COULD precalculate this, but effort.
+            }
         },
         hash: async function(string) {
             const msgUint8 = new TextEncoder().encode(string)
