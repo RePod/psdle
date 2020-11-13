@@ -14,12 +14,12 @@
         "default_title": "__MSG_pageActionRun__"
     },
     "permissions": [
-        "tabs", "activeTab", "https://store.playstation.com/*", "https://library.playstation.com/*"
+        "tabs", "https://store.playstation.com/*", "https://library.playstation.com/*"
     ],
     "background": {
         "scripts": ["js/background.js"]
     },
-    "web_accessible_resources": [ "js/psdleChromium.js", "js/psdle.js" ],
+    "web_accessible_resources": [ "js/psdleChromium.js", "js/psdle.js", "js/psdle3.js" ],
     "icons": {
         "16": "icons/icon32.png",
         "48": "icons/icon64.png",
