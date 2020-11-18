@@ -196,11 +196,18 @@ repod.psdle = {
                 this.waitForPage(config, config.root.postInit.bind(config.root))
             },
             waitForPage: function(config, callback) {
+                clearInterval(config.root.reactisms.stateChange.timer)
+
                 this.timer = setInterval(function() {
                     if (document.querySelector(config.DOMElements.collectionFilter) == null) {
                         console.log('PSDLE casts "Spin Wheels" on', location.href)
                         return
                     }
+
+                    //Regret part 1.
+                    document.querySelector(".collection-filter-selected").addEventListener("click", function(e) {
+                        config.root.reactisms.stateChange.callback(config)
+                    })
 
                     clearInterval(config.root.reactisms.stateChange.timer)
 
@@ -769,6 +776,12 @@ repod.psdle = {
                 gqlRequest.query = gqlQuery.query
             } else {
                 gqlRequest.operationName = gqlQuery.operationName
+            }
+
+            //Regret part 2. This will never break.
+            if (gqlQuery.variables.platform) {
+                let platform = document.querySelector(".collection-filter__selected-label span").dataset.trackClick.split(":").pop()
+                gqlQuery.variables.platform = platform == "all" ? ["ps4","ps5"] : [platform]
             }
 
             return gqlRequest
