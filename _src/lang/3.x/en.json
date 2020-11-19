@@ -1,0 +1,75 @@
+{
+    "def": "us",
+    "us": {
+        "local": "English",
+        "startup": {
+            "apis": "Select which store features you would like to use, hover for more details.<br>Certain store features may not be disabled.",
+            "wait": "Please wait.",
+            "start": "Start"
+        },
+        "columns": {
+            "icon": "Icon",
+            "name": "Name",
+            "platform": "Platform",
+            "size": "Size",
+            "date": "Date"
+        },
+        "labels": {
+            "exportView": "Export View",
+            "page": "Page"
+        },
+        "categories": {
+            "downloadable_game": "Games",
+            "demo": "Demos",
+            "add_on": "Add-ons",
+            "unlock": "Unlocks",
+            "unlock_key": "Unlock Keys",
+            "avatar": "Avatars",
+            "theme": "Themes",
+            "other": "other",
+            "other_game_related": "other_game_related",
+            "game_content": "game_content",
+            "tumbler_index": "tumbler_index",
+            "home": "home",
+            "ungrouped_game": "ungrouped_game",
+            "promo_content": "promo_content",
+            "beta": "Betas",
+            "application": "Applications",
+            "extras": "Extras",
+            "unknown": "Unknown"
+        },
+        "strings": {
+            "delimiter": "Enter separator:",
+            "yes": "Yes",
+            "no": "No",
+            "search": "Search",
+            "dlQueue": "Queue",
+            "dlList": "List",
+            "plus": "Toggle visibility of PS+ titles.",
+            "queueAll": "All",
+            "queueTo": "Download to $SYS$",
+            "noTarget": "There is no available target console to send to.",
+            "exportColumnName": "Column Name",
+            "exportProperty": "Property",
+            "exportImport": "Import"
+        },
+        "apis": [{
+            "internalID": "api_entitle",
+            "name": "Purchase History",
+            "desc": "Cannot be disabled. Uses your purchase history to create the download list and determine PlayStation Plus status."
+        }, {
+            "internalID": "api_game",
+            "name": "Catalog",
+            "desc": "Enable for additional game information, including categories. Increases time needed to create the download list."
+        }, {
+            "internalID": "api_queue",
+            "name": "Download Queue",
+            "desc": "Allows adding and removing items from the download queue. Reads download queue information and console activation status."
+        }, {
+            "internalID": "api_pstv",
+            "name": "PS TV",
+            "desc": "Detect PS TV compatible titles. Only supported on \"en-us\" web store (not PSDLE language).",
+            "disabled": true
+        }]
+    }
+}

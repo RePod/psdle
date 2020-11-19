@@ -22,6 +22,9 @@ repod.psdle = {
             catalogDatabase: this.database
         })
 
+        //Not currently hooked up to anything like a select box.
+        this.config.lang = this.language.getCurrent(this.config)
+
         this.css()
         this.userData.init(this.config)
         this.reactisms.init(this.config)
@@ -33,9 +36,8 @@ repod.psdle = {
         //Fetch games.
         config.gameList = await this.api.games(config, this.reactisms.getCurrentPage())
 
-        this.generate.filters.section(config)
-
         this.caches.props(config)
+        this.generate.filters.section(config)
 
         if (config.userData.catalog) {
             this.api.init(config)
@@ -329,7 +331,7 @@ repod.psdle = {
                 )
                 var exportButton = this.button(config,
                     "h4",
-                    `Export View (${config.gameList.length})`,
+                    `${config.lang.labels.exportView} (${config.gameList.length})`,
                     ["psw-cell", "psw-m-b-m", "psdle-filter-button", "psdle-filter-export"],
                     (e => this.toggleSectionVisibility(config, config.DOMElements.filterExportContainer))
                 )
@@ -534,7 +536,7 @@ repod.psdle = {
                     let catalogProps = config.catalogProps
 
                     if (catalogProps.length > 0) {
-                        if (!confirm("The following properties may not currently exist and could export as nothing, continue?\nThese may require running Catalog first.\n\n" + catalogProps.join(" ")))
+                        if (!confirm(`${config.lang.messages.exportNoProps}\n\n` + catalogProps.join(" ")))
                             return
                     }
                 }
@@ -816,6 +818,29 @@ repod.psdle = {
         style.type = 'text/css'
         style.innerHTML = `{{{include "css/psdle.min.css"}}}`
         document.getElementsByTagName('head')[0].appendChild(style)
+    },
+    language: {
+        getCurrent: function(config, override) {
+            let outputLang = Object.assign({}, this.cache.en.us)
+            let locale = (override || config.locale || "en-us").split("-")
+
+            if (this.cache.hasOwnProperty(locale[0])) {
+                let target = {}
+
+                if (this.cache[locale[0]].hasOwnProperty(locale[1])) {
+                    target = this.cache[locale[0]][locale[1]]
+                } else {
+                    let def = this.cache[locale[0]].def
+                    console.warn(`${locale[1]} not found for ${locale[0]}, falling back to ${def}`)
+                    target = this.cache[locale[0]][def]
+                }
+
+                Object.assign(outputLang, target)
+            }
+
+            return outputLang
+        },
+        cache: {{{include "lang/lang.min.json"}}}
     }
 }
 

@@ -23,6 +23,9 @@ repod.psdle = {
             catalogDatabase: this.database
         })
 
+        //Not currently hooked up to anything like a select box.
+        this.config.lang = this.language.getCurrent(this.config)
+
         this.css()
         this.userData.init(this.config)
         this.reactisms.init(this.config)
@@ -34,9 +37,8 @@ repod.psdle = {
         //Fetch games.
         config.gameList = await this.api.games(config, this.reactisms.getCurrentPage())
 
-        this.generate.filters.section(config)
-
         this.caches.props(config)
+        this.generate.filters.section(config)
 
         if (config.userData.catalog) {
             this.api.init(config)
@@ -206,15 +208,14 @@ repod.psdle = {
                     }
 
                     //Regret part 1.
-                    document.querySelector(".collection-filter-selected")
-                    .addEventListener("click", function(e) {
+                    document.querySelector(".collection-filter-selected").addEventListener("click", function(e) {
                         config.root.reactisms.stateChange.callback(config)
                     })
 
                     clearInterval(config.root.reactisms.stateChange.timer)
 
                     callback(config)
-                }, 50)
+                }, 125)
             }
         }
     },
@@ -331,7 +332,7 @@ repod.psdle = {
                 )
                 var exportButton = this.button(config,
                     "h4",
-                    `Export View (${config.gameList.length})`,
+                    `${config.lang.labels.exportView} (${config.gameList.length})`,
                     ["psw-cell", "psw-m-b-m", "psdle-filter-button", "psdle-filter-export"],
                     (e => this.toggleSectionVisibility(config, config.DOMElements.filterExportContainer))
                 )
@@ -536,7 +537,7 @@ repod.psdle = {
                     let catalogProps = config.catalogProps
 
                     if (catalogProps.length > 0) {
-                        if (!confirm("The following properties may not currently exist and could export as nothing, continue?\nThese may require running Catalog first.\n\n" + catalogProps.join(" ")))
+                        if (!confirm(`${config.lang.messages.exportNoProps}\n\n` + catalogProps.join(" ")))
                             return
                     }
                 }
@@ -818,6 +819,29 @@ repod.psdle = {
         style.type = 'text/css'
         style.innerHTML = `.psdle{--blue:#2185f4;--darker-blue:#063f7e;--bg-hover-filters:#e8e8e8;--psdle-logo-clear:url("data:image/webp;base64,UklGRnIAAABXRUJQVlA4TGUAAAAvU4AHEC9ApG1T/27Hzm6DINum/pwjuMAFBEX/R0OQbTOk+dMM4QYP8H8MbVsBRZEkNXMOAiAACUjAv6wMr3tG9H8Ckn3bhE1lUwEFhE0Nr2LzH4TNGLN5v5VtPgibV5YaT27fVgA=")}.psdle-logo{margin:0 auto;display:block;width:84px;height:31px;background-image:var(--psdle-logo-clear);background-color:var(--blue)}.psdle-filter-button{cursor:pointer}#psdle-filter-section-export{text-align:center;overflow:hidden;background-color:var(--bg-1)}#psdle-filter-section-export input{cursor:text}#psdle-filter-section-export select{border-style:solid;border:none;background-color:var(--bg-1);border-bottom:.0625rem solid #dedede}#psdle-filter-section-export select option{background-color:#fff}#psdle-filter-section-export input,#psdle-filter-section-export select{width:100%;padding:8px 16px}#psdle-filter-section-export input:hover,#psdle-filter-section-export select:hover{background-color:var(--bg-hover-filters)}#psdle-filter-section-export button{padding:.2rem .3rem;margin:.3rem}#psdle-filter-section-export button:hover{color:var(--blue);background-color:var(--bg-hover-filters)}`
         document.getElementsByTagName('head')[0].appendChild(style)
+    },
+    language: {
+        getCurrent: function(config, override) {
+            let outputLang = Object.assign({}, this.cache.en.us)
+            let locale = (override || config.locale || "en-us").split("-")
+
+            if (this.cache.hasOwnProperty(locale[0])) {
+                let target = {}
+
+                if (this.cache[locale[0]].hasOwnProperty(locale[1])) {
+                    target = this.cache[locale[0]][locale[1]]
+                } else {
+                    let def = this.cache[locale[0]].def
+                    console.warn(`${locale[1]} not found for ${locale[0]}, falling back to ${def}`)
+                    target = this.cache[locale[0]][def]
+                }
+
+                Object.assign(outputLang, target)
+            }
+
+            return outputLang
+        },
+        cache: {"en":{"def":"us","us":{"author":"","local":"English","labels":{"exportView":"Export View","deleteData":"Delete user data","catalogEnable":"Enable Catalog"},"messages":{"catalogFirstRun":"Your browser may prompt you for storage permissions. PSDLE will use this to store Catalog responses for quicker and automatic startup.\n\nGranting permission is only required for these benefits.","exportNoProps":"The following properties may not currently exist and could export as nothing, continue?\nThese may require running Catalog first."}}}}
     }
 }
 
