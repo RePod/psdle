@@ -68,7 +68,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <a href="https://twitter.com/RePod37/" target="_blank"><button class="btn btn-primary btn-block"><i class="fa fa-info fa-fw"></i> PSDLE is broken with the new store. For updates see Twitter (click) or the GitHub repo.<br>The site will be the slowest thing to update.</button></a>
+                    <a href="https://twitter.com/RePod37/" target="_blank"><button class="btn btn-primary btn-block"><i class="fa fa-info fa-fw"></i> The site may contain outdated information about PSDLE 3.x as it is updated to reflect 4.x (for "the new store").<br>For updates, follow Twitter (click) or the GitHub repository.</button></a>
                 </div>
             </div>
             <div class="row">
@@ -338,6 +338,58 @@
                         <h3 id="privacy"><i class="fa fa-eye fa-fw"></i> Privacy policy</h3>
                     </div>
                     <!-- <small><strong>The following policy is only in regards to this website's use of Google Analytics. For PSDLE's see below.</strong></small><br> -->
+                    <h4>PSDLE:</h4>
+                    PSDLE is very powerful and provides a lot of functionality but requires various information, some of which may be personal, however it only operates with complete user approval down to the method used and its activation.<br>
+                    <br>
+                    <strong>PSDLE 4.x ("the new store")</strong>
+                    <p>
+                    The current scope of PSDLE has been scaled back and is primarily focused on exporting.<br>
+                    <br>
+                    Currently PSDLE 4.x accesses the following personal information when used:
+                    <ul>
+                        <li>Transaction history / Purchase information <small>(should reflect the Library)</small></li>
+                    </ul>
+                    PSDLE still requires an account be signed into to access the above information but does not need or request the account or its credentials.<br>
+                    <br>
+                    Due to user feedback PSDLE 4.x now stores some information locally:
+                    <ul>
+                        <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">Local Storage</a> for user settings <small>(i.e. export properties)</small>
+                            <ul>
+                                <li>Applied on startup saving time.</li>
+                            </ul>
+                        </li>
+                        <li>An <a href="https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API">IndexedDB</a> database for caching Catalog responses
+                            <ul>
+                                <li>Using this feature is completely optional.</li>
+                                <li>When Catalog is first run it requests permission. No functionality should be lost by denying it.</li>
+                                <li>If granted, Catalog responses are stored in the database for faster startup times and runs automatically.</li>
+                                <li>The database is handled by the browser, not PSDLE.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    Clearing the site data for the Library page should remove the local storage and database (if it exists) if you wish to stop using PSDLE.<br>
+                    There is also a "Delete user data" button in PSDLE's configuration section accessible by clicking the logo during usage.<br>
+                    <br>
+                    In accordance with the Chrome Web Store <a href="https://developer.chrome.com/webstore/program_policies">Developer Program Policies</a>, I certify that I do not:
+                    <ul>
+                        <li>Sell user data to third parties</li>
+                        <li>Use or transfer user data for purposes that are unrelated to PSDLE's single purpose</li>
+                        <li>Use or transfer user data to determine creditworthiness or for lending purposes</li>
+                    </ul>
+                    This privacy policy may change in the future.
+                    </p>
+                    <br>
+                    <strong>PSDLE 3.x ("the old store")</strong>
+                    <br>
+                    PSDLE accesses the following information when used:
+                    <ul>
+                        <li>Purchase information for generating the list. <small>(PS+ status, time of purchase, etc.)</small></li>
+                        <li>Console activation information. <small>(only if Queue is enabled)</small></li>
+                        <li>Download Queue information. <small>(only if Queue is enabled)</small></li>
+                    </ul>
+                    Information collected during use is not permanently stored. If you would like to keep a permanent list please use the "Export View" function.
+                    <br>
+                    <br>
                     <h4>Google Analytics:</h4>
                     <p>
                     This <strong>website</strong> uses <a href="//www.google.com/analytics/">Google Analytics</a> to collect various non-identifiable information about you, the visitor, including but not limited to:
@@ -360,16 +412,7 @@
                     If the opt-out procedure is not to your liking I would advise ceasing use of this webpage completely.
                     </p>
                     <br>
-                    <h4>PSDLE:</h4>
-                    PSDLE is very powerful and provides a lot of functionality but requires various information, some of which may be personal, however it only operates with complete user approval down to the method used and its activation.<br>
-                    <br>
-                    PSDLE accesses the following information when used:
-                    <ul>
-                        <li>Purchase information for generating the list. <small>(PS+ status, time of purchase, etc.)</small></li>
-                        <li>Console activation information. <small>(only if Queue is enabled)</small></li>
-                        <li>Download Queue information. <small>(only if Queue is enabled)</small></li>
-                    </ul>
-                    Information collected during use is not permanently stored. If you would like to keep a permanent list please use the "Export View" function.
+
                 </div>
             </div>
             <div class="row hidden-xs hidden-sm">
