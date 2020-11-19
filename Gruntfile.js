@@ -65,10 +65,10 @@ module.exports = function(grunt) {
                 },
                 options: {
                     replacements: [{
-                        pattern: /(version\s*:\s*").*?(",)/ig,
+                        pattern: /(version\s*:\s*").*?(")/ig,
                         replacement: '$1<%= pkg.version %>$2'
                     },{
-                        pattern: /(versiondate\s*:\s*").*?(",)/ig,
+                        pattern: /(versiondate\s*:\s*").*?(")/ig,
                         replacement: '$1<%= grunt.template.today("yyyy-mm-dd") %>$2'
                     }]
                 }
@@ -80,7 +80,7 @@ module.exports = function(grunt) {
                 },
                 options: {
                     replacements: [{
-                        pattern: /("version":\s*").*?(",)/ig,
+                        pattern: /("version":\s*").*?(")/ig,
                         replacement: '$1<%= pkg.version %>$2'
                     },{
                         pattern: /(\/\/ @version(\s*)).*/ig,
