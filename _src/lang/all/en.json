@@ -5,8 +5,10 @@
         "local": "English",
         "labels": {
             "exportView": "Export View",
+            "exportEmpty": "..?",
             "deleteData": "Delete user data",
-            "catalogEnable": "Enable Catalog"
+            "catalogEnable": "Enable Catalog",
+            "website": "Website"
         },
         "messages": {
             "catalogFirstRun": "Your browser may prompt you for storage permissions. PSDLE will use this to store Catalog responses for quicker and automatic startup.\n\nGranting permission is only required for these benefits.",

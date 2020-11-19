@@ -1,10 +1,12 @@
 var repod = {}
 repod.psdle = {
     config: {
-        version: "4.Testing",
-        versionDate: "202X-Infinity-39"
+        version: "4.869",
+        versionDate: "202X-🔥-39"
     },
     init: function() {
+        console.log(`PSDLE ${this.config.version} ${this.config.versionDate}`)
+
         Object.assign(this.config, {
             root: repod.psdle,
             userData: {},
@@ -14,7 +16,8 @@ repod.psdle = {
             DOMElements: {
                 collectionFilter: ".collection-filter.psw-grid-container",
                 filterExportContainer: "psdle-filter-section-export",
-                filterExportSelects: "psdle-filter-export-selects"
+                filterExportSelects: "psdle-filter-export-selects",
+                PSDLEconfigurator: "psdle-configurator"
             },
             propCache: [],
             catalogCache: {},
@@ -321,7 +324,8 @@ repod.psdle = {
                 var psdleLogo = this.button(config,
                     "h4",
                     this.logo(config),
-                    ["psw-cell", "psw-m-b-m", "psdle-filter-button"]
+                    ["psw-cell", "psw-m-b-m", "psdle-filter-button"],
+                    (e => this.toggleSectionVisibility(config, config.DOMElements.PSDLEconfigurator))
                 )
                 var sortCollection = this.button(config,
                     "h4",
@@ -336,6 +340,14 @@ repod.psdle = {
                     (e => this.toggleSectionVisibility(config, config.DOMElements.filterExportContainer))
                 )
 
+                var configSection = this.sectionGroup(config,
+                    "div",
+                    config.root.generate.config.section(config, this),
+                    ["psdle", "psw-cell", "psw-m-b-m", "psw-round-m"],
+                    config.DOMElements.PSDLEconfigurator,
+                    true
+                )
+
                 var exportSection = this.sectionGroup(config,
                     "div",
                     config.root.exportView.section.generate(config),
@@ -346,6 +358,7 @@ repod.psdle = {
 
                 document.querySelector(config.DOMElements.collectionFilter).prepend(
                     psdleLogo,
+                    configSection,
                     exportButton,
                     exportSection
                 )
@@ -355,7 +368,7 @@ repod.psdle = {
                 var logo = document.createElement("div")
                 logo.classList.add("psdle", "psdle-logo")
                 logo.title = `${config.version} ${config.versionDate}`
-                logo.onclick = (() => config.root.api.init(config))
+                //logo.onclick = (() => config.root.api.init(config))
 
                 return logo
             },
@@ -389,6 +402,56 @@ repod.psdle = {
                 }
 
                 return el
+            }
+        },
+        config: {
+            section: function(config) {
+                var el = document.createElement("div")
+                el.append(this.buttons(config))
+
+                return el
+            },
+            buttons: function(config) {
+                var el = document.createElement("div")
+
+                if (config.userData.catalog !== true) {
+                    el.append(
+                        this.helpers.rowButton(config, config.lang.labels.catalogEnable, function(e) {
+                            e.target.remove()
+                            alert(config.lang.messages.catalogFirstRun)
+                            config.root.api.init(config)
+                        })
+                    )
+                }
+
+                el.append(
+                    this.helpers.rowButton(config, config.lang.labels.website, function(e) {
+                        window.open("https://repod.github.io/psdle/", "_blank");
+                    }),
+                    this.helpers.rowButton(config, config.lang.labels.deleteData, function(e) {
+                        config.root.userData.remove()
+                        config.root.database.drop()
+                    })
+                )
+
+                el.append(this.helpers.version(config))
+
+                return el
+            },
+            helpers: {
+                rowButton: function(config, text, onclick) {
+                    var el = document.createElement("button")
+                    el.innerText = text
+                    el.onclick = (onclick || (e => console.log(e)))
+
+                    return el
+                },
+                version: function(config) {
+                    let versionLabel = document.createElement("span")
+                    versionLabel.innerText = `${config.version} ${config.versionDate}`
+
+                    return versionLabel
+                }
             }
         }
     },
@@ -488,7 +551,7 @@ repod.psdle = {
                 var el = document.createElement("input")
                 el.onchange = (e => this.saveOptions(config, e))
                 el.type = "text"
-                el.placeholder = "..?"
+                el.placeholder = config.lang.labels.exportEmpty
                 el.defaultValue = (defaultText || "")
 
                 return el

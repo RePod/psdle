@@ -3,6 +3,7 @@
     --darker-blue: #063f7e;
     --bg-hover-filters: #e8e8e8; /* .collection-filter__label */
     --psdle-logo-clear: url("data:image/webp;base64,UklGRnIAAABXRUJQVlA4TGUAAAAvU4AHEC9ApG1T/27Hzm6DINum/pwjuMAFBEX/R0OQbTOk+dMM4QYP8H8MbVsBRZEkNXMOAiAACUjAv6wMr3tG9H8Ckn3bhE1lUwEFhE0Nr2LzH4TNGLN5v5VtPgibV5YaT27fVgA=");
+    --thin-padding: 8px 16px;
 }
 
 .psdle-logo {
@@ -18,6 +19,18 @@
     cursor: pointer
 }
 
+#psdle-configurator button {
+    text-align: left;
+    width: 100%;
+    padding: var(--thin-padding);
+    font-weight: normal !important;
+    font-size: 1rem;
+}
+#psdle-configurator button:not(:last-child) {
+    border-bottom:.0625rem solid #dedede
+}
+
+#psdle-configurator,
 #psdle-filter-section-export {
   text-align: center;
   overflow: hidden;
@@ -36,9 +49,10 @@
 #psdle-filter-section-export select,
 #psdle-filter-section-export input {
     width: 100%;
-    padding: 8px 16px;
+    padding: var(--thin-padding);
 }
 
+#psdle-configurator button:hover,
 #psdle-filter-section-export select:hover,
 #psdle-filter-section-export input:hover {
     background-color: var(--bg-hover-filters)
