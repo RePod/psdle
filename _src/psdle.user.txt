@@ -6,6 +6,7 @@
 // @homepage	https://repod.github.io/psdle/
 // @version		4.0.1
 // @include		/https://store.playstation.com/*/
+// @include		/https://library.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
 // @updateURL	https://repod.github.io/psdle/psdle.user.js
 // @downloadURL	https://repod.github.io/psdle/psdle.user.js
