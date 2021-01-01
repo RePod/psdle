@@ -1,8 +1,8 @@
 /*! psdle 3.3.19 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2020-12-31 */
 var repod = {};
 repod.psdle = {
-    version            : "3.3.18",
-    versiondate        : "2020-08-12",
+    version            : "3.3.19",
+    versiondate        : "2020-12-31",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
