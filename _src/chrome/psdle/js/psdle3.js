@@ -1,4 +1,4 @@
-/*! psdle 3.3.18 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2020-08-12 */
+/*! psdle 3.3.19 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2020-12-31 */
 var repod = {};
 repod.psdle = {
     version            : "3.3.18",
@@ -302,7 +302,7 @@ repod.psdle = {
                 auto_systems: function() {
                     var that = this,
                         sysCache = repod.psdle.sys_cache,
-                        order = ["ps1","ps2","ps3","ps4","vr","psp","vita"],
+                        order = ["ps1","ps2","ps3","ps4","ps5","vr","psp","vita"],
                         filterSystems = [];
 
                     $.each(order, function (i,v) {
@@ -370,13 +370,13 @@ repod.psdle = {
                 if (!that.pid_cache[temp.productID]) { that.pid_cache[temp.productID] = 1; } else { that.pid_cache[temp.productID]++; }
 
                 if (obj.entitlement_attributes) {
-                    //PS4
+                    //PS4... and PS5!
                     if (obj.game_meta) {
                         temp.name     = obj.game_meta.name;
                         temp.api_icon = obj.game_meta.icon_url;
                     }
                     temp.size        = obj.entitlement_attributes[0].package_file_size;
-                    temp.platform    = ["PS4"];
+                    temp.platform    = (obj.entitlement_attributes[0].platform_id == "ps5") ? ["PS5"] : ["PS4"];
                     temp.pkg         = obj.entitlement_attributes[0].reference_package_url
                 } else if (obj.drm_def) {
                     //PS3, PSP, or Vita
@@ -635,7 +635,7 @@ repod.psdle = {
                 }
 
                 var systems = $("<span />", {class: "psdle_fancy_bar search options system"}),
-                    order = ["ps1","ps2","ps3","ps4","vr","psp","vita"];
+                    order = ["ps1","ps2","ps3","ps4","ps5","vr","psp","vita"];
                 $.each(order, function (i,v) {
                     if (repod.psdle.sys_cache.hasOwnProperty(v)) {
                         $("<span />", {id: "system_"+v, text: repod.psdle.sys_cache[v]}).on("click", regenFunc).appendTo(systems);
@@ -1037,6 +1037,7 @@ repod.psdle = {
         else if (sys == "PS3" || sys.indexOf("PS3") > -1) { sys = "PS3"; } //The exception nobody expected, for games that return "PS3 PS4"
         else if (sys == "PS VR" || sys.indexOf("PS VR") > -1) { sys = "PS VR"; }
         else if (sys == "PS4" || sys.indexOf("PS4") > -1) { sys = "PS4"; } //What could this possibly break?
+        else if (sys == "PS5" || sys.indexOf("PS5") > -1) { sys = "PS5"; } //The edge case nobody expected.
 
         return sys;
     },
