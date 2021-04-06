@@ -746,6 +746,9 @@ repod.psdle = {
             }
         },
         fetchIDs: function(config) {
+            //Temporarily broken.
+            return false;
+            
             config.catalogDatabase.transact.getNewIDs(
                 config, ((e) => this.catalog(config, e))
             )
@@ -854,12 +857,12 @@ repod.psdle = {
         queries: {
             "recently-purchased": {
                 operationName: "getPurchasedGameList",
-                variables: {"isActive":true,"platform":["ps4","ps5"],"size":1000,"sortBy":"ACTIVE_DATE","sortDirection":"desc","subscriptionService":"NONE"},
+                variables: {"isActive":true,"platform":["ps4","ps5"],"size":9999,"sortBy":"ACTIVE_DATE","sortDirection":"desc","subscriptionService":"NONE"},
                 hash: "00694ada3d374422aa34564e91a0589f23c5f52e0e9a703b19d065dedceb3496"
             },
             "ps-plus": {
                 operationName: "getPurchasedGameList",
-                variables: {"platform":["ps4","ps5"],"size":1000,"sortBy":"ACTIVE_DATE","sortDirection":"desc","subscriptionService":"PS_PLUS"},
+                variables: {"platform":["ps4","ps5"],"size":9999,"sortBy":"ACTIVE_DATE","sortDirection":"desc","subscriptionService":"PS_PLUS"},
                 hash: "00694ada3d374422aa34564e91a0589f23c5f52e0e9a703b19d065dedceb3496"
             },
             catalog: {
