@@ -66,19 +66,24 @@
             </div>
         </nav>
         <div class="container">
+            <!--
             <div class="row">
                 <div class="col-md-12">
                     <a href="https://twitter.com/RePod37/" target="_blank"><button class="btn btn-primary btn-block"><i class="fa fa-info fa-fw"></i> The site may contain outdated information about PSDLE 3.x as it is updated to reflect 4.x (for "the new store").<br>For updates, follow Twitter (click) or the GitHub repository.</button></a>
                 </div>
             </div>
+            -->
             <div class="row">
                 <div class="col-md-12" style='text-align:center'>
                     <noscript>JavaScript is not enabled. It's not required but recommended.<br>
                     Google Analytics via JavaScript is also used (if possible), read privacy policy below for more info.<br><br></noscript>
                     <!-- <a href="https://goo.gl/forms/4LQrF1KcgvP8WiA92"><button class="btn btn-primary" style="margin-bottom:1.5em">Participate in a PSDLE user survey!</button></a><br> -->
+                    <!--
                     <div class="hidden-md hidden-lg">
                         <a id="imgur_album" href="//imgur.com/a/GD3Eb" target="_blank"><button class="btn btn-primary btn-block"><i class="fa fa-image fa-fw"></i> View screenshots on Imgur!</button></a>
                     </div>
+                    
+                    <!--
                     <div id='caro' class="hidden-xs hidden-sm" style='display:inline-block;text-align:center'>
                         <div id='caro_slides'>
                             <div style='background-image:url("//i.imgur.com/nQShH6n.jpg")'><div class='cell-info top'>Sample Screenshots - Slide to navigate.</div><div class='cell-info bottomfull'>PSDLE startup options</div></div>
@@ -98,28 +103,23 @@
                             <div id='export' style='background-image:url("//i.imgur.com/SSxMHhq.jpg")'><div class='cell-info bottomfull'>Export what you see in a CSV format!</div></div>
                         </div>
                     </div>
-                    <br><small>Screenshots may not reflect current features or design.</small>
+                    -->
+                    <div class="hidden-xs hidden-sm">
+                        <img src="./logo/example.jpg"></img>
+                        <br><small>Screenshots may not reflect current features or design.</small>
+                    </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-sm-6">
                     <div class="page-header">
-                        <h3 id="features"><i class="fa fa-star fa-fw"></i> Features <small class='hidden-xs hidden-sm'>(<i class="fa fa-search fa-fw"></i>: View screenshot)</small></h3>
+                        <h3 id="features"><i class="fa fa-star fa-fw"></i> Features <!-- <small class='hidden-xs hidden-sm'>(<i class="fa fa-search fa-fw"></i>: View screenshot)</small> --></h3>
                     </div>
                     <div>
                         <dl>
-                            <dt>One convenient list of all your content!</dt>
-                            <dt id='goto_view'><i class="fa fa-search fa-fw hidden-xs hidden-sm"></i> View, sort, and filter your download list as you desire!</dt>
-                            <dt id='goto_vita'><i class="fa fa-search fa-fw hidden-xs hidden-sm"></i> Easily see Vita-supported content!</dt>
-                                <dd>Even if you do not own a Vita!</dd>
-                            <dt id='goto_pstv'><i class="fa fa-search fa-fw hidden-xs hidden-sm"></i> Determine what is <abbr title="Subject to the web store's compatibility list.">compatible with PS TV</abbr>! (en-us only)</dt>
-                            <dt id='goto_plus_start'><i class="fa fa-search fa-fw hidden-xs hidden-sm"></i> PS+ Support</dt>
-                                <dd>See what is and is not tied to your subscription.</dd>
-                                <dd>Requires active subscription.</dd>
-                            <dt id='goto_newbox_start'><i class="fa fa-search fa-fw hidden-xs hidden-sm"></i> Download Queue support</dt>
-                                <dd>Easily send items where you want them to go.</dd>
-                                <dd id='goto_queue_fast'><i class="fa fa-search fa-fw hidden-xs hidden-sm"></i> Pick up the pace with keyboard shortcuts!</dd>
-                            <dt id='goto_export'><i class="fa fa-search fa-fw hidden-xs hidden-sm"></i> Export your list</dt>
+                            <!--<dt>One convenient list of all your content!</dt>-->
+                            <!-- <dt id='goto_view'><i class="fa fa-search fa-fw hidden-xs hidden-sm"></i> View, sort, and filter your download list as you desire!</dt> -->
+                            <dt>Export your list</dt>
                                 <dd>On your terms: <abbr title="Theoretically.">Infinite columns</abbr>, <abbr title="Or at least the ones that matter.">any property</abbr>.</dd>
                                 <dd>CSV format for spreadsheets.</dd>
                             <dt>Mobile</dt>
@@ -159,7 +159,6 @@
                                 <li>Submit.</li>
                                 <li>PSDLE should activate.</li>
                             </ol>
-                            <small>(Advanced) Through browser console: <a href="./psdle3.js">PSDLE 3 (old store)</a> and <a href="./psdle4.js">PSDLE 4 (new store)</a></small><br>
                             <br>
                             <small>Firefox users may need to toggle browser.urlbar.filter.javascript in about:config (research first).<br>If Direct does not work try other methods. Bookmarklet is the next step, followed by Userscript then extensions. Pasting the above line into your browser's console is also viable but not recommended.</small>
                         </div>
@@ -237,31 +236,12 @@
                     When signed in, an account's Entitlement (game) data is available and used to generate the list.
                     <br><br>
                     <div id="paq_container">
+                        <!--
                         <ul>
-                            <li><a href="#paq1">Can I select which specific console I send items to for the download queue?</a></li>
-                            <li><a href="#paq2">Sending items to the download queue is failing, despite working (minutes) before?</a></li>
-                            <li><a href="#paq_catalog">Where are all the cool features like PS1/PS2 games, categories, background screenshots, etc.?</a></li>
                             <li><a href="#paq_search">What all can I do with the search options?</a></li>
-                            <li><a href="#paq_pstv">Does this differentiate between Vita and PS/Vita TV games?</a></li>
-                            <li><a href="#paq_eh">Is PSDLE meant to compete with or replace the Download List?</a></li>
                             <li><a href="#paq_mystery">What does PSDLE stand for?</a></li>
                         </ul>
-                        <a class="anchor" id="paq1"></a><strong>Can I select which specific console I send items to for the download queue?</strong><br>
-                        Seemingly no. It appears any number of consoles share the same download queue so it's based on whichever checks it first.
-                        <br><br>
-
-                        <a class="anchor" id="paq2"></a><strong>Sending items to the download queue is failing, despite working (minutes) before?</strong><br>
-                        Your connection to the store most likely timed out, refreshing the page and running PSDLE again should solve this.<br>
-                        If the system is failing to start downloading, ensure you're signed in (or sign in again) or try rebooting it.<br>
-                        If it's still not working, then <a href="//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation">submit an issue.</a>
-                        <br><br>
-
-                        <a class="anchor" id="paq_catalog"></a><strong>Where are all the cool features like PS1/PS2 games, categories, background screenshots, etc.?</strong><br>
-                        Enable "Catalog" during startup to obtain additional information about each game.<br>
-                        <br>
-                        Keep in mind this increases the time to generate the list, relative to the amount of items on your list.
-                        <br><br>
-
+                        -->
                         <a class="anchor" id="paq_search"></a><strong>What all can I do with the search options?</strong><br>
                         <ul>
                             <li>Search by name, ID, Publisher, and more.</li>
@@ -279,31 +259,10 @@
                         For more information about Javascript Regex, <a href="//developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions" target="_blank">click here</a>.
                         <br><br>
 
-                        <a class="anchor" id="paq_pstv"></a><strong>Does this differentiate between Vita and PS/Vita TV games?</strong><br>
-                        At the time of writing PSDLE can attempt to detect PS TV content for <strong>en-us only</strong>.<br>
-                        The option will only show up if using the <strong>en-us</strong> web store, which accepts only <strong>en-us</strong> accounts.<br>
-                        This is a limitation of the web store, not PSDLE.<br>
-                        <br>
-                        If detected, "TV" will appear next to content's platform.
-                        <br><br>
-
-                        <a class="anchor" id="paq_eh"></a><strong>Is PSDLE meant to compete with or replace the Download List?</strong><br>
-                        It may appear to be a competitor or replacement due to its features. However, I see it as more of a supplement.<br><br>
-                        While the Download List may have shortcomings, I'm sure those who can officially provide a solution know and do not need to be reminded, told they "do not care", or told how their current product does not live up to PSDLE. Thank them for their awesome work instead, they do it for a living!<br><br>
-                        The Download List is a great thing to have, PSDLE simply makes it better!<br>
-                        <br>
-                        At the bare minimum, PSDLE intends to maintain parity with the download list and interact as expected with the PS4, PS3, and Vita first.<br>
-                        After that is done, pile on additional features (like powerful searching) to expedite those interactions.
-                        <br><br>
-
                         <a class="anchor" id="paq_mystery"></a><strong>What does PSDLE stand for?</strong><br>
                         <span>
                             <span style='background-color:#000;color:#000;width:100%;max-width:420px;height:1.2em;display:inline-block;cursor:text'></span>
                         </span>
-                        <br><br>
-
-                        <a class="anchor" id="paq_share"></a><strong>Can I write an article about/share/print out and marry PSDLE?</strong><br>
-                        Sure! <span class="hidden-xs hidden-sm">Check out <a href="#promo">Promotional Material</a> for more information.</span>
                         <br><br>
 
                         <a class="anchor" id="paq_redist"></a><strong>Am I free to copy, modify, redistribute, etc. PSDLE's source code?</strong><br>
@@ -380,6 +339,7 @@
                     </ul>
                     This privacy policy may change in the future.
                     </p>
+                    <!--
                     <br>
                     <strong>PSDLE 3.x ("the old store")</strong>
                     <br>
@@ -391,6 +351,7 @@
                     </ul>
                     Information collected during use is not permanently stored. If you would like to keep a permanent list please use the "Export View" function.
                     <br>
+                    -->
                     <br>
                     <h4>Google Analytics:</h4>
                     <p>
@@ -413,8 +374,6 @@
                     If this policy is not to your liking, but you wish to continue using this page (not PSDLE) you may do so with <a href="//tools.google.com/dlpage/gaoptout">this add-on provided by Google</a> or blocking Google Analytics outright with your preferred method such as an adblocker's privacy rules list.<br>
                     If the opt-out procedure is not to your liking I would advise ceasing use of this webpage completely.
                     </p>
-                    <br>
-
                 </div>
             </div>
             <div class="row hidden-xs hidden-sm">
