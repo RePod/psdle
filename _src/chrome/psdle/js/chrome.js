@@ -22,7 +22,6 @@ function spawn(url) {
 }
 
 (()=>{
-    let legacy = location.href.indexOf("psapp") > 0 ? "3" : "";
     spawn("js/psdleChromium.js");
-    spawn(`js/psdle${legacy}.js`);
+    spawn(`js/psdle.js`);
 })()

@@ -26,7 +26,7 @@ function redirectCallback(cbTab) {
 
 chrome.pageAction.onClicked.addListener(function (tab) {
 	//chrome.pageAction.hide(tab.id);
-    if (tab.url.indexOf(urls.store) == 0 && tab.url.indexOf("psapp") < 0) {
+    if (tab.url.indexOf(urls.store) == 0) {
         localStorage.setItem("redirect", "true")
         chrome.tabs.update(tab.id, {url: urls.library}, redirectCallback);
     } else {
