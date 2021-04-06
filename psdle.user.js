@@ -1,11 +1,11 @@
-/*! psdle 4.0.3 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2021-01-01 */
+/*! psdle 4.0.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2021-04-06 */
 // ==UserScript==
 // @author		RePod
 // @name		PSDLE for Greasemonkey
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		4.0.3
+// @version		4.0.4
 // @include		/https://store.playstation.com/*/
 // @include		/https://library.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
@@ -24,12 +24,12 @@ Alternatively, reconfigure the updating settings in your Userscript manager.
 */
 
 
-/*! psdle 4.0.3 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2021-01-01 */
+/*! psdle 4.0.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2021-04-06 */
 var repod = {}
 repod.psdle = {
     config: {
-        version: "4.0.3",
-        versionDate: "2021-01-01"
+        version: "4.0.4",
+        versionDate: "2021-04-06"
     },
     init: function() {
         console.log(`PSDLE ${this.config.version} ${this.config.versionDate}`)
@@ -441,6 +441,7 @@ repod.psdle = {
             buttons: function(config) {
                 var el = document.createElement("div")
 
+                /*
                 if (config.userData.catalog !== true) {
                     el.append(
                         this.helpers.rowButton(config, config.lang.labels.catalogEnable, function(e) {
@@ -450,6 +451,7 @@ repod.psdle = {
                         })
                     )
                 }
+                */
 
                 el.append(
                     this.helpers.rowButton(config, config.lang.labels.website, function(e) {
@@ -773,6 +775,9 @@ repod.psdle = {
             }
         },
         fetchIDs: function(config) {
+            //Temporarily broken.
+            return false;
+            
             config.catalogDatabase.transact.getNewIDs(
                 config, ((e) => this.catalog(config, e))
             )
@@ -881,12 +886,12 @@ repod.psdle = {
         queries: {
             "recently-purchased": {
                 operationName: "getPurchasedGameList",
-                variables: {"isActive":true,"platform":["ps4","ps5"],"size":1000,"sortBy":"ACTIVE_DATE","sortDirection":"desc","subscriptionService":"NONE"},
+                variables: {"isActive":true,"platform":["ps4","ps5"],"size":9999,"sortBy":"ACTIVE_DATE","sortDirection":"desc","subscriptionService":"NONE"},
                 hash: "00694ada3d374422aa34564e91a0589f23c5f52e0e9a703b19d065dedceb3496"
             },
             "ps-plus": {
                 operationName: "getPurchasedGameList",
-                variables: {"platform":["ps4","ps5"],"size":1000,"sortBy":"ACTIVE_DATE","sortDirection":"desc","subscriptionService":"PS_PLUS"},
+                variables: {"platform":["ps4","ps5"],"size":9999,"sortBy":"ACTIVE_DATE","sortDirection":"desc","subscriptionService":"PS_PLUS"},
                 hash: "00694ada3d374422aa34564e91a0589f23c5f52e0e9a703b19d065dedceb3496"
             },
             catalog: {

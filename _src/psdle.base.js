@@ -414,6 +414,7 @@ repod.psdle = {
             buttons: function(config) {
                 var el = document.createElement("div")
 
+                /*
                 if (config.userData.catalog !== true) {
                     el.append(
                         this.helpers.rowButton(config, config.lang.labels.catalogEnable, function(e) {
@@ -423,6 +424,7 @@ repod.psdle = {
                         })
                     )
                 }
+                */
 
                 el.append(
                     this.helpers.rowButton(config, config.lang.labels.website, function(e) {

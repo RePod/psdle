@@ -7,7 +7,7 @@
     "default_locale": "en",
     "homepage_url": "https://repod.github.io/psdle",
 
-    "version": "4.0.3",
+    "version": "4.0.4",
 
     "page_action": {
         "default_icon": "icons/icon32.png",
