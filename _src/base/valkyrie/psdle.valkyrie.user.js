@@ -1367,7 +1367,7 @@ repod.psdle = {
                 this.finish();
             }
 
-            this.batch.splice(0, (burstThreads || 30)).forEach(function(i, e) {
+            this.batch.splice(0, (burstThreads || 2)).forEach(function(i, e) {
                 catalog.resolve(i.pid)
                 .then(function (data) {
                     if (data.response && data.response.status == 404) return 0;
