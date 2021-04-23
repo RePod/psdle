@@ -1,21 +1,11 @@
 module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-        cssmin: {
-            target: {
-            files: [{
-                expand: true,
-                cwd: '_src/css',
-                src: ['*.css', '!*.min.css'],
-                dest: '_src/css',
-                ext: '.min.css'
-                }]
-            }
-        },
         includes: {
             build: {
                 files: {
-                    '_src/psdle.includes.js': '_src/psdle.base.js'
+                    '_src/base/gotham/psdle.includes.js': '_src/base/gotham/psdle.base.js',
+                    '_src/base/valkyrie/psdle.includes.js': '_src/base/valkyrie/psdle.base.js'
                 },
                 flatten: true,
                 cwd: '.',
@@ -31,9 +21,13 @@ module.exports = function(grunt) {
                 options: {
                     banner: '/*! <%= pkg.name %> <%= pkg.version %> <%= pkg.license %> - min - compiled <%= grunt.template.today("yyyy-mm-dd") %> */'
                 },
-                files: {
-                    'psdle.min.js': '_src/psdle.includes.js'
-                }
+                files: [{
+                    expand: true,
+                    src: ['_src/base/**/psdle.includes.js'],
+                    rename: function(dest, src) {
+                        return src.split("/").slice(0,-1).join("/") + "/psdle.min.js"
+                    }
+                }]
             }
         },
         copy: {
@@ -46,8 +40,10 @@ module.exports = function(grunt) {
                 banner: '/*! <%= pkg.name %> <%= pkg.version %> <%= pkg.license %> - user+base - compiled <%= grunt.template.today("yyyy-mm-dd") %> */\n'
             },
             userscript: {
-                src: ['_src/psdle.user.txt', '_src/psdle.includes.js'],
-                dest: 'psdle.user.js',
+                files: {
+                    '_src/base/gotham/psdle.gotham.user.js': ['_src/psdle.user.txt', '_src/base/gotham/psdle.includes.js'],
+                    '_src/base/valkyrie/psdle.valkyrie.user.js': ['_src/psdle.user.txt', '_src/base/valkyrie/psdle.includes.js']
+                }
             }
         },
         exec: {
@@ -60,9 +56,10 @@ module.exports = function(grunt) {
         },
         'string-replace': {
             compile: {
-                files: {
-                    '_src/psdle.includes.js': '_src/psdle.includes.js'
-                },
+                files: [{
+                    expand: true,
+                    src: '_src/base/**/psdle.includes.js'
+                }],
                 options: {
                     replacements: [{
                         pattern: /(version\s*:\s*").*?(")/ig,
@@ -87,14 +84,47 @@ module.exports = function(grunt) {
                         replacement: '$1<%= pkg.version %>'
                     }]
                 }
+            },
+            // Terrifying.
+            userscriptGotham: {
+                files: { '_src/base/gotham/psdle.gotham.user.js': '_src/base/gotham/psdle.gotham.user.js' },
+                options: {
+                    replacements: [{
+                        pattern: /\{variant\}/ig,
+                        replacement: 'gotham'
+                    }]
+                }
+            },
+            userscriptValkyrie: {
+                files: { '_src/base/valkyrie/psdle.valkyrie.user.js': '_src/base/valkyrie/psdle.valkyrie.user.js' },
+                options: {
+                    replacements: [{
+                        pattern: /\{variant\}/ig,
+                        replacement: 'valkyrie'
+                    }]
+                }
+            }
+        },
+        cssmin: {
+            target: {
+                files: [{
+                    expand: true,
+                    src: ['_src/base/**/css/*.css', '!_src/base/**/css/*.min.css'],
+                    ext: '.min.css'
+                }]
             }
         },
         'concat-json': {
-            lang: {
-                cwd: "_src/lang/all",
-                src: [ "*.json" ],
-                dest: "_src/lang/lang.min.json"
-            }
+            gotham: {
+                cwd: '_src/base/gotham/lang/all',
+                src: [ '*.json' ],
+                dest: '_src/base/gotham/lang/lang.min.json'
+            },
+            valkyrie: {
+                cwd: '_src/base/valkyrie/lang/all',
+                src: [ '*.json' ],
+                dest: '_src/base/valkyrie/lang/lang.min.json'
+            },
         }
     });
 
@@ -107,7 +137,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-exec');
     grunt.loadNpmTasks('grunt-concat-json');
 
-    grunt.registerTask('minlang', 'Concat and minify language files. Never automate, shouldn\'t need often.', ['concat-json:lang']);
+    grunt.registerTask('minlang', 'Concat and minify language files. Never automate, shouldn\'t need often.', ['concat-json']);
     grunt.registerTask('compile', 'Bake in language JSON and minified CSS, then bake in version.', function(){
         grunt.task.run([
             'cssmin',
@@ -124,6 +154,8 @@ module.exports = function(grunt) {
             'uglify:release',   //Minified
             'copy:chrome',
             'concat:userscript', //Userscript
+            'string-replace:userscriptGotham', //Userscript smartness
+            'string-replace:userscriptValkyrie', //And again. Filenames hard.
             'exec:chrome_zip' //Chrome + Firefox
        ]);
     });

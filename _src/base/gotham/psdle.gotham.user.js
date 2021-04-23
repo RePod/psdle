@@ -1,9 +1,37 @@
-/*! psdle 4.0.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2021-04-06 */
+/*! psdle 4.0.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2021-04-23 */
+// ==UserScript==
+// @author		RePod
+// @name		PSDLE for Greasemonkey (gotham)
+// @description	Improving everyone's favorite online download list, one loop at a time.
+// @namespace	https://github.com/RePod/psdle
+// @homepage	https://repod.github.io/psdle/
+// @version		4.0.4
+// @include		/https://store.playstation.com/*/
+// @include		/https://library.playstation.com/*/
+// @exclude		/https://store.playstation.com/(cam|liquid)/*/
+// @updateURL	https://repod.github.io/psdle/psdle.gotham.user.js
+// @downloadURL	https://repod.github.io/psdle/psdle.gotham.user.js
+// @icon		https://repod.github.io/psdle/logo/6_psdle_64px.png
+// @grant		none
+// @noframes
+// ==/UserScript==
+
+/*
+
+NOTE: The Valkyrie and Gotham (old/new) store Userscripts are separate (psdle.valkyrie.user.js, psdle.gotham.user.js).
+
+To keep this from updating remove the @updateURL (for automatic updates) and @downloadURL (for manual updates) above.
+Alternatively, reconfigure the updating settings in your Userscript manager.
+
+*/
+
+
+/*! psdle 4.0.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2021-04-23 */
 var repod = {}
 repod.psdle = {
     config: {
         version: "4.0.4",
-        versionDate: "2021-04-06"
+        versionDate: "2021-04-23"
     },
     init: function() {
         console.log(`PSDLE ${this.config.version} ${this.config.versionDate}`)
