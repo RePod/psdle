@@ -1,2 +1,2 @@
 const psdleChromium=true;
-const psdleSkip=true; //3.x
+const psdleSkip=true; // Valkyrie / 3.x

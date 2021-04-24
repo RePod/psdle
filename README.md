@@ -15,21 +15,19 @@ Usage
 
 **Everyone else:** PSDLE uses Node, NPM, and Grunt to compile versions.
 
-The latest versions should end up in **the root** (except chrome zip), and should be the same or newer than the files available from the website (they may even be broken!).
+The latest versions (except chrome zip) end up in `_src/base/variant/` and should be the same or newer than the files available from the website (they may even be broken!).
 
 Notable Grunt tasks:
-  - `grunt compile` compiles the base version in **_src/** including the min CSS and languages.  
+  - `grunt compile` compiles the base versions in `_src/base/variant/` including the min CSS and languages.  
   - `grunt` (default) is the same as `grunt compile`.
-  - `grunt release` generates all the release versions (base, min, user, chrome, firefox) into **the root** (except chrome).
+  - `grunt release` generates all the release versions (base, min, user, chrome, firefox) into `_src/base/variant` (except chrome).
     - `grunt deploy` as a follow up to clean firefox add-on files, open chrome webstore, then sync to *gh-pages*.
-  
-Releases end up in **the root** to ease in copying them to the *[gh-pages](//github.com/RePod/psdle/tree/gh-pages)* branch.
 
 What Needs To Be Done
 =====
 * **[Translations!](https://github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation)**
 * General performance and stability improvements.
-* ~~Improve various API accuracy and functionality, including Download Queue.~~ Thanks Valkyrie.
+* ~~Improve various API accuracy and functionality, including Download Queue.~~ ~~Thanks Valkyrie.~~ Thanks Gotham.
 
 License
 =====

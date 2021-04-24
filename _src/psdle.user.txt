@@ -1,6 +1,6 @@
 // ==UserScript==
 // @author		RePod
-// @name		PSDLE for Greasemonkey
+// @name		PSDLE for Greasemonkey ({variant})
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
@@ -8,14 +8,16 @@
 // @include		/https://store.playstation.com/*/
 // @include		/https://library.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
-// @updateURL	https://repod.github.io/psdle/psdle.user.js
-// @downloadURL	https://repod.github.io/psdle/psdle.user.js
+// @updateURL	https://repod.github.io/psdle/psdle.{variant}.user.js
+// @downloadURL	https://repod.github.io/psdle/psdle.{variant}.user.js
 // @icon		https://repod.github.io/psdle/logo/6_psdle_64px.png
 // @grant		none
 // @noframes
 // ==/UserScript==
 
 /*
+
+NOTE: The Valkyrie and Gotham (old/new) store Userscripts are separate (psdle.valkyrie.user.js, psdle.gotham.user.js).
 
 To keep this from updating remove the @updateURL (for automatic updates) and @downloadURL (for manual updates) above.
 Alternatively, reconfigure the updating settings in your Userscript manager.
