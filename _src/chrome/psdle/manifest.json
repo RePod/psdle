@@ -19,7 +19,7 @@
     "background": {
         "scripts": ["js/background.js"]
     },
-    "web_accessible_resources": [ "js/psdleChromium.js", "js/psdle.js", "js/psdle3.js" ],
+    "web_accessible_resources": [ "js/psdleChromium.js", "js/psdle.gotham.js", "js/psdle.valkyrie.js" ],
     "icons": {
         "16": "icons/icon32.png",
         "48": "icons/icon64.png",

@@ -1,8 +1,8 @@
-/*! psdle 4.0.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2021-04-23 */
+/*! psdle 4.0.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2021-04-24 */
 var repod = {};
 repod.psdle = {
-    version            : "4.0.4",
-    versiondate        : "2021-04-23",
+    version            : "Testing",
+    versiondate        : "Infinity",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -96,7 +96,7 @@ repod.psdle = {
         if ($("#psdle_start").length == 0) {
             var that = this;
 
-            if (window.psdleSkip && window.psdleSkip == true) {
+            if (psdleSkip && psdleSkip == true) {
                 this.container.go("startup");
             } else {
                 $("<div/>",{class:"psdle_logo startup"}).click(function() {

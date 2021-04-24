@@ -32,7 +32,12 @@ module.exports = function(grunt) {
         },
         copy: {
             release: { files: {'psdle.js': '_src/psdle.includes.js'} },
-            chrome: { files: { '_src/chrome/psdle/js/psdle.js': 'psdle.js' } }
+            chrome: {
+                files: { 
+                    '_src/chrome/psdle/js/psdle.gotham.js': '_src/base/gotham/psdle.includes.js',
+                    '_src/chrome/psdle/js/psdle.valkyrie.js': '_src/base/valkyrie/psdle.includes.js',
+                }
+            }
         },
         concat: {
             options: {

@@ -95,7 +95,7 @@ repod.psdle = {
         if ($("#psdle_start").length == 0) {
             var that = this;
 
-            if (window.psdleSkip && window.psdleSkip == true) {
+            if (psdleSkip && psdleSkip == true) {
                 this.container.go("startup");
             } else {
                 $("<div/>",{class:"psdle_logo startup"}).click(function() {

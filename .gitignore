@@ -1,5 +1,5 @@
 # Chrome Extension
-_src/chrome/psdle/js/psdle.js
+_src/chrome/psdle/js/psdle.*.js
 *.pem
 *.crx
 # Firefox Add-on
