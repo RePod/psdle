@@ -1,7 +1,7 @@
-/*! psdle 4.0.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2021-04-24 */
+/*! psdle 4.0.5 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2021-04-24 */
 var repod = {};
 repod.psdle = {
-    version            : "4.0.4",
+    version            : "4.0.5",
     versiondate        : "2021-04-24",
     autocomplete_cache : [],
     gamelist           : [],
