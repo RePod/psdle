@@ -4,8 +4,8 @@ module.exports = function(grunt) {
         includes: {
             build: {
                 files: {
-                    '_src/base/gotham/psdle.includes.js': '_src/base/gotham/psdle.base.js',
-                    '_src/base/valkyrie/psdle.includes.js': '_src/base/valkyrie/psdle.base.js'
+                    '_src/base/gotham/psdle.gotham.includes.js': '_src/base/gotham/psdle.base.js',
+                    '_src/base/valkyrie/psdle.valkyrie.includes.js': '_src/base/valkyrie/psdle.base.js'
                 },
                 flatten: true,
                 cwd: '.',
@@ -21,21 +21,27 @@ module.exports = function(grunt) {
                 options: {
                     banner: '/*! <%= pkg.name %> <%= pkg.version %> <%= pkg.license %> - min - compiled <%= grunt.template.today("yyyy-mm-dd") %> */'
                 },
-                files: [{
-                    expand: true,
-                    src: ['_src/base/**/psdle.includes.js'],
-                    rename: function(dest, src) {
-                        return src.split("/").slice(0,-1).join("/") + "/psdle.min.js"
-                    }
-                }]
+                files: {
+                    '_src/base/gotham/psdle.gotham.min.js': '_src/base/gotham/psdle.gotham.includes.js',
+                    '_src/base/valkyrie/psdle.valkyrie.min.js': '_src/base/valkyrie/psdle.valkyrie.includes.js'
+                }
             }
         },
         copy: {
-            release: { files: {'psdle.js': '_src/psdle.includes.js'} },
+            release: { 
+                files: [{
+                    expand: true,
+                    flatten: true,
+                    src: '_src/base/**/psdle.*.*.js',
+                    rename: function(src, dest) {
+                        return dest.replace(".includes", "")
+                    }
+                }]
+            },
             chrome: {
                 files: { 
-                    '_src/chrome/psdle/js/psdle.gotham.js': '_src/base/gotham/psdle.includes.js',
-                    '_src/chrome/psdle/js/psdle.valkyrie.js': '_src/base/valkyrie/psdle.includes.js',
+                    '_src/chrome/psdle/js/psdle.gotham.js': '_src/base/gotham/psdle.gotham.includes.js',
+                    '_src/chrome/psdle/js/psdle.valkyrie.js': '_src/base/valkyrie/psdle.valkyrie.includes.js'
                 }
             }
         },
@@ -46,8 +52,8 @@ module.exports = function(grunt) {
             },
             userscript: {
                 files: {
-                    '_src/base/gotham/psdle.gotham.user.js': ['_src/psdle.user.txt', '_src/base/gotham/psdle.includes.js'],
-                    '_src/base/valkyrie/psdle.valkyrie.user.js': ['_src/psdle.user.txt', '_src/base/valkyrie/psdle.includes.js']
+                    '_src/base/gotham/psdle.gotham.user.js': ['_src/psdle.user.txt', '_src/base/gotham/psdle.gotham.includes.js'],
+                    '_src/base/valkyrie/psdle.valkyrie.user.js': ['_src/psdle.user.txt', '_src/base/valkyrie/psdle.valkyrie.includes.js']
                 }
             }
         },
@@ -63,7 +69,7 @@ module.exports = function(grunt) {
             compile: {
                 files: [{
                     expand: true,
-                    src: '_src/base/**/psdle.includes.js'
+                    src: '_src/base/**/psdle.*.includes.js'
                 }],
                 options: {
                     replacements: [{

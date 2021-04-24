@@ -1,4 +1,4 @@
-/*! psdle 4.0.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2021-04-23 */
+/*! psdle 4.0.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2021-04-24 */
 // ==UserScript==
 // @author		RePod
 // @name		PSDLE for Greasemonkey (valkyrie)
@@ -26,11 +26,11 @@ Alternatively, reconfigure the updating settings in your Userscript manager.
 */
 
 
-/*! psdle 4.0.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2021-04-23 */
+/*! psdle 4.0.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2021-04-24 */
 var repod = {};
 repod.psdle = {
     version            : "4.0.4",
-    versiondate        : "2021-04-23",
+    versiondate        : "2021-04-24",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -124,7 +124,7 @@ repod.psdle = {
         if ($("#psdle_start").length == 0) {
             var that = this;
 
-            if (window.psdleSkip && window.psdleSkip == true) {
+            if (psdleSkip && psdleSkip == true) {
                 this.container.go("startup");
             } else {
                 $("<div/>",{class:"psdle_logo startup"}).click(function() {
@@ -1367,7 +1367,7 @@ repod.psdle = {
                 this.finish();
             }
 
-            this.batch.splice(0, (burstThreads || 2)).forEach(function(i, e) {
+            this.batch.splice(0, (burstThreads || 3)).forEach(function(i, e) {
                 catalog.resolve(i.pid)
                 .then(function (data) {
                     if (data.response && data.response.status == 404) return 0;

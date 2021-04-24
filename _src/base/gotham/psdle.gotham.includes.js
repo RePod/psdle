@@ -2,8 +2,8 @@
 var repod = {}
 repod.psdle = {
     config: {
-        version: "4.869",
-        versionDate: "202X-🔥-39"
+        version: "4.0.4",
+        versionDate: "2021-04-24"
     },
     init: function() {
         console.log(`PSDLE ${this.config.version} ${this.config.versionDate}`)
