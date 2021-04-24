@@ -160,7 +160,7 @@ module.exports = function(grunt) {
     grunt.registerTask('release', 'Generate PSDLE release, compiles first.', function() {
         grunt.task.run([
             'compile',
-            'copy:release',     //Base
+            //'copy:release',     //Base
             'string-replace:release', //Set versions
             'uglify:release',   //Minified
             'copy:chrome',
