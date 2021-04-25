@@ -5,6 +5,7 @@
         "startup": {
             "apis": "Select which store features you would like to use, hover for more details.<br>Certain store features may not be disabled.",
             "wait": "Please wait.",
+            "catalog": "Your browser may prompt you for storage permissions. PSDLE will use this to store Catalog responses for quicker and automatic startup.\n\nGranting permission is only required for these benefits.\n\nIf you run into issues or would like to you can revoke the persmission and clear the cache below the Start button.",
             "start": "Start"
         },
         "columns": {

@@ -158,12 +158,14 @@ repod.psdle = {
         },
         header: function() {
             //"<div class='amopromo'><a href='https://goo.gl/forms/4LQrF1KcgvP8WiA92' target='_blank'><span class='psdle_btn'>PSDLE User Survey</span></a><br><div>Let your voice be heard!</div></div>"
-            return "<span><a href='//repod.github.io/psdle/' target='_blank'><div class='psdle_logo'></div></a><br><small>v"+repod.psdle.version+" <small>"+repod.psdle.versiondate+"</small></small></span>";
+            return "<span><a href='//repod.github.io/psdle/' target='_blank'><div class='psdle_logo'></div></a><br><small>v"+repod.psdle.version+" <small>"+repod.psdle.versiondate+" (Valkyrie)</small></small></span>";
         },
         tagline: function() {
             var that = this;
             var t = $("<div />", {class:'psdle tagline'});
             t.append($("<span />", {id:'psdle_night', text: "Night Mode"}).on("click", function() { that.darkCSS(); }))
+            .append(" | ")
+            .append($("<span />", {id:'dropCache', text: "Clear Catalog Cache"}).on("click", function() { repod.psdle.database.drop(); })) 
             .append("<br><a href='//repod.github.io/psdle#support' target='_blank'>Support PSDLE</a> | <a href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation' target='_blank'>Submit Bug/Translation</a> | ")
             .append($("<span />", {id:'dump_raw', text: "Dump Raw"}).on("click", function() {
                 repod.psdle.macrossBrain(function(raw) {
@@ -193,16 +195,19 @@ repod.psdle = {
 
                 $("<span />", {
                     id: con.internalID,
-                    class: (con.internalID == "api_game" || con.disabled) ? "toggled_off" : "",
+                    class: ((con.internalID == "api_game" && localStorage.catalog !== "true") || con.disabled) ? "toggled_off" : "",
                     "data-tooltip": con.desc.replace(/'/g, "&apos;"),
                     text: con.name.replace(/'/g, "&apos;")
                 }).on("click", function() {
                     if ($(this).attr("id") !== "api_entitle") $(this).toggleClass("toggled_off");
+                    if ($(this).attr("id") == "api_game" && !$(this).hasClass("toggled_off")) {
+                        alert(lang.startup.catalog)
+                    }
                 }).appendTo(bar)
             });
 
             var goBtn = $("<span />", {id: "psdle_go", class: "psdle_btn", text: lang.startup.start}).on("click", function() {
-                config.deep_search = !$("#api_game").hasClass("toggled_off");
+                localStorage.catalog = config.deep_search = !$("#api_game").hasClass("toggled_off");
                 config.dlQueue = !$("#api_queue").hasClass("toggled_off");
                 config.check_tv = ($("#api_pstv").length) ? !$("#api_pstv").hasClass("toggled_off") : false;
 
