@@ -2,8 +2,8 @@
 var repod = {}
 repod.psdle = {
     config: {
-        version: "4.0.5",
-        versionDate: "2021-04-24"
+        version: "4.869",
+        versionDate: "202X-🔥-39"
     },
     init: function() {
         console.log(`PSDLE ${this.config.version} ${this.config.versionDate}`)
@@ -73,7 +73,7 @@ repod.psdle = {
             return false
         },
         drop: function() {
-            this.db.close()
+            if (this.db.hasOwnProperty("close")) this.db.close()
 
             var dropDatabase = window.indexedDB.deleteDatabase(this.name)
             dropDatabase.onsuccess = (e => console.log(e))

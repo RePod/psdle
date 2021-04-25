@@ -1515,7 +1515,7 @@ repod.psdle = {
             return false
         },
         drop: function() {
-            this.db.close()
+            if (this.db.hasOwnProperty("close")) this.db.close()
 
             var dropDatabase = window.indexedDB.deleteDatabase(this.name)
             dropDatabase.onsuccess = (e => console.log(e))
