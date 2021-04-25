@@ -1,11 +1,11 @@
-/*! psdle 4.0.5 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2021-04-24 */
+/*! psdle 4.0.6 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2021-04-24 */
 // ==UserScript==
 // @author		RePod
 // @name		PSDLE for Greasemonkey (gotham)
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		4.0.5
+// @version		4.0.6
 // @include		/https://store.playstation.com/*/
 // @include		/https://library.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
@@ -26,11 +26,11 @@ Alternatively, reconfigure the updating settings in your Userscript manager.
 */
 
 
-/*! psdle 4.0.5 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2021-04-24 */
+/*! psdle 4.0.6 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2021-04-24 */
 var repod = {}
 repod.psdle = {
     config: {
-        version: "4.0.5",
+        version: "4.0.6",
         versionDate: "2021-04-24"
     },
     init: function() {
@@ -101,7 +101,7 @@ repod.psdle = {
             return false
         },
         drop: function() {
-            this.db.close()
+            if (this.db.hasOwnProperty("close")) this.db.close()
 
             var dropDatabase = window.indexedDB.deleteDatabase(this.name)
             dropDatabase.onsuccess = (e => console.log(e))

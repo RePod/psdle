@@ -1,8 +1,8 @@
-/*! psdle 4.0.5 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2021-04-24 */
+/*! psdle 4.0.6 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2021-04-24 */
 var repod = {}
 repod.psdle = {
     config: {
-        version: "4.0.5",
+        version: "4.0.6",
         versionDate: "2021-04-24"
     },
     init: function() {
@@ -73,7 +73,7 @@ repod.psdle = {
             return false
         },
         drop: function() {
-            this.db.close()
+            if (this.db.hasOwnProperty("close")) this.db.close()
 
             var dropDatabase = window.indexedDB.deleteDatabase(this.name)
             dropDatabase.onsuccess = (e => console.log(e))
