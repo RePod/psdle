@@ -1,8 +1,8 @@
 /*! psdle 4.0.5 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2021-04-24 */
 var repod = {};
 repod.psdle = {
-    version            : "4.0.5",
-    versiondate        : "2021-04-24",
+    version            : "Testing",
+    versiondate        : "Infinity",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -96,7 +96,7 @@ repod.psdle = {
         if ($("#psdle_start").length == 0) {
             var that = this;
 
-            if (psdleSkip && psdleSkip == true) {
+            if (window.psdleSkip && window.psdleSkip == true) {
                 this.container.go("startup");
             } else {
                 $("<div/>",{class:"psdle_logo startup"}).click(function() {
@@ -244,7 +244,7 @@ repod.psdle = {
 
             if (repod.psdle.config.deep_search && this.postRuns.catalog !== true) {
                 this.go("progress");
-                repod.psdle.game_api.run();
+                repod.psdle.game_api.backport();
                 return;
             }
 
@@ -426,7 +426,7 @@ repod.psdle = {
                 delete that.pid_cache[i]
             }
         })
-        
+
         //Side effect of adapting to mobile and future changes.
         //.create() so we're not required to be on the download list. .destroy() after.
         var downloadListController = require("valkyrie-storefront/pods/download/list/controller").default.create();
@@ -436,10 +436,10 @@ repod.psdle = {
             that.gamelist[a].dlListPage = Math.ceil(that.gamelist[a].index  / downloadListController.pageSize);
 
             if (that.config.deep_search) {
-                that.game_api.queue(a+1,((that.pid_cache[b.productID] > 1)?b.id:b.productID));
+                //that.game_api.queue(a+1,((that.pid_cache[b.productID] > 1)?b.id:b.productID));
             }
         });
-        
+
         downloadListController.destroy(); //Sure why not.
 
         console.log("PSDLE | Finished generating download list. End result is "+this.gamelist.length+" of "+entitlements.length+" item(s).",this.stats);
@@ -1234,12 +1234,12 @@ repod.psdle = {
         },
         download: function(download, content) {
             var blob = new Blob([content], {type: "octet/stream"});
-            
+
             $("<a>",{
               "download" : "psdle_"+(new Date().toISOString())+(download || "_generic.txt"),
               "href" : window.URL.createObjectURL(blob)
             })[0].dispatchEvent(new MouseEvent("click"));
-            
+
             window.URL.revokeObjectURL(blob);
         },
         format: function(index,target,sep) {
@@ -1319,34 +1319,50 @@ repod.psdle = {
     game_api: {
         batch: [],
         called: 0, //Catalog threads completed (success or not)
-        queue: function(index,pid) {
-            var that = this,
-                a    = {pid:pid,index:index};
-
-            //Do some queue/delay magic here.
-            if (index == "pid_cache") {
-                this.batch.push(a)
-            } else {
-                this.batch.unshift(a);
+        backport: function() {
+            repod.psdle.backportConfig = {
+                root: repod.psdle,
+                catalogDatabase: repod.psdle.database,
+                catalogCache: repod.psdle.databaseCache
             }
+
+            // Init DB, pull out new IDs for batch
+            var config = repod.psdle.backportConfig
+            repod.psdle.database.init(config, (() =>
+                config.catalogDatabase.transact.getNewIDs(
+                    config, ((e) => this.queue(e))
+                )
+            ))
+        },
+        queue: function(newIDs) {
+            this.batch = newIDs.map(function(id) {
+                return {"index":0, "pid":id}
+            })
+
+            // What a workaround!
+            this.called = repod.psdle.gamelist.length - this.batch.length
+
+            this.run()
         },
         run: function(burstThreads) {
             var that = this,
                 catalog = repod.psdle.config.valkyrieInstance.lookup('service:susuwatari');
 
             if (this.batch.length == 0) {
-                return 0;
                 this.finish();
+                return
             }
 
             this.batch.splice(0, (burstThreads || 3)).forEach(function(i, e) {
                 catalog.resolve(i.pid)
                 .then(function (data) {
-                    if (data.response && data.response.status == 404) return 0;
+                    /*if (data.response && data.response.status == 404 || data.response.status == 403) {
+                        return 0;
+                    }*/
 
                     var parse = that.parse(data),
                         cached = repod.psdle.pid_cache.hasOwnProperty(data.id);
-                    repod.psdle.type_cache[parse.category] = true;
+                    //repod.psdle.type_cache[parse.category] = true;
 
                     if (cached) {
                         repod.psdle.pid_cache[data.id] = parse;
@@ -1356,23 +1372,43 @@ repod.psdle = {
                     var target = repod.psdle.gamelist.find(function (i) { return i.id == data.id });
 
                     if (target.hasOwnProperty("index")) {
-                        $.extend(repod.psdle.gamelist[target.index-1], parse);
+                        //$.extend(repod.psdle.gamelist[target.index-1], parse);
+
+                        // Store in DB cache
+                        repod.psdle.backportConfig.catalogCache[data.id] = parse
                     }
 
                     that.called++;
                 })
-                .catch(function(e){ that.called++; repod.psdle.type_cache["unknown"] = true; })
+                .catch(function(e){
+                    if (e.response) {
+                        var response = e.response;
+                        if (response.status == 404) {
+                            // Trust the server that it doesn't exist. Don't want 403s slipping in.
+                            repod.psdle.backportConfig.catalogCache[response.url.split("/").pop()] = {}
+                        }
+                        if (response.status == 403) {/* Oh no! */ }
+                    }
+                    
+                    that.called++; repod.psdle.type_cache["unknown"] = true;
+                })
                 .then(function() { that.run(1); that.updateBar(); });
             });
         },
         updateBar: function() {
             var l = this.called,
                 r = repod.psdle.gamelist.length;
+                
+            if (l % 100 == 0) {
+                // Periodically save results 
+                var config = repod.psdle.backportConfig
+                config.catalogDatabase.transact.dumpCacheToDB(config, () => console.log("Catalog saved..."))
+            }
 
             $("#startup_progress").attr({value:l,max:r});
             $("#psdle_status").text(repod.psdle.lang.startup.wait).append($("<br />")).append(l+" / "+r); //Slow, but scared of .html for translations.
 
-            if (l == r) {
+            if (l >= r) {
                 $("#psdle_status").text(repod.psdle.lang.startup.wait);
                 $("#startup_progress").attr("value",null);
                 this.finish();
@@ -1382,6 +1418,25 @@ repod.psdle = {
             if (force !== true) {
                 if (this.called > 0 && this.called < repod.psdle.gamelist.length) { return; } //Keep waiting
             }
+
+            var config = repod.psdle.backportConfig
+            config.catalogDatabase.transact.dumpCacheToDB(config, (function() { config.root.game_api.finishCB(config) }), true)
+        },
+        finishCB: function(config) {
+            repod.psdle.gamelist.forEach(function(data, index) {
+                var id = data.id
+
+                if (config.catalogCache.hasOwnProperty(id)) {
+                    var response = config.catalogCache[id]
+
+                    $.extend(repod.psdle.gamelist[index], response);
+
+                    // Could revive PID cache here
+
+                    // Cache stuff
+                    repod.psdle.type_cache[(response.category || "unknown")] = true;
+                }
+            })
 
             setTimeout(function() {
                 repod.psdle.container.postList("catalog");
@@ -1415,6 +1470,10 @@ repod.psdle = {
             }
 
             //Everything else.
+            if (data.fileSize.unit !== "") {
+                var i18n = repod.psdle.config.valkyrieInstance.lookup('service:i18n')
+                extend.prettySize = i18n.t("c.page.details.drmDetails." + data.fileSize.unit.toLowerCase(),{val: data.fileSize.value}).string
+            }
             extend.baseGame = data.name || undefined
             extend.category = data.topCategory || "unknown"
             extend.description = data.longDescription || undefined
@@ -1427,6 +1486,138 @@ repod.psdle = {
             //if (data.age_limit && data.content_rating) { extend.ageLimit = data.content_rating.rating_system + " " + data.age_limit; }
 
             return extend;
+        }
+    },
+    backportConfig: {},
+    databaseCache: {},
+    database: { // Spot the backport
+        version: 2,
+        name: "PSDLEValkyrieCatalogCache",
+        db: {},
+        init: async function(config, callback) {
+            var persist = await this.persist()
+
+            if (persist) {
+                //config.userData.catalog = true
+                //config.root.userData.save(config)
+
+                this.create.db(config, callback)
+            } else {
+                //Temporary would defeat the purpose.
+            }
+        },
+        persist: function() {
+            if (navigator.storage && navigator.storage.persist) {
+                return navigator.storage.persist().then(function(persistent) {
+                    return persistent
+                })
+            }
+
+            return false
+        },
+        drop: function() {
+            this.db.close()
+
+            var dropDatabase = window.indexedDB.deleteDatabase(this.name)
+            dropDatabase.onsuccess = (e => console.log(e))
+            dropDatabase.onerror = (e => console.error(e))
+            location.reload()
+        },
+        create: {
+            db: function(config, callback) {
+                var db = window.indexedDB.open(
+                    config.catalogDatabase.name,
+                    config.catalogDatabase.version
+                )
+
+                db.onerror = (e => console.error(e))
+                db.onupgradeneeded = function(e) {
+                    config.catalogDatabase.db = db.result
+                    config.catalogDatabase.create.upgrade(config, e, db.result)
+                }
+                db.onsuccess = function(e) {
+                    config.catalogDatabase.db = db.result
+                    callback()
+                }
+            },
+            upgrade: function(config, e, db) {
+                if (e.oldVersion > 0 && e.oldVersion < config.catalogDatabase.version) {
+                    db.deleteObjectStore("cache")
+                }
+
+                this.objectStore(config, db)
+            },
+            objectStore: function(config, db) {
+                var db = db.createObjectStore("cache", { keyPath: "id" })
+                db.createIndex("ID", "id", {unique: true})
+
+                db.transaction.oncomplete = (e => console.log(e))
+                db.transaction.onerror = (e => console.log(e))
+            }
+        },
+        transact: {
+            get: function(config, type) {
+                return config.catalogDatabase.db.transaction("cache", type)
+            },
+            dumpCacheToDB: function(config, callback, backToCache) {
+                var db = this.get(config, "readwrite")
+                var store = db.objectStore("cache")
+
+                db.oncomplete = function(e) {
+                    if (backToCache) {
+                        config.catalogDatabase.transact.dumpDBToCache(config, callback)
+                    } else {
+                        callback(e)
+                    }
+                }
+                db.onerror = (e => console.log(e))
+
+                for (var [id, json] of Object.entries(config.catalogCache)) {
+                    store.put({"id": id, "json": json})
+                }
+            },
+            dumpDBToCache: function(config, callback) {
+                var db = this.get(config)
+                var store = db.objectStore("cache")
+                var readOut = {}
+
+                db.oncomplete = (e => callback(e))
+                db.onerror = (e => console.log(e))
+
+                store.openCursor().onsuccess = function(event) {
+                    var cursor = event.target.result
+                    if (cursor) {
+                        readOut[cursor.key] = cursor.value.json
+                        cursor.continue()
+                    }
+                    else {
+                        config.catalogCache = Object.assign({}, readOut)
+                    }
+                }
+            },
+            getNewIDs: function(config, callback) {
+                var games = repod.psdle.gamelist.map(e=>e.id)
+                var db = this.get(config, "readonly")
+                var store = db.objectStore("cache")
+                var readOut = []
+
+                //db.oncomplete = (e => console.log(e))
+                db.onerror = (e => console.log(e))
+
+                store.openCursor().onsuccess = function(event) {
+                    var cursor = event.target.result
+                    if (cursor) {
+                        readOut.push(cursor.key)
+                        cursor.continue()
+                    }
+                    else {
+                        var newIDs = games.filter(e => readOut.indexOf(e) < 0)
+                        console.debug("Catalog new IDs:", newIDs)
+
+                        callback(newIDs)
+                    }
+                }
+            },
         }
     },
     dlQueue: {
