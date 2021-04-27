@@ -94,13 +94,13 @@ div.amopromo > div {
     font-size: small
 }
 .psdle.tagline > a,
-.psdle.tagline > span {
+.psdle.tagline > button {
     line-height: 0;
     cursor: pointer;
     color: #7F6D75 !important;
 }
 .psdle.tagline > a:hover,
-.psdle.tagline > span:hover {
+.psdle.tagline > button:hover {
     color: inherit !important;
     text-decoration: underline;
 }
@@ -240,30 +240,31 @@ td:nth-child(2) {
     background-color: #FF8080 !important;
     color: #fff
 }
-.psdle_fancy_bar>span,
-span#export_view,
-span[id^=dl_],
-span[id^=filter_],
-span[id^=system_],
+.psdle_fancy_bar>button,
+button#export_view,
+button[id^=dl_],
+button[id^=filter_],
+button[id^=system_],
 .psdle_fancy_but {
     font-weight: 700;
     font-size: 0.9em;
+    line-height: unset;
     color: #fff;
     background-color: #2185f4;
     display: inline-block;
     margin-right: 2px;
     margin-bottom: 5px;
     padding: 1px 10px;
-    cursor: pointer
+    cursor: pointer;
 }
 .psdle_fancy_but {
     border-radius: 12px
 }
-#muh_games_container:not(.rtl) .psdle_fancy_bar>span:first-of-type {
+#muh_games_container:not(.rtl) .psdle_fancy_bar > button:first-of-type {
     border-top-left-radius: 12px;
     border-bottom-left-radius: 12px
 }
-#muh_games_container:not(.rtl) .psdle_fancy_bar > span:last-of-type {
+#muh_games_container:not(.rtl) .psdle_fancy_bar > button:last-of-type {
     border-top-right-radius: 12px;
     border-bottom-right-radius: 12px
 }
@@ -334,17 +335,22 @@ span[id^=system_],
     width: 100%;
     table-layout: fixed
 }
-#dlQASys>div {
+#dlQASys > div {
     display: table-cell
 }
-#dlQASys>div>div {
-    cursor: pointer;
+#dlQASys > div > button {
+    color: #fff;
+    line-height: unset;
     background-color: rgba(33, 133, 244, .8);
     border-radius: 10px;
     padding: 2px;
     margin: 0 10px;
     box-shadow: 0 0 30px #000;
-    transition: background-color 0.5s, box-shadow 0.5s
+    transition: background-color 0.5s, box-shadow 0.5s;
+    width: 100%;
+    width: -moz-available;
+    width: -webkit-fill-available;
+    width: fill-available;
 }
 #dlQASys>div>div:hover {
     background-color: rgba(33, 133, 244, 1);

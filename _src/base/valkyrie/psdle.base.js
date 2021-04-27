@@ -98,10 +98,10 @@ repod.psdle = {
             if ((window.psdleSkip || false) == true) {
                 this.container.go("startup");
             } else {
-                $("<div/>",{class:"psdle_logo startup"}).click(function() {
+                $("<button/>",{class:"psdle_logo startup","aria-label":repod.psdle.lang.aria.start}).click(function() {
                     $(this).remove();
                     that.container.go("startup");
-                }).appendTo("body");
+                }).prependTo("body");
             }
         }
     },
@@ -112,31 +112,34 @@ repod.psdle = {
             switch (target) {
                 default:
                 case "startup":
-                    this.respawn(this.startup());
+                    this.respawn(this.startup(), 0, target);
                     break;
                 case "progress":
-                    this.respawn(this.progress());
+                    this.respawn(this.progress(), 0, target);
                     break;
                 case "dlList":
                     this.respawn(this.dlList().append(this.tagline()), function () {
                         repod.psdle.table.regen(true);
                         repod.psdle.table.margin();
-                    })
+                    },
+                    target)
                     break;
                 case "dlQueue":
                     repod.psdle.dlQueue.generate.display(); //TO-DO: Not this!
                     break;
             }
         },
-        respawn: function(content,cb) {
+        respawn: function(content,cb,target) {
             //$("#"+this.subElemID).remove(); //Temporary lazy unbind
             var that = this;
+            var title = repod.psdle.lang.aria.start.replace("$SCREEN$", target)
 
             if ($("#"+this.elemID).length == 0) {
-                $("<div />",{id:this.elemID,class:"valkyrie"}).appendTo("body")
+                $("<div />",{id:this.elemID,class:"valkyrie",role:"main","aria-label": title}).prependTo("body")
             }
 
             $("#"+this.elemID)
+            .attr({"aria-label": title})
             .slideUp(function() {
                 $(this).children().remove();
 
@@ -163,17 +166,17 @@ repod.psdle = {
         tagline: function() {
             var that = this;
             var t = $("<div />", {class:'psdle tagline'});
-            t.append($("<span />", {id:'psdle_night', text: "Night Mode"}).on("click", function() { that.darkCSS(); }))
+            t.append($("<button />", {id:'psdle_night', text: "Night Mode"}).on("click", function() { that.darkCSS(); }))
             .append(" | ")
-            .append($("<span />", {id:'dropCache', text: "Clear Catalog Cache"}).on("click", function() { repod.psdle.database.drop(); })) 
-            .append("<br><a href='//repod.github.io/psdle#support' target='_blank'>Support PSDLE</a> | <a href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation' target='_blank'>Submit Bug/Translation</a> | ")
-            .append($("<span />", {id:'dump_raw', text: "Dump Raw"}).on("click", function() {
+            .append($("<button />", {id:'dropCache', text: "Clear Catalog Cache"}).on("click", function() { repod.psdle.database.drop(); })) 
+            .append("<br><a href='//repod.github.io/psdle#support' target='_blank' aria-label='Support P S D L E'>Support PSDLE</a> | <a href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation' target='_blank'>Submit Bug/Translation</a> | ")
+            .append($("<button />", {id:'dump_raw', text: "Dump Raw"}).on("click", function() {
                 repod.psdle.macrossBrain(function(raw) {
                     repod.psdle.exportList.download("_raw.json",JSON.stringify(raw))
                 });
             }))
             .append(" | ")
-            .append($("<span />", {id: "inject_lang", text: "Inject Language"}).on("click", function() {
+            .append($("<button />", {id: "inject_lang", text: "Inject Language"}).on("click", function() {
                     repod.psdle.debug.inject_lang();
             }))
 
@@ -193,7 +196,7 @@ repod.psdle = {
             $.each(lang.apis, function(key,con) {
                 if (con.internalID == "api_pstv" /*&& config.language !== "en-us"*/) { return 0; }
 
-                $("<span />", {
+                $("<button />", {
                     id: con.internalID,
                     class: ((con.internalID == "api_game" && localStorage.catalog !== "true") || con.disabled) ? "toggled_off" : "",
                     "data-tooltip": con.desc.replace(/'/g, "&apos;"),
@@ -206,7 +209,7 @@ repod.psdle = {
                 }).appendTo(bar)
             });
 
-            var goBtn = $("<span />", {id: "psdle_go", class: "psdle_btn", text: lang.startup.start}).on("click", function() {
+            var goBtn = $("<button />", {id: "psdle_go", class: "psdle_btn", text: lang.startup.start}).on("click", function() {
                 localStorage.catalog = config.deep_search = !$("#api_game").hasClass("toggled_off");
                 config.dlQueue = !$("#api_queue").hasClass("toggled_off");
                 config.check_tv = ($("#api_pstv").length) ? !$("#api_pstv").hasClass("toggled_off") : false;
@@ -632,7 +635,7 @@ repod.psdle = {
 
                 if (!dlQueue) {
                     r.append($("<span />", {class: "psdle_fancy_bar"})
-                        .append($("<span />", {id: "export_view", text: lang.labels.exportView}).on("click", function() {
+                        .append($("<button />", {id: "export_view", text: lang.labels.exportView}).on("click", function() {
                             repod.psdle.exportList.configure();
                         }))
                     )
@@ -642,7 +645,7 @@ repod.psdle = {
                     order = ["ps1","ps2","ps3","ps4","ps5","vr","psp","vita"];
                 $.each(order, function (i,v) {
                     if (repod.psdle.sys_cache.hasOwnProperty(v)) {
-                        $("<span />", {id: "system_"+v, text: repod.psdle.sys_cache[v]}).on("click", regenFunc).appendTo(systems);
+                        $("<button />", {id: "system_"+v, text: repod.psdle.sys_cache[v]}).on("click", regenFunc).appendTo(systems);
                     }
                 });
                 systems.appendTo(r);
@@ -652,7 +655,7 @@ repod.psdle = {
                         n = (dlQueue) ? "dlList" : "dlQueue",
                         tr = lang.strings[n];
 
-                    $("<span />", {class: "psdle_fancy_but", id: nid, text: tr}).on("click", function() {
+                    $("<button />", {class: "psdle_fancy_but", id: nid, text: tr}).on("click", function() {
                         repod.psdle.container.go(n);
                     }).appendTo(r);
                 }
@@ -663,7 +666,7 @@ repod.psdle = {
 
                     //TO-DO: sort by order
                     $.each(repod.psdle.type_cache, function (key) {
-                        var i = $("<span />", {id: "filter_"+key, text: (lang.categories[key] || key)}).on("click", regenFunc)
+                        var i = $("<button />", {id: "filter_"+key, text: (lang.categories[key] || key)}).on("click", regenFunc)
                         if (order.indexOf(key) >= 0) {
                             order[order.indexOf(key)] = i;
                         } else {
@@ -1027,7 +1030,7 @@ repod.psdle = {
     },
     safeSystemCheck: function() {
         var temp = [];
-        $("span[id^=system_]:not('.toggled_off')").each(function() { temp.push($(this).text()); });
+        $("button[id^=system_]:not('.toggled_off')").each(function() { temp.push($(this).text()); });
         return temp;
     },
     safeGuessSystem: function(sys_in) {
@@ -1072,8 +1075,8 @@ repod.psdle = {
                         $("<div>").append(this.genTable())
                     )
 
-            //Gen output
-            w.append($("<span class='psdle_fancy_bar'><span id='export_row_del'>-</span><span id='export_row_add'>+</span></span><span id='export_import' class='psdle_fancy_but'>"+repod.psdle.lang.strings.exportImport+"</span><br><span class='psdle_fancy_bar'><span id='sel_export_view'>"+repod.psdle.lang.labels.exportView+"</span><span id='sel_export_json'>JSON</span><span id='sel_export_csv'>CSV</span>"))
+            //Gen output (wow)
+            w.append($("<span class='psdle_fancy_bar'><button id='export_row_del'>−</button><button id='export_row_add'>+</button></span><span id='export_import' class='psdle_fancy_but'>"+repod.psdle.lang.strings.exportImport+"</span><br><span class='psdle_fancy_bar'><button id='sel_export_view'>"+repod.psdle.lang.labels.exportView+"</button><button id='sel_export_json'>JSON</button><button id='sel_export_csv'>CSV</button>"))
 
             //Generate window.
             $("<div />",{id:"export_configure",class:"cover"}).append($("<div />").append(w)).appendTo("#muh_games_container");
@@ -1836,11 +1839,11 @@ repod.psdle = {
 
                     $.each(temp,function(a,b) {
                         var c = b.replace(/ps /i,"").toLowerCase(), d = (repod.psdle.config.active_consoles.hasOwnProperty(c)) ? "" : "toggled_off";
-                        t.append($("<div>").append($("<div>", {id:"dla_"+c+"_"+id,class:d,text:b} )))
+                        t.append($("<div>").append($("<button>", {id:"dla_"+c+"_"+id,class:`${d} psdle_fancy_but`,text:b} )))
                     });
                 } else {
                     var c = temp[0].slice(0).replace(/ps /i,"").toLowerCase(), d = (repod.psdle.config.active_consoles.hasOwnProperty(c)) ? "" : "toggled_off";
-                    t.html($("<div>").append($("<div>",{id:"dla_"+c+"_"+id,class:d,text:repod.psdle.lang.strings.queueTo.replace("$SYS$",game.platformUsable[0].slice(0))})))
+                    t.html($("<div>").append($("<button>",{id:"dla_"+c+"_"+id,class:`${d} psdle_fancy_but`,text:repod.psdle.lang.strings.queueTo.replace("$SYS$",game.platformUsable[0].slice(0))})))
                 }
                 dialog.append(t);
             }
@@ -1892,13 +1895,13 @@ repod.psdle = {
                         event.stopPropagation();
                     });
 
-                    $("div[id^=dla_]:not('.toggled_off')").on("click", function() {
+                    $("button[id^=dla_]:not('.toggled_off')").on("click", function() {
                         repod.psdle.dlQueue.batch.add.go(this);
                     });
                     break;
 
                 case "off":
-                    $("div[id^=dla_]").off("click");
+                    $("button[id^=dla_]").off("click");
                     $("#dlQueueAsk").off("click");
                     break;
             }

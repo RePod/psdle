@@ -8,6 +8,10 @@
             "catalog": "Your browser may prompt you for storage permissions. PSDLE will use this to store Catalog responses for quicker and automatic startup.\n\nGranting permission is only required for these benefits.\n\nIf you run into issues or would like to you can revoke the persmission and clear the cache below the Start button.",
             "start": "Start"
         },
+        "aria": {
+            "start": "Start P S D L E",
+            "mainScreen": "P S D L E $SCREEN$ screen"
+        },
         "columns": {
             "icon": "Icon",
             "name": "Name",
