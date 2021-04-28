@@ -10,7 +10,14 @@
         },
         "aria": {
             "start": "Start P S D L E",
-            "mainScreen": "P S D L E $SCREEN$ screen"
+            "mainScreen": "P S D L E $SCREEN$ screen",
+            "filterSystems": "Filter by System",
+            "filterCategory": "Filter by Category",
+            "filterText": "Filter by text search",
+            "filterScope": "Text search scope",
+            "dlQueueWindow": "Download queue window",
+            "sortAsc": "Sorted ascending",
+            "sortDesc": "Sorted descending"
         },
         "columns": {
             "icon": "Icon",

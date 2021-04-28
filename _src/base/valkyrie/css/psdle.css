@@ -290,18 +290,18 @@ button[id^=system_],
 }
 /*Sorting        */
 
-.psdle_sort_asc,
-.psdle_sort_desc {
+.psdle_sort_Asc,
+.psdle_sort_Desc {
     float: right;
     width: 0;
     height: 0;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent
 }
-.psdle_sort_asc {
+.psdle_sort_Asc {
     border-bottom: 5px solid #fff
 }
-.psdle_sort_desc {
+.psdle_sort_Desc {
     border-top: 5px solid #fff
 }
 /*Newbox         */
