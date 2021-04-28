@@ -1882,7 +1882,7 @@ repod.psdle = {
                     $.each(temp,function(a,b) {
                         var c = b.replace(/ps /i,"").toLowerCase(), d = (repod.psdle.config.active_consoles.hasOwnProperty(c)) ? "" : "toggled_off";
                         t.append($("<div>").append($("<button>", {id:"dla_"+c+"_"+id,class:`${d} psdle_fancy_but`,text:b,
-                            "aria-label": repod.psdle.lang.queueTo.replace("$SYS$", b)
+                            "aria-label": repod.psdle.lang.strings.queueTo.replace("$SYS$", b)
                         }))) // Real ) hours
                     });
                 } else {
