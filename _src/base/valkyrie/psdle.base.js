@@ -101,7 +101,7 @@ repod.psdle = {
                 $("<button/>",{class:"psdle_logo startup","aria-label":repod.psdle.lang.aria.start}).click(function() {
                     $(this).remove();
                     that.container.go("startup");
-                }).appendTo("body");
+                }).appendTo("body").focus()
             }
         }
     },
@@ -112,20 +112,22 @@ repod.psdle = {
             switch (target) {
                 default:
                 case "startup":
-                    this.respawn(this.startup(), 0, target);
+                    this.respawn(this.startup(), function(){ $("#api_entitle").focus() }, target);
                     break;
                 case "progress":
-                    this.respawn(this.progress(), 0, target);
+                    this.respawn(this.progress(), function(){ $("#startup_progress").focus() }, target);
                     break;
                 case "dlList":
                     this.respawn(this.dlList().append(this.tagline()), function () {
                         repod.psdle.table.regen(true);
                         repod.psdle.table.margin();
+                        $("#export_view").focus()
                     },
                     target)
                     break;
                 case "dlQueue":
                     repod.psdle.dlQueue.generate.display(); //TO-DO: Not this!
+                    $("#system_ps3").focus()
                     break;
             }
         },
@@ -200,6 +202,7 @@ repod.psdle = {
                     id: con.internalID,
                     class: ((con.internalID == "api_game" && localStorage.catalog !== "true") || con.disabled) ? "toggled_off" : "",
                     "data-tooltip": con.desc.replace(/'/g, "&apos;"),
+                    "aria-description": con.desc.replace(/'/g, "&apos;"),
                     text: con.name.replace(/'/g, "&apos;")
                 }).attr({
                     "aria-checked": !((con.internalID == "api_game" && localStorage.catalog !== "true") || con.disabled),
@@ -545,7 +548,7 @@ repod.psdle = {
             var sub = $("<div />", {id: repod.psdle.container.subElemID})
             .append(this.header.gen())
             // Nooooooooooooo
-            .append("<div class='psdle_table'><table><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name' role='button'>"+repod.psdle.lang.columns.name+"</th><th role='button' title='Approximate, check store page for all supported platforms.'>"+repod.psdle.lang.columns.platform+"</th><th role='button' id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th role='button' id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table></div>");
+            .append("<div class='psdle_table' aria-live='polite'><table><thead><tr><th>"+repod.psdle.lang.columns.icon+"</th><th id='sort_name' role='button'>"+repod.psdle.lang.columns.name+"</th><th role='button' title='Approximate, check store page for all supported platforms.'>"+repod.psdle.lang.columns.platform+"</th><th role='button' id='sort_size'>"+repod.psdle.lang.columns.size+"</th><th role='button' id='sort_date'>"+repod.psdle.lang.columns.date+"</th></tr></thead><tbody></tbody></table></div>");
             sub.find("th[id^=sort_]").on("click", function() {
                 repod.psdle.sortGamelist($(this));
             });
@@ -1117,6 +1120,8 @@ repod.psdle = {
 
             //Generate window.
             $("<div />",{id:"export_configure",class:"cover"}).append($("<div />").append(w)).appendTo("#muh_games_container");
+            
+            $("#export_table input").first().focus();
 
             //Bind
             $("#export_import").on("click", function() {
@@ -1973,7 +1978,7 @@ repod.psdle = {
     focusManager: {
         // PSDLE doesn't care if the queue window is left open since it destroys it before making a new one.
         // The export window probably needs this the most. Also slip in close buttons/escapes.
-        manage: function(dialog) {
+        manage: function(dialog, start) {
             // $("#export_configure").find("table, button, input")
             // $("#dlQASys").find("button") 
         }
