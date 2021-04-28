@@ -1109,12 +1109,12 @@ repod.psdle = {
             var that = this;
 
             //Gen input
-            var w = $("<div>", {id:"export_select", role: "region", "aria-label": repod.psdle.lang.labels.exportView}).append(
+            var w = $("<div>", {id:"export_select", role: "dialog", "aria-label": repod.psdle.lang.labels.exportView}).append(
                         $("<div>").append(this.genTable())
                     )
 
             //Gen output (wow)
-            w.append($("<span class='psdle_fancy_bar'><button id='export_row_del'>−</button><button id='export_row_add'>+</button></span><span id='export_import' class='psdle_fancy_but'>"+repod.psdle.lang.strings.exportImport+"</span><br><span class='psdle_fancy_bar'><button id='sel_export_view'>"+repod.psdle.lang.labels.exportView+"</button><button id='sel_export_json'>JSON</button><button id='sel_export_csv'>CSV</button>"))
+            w.append($("<span class='psdle_fancy_bar'><button id='export_row_del'>−</button><button id='export_row_add'>+</button></span><button id='export_import' class='psdle_fancy_but'>"+repod.psdle.lang.strings.exportImport+"</button><br><span class='psdle_fancy_bar'><button id='sel_export_view'>"+repod.psdle.lang.labels.exportView+"</button><button id='sel_export_json'>JSON</button><button id='sel_export_csv'>CSV</button>"))
 
             //Generate window.
             $("<div />",{id:"export_configure",class:"cover"}).append($("<div />").append(w)).appendTo("#muh_games_container");
@@ -1863,7 +1863,7 @@ repod.psdle = {
                 icon = game.icon;
                 dialog = $("<div>", {
                             id: "dlQueueAsk",
-                            role: "region",
+                            role: "dialog",
                             "aria-label": repod.psdle.lang.aria.dlQueueWindow,
                             "aria-description": game.name,
                             style: "background-image:url(\""+repod.psdle.table.icons.toSize(icon,400)+"\");"
@@ -1930,6 +1930,10 @@ repod.psdle = {
         },
         bind: function(e) {
             var that = this;
+            
+            // last = document.activeElement
+            //$("#dlQueueAsk").first().focus()
+            $("#dlQueueAsk button").first().focus()
 
             switch (e) {
                 case "on":
@@ -1965,6 +1969,14 @@ repod.psdle = {
         close: function() {
             $("#dlQueue_newbox").remove();
             this.bind("off");
+        }
+    },
+    focusManager: {
+        // PSDLE doesn't care if the queue window is left open since it destroys it before making a new one.
+        // The export window probably needs this the most. Also slip in close buttons/escapes.
+        manage: function(dialog) {
+            // $("#export_configure").find("table, button, input")
+            // $("#dlQASys").find("button") 
         }
     },
     tv: {
