@@ -5,7 +5,7 @@ module.exports = function(grunt) {
             build: {
                 files: {
                     '_src/base/gotham/psdle.gotham.includes.js': '_src/base/gotham/psdle.base.js',
-                    //'_src/base/valkyrie/psdle.valkyrie.includes.js': '_src/base/valkyrie/psdle.base.js'
+                    '_src/base/valkyrie/psdle.valkyrie.includes.js': '_src/base/valkyrie/psdle.base.js'
                 },
                 flatten: true,
                 cwd: '.',
@@ -120,7 +120,8 @@ module.exports = function(grunt) {
             target: {
                 files: [{
                     expand: true,
-                    src: ['_src/base/gotham/css/*.css', '!_src/base/gotham/css/*.min.css'],
+                    //src: ['_src/base/gotham/css/*.css', '!_src/base/gotham/css/*.min.css'],
+                    src: ['_src/base/**/css/*.css', '!_src/base/**/css/*.min.css'],
                     ext: '.min.css'
                 }]
             }

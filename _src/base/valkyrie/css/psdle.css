@@ -58,7 +58,7 @@ div.amopromo > div {
     text-align: center
 }
 #sub_container {
-    padding: 20px;
+    /*padding: 20px;*/
     background-color: #fff
 }
 /*Progress bar  */
@@ -170,7 +170,7 @@ div.amopromo > div {
 
 .psdle_table, table {
     text-align: left;
-    display: inline-block;
+    /*display: inline-block;*/
     border-collapse: initial;
 }
 th[id^=sort] {

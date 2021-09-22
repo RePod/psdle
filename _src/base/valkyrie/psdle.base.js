@@ -1,3 +1,4 @@
+var psdleSkip = true;
 var repod = {};
 repod.psdle = {
     version            : "Testing",
@@ -63,7 +64,7 @@ repod.psdle = {
             match = window.location.pathname.match(/^\/([a-z\-]+)\//i),
             l = (match !== null && match.length > 1 ? match.pop() : "en-us").toLowerCase(),
             l2 = l.split("-");
-        var instance = Ember.Application.NAMESPACES_BY_ID["valkyrie-storefront"].__container__;
+        var instance = Ember.Application.NAMESPACES_BY_ID["psst"].__container__;
 
         this.config = $.extend(this.config,{
             valkyrieInstance: instance,
@@ -80,7 +81,7 @@ repod.psdle = {
             check_tv        : false,
             iconSize        : 42,
             mobile          : false,
-            storeURLs       : instance.lookup("service:store-root").get("user").fetchStoreUrls()._result,
+            //storeURLs       : instance.lookup("service:store-root").get("user").fetchStoreUrls()._result,
             includeExpired  : false
         });
 
@@ -339,10 +340,21 @@ repod.psdle = {
             }
         }
     },
+    rawEntitlements: [],
     macrossBrain: function(callback) {
-        this.config.valkyrieInstance.lookup("service:macross-brain").macrossBrainInstance.getEntitlementStore().getAllEntitlements()
-        .then(function(entitlements) {
-            callback(entitlements);
+        var that = this // The classic
+        
+        this.config.valkyrieInstance.lookup("service:entitlements")
+        .fetchInternalEntitlements({start: (entitlements.length || 0)})
+        .then(function (ents) {
+            // The API response includes total but this function doesn't return it.
+            // Keep going until returned < size (450 by default)
+            that.rawEntitlements.concat(ents)
+            if (ents.length < 450) {
+                callback(that.rawEntitlements)
+            } else {
+                that.macrossBrain(callback)
+            }
         })
     },
     generateList: function(entitlements) {
@@ -354,10 +366,11 @@ repod.psdle = {
             return;
         }
 
-        console.log("PSDLE | Generating download list.");
+        console.log("PSDLE | Generating download list.", entitlements);
 
         this.gamelist = [];
         var i18n = this.config.valkyrieInstance.lookup('service:i18n');
+        var moment = this.config.valkyrieInstance.lookup("service:moment")
         var entitlements = (entitlements || this.config.valkyrieInstance.lookup("service:macross-brain").macrossBrainInstance._entitlementStore._storage._entitlementMapCache).concat(this.e_inject_cache);
         var validContent = 0;
 
@@ -368,53 +381,52 @@ repod.psdle = {
                 //Constants/pre-determined.
                 temp.indexRaw   = ++index;
                 temp.indexValid = ++validContent;
-                temp.productID  = obj.product_id;
+                temp.productID  = obj.productId;
                 temp.id         = obj.id;
                 if (that.config.deep_search) { temp.category = "unknown"; }
                 if (!that.pid_cache[temp.productID]) { that.pid_cache[temp.productID] = 1; } else { that.pid_cache[temp.productID]++; }
 
-                if (obj.entitlement_attributes) {
-                    //PS4... and PS5!
-                    if (obj.game_meta) {
-                        temp.name     = obj.game_meta.name;
-                        temp.api_icon = obj.game_meta.icon_url;
-                    }
-                    temp.size        = obj.entitlement_attributes[0].package_file_size;
-                    temp.platform    = (obj.entitlement_attributes[0].platform_id == "ps5") ? ["PS5"] : ["PS4"];
-                    temp.pkg         = obj.entitlement_attributes[0].reference_package_url
-                } else if (obj.drm_def) {
+                if (obj.drmDef !== null) {
                     //PS3, PSP, or Vita
-                    temp.name        = (obj.drm_def.contentName) ? obj.drm_def.contentName : (obj.drm_def.drmContents[0].titleName) ? obj.drm_def.drmContents[0].titleName : "Unknown! - Submit a bug report!";
-                    temp.api_icon    = obj.drm_def.image_url;
-                    temp.size        = obj.drm_def.drmContents[0].contentSize;
+                    temp.name        = obj.gameMeta.name //(obj.drmDef.contentName) ? obj.drmDef.contentName : (obj.drmDef.drmContents[0].titleName) ? obj.drmDef.drmContents[0].titleName : "Unknown! - Submit a bug report!";
+                    temp.api_icon    = obj.drmDef.imageUrl;
+                    temp.size        = obj.drmDef.drmContents[0].contentSize;
                     temp.platform    = [];
-                    temp.baseGame    = obj.drm_def.drmContents[0].titleName; //Apparently PS4 entitlements don't have this.
-                    temp.publisher   = obj.drm_def.drmContents[0].spName; //Or this.
-                    temp.pkg         = obj.drm_def.drmContents[0].contentUrl
+                    temp.baseGame    = obj.drmDef.drmContents[0].titleName; //Apparently PS4 entitlements don't have this.
+                    temp.publisher   = obj.drmDef.drmContents[0].spName; //Or this.
+                    //temp.pkg         = obj.drmDef.drmContents[0].contentUrl
 
-                    temp.platform = that.determineSystem(obj.drm_def.drmContents[0].platformIds);
-                }
+                    temp.platform = that.determineSystem(obj.drmDef.drmContents[0].platformIds);
+                } else if (obj.gameMeta) {
+                    // Everything has gameMeta now!
+                    //PS4... and PS5!
+                    
+                    temp.name     = obj.gameMeta.name;
+                    temp.api_icon = obj.gameMeta.iconUrl;
+                    temp.size        = "N/A" //obj.entitlement_attributes[0].package_file_size;
+                    temp.platform    = obj.gameMeta.type == "PSGD" ? ["PS5"] : ["PS4"]
+                    //temp.pkg         = obj.entitlement_attributes[0].reference_package_url
+                } 
 
                 //Post-processing.
                 temp.icons          = [
+                    temp.api_icon,
                     that.config.game_api+temp.id+"/image",
                     that.config.game_api+temp.productID+"/image",
-                    temp.api_icon
                 ];
 
-                temp.date           = obj.active_date;
-                var tempDate        = new Date(temp.date);
-                var toPrettyDate    = {mm:tempDate.getMonth()+1, dd:tempDate.getDate(), yyyy:tempDate.getFullYear()};
-                temp.prettyDate     = i18n.t("c.format.numericDateSlashes",toPrettyDate).string;
-                temp.dateUnix       = tempDate.getTime() / 1000;
+                temp.date           = obj.activeDate;
+                var tempMoment      = moment.moment(temp.date)
+                temp.prettyDate     = tempMoment.format("L")
+                temp.dateUnix       = tempMoment.unix()
 
-                var tempSize        = require("valkyrie-storefront/utils/download").default.getFormattedFileSize(temp.size);
-                temp.prettySize     = (temp.size === 0) ? "N/A" : i18n.t("c.page.details.drmDetails."+tempSize.unit,{val: tempSize.value}).string;
+                var tempSize        = 0 //require("valkyrie-storefront/utils/download").default.getFormattedFileSize(temp.size);
+                temp.prettySize     = (temp.size || "N/A") //(temp.size === 0) ? "N/A" : i18n.t("c.page.details.drmDetails."+tempSize.unit,{val: tempSize.value}).string;
                 temp.url            = repod.psdle.config.game_page + temp.productID;
                 temp.platformUsable = temp.platform.slice(0);
 
                 //Get Plus status
-                if (!obj.drm_def && !!obj.inactive_date)    { temp.plus = true; } //PS4, Vita, PSP
+                if (!obj.drmDef && !!obj.inactive_date)    { temp.plus = true; } //PS4, Vita, PSP
                 if (obj.license && obj.license.expiration)  { temp.plus = true; } //PS3
                 if (temp.plus)                              { that.config.has_plus = true; }
 
@@ -433,18 +445,18 @@ repod.psdle = {
 
         //Side effect of adapting to mobile and future changes.
         //.create() so we're not required to be on the download list. .destroy() after.
-        var downloadListController = require("valkyrie-storefront/pods/download/list/controller").default.create();
+        //var downloadListController = require("valkyrie-storefront/pods/download/list/controller").default.create();
 
         $.each(this.gamelist,function(a,b) {
             that.gamelist[a].index = a+1;
-            that.gamelist[a].dlListPage = Math.ceil(that.gamelist[a].index  / downloadListController.pageSize);
+            //that.gamelist[a].dlListPage = Math.ceil(that.gamelist[a].index  / downloadListController.pageSize);
 
             if (that.config.deep_search) {
                 //that.game_api.queue(a+1,((that.pid_cache[b.productID] > 1)?b.id:b.productID));
             }
         });
 
-        downloadListController.destroy(); //Sure why not.
+        //downloadListController.destroy(); //Sure why not.
 
         console.log("PSDLE | Finished generating download list. End result is "+this.gamelist.length+" of "+entitlements.length+" item(s).",this.stats);
         repod.psdle.container.postList();
@@ -452,8 +464,8 @@ repod.psdle = {
     determineSystem: function(HASH) {
         var that = this,
             sys = [],
-            K = require("valkyrie-storefront/utils/const").default.KamajiPlatformFlags,
-            K2 = require("valkyrie-storefront/utils/const").default.KamajiPlatforms,
+            K = {PS3: 2147483648, PSP: 1073741824, PSVITA: 134217728},
+            K2 = {PS4: 'PS4', PS3: 'PS3', PSVITA: 'PS Vita', PSP: 'PSP'},
             _K = K
 
         $.each(_K, function (t,u) {
@@ -469,10 +481,10 @@ repod.psdle = {
             inf = (obj.license) ? obj.license.infinite_duration : false;
 
 
-        if (!this.config.includeVideo && (obj.VUData || (obj.drm_def && obj.drm_def.contentType == "TV"))) { this.stats.video++; return 0; }
+        if (!this.config.includeVideo && (obj.VUData || (obj.drmDef && obj.drmDef.contentType == "TV"))) { this.stats.video++; return 0; }
         else if (obj.entitlement_type == 1 || obj.entitlement_type == 4) { this.stats.service++; return 0; } //Services = Ignored
         else if (inf == false && this.config.includeExpired !== true && new Date(exp) < new Date()) { this.stats.expired++; return 0; }
-        else if (obj.drm_def || obj.entitlement_attributes) { this.stats.fine++; return 1; }
+        else if (obj.drmDef || obj.gameMeta) { this.stats.fine++; return 1; }
         else { this.stats.generic++; return 0; }
     },
     genSysCache: function() {
@@ -1806,7 +1818,7 @@ repod.psdle = {
                 var i18n = repod.psdle.config.valkyrieInstance.lookup('service:i18n');
 
                 $.each(repod.psdle.gamelist_cur, function(b,c) { a += c.size; });
-                var tempSize = require("valkyrie-storefront/utils/download").default.getFormattedFileSize(a);
+                var tempSize = 0 //require("valkyrie-storefront/utils/download").default.getFormattedFileSize(a);
                 out_size = (a > 0) ? i18n.t("c.page.details.drmDetails."+tempSize.unit,{val: tempSize.value}) : "";
 
                 return "<tr id='psdle_totals'><td /><td /><td /><td>"+out_size+"</td><td /></tr>";
@@ -2046,7 +2058,7 @@ repod.psdle = {
 repod.psdle.config.timerID = setInterval(function(a){
     if (
         (typeof Ember !== "undefined" && Ember.BOOTED) &&
-        Ember.Application.NAMESPACES_BY_ID["valkyrie-storefront"]._booted
+        Ember.Application.NAMESPACES_BY_ID["psst"]._booted
     )
     {
         clearInterval(repod.psdle.config.timerID);
