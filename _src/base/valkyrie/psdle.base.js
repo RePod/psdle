@@ -102,7 +102,7 @@ repod.psdle = {
                 $("<div/>",{class:"psdle_logo startup"}).click(function() {
                     $(this).remove();
                     that.container.go("startup");
-                }).appendTo("body");
+                }).prependTo("#psst");
             }
         }
     },
@@ -166,7 +166,7 @@ repod.psdle = {
             var t = $("<div />", {class:'psdle tagline'});
             t.append($("<span />", {id:'psdle_night', text: "Night Mode"}).on("click", function() { that.darkCSS(); }))
             .append(" | ")
-            .append($("<span />", {id:'dropCache', text: "Clear Catalog Cache"}).on("click", function() { repod.psdle.database.drop(); })) 
+            .append($("<span />", {id:'dropCache', text: "Clear Catalog Cache"}).on("click", function() { repod.psdle.database.drop(); }))
             .append("<br><a href='//repod.github.io/psdle#support' target='_blank'>Support PSDLE</a> | <a href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation' target='_blank'>Submit Bug/Translation</a> | ")
             .append($("<span />", {id:'dump_raw', text: "Dump Raw"}).on("click", function() {
                 repod.psdle.macrossBrain(function(raw) {
@@ -192,6 +192,7 @@ repod.psdle = {
 
             var bar = $("<span />", {class: "psdle_fancy_bar"});
             $.each(lang.apis, function(key,con) {
+                if (con.internalID !== "api_entitle" /*&& config.language !== "en-us"*/) { return 0; }
                 if (con.internalID == "api_pstv" /*&& config.language !== "en-us"*/) { return 0; }
 
                 $("<span />", {
@@ -208,8 +209,8 @@ repod.psdle = {
             });
 
             var goBtn = $("<span />", {id: "psdle_go", class: "psdle_btn", text: lang.startup.start}).on("click", function() {
-                localStorage.catalog = config.deep_search = !$("#api_game").hasClass("toggled_off");
-                config.dlQueue = !$("#api_queue").hasClass("toggled_off");
+                //localStorage.catalog = config.deep_search = !$("#api_game").hasClass("toggled_off");
+                //config.dlQueue = !$("#api_queue").hasClass("toggled_off");
                 config.check_tv = ($("#api_pstv").length) ? !$("#api_pstv").hasClass("toggled_off") : false;
 
                 //that.go("progress");
@@ -249,7 +250,7 @@ repod.psdle = {
 
             if (repod.psdle.config.deep_search && this.postRuns.catalog !== true) {
                 this.go("progress");
-                repod.psdle.game_api.backport();
+                //repod.psdle.game_api.backport();
                 return;
             }
 
@@ -343,13 +344,13 @@ repod.psdle = {
     rawEntitlements: [],
     macrossBrain: function(callback) {
         var that = this // The classic
-        
+
         this.config.valkyrieInstance.lookup("service:entitlements")
-        .fetchInternalEntitlements({start: (entitlements.length || 0)})
+        .fetchInternalEntitlements({start: this.rawEntitlements.length/*, size: 450*/})
         .then(function (ents) {
             // The API response includes total but this function doesn't return it.
             // Keep going until returned < size (450 by default)
-            that.rawEntitlements.concat(ents)
+            that.rawEntitlements = that.rawEntitlements.concat(ents)
             if (ents.length < 450) {
                 callback(that.rawEntitlements)
             } else {
@@ -400,13 +401,13 @@ repod.psdle = {
                 } else if (obj.gameMeta) {
                     // Everything has gameMeta now!
                     //PS4... and PS5!
-                    
+
                     temp.name     = obj.gameMeta.name;
                     temp.api_icon = obj.gameMeta.iconUrl;
-                    temp.size        = "N/A" //obj.entitlement_attributes[0].package_file_size;
+                    temp.size        = 0 //obj.entitlement_attributes[0].package_file_size;
                     temp.platform    = obj.gameMeta.type == "PSGD" ? ["PS5"] : ["PS4"]
                     //temp.pkg         = obj.entitlement_attributes[0].reference_package_url
-                } 
+                }
 
                 //Post-processing.
                 temp.icons          = [
@@ -1405,7 +1406,7 @@ repod.psdle = {
                         }
                         if (response.status == 403) {/* Oh no! */ }
                     }
-                    
+
                     that.called++; repod.psdle.type_cache["unknown"] = true;
                 })
                 .then(function() { that.run(1); that.updateBar(); });
@@ -1414,9 +1415,9 @@ repod.psdle = {
         updateBar: function() {
             var l = this.called,
                 r = repod.psdle.gamelist.length;
-                
+
             if (l % 100 == 0) {
-                // Periodically save results 
+                // Periodically save results
                 var config = repod.psdle.backportConfig
                 config.catalogDatabase.transact.dumpCacheToDB(config, () => console.log("Catalog saved..."))
             }

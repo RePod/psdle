@@ -41,7 +41,7 @@ module.exports = function(grunt) {
             chrome: {
                 files: { 
                     '_src/chrome/psdle/js/psdle.gotham.js': '_src/base/gotham/psdle.gotham.includes.js',
-                    //'_src/chrome/psdle/js/psdle.valkyrie.js': '_src/base/valkyrie/psdle.valkyrie.includes.js'
+                    '_src/chrome/psdle/js/psdle.valkyrie.js': '_src/base/valkyrie/psdle.valkyrie.includes.js'
                 }
             }
         },
@@ -132,11 +132,11 @@ module.exports = function(grunt) {
                 src: [ '*.json' ],
                 dest: '_src/base/gotham/lang/lang.min.json'
             },
-            /*valkyrie: {
+            valkyrie: {
                 cwd: '_src/base/valkyrie/lang/all',
                 src: [ '*.json' ],
                 dest: '_src/base/valkyrie/lang/lang.min.json'
-            },*/
+            },
         }
     });
 
