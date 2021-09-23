@@ -1,4 +1,5 @@
-var isValkyrie = document.querySelectorAll(".ember-application").length > 0
+console.log("*radio static* I'm in",window,document)
+var isValkyrie = location.hostname == "transact.playstation.com"
 var variant = isValkyrie ? "valkyrie" : "gotham"
 
 chrome.runtime.onMessage.addListener(
