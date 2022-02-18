@@ -1,6 +1,6 @@
 {
   "name": "psdle",
-  "version": "4.0.6",
+  "version": "4.0.7",
   "description": "Improving everyone's favorite online download list, one loop at a time.",
   "main": "_src/psdle.base.js",
   "scripts": {},
