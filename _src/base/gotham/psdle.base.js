@@ -852,7 +852,7 @@ repod.psdle = {
             //Regret part 2. This will never break.
             if (gqlQuery.variables.platform) {
                 let selector = `${config.DOMElements.collectionFilter} .psw-radio.psw-is-active .psw-radio-label`
-                let platform = document.querySelector(selector).textContent.toLowerCase()
+                let platform = document.querySelector(selector).parentElement.dataset.qa.split("-").pop()
                 gqlQuery.variables.platform = platform == "all" ? ["ps4","ps5"] : [platform]
             }
 
