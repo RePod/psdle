@@ -1,11 +1,11 @@
-/*! psdle 4.0.6 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2021-04-24 */
+/*! psdle 4.0.7 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2022-02-18 */
 // ==UserScript==
 // @author		RePod
 // @name		PSDLE for Greasemonkey (gotham)
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		4.0.6
+// @version		4.0.7
 // @include		/https://store.playstation.com/*/
 // @include		/https://library.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
@@ -26,12 +26,12 @@ Alternatively, reconfigure the updating settings in your Userscript manager.
 */
 
 
-/*! psdle 4.0.6 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2021-04-24 */
+/*! psdle 4.0.7 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2022-02-18 */
 var repod = {}
 repod.psdle = {
     config: {
-        version: "4.0.6",
-        versionDate: "2021-04-24"
+        version: "4.0.7",
+        versionDate: "2022-02-18"
     },
     init: function() {
         console.log(`PSDLE ${this.config.version} ${this.config.versionDate}`)
@@ -43,7 +43,7 @@ repod.psdle = {
             locale: __NEXT_DATA__.props.appProps.session.userData.locale,
             gqlHost: __NEXT_DATA__.runtimeConfig.service.gqlBrowser.host,
             DOMElements: {
-                collectionFilter: ".collection-filter.psw-grid-container",
+                collectionFilter: "div[data-qa=collection-filter]",
                 filterExportContainer: "psdle-filter-section-export",
                 filterExportSelects: "psdle-filter-export-selects",
                 PSDLEconfigurator: "psdle-configurator"
@@ -238,10 +238,11 @@ repod.psdle = {
                         return
                     }
 
-                    //Regret part 1.
-                    document.querySelector(".collection-filter-selected").addEventListener("click", function(e) {
-                        config.root.reactisms.stateChange.callback(config)
-                    })
+                    // Regret part 1.
+                    document.querySelectorAll(`${config.DOMElements.collectionFilter} .psw-radio`)
+                    .forEach( systemFilter => 
+                        systemFilter.addEventListener("click", e => config.root.reactisms.stateChange.callback(config))
+                    )
 
                     clearInterval(config.root.reactisms.stateChange.timer)
 
@@ -879,7 +880,8 @@ repod.psdle = {
 
             //Regret part 2. This will never break.
             if (gqlQuery.variables.platform) {
-                let platform = document.querySelector(".collection-filter__selected-label span").dataset.trackClick.split(":").pop()
+                let selector = `${config.DOMElements.collectionFilter} .psw-radio.psw-is-active .psw-radio-label`
+                let platform = document.querySelector(selector).parentElement.dataset.qa.split("-").pop()
                 gqlQuery.variables.platform = platform == "all" ? ["ps4","ps5"] : [platform]
             }
 
