@@ -389,7 +389,7 @@ repod.psdle = {
                 //Constants/pre-determined.
                 temp.indexRaw   = ++index;
                 temp.indexValid = ++validContent;
-                temp.productID  = obj.productId;
+                temp.productID  = obj.product_id;
                 temp.id         = obj.id;
                 if (that.config.deep_search) { temp.category = "unknown"; }
                 if (!that.pid_cache[temp.productID]) { that.pid_cache[temp.productID] = 1; } else { that.pid_cache[temp.productID]++; }
