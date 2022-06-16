@@ -344,14 +344,21 @@ repod.psdle = {
     rawEntitlements: [],
     macrossBrain: function(callback) {
         var that = this // The classic
+        
+        query = window.GrandCentralCore.createQueryString({
+            start: this.rawEntitlements.length,
+            size: 450,
+            fields: 'meta_rev,cloud_meta,reward_meta,game_meta,drm_def,drm_def.content_type,title_meta,product_meta',
+            revisionId: 0, // 2022-06-16: 1654209825100. Not sure where it's obtaining that outside of the results. Pass it back in?
+            metaRevisionId: 0
+        })
 
         this.config.valkyrieInstance.lookup("service:entitlements")
-        .fetchInternalEntitlements({start: this.rawEntitlements.length/*, size: 450*/})
-        .then(function (ents) {
-            // The API response includes total but this function doesn't return it.
-            // Keep going until returned < size (450 by default)
-            that.rawEntitlements = that.rawEntitlements.concat(ents)
-            if (ents.length < 450) {
+        ._buildApiPromise('fetchInternalEntitlements', 'GET', 'internal_entitlements', query)
+        .then(function (response) {
+            that.rawEntitlements = that.rawEntitlements.concat(response.entitlements)
+            
+            if (response.entitlements.length < 450) {
                 callback(that.rawEntitlements)
             } else {
                 that.macrossBrain(callback)
@@ -370,7 +377,7 @@ repod.psdle = {
         console.log("PSDLE | Generating download list.", entitlements);
 
         this.gamelist = [];
-        var i18n = this.config.valkyrieInstance.lookup('service:i18n');
+        var i18n = this.config.valkyrieInstance.lookup('service:intl');
         var moment = this.config.valkyrieInstance.lookup("service:moment")
         var entitlements = (entitlements || this.config.valkyrieInstance.lookup("service:macross-brain").macrossBrainInstance._entitlementStore._storage._entitlementMapCache).concat(this.e_inject_cache);
         var validContent = 0;
@@ -1488,7 +1495,7 @@ repod.psdle = {
 
             //Everything else.
             if (data.fileSize.unit !== "") {
-                var i18n = repod.psdle.config.valkyrieInstance.lookup('service:i18n')
+                var i18n = repod.psdle.config.valkyrieInstance.lookup('service:intl')
                 extend.prettySize = i18n.t("c.page.details.drmDetails." + data.fileSize.unit.toLowerCase(),{val: data.fileSize.value}).string
             }
             extend.baseGame = data.name || undefined
@@ -1816,7 +1823,7 @@ repod.psdle = {
             totals: function() {
                 var a = 0;
                 var out_size = "";
-                var i18n = repod.psdle.config.valkyrieInstance.lookup('service:i18n');
+                var i18n = repod.psdle.config.valkyrieInstance.lookup('service:intl');
 
                 $.each(repod.psdle.gamelist_cur, function(b,c) { a += c.size; });
                 var tempSize = 0 //require("valkyrie-storefront/utils/download").default.getFormattedFileSize(a);
