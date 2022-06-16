@@ -82,7 +82,7 @@ repod.psdle = {
             iconSize        : 42,
             mobile          : false,
             //storeURLs       : instance.lookup("service:store-root").get("user").fetchStoreUrls()._result,
-            includeExpired  : false
+            includeExpired  : true
         });
 
         console.log("PSDLE | Config set.");
@@ -394,25 +394,25 @@ repod.psdle = {
                 if (that.config.deep_search) { temp.category = "unknown"; }
                 if (!that.pid_cache[temp.productID]) { that.pid_cache[temp.productID] = 1; } else { that.pid_cache[temp.productID]++; }
 
-                if (obj.drmDef !== null) {
+                if (typeof obj.drm_def !== "undefined") {
                     //PS3, PSP, or Vita
-                    temp.name        = obj.gameMeta.name //(obj.drmDef.contentName) ? obj.drmDef.contentName : (obj.drmDef.drmContents[0].titleName) ? obj.drmDef.drmContents[0].titleName : "Unknown! - Submit a bug report!";
-                    temp.api_icon    = obj.drmDef.imageUrl;
-                    temp.size        = obj.drmDef.drmContents[0].contentSize;
+                    temp.name        = obj.game_meta.name //(obj.drm_def.contentName) ? obj.drm_def.contentName : (obj.drm_def.drmContents[0].titleName) ? obj.drm_def.drmContents[0].titleName : "Unknown! - Submit a bug report!";
+                    temp.api_icon    = obj.drm_def.image_url;
+                    temp.size        = obj.drm_def.drmContents[0].contentSize;
                     temp.platform    = [];
-                    temp.baseGame    = obj.drmDef.drmContents[0].titleName; //Apparently PS4 entitlements don't have this.
-                    temp.publisher   = obj.drmDef.drmContents[0].spName; //Or this.
-                    //temp.pkg         = obj.drmDef.drmContents[0].contentUrl
+                    temp.baseGame    = obj.drm_def.drmContents[0].titleName; //Apparently PS4 entitlements don't have this.
+                    temp.publisher   = obj.drm_def.drmContents[0].spName; //Or this.
+                    temp.pkg         = obj.drm_def.drmContents[0].contentUrl
 
-                    temp.platform = that.determineSystem(obj.drmDef.drmContents[0].platformIds);
-                } else if (obj.gameMeta) {
-                    // Everything has gameMeta now!
+                    temp.platform = that.determineSystem(obj.drm_def.drmContents[0].platformIds);
+                } else if (obj.game_meta) {
+                    // Everything has game_meta now!
                     //PS4... and PS5!
 
-                    temp.name     = obj.gameMeta.name;
-                    temp.api_icon = obj.gameMeta.iconUrl;
+                    temp.name     = obj.game_meta.name;
+                    temp.api_icon = obj.game_meta.icon_url;
                     temp.size        = 0 //obj.entitlement_attributes[0].package_file_size;
-                    temp.platform    = obj.gameMeta.type == "PSGD" ? ["PS5"] : ["PS4"]
+                    temp.platform    = obj.game_meta.type == "PSGD" ? ["PS5"] : ["PS4"]
                     //temp.pkg         = obj.entitlement_attributes[0].reference_package_url
                 }
 
@@ -423,7 +423,7 @@ repod.psdle = {
                     that.config.game_api+temp.productID+"/image",
                 ];
 
-                temp.date           = obj.activeDate;
+                temp.date           = obj.active_date;
                 var tempMoment      = moment.moment(temp.date)
                 temp.prettyDate     = tempMoment.format("L")
                 temp.dateUnix       = tempMoment.unix()
@@ -434,7 +434,7 @@ repod.psdle = {
                 temp.platformUsable = temp.platform.slice(0);
 
                 //Get Plus status
-                if (!obj.drmDef && !!obj.inactive_date)    { temp.plus = true; } //PS4, Vita, PSP
+                if (!obj.drm_def && !!obj.inactive_date)    { temp.plus = true; } //PS4, Vita, PSP
                 if (obj.license && obj.license.expiration)  { temp.plus = true; } //PS3
                 if (temp.plus)                              { that.config.has_plus = true; }
 
@@ -489,10 +489,10 @@ repod.psdle = {
             inf = (obj.license) ? obj.license.infinite_duration : false;
 
 
-        if (!this.config.includeVideo && (obj.VUData || (obj.drmDef && obj.drmDef.contentType == "TV"))) { this.stats.video++; return 0; }
+        if (!this.config.includeVideo && (obj.VUData || (obj.drm_def && obj.drm_def.contentType == "TV"))) { this.stats.video++; return 0; }
         else if (obj.entitlement_type == 1 || obj.entitlement_type == 4) { this.stats.service++; return 0; } //Services = Ignored
         else if (inf == false && this.config.includeExpired !== true && new Date(exp) < new Date()) { this.stats.expired++; return 0; }
-        else if (obj.drmDef || obj.gameMeta) { this.stats.fine++; return 1; }
+        else if (obj.drm_def || obj.game_meta) { this.stats.fine++; return 1; }
         else { this.stats.generic++; return 0; }
     },
     genSysCache: function() {
@@ -838,7 +838,7 @@ repod.psdle = {
             },
             toSize: function(url,size) {
                 size = (size || repod.psdle.config.iconSize || 42);
-                var suf = /\?w=\d+&h=\d+$/.test(url) ? "" : "?w=" + size + "&h=" + size
+                var suf = /\&w=\d+&h=\d+$/.test(url) ? "" : "&w=" + size + "&h=" + size
                 return url + suf;
             },
             validate: function(index) {
@@ -857,15 +857,20 @@ repod.psdle = {
                         that.setIcon(index);
                         return 0;
                     }
+                    
+                    // Assume API icons from now on.
+                    
+                    $.extend(repod.psdle.gamelist[index],{safe_icon: true, icon: u});
+                    that.setIcon(index);
 
-                    $.get(url)
+                    /*$.get(url)
                     .success(function() {
                         $.extend(repod.psdle.gamelist[index],{safe_icon: true, icon: u});
                         that.setIcon(index);
                     })
                     .fail(function(e) {
                         that.validate(index);
-                    });
+                    });*/
                 } else {
                     that.setIcon(index);
                 }
