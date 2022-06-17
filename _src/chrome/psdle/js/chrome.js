@@ -1,4 +1,4 @@
-console.log("*radio static* I'm in",window,document)
+console.info("PSDLE Chrome | *radio static* I'm in",window,document)
 var isValkyrie = location.hostname == "transact.playstation.com"
 var variant = isValkyrie ? "valkyrie" : "gotham"
 
@@ -19,7 +19,7 @@ function spawn(url) {
         this.parentNode.removeChild(this);
     };
     s.onerror = function(e) {
-        console.warn("PSDLE Chrome | Something broke. ",url);
+        console.warn("PSDLE Chrome | Something broke.",url);
     };
     s.src = chrome.extension.getURL(url);
     (document.head||document.documentElement).appendChild(s);
