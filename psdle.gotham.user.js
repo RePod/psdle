@@ -1,4 +1,4 @@
-/*! psdle 4.0.7 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2022-02-18 */
+/*! psdle 4.0.7 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2022-06-17 */
 // ==UserScript==
 // @author		RePod
 // @name		PSDLE for Greasemonkey (gotham)
@@ -26,12 +26,12 @@ Alternatively, reconfigure the updating settings in your Userscript manager.
 */
 
 
-/*! psdle 4.0.7 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2022-02-18 */
+/*! psdle 4.0.7 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2022-06-17 */
 var repod = {}
 repod.psdle = {
     config: {
         version: "4.0.7",
-        versionDate: "2022-02-18"
+        versionDate: "2022-06-17"
     },
     init: function() {
         console.log(`PSDLE ${this.config.version} ${this.config.versionDate}`)
