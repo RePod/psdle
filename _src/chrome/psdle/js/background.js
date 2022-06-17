@@ -7,6 +7,10 @@ function checkForValidUrl(tabId,changeInfo,tab) {
     if (tab.url.indexOf(urls.store) == 0 ||
         tab.url.indexOf(urls.library) == 0) {
 		chrome.pageAction.show(tabId);
+        
+        chrome.tabs.executeScript({
+            code: `document.querySelector("iframe[src*=viewTransactionHistory]").parentElement.style['max-width'] = 'unset'`
+        })
 	}
 
     localStorage.removeItem("redirect")

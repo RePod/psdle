@@ -1,4 +1,4 @@
-/*! psdle 4.0.7 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2022-02-18 */
+/*! psdle 4.0.7 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2022-06-17 */
 var psdleSkip = true;
 var repod = {};
 repod.psdle = {
@@ -83,7 +83,7 @@ repod.psdle = {
             iconSize        : 42,
             mobile          : false,
             //storeURLs       : instance.lookup("service:store-root").get("user").fetchStoreUrls()._result,
-            includeExpired  : false
+            includeExpired  : true
         });
 
         console.log("PSDLE | Config set.");
@@ -309,7 +309,7 @@ repod.psdle = {
                 auto_systems: function() {
                     var that = this,
                         sysCache = repod.psdle.sys_cache,
-                        order = ["ps1","ps2","ps3","ps4","ps5","vr","psp","vita"],
+                        order = ["ps1","ps2","ps3","ps4","ps5","vr","psp","vita","ps_plus_required"],
                         filterSystems = [];
 
                     $.each(order, function (i,v) {
@@ -345,14 +345,21 @@ repod.psdle = {
     rawEntitlements: [],
     macrossBrain: function(callback) {
         var that = this // The classic
+        
+        query = window.GrandCentralCore.createQueryString({
+            start: this.rawEntitlements.length,
+            size: 450,
+            fields: 'meta_rev,cloud_meta,reward_meta,game_meta,drm_def,drm_def.content_type,title_meta,product_meta',
+            revisionId: 0, // 2022-06-16: 1654209825100. Not sure where it's obtaining that outside of the results. Pass it back in?
+            metaRevisionId: 0
+        })
 
         this.config.valkyrieInstance.lookup("service:entitlements")
-        .fetchInternalEntitlements({start: this.rawEntitlements.length/*, size: 450*/})
-        .then(function (ents) {
-            // The API response includes total but this function doesn't return it.
-            // Keep going until returned < size (450 by default)
-            that.rawEntitlements = that.rawEntitlements.concat(ents)
-            if (ents.length < 450) {
+        ._buildApiPromise('fetchInternalEntitlements', 'GET', 'internal_entitlements', query)
+        .then(function (response) {
+            that.rawEntitlements = that.rawEntitlements.concat(response.entitlements)
+            
+            if (response.entitlements.length < 450) {
                 callback(that.rawEntitlements)
             } else {
                 that.macrossBrain(callback)
@@ -371,7 +378,7 @@ repod.psdle = {
         console.log("PSDLE | Generating download list.", entitlements);
 
         this.gamelist = [];
-        var i18n = this.config.valkyrieInstance.lookup('service:i18n');
+        var i18n = this.config.valkyrieInstance.lookup('service:intl');
         var moment = this.config.valkyrieInstance.lookup("service:moment")
         var entitlements = (entitlements || this.config.valkyrieInstance.lookup("service:macross-brain").macrossBrainInstance._entitlementStore._storage._entitlementMapCache).concat(this.e_inject_cache);
         var validContent = 0;
@@ -383,30 +390,30 @@ repod.psdle = {
                 //Constants/pre-determined.
                 temp.indexRaw   = ++index;
                 temp.indexValid = ++validContent;
-                temp.productID  = obj.productId;
+                temp.productID  = obj.product_id;
                 temp.id         = obj.id;
                 if (that.config.deep_search) { temp.category = "unknown"; }
                 if (!that.pid_cache[temp.productID]) { that.pid_cache[temp.productID] = 1; } else { that.pid_cache[temp.productID]++; }
 
-                if (obj.drmDef !== null) {
+                if (typeof obj.drm_def !== "undefined") {
                     //PS3, PSP, or Vita
-                    temp.name        = obj.gameMeta.name //(obj.drmDef.contentName) ? obj.drmDef.contentName : (obj.drmDef.drmContents[0].titleName) ? obj.drmDef.drmContents[0].titleName : "Unknown! - Submit a bug report!";
-                    temp.api_icon    = obj.drmDef.imageUrl;
-                    temp.size        = obj.drmDef.drmContents[0].contentSize;
+                    temp.name        = obj.game_meta.name //(obj.drm_def.contentName) ? obj.drm_def.contentName : (obj.drm_def.drmContents[0].titleName) ? obj.drm_def.drmContents[0].titleName : "Unknown! - Submit a bug report!";
+                    temp.api_icon    = obj.drm_def.image_url;
+                    temp.size        = obj.drm_def.drmContents[0].contentSize;
                     temp.platform    = [];
-                    temp.baseGame    = obj.drmDef.drmContents[0].titleName; //Apparently PS4 entitlements don't have this.
-                    temp.publisher   = obj.drmDef.drmContents[0].spName; //Or this.
-                    //temp.pkg         = obj.drmDef.drmContents[0].contentUrl
+                    temp.baseGame    = obj.drm_def.drmContents[0].titleName; //Apparently PS4 entitlements don't have this.
+                    temp.publisher   = obj.drm_def.drmContents[0].spName; //Or this.
+                    temp.pkg         = obj.drm_def.drmContents[0].contentUrl
 
-                    temp.platform = that.determineSystem(obj.drmDef.drmContents[0].platformIds);
-                } else if (obj.gameMeta) {
-                    // Everything has gameMeta now!
+                    temp.platform = that.determineSystem(obj.drm_def.drmContents[0].platformIds);
+                } else if (obj.game_meta) {
+                    // Everything has game_meta now!
                     //PS4... and PS5!
 
-                    temp.name     = obj.gameMeta.name;
-                    temp.api_icon = obj.gameMeta.iconUrl;
+                    temp.name     = obj.game_meta.name;
+                    temp.api_icon = obj.product_meta.image_url;
                     temp.size        = 0 //obj.entitlement_attributes[0].package_file_size;
-                    temp.platform    = obj.gameMeta.type == "PSGD" ? ["PS5"] : ["PS4"]
+                    temp.platform    = typeof obj.game_meta.type !== "undefined" ? (obj.game_meta.type == "PSGD" ? ["PS5"] : ["PS4"]) : "PS_PLUS_REQUIRED"
                     //temp.pkg         = obj.entitlement_attributes[0].reference_package_url
                 }
 
@@ -417,7 +424,7 @@ repod.psdle = {
                     that.config.game_api+temp.productID+"/image",
                 ];
 
-                temp.date           = obj.activeDate;
+                temp.date           = obj.active_date;
                 var tempMoment      = moment.moment(temp.date)
                 temp.prettyDate     = tempMoment.format("L")
                 temp.dateUnix       = tempMoment.unix()
@@ -428,7 +435,7 @@ repod.psdle = {
                 temp.platformUsable = temp.platform.slice(0);
 
                 //Get Plus status
-                if (!obj.drmDef && !!obj.inactive_date)    { temp.plus = true; } //PS4, Vita, PSP
+                if (!obj.drm_def && !!obj.inactive_date)    { temp.plus = true; } //PS4, Vita, PSP
                 if (obj.license && obj.license.expiration)  { temp.plus = true; } //PS3
                 if (temp.plus)                              { that.config.has_plus = true; }
 
@@ -483,10 +490,10 @@ repod.psdle = {
             inf = (obj.license) ? obj.license.infinite_duration : false;
 
 
-        if (!this.config.includeVideo && (obj.VUData || (obj.drmDef && obj.drmDef.contentType == "TV"))) { this.stats.video++; return 0; }
-        else if (obj.entitlement_type == 1 || obj.entitlement_type == 4) { this.stats.service++; return 0; } //Services = Ignored
+        if (!this.config.includeVideo && (obj.VUData || (obj.drm_def && obj.drm_def.contentType == "TV"))) { this.stats.video++; return 0; }
+        else if (obj.entitlement_type == 1 || obj.entitlement_type == 4 || obj.serviceType == 1) { this.stats.service++; return 0; } //Services = Ignored
         else if (inf == false && this.config.includeExpired !== true && new Date(exp) < new Date()) { this.stats.expired++; return 0; }
-        else if (obj.drmDef || obj.gameMeta) { this.stats.fine++; return 1; }
+        else if (obj.drm_def || obj.game_meta) { this.stats.fine++; return 1; }
         else { this.stats.generic++; return 0; }
     },
     genSysCache: function() {
@@ -572,7 +579,7 @@ repod.psdle = {
                 helpers: {
                     auto_systems: function(filter) {
                         var sysCache = repod.psdle.sys_cache,
-                            order = ["ps1","ps2","ps3","ps4","vr","psp","vita"],
+                            order = ["ps1","ps2","ps3","ps4","vr","psp","vita","ps_plus_required"],
                             filterSystems = [];
 
                         $.each(order, function (i,v) {
@@ -653,7 +660,7 @@ repod.psdle = {
                 }
 
                 var systems = $("<span />", {class: "psdle_fancy_bar search options system"}),
-                    order = ["ps1","ps2","ps3","ps4","ps5","vr","psp","vita"];
+                    order = ["ps1","ps2","ps3","ps4","ps5","vr","psp","vita","ps_plus_required"];
                 $.each(order, function (i,v) {
                     if (repod.psdle.sys_cache.hasOwnProperty(v)) {
                         $("<span />", {id: "system_"+v, text: repod.psdle.sys_cache[v]}).on("click", regenFunc).appendTo(systems);
@@ -832,7 +839,7 @@ repod.psdle = {
             },
             toSize: function(url,size) {
                 size = (size || repod.psdle.config.iconSize || 42);
-                var suf = /\?w=\d+&h=\d+$/.test(url) ? "" : "?w=" + size + "&h=" + size
+                var suf = /\&w=\d+&h=\d+$/.test(url) ? "" : "&w=" + size + "&h=" + size
                 return url + suf;
             },
             validate: function(index) {
@@ -851,15 +858,20 @@ repod.psdle = {
                         that.setIcon(index);
                         return 0;
                     }
+                    
+                    // Assume API icons from now on.
+                    
+                    $.extend(repod.psdle.gamelist[index],{safe_icon: true, icon: u});
+                    that.setIcon(index);
 
-                    $.get(url)
+                    /*$.get(url)
                     .success(function() {
                         $.extend(repod.psdle.gamelist[index],{safe_icon: true, icon: u});
                         that.setIcon(index);
                     })
                     .fail(function(e) {
                         that.validate(index);
-                    });
+                    });*/
                 } else {
                     that.setIcon(index);
                 }
@@ -1056,6 +1068,7 @@ repod.psdle = {
         else if (sys == "PS VR" || sys.indexOf("PS VR") > -1) { sys = "PS VR"; }
         else if (sys == "PS4" || sys.indexOf("PS4") > -1) { sys = "PS4"; } //What could this possibly break?
         else if (sys == "PS5" || sys.indexOf("PS5") > -1) { sys = "PS5"; } //The edge case nobody expected.
+        else if (sys == "PS_PLUS_REQUIRED" || sys.indexOf("PS_PLUS_REQUIRED") > -1) { sys = "PS_PLUS_REQUIRED"; }
 
         return sys;
     },
@@ -1489,7 +1502,7 @@ repod.psdle = {
 
             //Everything else.
             if (data.fileSize.unit !== "") {
-                var i18n = repod.psdle.config.valkyrieInstance.lookup('service:i18n')
+                var i18n = repod.psdle.config.valkyrieInstance.lookup('service:intl')
                 extend.prettySize = i18n.t("c.page.details.drmDetails." + data.fileSize.unit.toLowerCase(),{val: data.fileSize.value}).string
             }
             extend.baseGame = data.name || undefined
@@ -1817,7 +1830,7 @@ repod.psdle = {
             totals: function() {
                 var a = 0;
                 var out_size = "";
-                var i18n = repod.psdle.config.valkyrieInstance.lookup('service:i18n');
+                var i18n = repod.psdle.config.valkyrieInstance.lookup('service:intl');
 
                 $.each(repod.psdle.gamelist_cur, function(b,c) { a += c.size; });
                 var tempSize = 0 //require("valkyrie-storefront/utils/download").default.getFormattedFileSize(a);
