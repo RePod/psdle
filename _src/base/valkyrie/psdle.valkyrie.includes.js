@@ -309,7 +309,7 @@ repod.psdle = {
                 auto_systems: function() {
                     var that = this,
                         sysCache = repod.psdle.sys_cache,
-                        order = ["ps1","ps2","ps3","ps4","ps5","vr","psp","vita"],
+                        order = ["ps1","ps2","ps3","ps4","ps5","vr","psp","vita","ps_plus_required"],
                         filterSystems = [];
 
                     $.each(order, function (i,v) {
@@ -411,9 +411,9 @@ repod.psdle = {
                     //PS4... and PS5!
 
                     temp.name     = obj.game_meta.name;
-                    temp.api_icon = obj.product_meta.icon_url;
+                    temp.api_icon = obj.product_meta.image_url;
                     temp.size        = 0 //obj.entitlement_attributes[0].package_file_size;
-                    temp.platform    = obj.game_meta.type == "PSGD" ? ["PS5"] : ["PS4"]
+                    temp.platform    = typeof obj.game_meta.type !== "undefined" ? (obj.game_meta.type == "PSGD" ? ["PS5"] : ["PS4"]) : "PS_PLUS_REQUIRED"
                     //temp.pkg         = obj.entitlement_attributes[0].reference_package_url
                 }
 
@@ -579,7 +579,7 @@ repod.psdle = {
                 helpers: {
                     auto_systems: function(filter) {
                         var sysCache = repod.psdle.sys_cache,
-                            order = ["ps1","ps2","ps3","ps4","vr","psp","vita"],
+                            order = ["ps1","ps2","ps3","ps4","vr","psp","vita","ps_plus_required"],
                             filterSystems = [];
 
                         $.each(order, function (i,v) {
@@ -660,7 +660,7 @@ repod.psdle = {
                 }
 
                 var systems = $("<span />", {class: "psdle_fancy_bar search options system"}),
-                    order = ["ps1","ps2","ps3","ps4","ps5","vr","psp","vita"];
+                    order = ["ps1","ps2","ps3","ps4","ps5","vr","psp","vita","ps_plus_required"];
                 $.each(order, function (i,v) {
                     if (repod.psdle.sys_cache.hasOwnProperty(v)) {
                         $("<span />", {id: "system_"+v, text: repod.psdle.sys_cache[v]}).on("click", regenFunc).appendTo(systems);
@@ -1068,6 +1068,7 @@ repod.psdle = {
         else if (sys == "PS VR" || sys.indexOf("PS VR") > -1) { sys = "PS VR"; }
         else if (sys == "PS4" || sys.indexOf("PS4") > -1) { sys = "PS4"; } //What could this possibly break?
         else if (sys == "PS5" || sys.indexOf("PS5") > -1) { sys = "PS5"; } //The edge case nobody expected.
+        else if (sys == "PS_PLUS_REQUIRED" || sys.indexOf("PS_PLUS_REQUIRED") > -1) { sys = "PS_PLUS_REQUIRED"; }
 
         return sys;
     },
