@@ -1,11 +1,11 @@
-/*! psdle 4.0.6 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2021-04-24 */
+/*! psdle 4.1.0 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2022-06-17 */
 // ==UserScript==
 // @author		RePod
 // @name		PSDLE for Greasemonkey (valkyrie)
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		4.0.6
+// @version		4.1.0
 // @include		/https://store.playstation.com/*/
 // @include		/https://library.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
@@ -26,11 +26,12 @@ Alternatively, reconfigure the updating settings in your Userscript manager.
 */
 
 
-/*! psdle 4.0.6 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2021-04-24 */
+/*! psdle 4.1.0 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2022-06-17 */
+var psdleSkip = true;
 var repod = {};
 repod.psdle = {
-    version            : "4.0.6",
-    versiondate        : "2021-04-24",
+    version            : "4.1.0",
+    versiondate        : "2022-06-17",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -92,7 +93,7 @@ repod.psdle = {
             match = window.location.pathname.match(/^\/([a-z\-]+)\//i),
             l = (match !== null && match.length > 1 ? match.pop() : "en-us").toLowerCase(),
             l2 = l.split("-");
-        var instance = Ember.Application.NAMESPACES_BY_ID["valkyrie-storefront"].__container__;
+        var instance = Ember.Application.NAMESPACES_BY_ID["psst"].__container__;
 
         this.config = $.extend(this.config,{
             valkyrieInstance: instance,
@@ -109,8 +110,8 @@ repod.psdle = {
             check_tv        : false,
             iconSize        : 42,
             mobile          : false,
-            storeURLs       : instance.lookup("service:store-root").get("user").fetchStoreUrls()._result,
-            includeExpired  : false
+            //storeURLs       : instance.lookup("service:store-root").get("user").fetchStoreUrls()._result,
+            includeExpired  : true
         });
 
         console.log("PSDLE | Config set.");
@@ -130,7 +131,7 @@ repod.psdle = {
                 $("<div/>",{class:"psdle_logo startup"}).click(function() {
                     $(this).remove();
                     that.container.go("startup");
-                }).appendTo("body");
+                }).prependTo("#psst");
             }
         }
     },
@@ -194,7 +195,7 @@ repod.psdle = {
             var t = $("<div />", {class:'psdle tagline'});
             t.append($("<span />", {id:'psdle_night', text: "Night Mode"}).on("click", function() { that.darkCSS(); }))
             .append(" | ")
-            .append($("<span />", {id:'dropCache', text: "Clear Catalog Cache"}).on("click", function() { repod.psdle.database.drop(); })) 
+            .append($("<span />", {id:'dropCache', text: "Clear Catalog Cache"}).on("click", function() { repod.psdle.database.drop(); }))
             .append("<br><a href='//repod.github.io/psdle#support' target='_blank'>Support PSDLE</a> | <a href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation' target='_blank'>Submit Bug/Translation</a> | ")
             .append($("<span />", {id:'dump_raw', text: "Dump Raw"}).on("click", function() {
                 repod.psdle.macrossBrain(function(raw) {
@@ -220,6 +221,7 @@ repod.psdle = {
 
             var bar = $("<span />", {class: "psdle_fancy_bar"});
             $.each(lang.apis, function(key,con) {
+                if (con.internalID !== "api_entitle" /*&& config.language !== "en-us"*/) { return 0; }
                 if (con.internalID == "api_pstv" /*&& config.language !== "en-us"*/) { return 0; }
 
                 $("<span />", {
@@ -236,8 +238,8 @@ repod.psdle = {
             });
 
             var goBtn = $("<span />", {id: "psdle_go", class: "psdle_btn", text: lang.startup.start}).on("click", function() {
-                localStorage.catalog = config.deep_search = !$("#api_game").hasClass("toggled_off");
-                config.dlQueue = !$("#api_queue").hasClass("toggled_off");
+                //localStorage.catalog = config.deep_search = !$("#api_game").hasClass("toggled_off");
+                //config.dlQueue = !$("#api_queue").hasClass("toggled_off");
                 config.check_tv = ($("#api_pstv").length) ? !$("#api_pstv").hasClass("toggled_off") : false;
 
                 //that.go("progress");
@@ -277,7 +279,7 @@ repod.psdle = {
 
             if (repod.psdle.config.deep_search && this.postRuns.catalog !== true) {
                 this.go("progress");
-                repod.psdle.game_api.backport();
+                //repod.psdle.game_api.backport();
                 return;
             }
 
@@ -335,7 +337,7 @@ repod.psdle = {
                 auto_systems: function() {
                     var that = this,
                         sysCache = repod.psdle.sys_cache,
-                        order = ["ps1","ps2","ps3","ps4","ps5","vr","psp","vita"],
+                        order = ["ps1","ps2","ps3","ps4","ps5","vr","psp","vita","ps_plus_required"],
                         filterSystems = [];
 
                     $.each(order, function (i,v) {
@@ -368,10 +370,28 @@ repod.psdle = {
             }
         }
     },
+    rawEntitlements: [],
     macrossBrain: function(callback) {
-        this.config.valkyrieInstance.lookup("service:macross-brain").macrossBrainInstance.getEntitlementStore().getAllEntitlements()
-        .then(function(entitlements) {
-            callback(entitlements);
+        var that = this // The classic
+        
+        query = window.GrandCentralCore.createQueryString({
+            start: this.rawEntitlements.length,
+            size: 450,
+            fields: 'meta_rev,cloud_meta,reward_meta,game_meta,drm_def,drm_def.content_type,title_meta,product_meta',
+            revisionId: 0, // 2022-06-16: 1654209825100. Not sure where it's obtaining that outside of the results. Pass it back in?
+            metaRevisionId: 0
+        })
+
+        this.config.valkyrieInstance.lookup("service:entitlements")
+        ._buildApiPromise('fetchInternalEntitlements', 'GET', 'internal_entitlements', query)
+        .then(function (response) {
+            that.rawEntitlements = that.rawEntitlements.concat(response.entitlements)
+            
+            if (response.entitlements.length < 450) {
+                callback(that.rawEntitlements)
+            } else {
+                that.macrossBrain(callback)
+            }
         })
     },
     generateList: function(entitlements) {
@@ -383,10 +403,11 @@ repod.psdle = {
             return;
         }
 
-        console.log("PSDLE | Generating download list.");
+        console.log("PSDLE | Generating download list.", entitlements);
 
         this.gamelist = [];
-        var i18n = this.config.valkyrieInstance.lookup('service:i18n');
+        var i18n = this.config.valkyrieInstance.lookup('service:intl');
+        var moment = this.config.valkyrieInstance.lookup("service:moment")
         var entitlements = (entitlements || this.config.valkyrieInstance.lookup("service:macross-brain").macrossBrainInstance._entitlementStore._storage._entitlementMapCache).concat(this.e_inject_cache);
         var validContent = 0;
 
@@ -402,18 +423,9 @@ repod.psdle = {
                 if (that.config.deep_search) { temp.category = "unknown"; }
                 if (!that.pid_cache[temp.productID]) { that.pid_cache[temp.productID] = 1; } else { that.pid_cache[temp.productID]++; }
 
-                if (obj.entitlement_attributes) {
-                    //PS4... and PS5!
-                    if (obj.game_meta) {
-                        temp.name     = obj.game_meta.name;
-                        temp.api_icon = obj.game_meta.icon_url;
-                    }
-                    temp.size        = obj.entitlement_attributes[0].package_file_size;
-                    temp.platform    = (obj.entitlement_attributes[0].platform_id == "ps5") ? ["PS5"] : ["PS4"];
-                    temp.pkg         = obj.entitlement_attributes[0].reference_package_url
-                } else if (obj.drm_def) {
+                if (typeof obj.drm_def !== "undefined") {
                     //PS3, PSP, or Vita
-                    temp.name        = (obj.drm_def.contentName) ? obj.drm_def.contentName : (obj.drm_def.drmContents[0].titleName) ? obj.drm_def.drmContents[0].titleName : "Unknown! - Submit a bug report!";
+                    temp.name        = obj.game_meta.name //(obj.drm_def.contentName) ? obj.drm_def.contentName : (obj.drm_def.drmContents[0].titleName) ? obj.drm_def.drmContents[0].titleName : "Unknown! - Submit a bug report!";
                     temp.api_icon    = obj.drm_def.image_url;
                     temp.size        = obj.drm_def.drmContents[0].contentSize;
                     temp.platform    = [];
@@ -422,23 +434,31 @@ repod.psdle = {
                     temp.pkg         = obj.drm_def.drmContents[0].contentUrl
 
                     temp.platform = that.determineSystem(obj.drm_def.drmContents[0].platformIds);
+                } else if (obj.game_meta) {
+                    // Everything has game_meta now!
+                    //PS4... and PS5!
+
+                    temp.name     = obj.game_meta.name;
+                    temp.api_icon = obj.product_meta.image_url;
+                    temp.size        = 0 //obj.entitlement_attributes[0].package_file_size;
+                    temp.platform    = typeof obj.game_meta.type !== "undefined" ? (obj.game_meta.type == "PSGD" ? ["PS5"] : ["PS4"]) : "PS_PLUS_REQUIRED"
+                    //temp.pkg         = obj.entitlement_attributes[0].reference_package_url
                 }
 
                 //Post-processing.
                 temp.icons          = [
+                    temp.api_icon,
                     that.config.game_api+temp.id+"/image",
                     that.config.game_api+temp.productID+"/image",
-                    temp.api_icon
                 ];
 
                 temp.date           = obj.active_date;
-                var tempDate        = new Date(temp.date);
-                var toPrettyDate    = {mm:tempDate.getMonth()+1, dd:tempDate.getDate(), yyyy:tempDate.getFullYear()};
-                temp.prettyDate     = i18n.t("c.format.numericDateSlashes",toPrettyDate).string;
-                temp.dateUnix       = tempDate.getTime() / 1000;
+                var tempMoment      = moment.moment(temp.date)
+                temp.prettyDate     = tempMoment.format("L")
+                temp.dateUnix       = tempMoment.unix()
 
-                var tempSize        = require("valkyrie-storefront/utils/download").default.getFormattedFileSize(temp.size);
-                temp.prettySize     = (temp.size === 0) ? "N/A" : i18n.t("c.page.details.drmDetails."+tempSize.unit,{val: tempSize.value}).string;
+                var tempSize        = 0 //require("valkyrie-storefront/utils/download").default.getFormattedFileSize(temp.size);
+                temp.prettySize     = (temp.size || "N/A") //(temp.size === 0) ? "N/A" : i18n.t("c.page.details.drmDetails."+tempSize.unit,{val: tempSize.value}).string;
                 temp.url            = repod.psdle.config.game_page + temp.productID;
                 temp.platformUsable = temp.platform.slice(0);
 
@@ -462,18 +482,18 @@ repod.psdle = {
 
         //Side effect of adapting to mobile and future changes.
         //.create() so we're not required to be on the download list. .destroy() after.
-        var downloadListController = require("valkyrie-storefront/pods/download/list/controller").default.create();
+        //var downloadListController = require("valkyrie-storefront/pods/download/list/controller").default.create();
 
         $.each(this.gamelist,function(a,b) {
             that.gamelist[a].index = a+1;
-            that.gamelist[a].dlListPage = Math.ceil(that.gamelist[a].index  / downloadListController.pageSize);
+            //that.gamelist[a].dlListPage = Math.ceil(that.gamelist[a].index  / downloadListController.pageSize);
 
             if (that.config.deep_search) {
                 //that.game_api.queue(a+1,((that.pid_cache[b.productID] > 1)?b.id:b.productID));
             }
         });
 
-        downloadListController.destroy(); //Sure why not.
+        //downloadListController.destroy(); //Sure why not.
 
         console.log("PSDLE | Finished generating download list. End result is "+this.gamelist.length+" of "+entitlements.length+" item(s).",this.stats);
         repod.psdle.container.postList();
@@ -481,8 +501,8 @@ repod.psdle = {
     determineSystem: function(HASH) {
         var that = this,
             sys = [],
-            K = require("valkyrie-storefront/utils/const").default.KamajiPlatformFlags,
-            K2 = require("valkyrie-storefront/utils/const").default.KamajiPlatforms,
+            K = {PS3: 2147483648, PSP: 1073741824, PSVITA: 134217728},
+            K2 = {PS4: 'PS4', PS3: 'PS3', PSVITA: 'PS Vita', PSP: 'PSP'},
             _K = K
 
         $.each(_K, function (t,u) {
@@ -499,9 +519,9 @@ repod.psdle = {
 
 
         if (!this.config.includeVideo && (obj.VUData || (obj.drm_def && obj.drm_def.contentType == "TV"))) { this.stats.video++; return 0; }
-        else if (obj.entitlement_type == 1 || obj.entitlement_type == 4) { this.stats.service++; return 0; } //Services = Ignored
+        else if (obj.entitlement_type == 1 || obj.entitlement_type == 4 || obj.serviceType == 1) { this.stats.service++; return 0; } //Services = Ignored
         else if (inf == false && this.config.includeExpired !== true && new Date(exp) < new Date()) { this.stats.expired++; return 0; }
-        else if (obj.drm_def || obj.entitlement_attributes) { this.stats.fine++; return 1; }
+        else if (obj.drm_def || obj.game_meta) { this.stats.fine++; return 1; }
         else { this.stats.generic++; return 0; }
     },
     genSysCache: function() {
@@ -587,7 +607,7 @@ repod.psdle = {
                 helpers: {
                     auto_systems: function(filter) {
                         var sysCache = repod.psdle.sys_cache,
-                            order = ["ps1","ps2","ps3","ps4","vr","psp","vita"],
+                            order = ["ps1","ps2","ps3","ps4","vr","psp","vita","ps_plus_required"],
                             filterSystems = [];
 
                         $.each(order, function (i,v) {
@@ -668,7 +688,7 @@ repod.psdle = {
                 }
 
                 var systems = $("<span />", {class: "psdle_fancy_bar search options system"}),
-                    order = ["ps1","ps2","ps3","ps4","ps5","vr","psp","vita"];
+                    order = ["ps1","ps2","ps3","ps4","ps5","vr","psp","vita","ps_plus_required"];
                 $.each(order, function (i,v) {
                     if (repod.psdle.sys_cache.hasOwnProperty(v)) {
                         $("<span />", {id: "system_"+v, text: repod.psdle.sys_cache[v]}).on("click", regenFunc).appendTo(systems);
@@ -847,7 +867,7 @@ repod.psdle = {
             },
             toSize: function(url,size) {
                 size = (size || repod.psdle.config.iconSize || 42);
-                var suf = /\?w=\d+&h=\d+$/.test(url) ? "" : "?w=" + size + "&h=" + size
+                var suf = /\&w=\d+&h=\d+$/.test(url) ? "" : "&w=" + size + "&h=" + size
                 return url + suf;
             },
             validate: function(index) {
@@ -866,15 +886,20 @@ repod.psdle = {
                         that.setIcon(index);
                         return 0;
                     }
+                    
+                    // Assume API icons from now on.
+                    
+                    $.extend(repod.psdle.gamelist[index],{safe_icon: true, icon: u});
+                    that.setIcon(index);
 
-                    $.get(url)
+                    /*$.get(url)
                     .success(function() {
                         $.extend(repod.psdle.gamelist[index],{safe_icon: true, icon: u});
                         that.setIcon(index);
                     })
                     .fail(function(e) {
                         that.validate(index);
-                    });
+                    });*/
                 } else {
                     that.setIcon(index);
                 }
@@ -1071,12 +1096,13 @@ repod.psdle = {
         else if (sys == "PS VR" || sys.indexOf("PS VR") > -1) { sys = "PS VR"; }
         else if (sys == "PS4" || sys.indexOf("PS4") > -1) { sys = "PS4"; } //What could this possibly break?
         else if (sys == "PS5" || sys.indexOf("PS5") > -1) { sys = "PS5"; } //The edge case nobody expected.
+        else if (sys == "PS_PLUS_REQUIRED" || sys.indexOf("PS_PLUS_REQUIRED") > -1) { sys = "PS_PLUS_REQUIRED"; }
 
         return sys;
     },
     injectCSS: function() {
         //CSS prefers " over ' to avoid string literal issues.
-        var temp = 'div.amopromo{margin-bottom:1em}div.amopromo a,div.amopromo a:hover{text-decoration:unset;color:unset}div.amopromo .psdle_btn{margin:unset}div.amopromo .psdle_btn:hover{margin:unset}div.amopromo>div{font-size:small}.valkyrie #export_table input,.valkyrie #export_table select,.valkyrie #lang_select{height:unset;padding:unset;margin:unset;width:unset;display:unset}.psdle_logo{display:inline-block;width:84px;height:31px;background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAAAfCAYAAAEO89r4AAABaUlEQVRoge2XS27CQAyGPSVSUVErdqzpMqveiRvALnu67Gl6D+gFuAKIPgQrs0o1TJSJJ7aJBvnbRXE8f357XoCIGyTiEBFf33+BwgMpyg/eVRNSsENEpAQWMa27agL1e7JWcmCSVSG+tF6jp1D4o/qkqN8un+Bl7JpJUxP5vH38XT2T655CtEf6olKoaFLq3ElK2heRlgq//U/KKVj4rcrvs+Y+h7Z1ow2Vv9eg6A5p53MxhnI2an0vWSmW0HI2EhUTI5vSN4T2Xem0ycZRh4h7AJgOLaQLlf1ega2br3/IQlMW6TA2dYEPc2XToyZUGtbOdMs1lyX0lqeubEpvQqVp9GhsghxPOpvY8yPA1yo+MRtCh7iWfJ/j49rOpEE2QnM55h1U7/Wcox0nb+y9lqY6dzYtmgtmqDBmqDBmqDCDGcq5Ew5xCqViHSqMGSqMGSqMGSpMp6H3unloYR0qjBkqjBkqjBkqzAUtBKxj5lT3GAAAAABJRU5ErkJggg==)}.startup{z-index:10000;position:fixed;bottom:10px;left:10px;cursor:pointer;box-shadow:0 0 10px #fff}#muh_games_container{display:none;position:absolute;top:0;right:0;left:0;color:#000;z-index:10000;text-align:center}#sub_container{padding:20px;background-color:#fff}#startup_progress{-webkit-appearance:none;-moz-appearance:none;appearance:none;width:400px;height:16px;border:1px solid #999;overflow:hidden;border-radius:10px;margin:10px;color:#2185f4!important}#startup_progress::-moz-progress-bar{background-color:#2185f4!important}#startup_progress::-webkit-progress-value{background-color:#2185f4!important}.psdle_btn{background-color:#2185f4}.psdle_btn{cursor:pointer;border-radius:13px;color:#fff;padding:1px 15px;display:inline-block;margin:5px auto}.psdle.tagline{font-size:small}.psdle.tagline>a,.psdle.tagline>span{line-height:0;cursor:pointer;color:#7f6d75!important}.psdle.tagline>a:hover,.psdle.tagline>span:hover{color:inherit!important;text-decoration:underline}.search.options.syntax{display:block;text-align:center;width:500px;margin:auto;margin-bottom:1em;border:none;border-bottom:1px solid #000}.search.options.filter.container{display:inline-block;background-color:#2185f4;color:#fff;margin:0 .3em;cursor:default}.search.options.filter.container .value{display:inline-block;padding:0 .2em;text-align:center}.search.options.filter.container.system .value{background-color:red}.search.options.filter.container.category .value{background-color:green}.search.options.filter.close{display:inline-block;color:#fff;padding:0 .3em;cursor:pointer}.search.options.filter.close:hover{background-color:rgba(255,51,0,.8)}.search.options.container{margin-bottom:20px}.search.main.container{position:fixed;left:0;top:0;width:100%;padding:15px 0;background-color:rgba(255,255,255,.8);z-index:10000}.search.input.plus{cursor:pointer!important}.search.export{display:inline;width:95%;max-width:600px}.psdle_table,table{text-align:left;display:inline-block;border-collapse:initial}th[id^=sort]{cursor:pointer}th[id^=sort]:hover{background-color:#62a5f0}th{padding:5px!important;background-color:#2185f4;color:#fff;border:none;transition:background-color .3s}tr:hover{background-color:rgba(33,133,244,.7)!important}.valkyrie td{padding:0;border:none}td a.psdle_game_link{display:block;width:100%;height:100%;color:#000;padding:8px!important}.psdle_game_icon.is_plus{background-color:#ffd10d}tr[id^=psdle_index_].is_plus td:last-child{border-right:#ffd10d 3px solid}tr:nth-child(2n){background-color:#eee}td{text-align:center}td:nth-child(2),th:nth-child(2){text-align:left!important}#psdle_search_select,#psdle_search_text{font-size:large;padding:5px 10px;border:1px solid #f0f0f0;display:inline-block;width:auto}#psdle_search_select{background-color:#f0f0f0;text-align:center}#psdle_search_text{font-size:large;max-width:480px;width:100%}.negate_regex{background-color:#ff8080!important;color:#fff}.psdle_fancy_bar>span,.psdle_fancy_but,span#export_view,span[id^=dl_],span[id^=filter_],span[id^=system_]{font-weight:700;font-size:.9em;color:#fff;background-color:#2185f4;display:inline-block;margin-right:2px;margin-bottom:5px;padding:1px 10px;cursor:pointer}.psdle_fancy_but{border-radius:12px}#muh_games_container:not(.rtl) .psdle_fancy_bar>span:first-of-type{border-top-left-radius:12px;border-bottom-left-radius:12px}#muh_games_container:not(.rtl) .psdle_fancy_bar>span:last-of-type{border-top-right-radius:12px;border-bottom-right-radius:12px}.toggled_off{background-color:rgba(33,133,244,.4)!important}#muh_games_container:not(.rtl) #psdle_search_select{border-radius:90px 0 0 90px}#psdle_search_text{border-radius:0 90px 90px 0}.psdle_game_icon{max-width:100%;vertical-align:middle;padding:3px;width:42px;height:42px}.psdle_sort_asc,.psdle_sort_desc{float:right;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent}.psdle_sort_asc{border-bottom:5px solid #fff}.psdle_sort_desc{border-top:5px solid #fff}#dlQARating,#dlQAStat{color:#fff;background-color:rgba(33,133,244,.8);font-size:small}#dlQueueAsk{width:400px;height:400px}#dlQAN{background-color:rgba(33,133,244,.8);padding:7px 15px;color:#fff;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}#dlQASys{position:absolute;bottom:0;padding:7px 0;color:#fff;display:table;width:100%;table-layout:fixed}#dlQASys>div{display:table-cell}#dlQASys>div>div{cursor:pointer;background-color:rgba(33,133,244,.8);border-radius:10px;padding:2px;margin:0 10px;box-shadow:0 0 30px #000;transition:background-color .5s,box-shadow .5s}#dlQASys>div>div:hover{background-color:rgba(33,133,244,1);box-shadow:0 0 30px rgba(33,133,244,1)}#dlQAStat{border-bottom-left-radius:20px;padding:0 10px 0 15px;float:right}#dlQARating{border-bottom-right-radius:20px;padding:0 15px 0 10px;float:left}.success{background-color:#237423!important}.failure{background-color:#a43636!important}#dlQueueExt{overflow:hidden;position:absolute;left:10px;right:10px;bottom:40px;font-size:.8em;background-color:rgba(33,133,244,.8);padding:10px;border-radius:9px;top:66px;text-align:left}.cover,.cover>div>div{background-size:cover}.cover{z-index:10000;position:fixed;top:0;left:0;width:100%;height:100%;display:table;background-color:rgba(0,0,0,.25);background-position:center}.cover>div{display:table-cell;vertical-align:middle;height:inherit;text-align:center}.cover>div>div{box-shadow:0 0 30px #000;display:inline-block;background-color:#fff;border-radius:20px;overflow:hidden;position:relative}#export_select{padding:10px;background-color:#fff;color:#000}#export_select>div{border-top-left-radius:10px;border-top-right-radius:10px;overflow-y:auto;overflow-x:hidden;max-height:490px}#export_table{width:100%}#export_table th{text-align:center}#export_table .orderUp{cursor:pointer;height:1em;border-left:.4em solid transparent;border-right:.4em solid transparent;border-bottom:.9em solid rgba(0,0,0,.2);display:inline-block;padding:1px;margin:0 3px}#export_table .orderUp:hover{border-bottom-color:#000}#slider,.handle{display:inline-block}#slider{vertical-align:bottom;cursor:pointer;width:30px;height:12px;border-radius:10px;border:2px solid #f0f0f0}.handle_container{text-align:center;width:100%;height:100%}.handle{width:10px;height:10px;border-radius:100%;margin:0 2px 6px;border:1px solid #fff;background-color:#85c107}[data-tooltip]{position:relative;z-index:2;cursor:pointer}[data-tooltip]:after,[data-tooltip]:before{visibility:hidden;opacity:0;pointer-events:none}[data-tooltip]:before{--width:300px;position:absolute;top:150%;left:50%;margin-left:calc(var(--width)/2*-1);padding:7px;width:var(--width);border-radius:3px;background-color:rgba(33,133,244,.9);color:#fff;content:attr(data-tooltip);text-align:center;font-size:.9em;line-height:1.2;box-shadow:0 0 10px #fff}[data-tooltip]:after{position:absolute;top:calc(150% - 5px);left:50%;margin-left:-5px;width:0;border-bottom:5px solid rgba(33,133,244,.9);border-right:5px solid transparent;border-left:5px solid transparent;content:" ";font-size:0;line-height:0}[data-tooltip]:hover:after,[data-tooltip]:hover:before{visibility:visible;opacity:1}.ui-autocomplete{z-index:9002;max-width:590px;max-height:200px;overflow-y:auto;overflow-x:hidden}.ui-menu{position:fixed;border:2px solid #f0f0f0;border-top:none;background-color:#fff}.ui-menu>.ui-menu-item *{color:#000;text-decoration:none;white-space:nowrap;text-overflow:ellipsis;cursor:pointer}.ui-menu>.ui-menu-item:nth-child(even){background-color:#e6e6e6}.ui-menu-item .ui-state-focus{display:inline-block;width:100%;color:#000;background-color:rgba(33,133,244,.7)}.psdletv{font-style:italic;font-weight:700;font-size:.6em;vertical-align:text-top;position:absolute;top:4px}.psp3{border-left:2px solid #2185f4;border-right:2px solid #2185f4}.psp2{background-color:rgba(33,133,244,.15)!important}#muh_games_container.rtl{direction:rtl}.rtl #psdle_search_select{border-radius:0 90px 90px 0}.rtl #psdle_search_text{border-radius:90px 0 0 90px}.rtl .psdle_fancy_bar span:last-of-type{border-top-left-radius:12px;border-bottom-left-radius:12px}.rtl .psdle_fancy_bar span:first-of-type{border-top-right-radius:12px;border-bottom-right-radius:12px}.rtl .psdle_table *{text-align:right}.rtl tr.is_plus[id^=psdle_index_] td:last-child{border-right:none;border-left:#ffd10d 3px solid}.psdledark #sub_container{background-color:#222;color:#e7e7e7}.psdledark a.psdle_game_link{color:#e7e7e7}.psdledark .search.main.container{background-color:rgba(34,34,34,.7)}.psdledark tr{background-color:#222}.psdledark tr:nth-child(2n){background-color:#393939}';
+        var temp = 'div.amopromo{margin-bottom:1em}div.amopromo a,div.amopromo a:hover{text-decoration:unset;color:unset}div.amopromo .psdle_btn{margin:unset}div.amopromo .psdle_btn:hover{margin:unset}div.amopromo>div{font-size:small}.valkyrie #export_table input,.valkyrie #export_table select,.valkyrie #lang_select{height:unset;padding:unset;margin:unset;width:unset;display:unset}.psdle_logo{display:inline-block;width:84px;height:31px;background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAAAfCAYAAAEO89r4AAABaUlEQVRoge2XS27CQAyGPSVSUVErdqzpMqveiRvALnu67Gl6D+gFuAKIPgQrs0o1TJSJJ7aJBvnbRXE8f357XoCIGyTiEBFf33+BwgMpyg/eVRNSsENEpAQWMa27agL1e7JWcmCSVSG+tF6jp1D4o/qkqN8un+Bl7JpJUxP5vH38XT2T655CtEf6olKoaFLq3ElK2heRlgq//U/KKVj4rcrvs+Y+h7Z1ow2Vv9eg6A5p53MxhnI2an0vWSmW0HI2EhUTI5vSN4T2Xem0ycZRh4h7AJgOLaQLlf1ega2br3/IQlMW6TA2dYEPc2XToyZUGtbOdMs1lyX0lqeubEpvQqVp9GhsghxPOpvY8yPA1yo+MRtCh7iWfJ/j49rOpEE2QnM55h1U7/Wcox0nb+y9lqY6dzYtmgtmqDBmqDBmqDCDGcq5Ew5xCqViHSqMGSqMGSqMGSpMp6H3unloYR0qjBkqjBkqjBkqzAUtBKxj5lT3GAAAAABJRU5ErkJggg==)}.startup{z-index:10000;position:fixed;bottom:10px;left:10px;cursor:pointer;box-shadow:0 0 10px #fff}#muh_games_container{display:none;position:absolute;top:0;right:0;left:0;color:#000;z-index:10000;text-align:center}#sub_container{background-color:#fff}#startup_progress{-webkit-appearance:none;-moz-appearance:none;appearance:none;width:400px;height:16px;border:1px solid #999;overflow:hidden;border-radius:10px;margin:10px;color:#2185f4!important}#startup_progress::-moz-progress-bar{background-color:#2185f4!important}#startup_progress::-webkit-progress-value{background-color:#2185f4!important}.psdle_btn{background-color:#2185f4}.psdle_btn{cursor:pointer;border-radius:13px;color:#fff;padding:1px 15px;display:inline-block;margin:5px auto}.psdle.tagline{font-size:small}.psdle.tagline>a,.psdle.tagline>span{line-height:0;cursor:pointer;color:#7f6d75!important}.psdle.tagline>a:hover,.psdle.tagline>span:hover{color:inherit!important;text-decoration:underline}.search.options.syntax{display:block;text-align:center;width:500px;margin:auto;margin-bottom:1em;border:none;border-bottom:1px solid #000}.search.options.filter.container{display:inline-block;background-color:#2185f4;color:#fff;margin:0 .3em;cursor:default}.search.options.filter.container .value{display:inline-block;padding:0 .2em;text-align:center}.search.options.filter.container.system .value{background-color:red}.search.options.filter.container.category .value{background-color:green}.search.options.filter.close{display:inline-block;color:#fff;padding:0 .3em;cursor:pointer}.search.options.filter.close:hover{background-color:rgba(255,51,0,.8)}.search.options.container{margin-bottom:20px}.search.main.container{position:fixed;left:0;top:0;width:100%;padding:15px 0;background-color:rgba(255,255,255,.8);z-index:10000}.search.input.plus{cursor:pointer!important}.search.export{display:inline;width:95%;max-width:600px}.psdle_table,table{text-align:left;border-collapse:initial}th[id^=sort]{cursor:pointer}th[id^=sort]:hover{background-color:#62a5f0}th{padding:5px!important;background-color:#2185f4;color:#fff;border:none;transition:background-color .3s}tr:hover{background-color:rgba(33,133,244,.7)!important}.valkyrie td{padding:0;border:none}td a.psdle_game_link{display:block;width:100%;height:100%;color:#000;padding:8px!important}.psdle_game_icon.is_plus{background-color:#ffd10d}tr[id^=psdle_index_].is_plus td:last-child{border-right:#ffd10d 3px solid}tr:nth-child(2n){background-color:#eee}td{text-align:center}td:nth-child(2),th:nth-child(2){text-align:left!important}#psdle_search_select,#psdle_search_text{font-size:large;padding:5px 10px;border:1px solid #f0f0f0;display:inline-block;width:auto}#psdle_search_select{background-color:#f0f0f0;text-align:center}#psdle_search_text{font-size:large;max-width:480px;width:100%}.negate_regex{background-color:#ff8080!important;color:#fff}.psdle_fancy_bar>span,.psdle_fancy_but,span#export_view,span[id^=dl_],span[id^=filter_],span[id^=system_]{font-weight:700;font-size:.9em;color:#fff;background-color:#2185f4;display:inline-block;margin-right:2px;margin-bottom:5px;padding:1px 10px;cursor:pointer}.psdle_fancy_but{border-radius:12px}#muh_games_container:not(.rtl) .psdle_fancy_bar>span:first-of-type{border-top-left-radius:12px;border-bottom-left-radius:12px}#muh_games_container:not(.rtl) .psdle_fancy_bar>span:last-of-type{border-top-right-radius:12px;border-bottom-right-radius:12px}.toggled_off{background-color:rgba(33,133,244,.4)!important}#muh_games_container:not(.rtl) #psdle_search_select{border-radius:90px 0 0 90px}#psdle_search_text{border-radius:0 90px 90px 0}.psdle_game_icon{max-width:100%;vertical-align:middle;padding:3px;width:42px;height:42px}.psdle_sort_asc,.psdle_sort_desc{float:right;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent}.psdle_sort_asc{border-bottom:5px solid #fff}.psdle_sort_desc{border-top:5px solid #fff}#dlQARating,#dlQAStat{color:#fff;background-color:rgba(33,133,244,.8);font-size:small}#dlQueueAsk{width:400px;height:400px}#dlQAN{background-color:rgba(33,133,244,.8);padding:7px 15px;color:#fff;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}#dlQASys{position:absolute;bottom:0;padding:7px 0;color:#fff;display:table;width:100%;table-layout:fixed}#dlQASys>div{display:table-cell}#dlQASys>div>div{cursor:pointer;background-color:rgba(33,133,244,.8);border-radius:10px;padding:2px;margin:0 10px;box-shadow:0 0 30px #000;transition:background-color .5s,box-shadow .5s}#dlQASys>div>div:hover{background-color:rgba(33,133,244,1);box-shadow:0 0 30px rgba(33,133,244,1)}#dlQAStat{border-bottom-left-radius:20px;padding:0 10px 0 15px;float:right}#dlQARating{border-bottom-right-radius:20px;padding:0 15px 0 10px;float:left}.success{background-color:#237423!important}.failure{background-color:#a43636!important}#dlQueueExt{overflow:hidden;position:absolute;left:10px;right:10px;bottom:40px;font-size:.8em;background-color:rgba(33,133,244,.8);padding:10px;border-radius:9px;top:66px;text-align:left}.cover,.cover>div>div{background-size:cover}.cover{z-index:10000;position:fixed;top:0;left:0;width:100%;height:100%;display:table;background-color:rgba(0,0,0,.25);background-position:center}.cover>div{display:table-cell;vertical-align:middle;height:inherit;text-align:center}.cover>div>div{box-shadow:0 0 30px #000;display:inline-block;background-color:#fff;border-radius:20px;overflow:hidden;position:relative}#export_select{padding:10px;background-color:#fff;color:#000}#export_select>div{border-top-left-radius:10px;border-top-right-radius:10px;overflow-y:auto;overflow-x:hidden;max-height:490px}#export_table{width:100%}#export_table th{text-align:center}#export_table .orderUp{cursor:pointer;height:1em;border-left:.4em solid transparent;border-right:.4em solid transparent;border-bottom:.9em solid rgba(0,0,0,.2);display:inline-block;padding:1px;margin:0 3px}#export_table .orderUp:hover{border-bottom-color:#000}#slider,.handle{display:inline-block}#slider{vertical-align:bottom;cursor:pointer;width:30px;height:12px;border-radius:10px;border:2px solid #f0f0f0}.handle_container{text-align:center;width:100%;height:100%}.handle{width:10px;height:10px;border-radius:100%;margin:0 2px 6px;border:1px solid #fff;background-color:#85c107}[data-tooltip]{position:relative;z-index:2;cursor:pointer}[data-tooltip]:after,[data-tooltip]:before{visibility:hidden;opacity:0;pointer-events:none}[data-tooltip]:before{--width:300px;position:absolute;top:150%;left:50%;margin-left:calc(var(--width)/2*-1);padding:7px;width:var(--width);border-radius:3px;background-color:rgba(33,133,244,.9);color:#fff;content:attr(data-tooltip);text-align:center;font-size:.9em;line-height:1.2;box-shadow:0 0 10px #fff}[data-tooltip]:after{position:absolute;top:calc(150% - 5px);left:50%;margin-left:-5px;width:0;border-bottom:5px solid rgba(33,133,244,.9);border-right:5px solid transparent;border-left:5px solid transparent;content:" ";font-size:0;line-height:0}[data-tooltip]:hover:after,[data-tooltip]:hover:before{visibility:visible;opacity:1}.ui-autocomplete{z-index:9002;max-width:590px;max-height:200px;overflow-y:auto;overflow-x:hidden}.ui-menu{position:fixed;border:2px solid #f0f0f0;border-top:none;background-color:#fff}.ui-menu>.ui-menu-item *{color:#000;text-decoration:none;white-space:nowrap;text-overflow:ellipsis;cursor:pointer}.ui-menu>.ui-menu-item:nth-child(even){background-color:#e6e6e6}.ui-menu-item .ui-state-focus{display:inline-block;width:100%;color:#000;background-color:rgba(33,133,244,.7)}.psdletv{font-style:italic;font-weight:700;font-size:.6em;vertical-align:text-top;position:absolute;top:4px}.psp3{border-left:2px solid #2185f4;border-right:2px solid #2185f4}.psp2{background-color:rgba(33,133,244,.15)!important}#muh_games_container.rtl{direction:rtl}.rtl #psdle_search_select{border-radius:0 90px 90px 0}.rtl #psdle_search_text{border-radius:90px 0 0 90px}.rtl .psdle_fancy_bar span:last-of-type{border-top-left-radius:12px;border-bottom-left-radius:12px}.rtl .psdle_fancy_bar span:first-of-type{border-top-right-radius:12px;border-bottom-right-radius:12px}.rtl .psdle_table *{text-align:right}.rtl tr.is_plus[id^=psdle_index_] td:last-child{border-right:none;border-left:#ffd10d 3px solid}.psdledark #sub_container{background-color:#222;color:#e7e7e7}.psdledark a.psdle_game_link{color:#e7e7e7}.psdledark .search.main.container{background-color:rgba(34,34,34,.7)}.psdledark tr{background-color:#222}.psdledark tr:nth-child(2n){background-color:#393939}';
         $("head").append('<style type="text/css">'+temp+'</style>');
     },
     exportList: {
@@ -1422,7 +1448,7 @@ repod.psdle = {
                         }
                         if (response.status == 403) {/* Oh no! */ }
                     }
-                    
+
                     that.called++; repod.psdle.type_cache["unknown"] = true;
                 })
                 .then(function() { that.run(1); that.updateBar(); });
@@ -1431,9 +1457,9 @@ repod.psdle = {
         updateBar: function() {
             var l = this.called,
                 r = repod.psdle.gamelist.length;
-                
+
             if (l % 100 == 0) {
-                // Periodically save results 
+                // Periodically save results
                 var config = repod.psdle.backportConfig
                 config.catalogDatabase.transact.dumpCacheToDB(config, () => console.log("Catalog saved..."))
             }
@@ -1504,7 +1530,7 @@ repod.psdle = {
 
             //Everything else.
             if (data.fileSize.unit !== "") {
-                var i18n = repod.psdle.config.valkyrieInstance.lookup('service:i18n')
+                var i18n = repod.psdle.config.valkyrieInstance.lookup('service:intl')
                 extend.prettySize = i18n.t("c.page.details.drmDetails." + data.fileSize.unit.toLowerCase(),{val: data.fileSize.value}).string
             }
             extend.baseGame = data.name || undefined
@@ -1832,10 +1858,10 @@ repod.psdle = {
             totals: function() {
                 var a = 0;
                 var out_size = "";
-                var i18n = repod.psdle.config.valkyrieInstance.lookup('service:i18n');
+                var i18n = repod.psdle.config.valkyrieInstance.lookup('service:intl');
 
                 $.each(repod.psdle.gamelist_cur, function(b,c) { a += c.size; });
-                var tempSize = require("valkyrie-storefront/utils/download").default.getFormattedFileSize(a);
+                var tempSize = 0 //require("valkyrie-storefront/utils/download").default.getFormattedFileSize(a);
                 out_size = (a > 0) ? i18n.t("c.page.details.drmDetails."+tempSize.unit,{val: tempSize.value}) : "";
 
                 return "<tr id='psdle_totals'><td /><td /><td /><td>"+out_size+"</td><td /></tr>";
@@ -2075,7 +2101,7 @@ repod.psdle = {
 repod.psdle.config.timerID = setInterval(function(a){
     if (
         (typeof Ember !== "undefined" && Ember.BOOTED) &&
-        Ember.Application.NAMESPACES_BY_ID["valkyrie-storefront"]._booted
+        Ember.Application.NAMESPACES_BY_ID["psst"]._booted
     )
     {
         clearInterval(repod.psdle.config.timerID);
