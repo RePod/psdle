@@ -410,7 +410,7 @@ repod.psdle = {
                     //PS4... and PS5!
 
                     temp.name     = obj.game_meta.name;
-                    temp.api_icon = obj.game_meta.icon_url;
+                    temp.api_icon = obj.product_meta.icon_url;
                     temp.size        = 0 //obj.entitlement_attributes[0].package_file_size;
                     temp.platform    = obj.game_meta.type == "PSGD" ? ["PS5"] : ["PS4"]
                     //temp.pkg         = obj.entitlement_attributes[0].reference_package_url
