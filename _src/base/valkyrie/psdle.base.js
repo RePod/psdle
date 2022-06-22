@@ -367,12 +367,14 @@ repod.psdle = {
     },
     generateList: function(entitlements) {
         var that = this;
-        entitlements = (window.psdleEnts || entitlements).filter(obj => obj !== null);
+        entitlements = (window.psdleEnts || entitlements)
 
         if (!entitlements) {
             this.macrossBrain(function(e) { that.generateList(e) })
             return;
         }
+        
+        entitlements = entitlements.filter(obj => obj !== null);
 
         console.log("PSDLE | Generating download list.", entitlements);
 
