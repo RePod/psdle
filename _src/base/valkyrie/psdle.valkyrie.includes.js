@@ -1,9 +1,9 @@
-/*! psdle 4.1.0 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2022-06-17 */
+/*! psdle 4.1.1 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2022-06-21 */
 var psdleSkip = true;
 var repod = {};
 repod.psdle = {
-    version            : "4.1.0",
-    versiondate        : "2022-06-17",
+    version            : "4.1.1",
+    versiondate        : "2022-06-21",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -368,7 +368,7 @@ repod.psdle = {
     },
     generateList: function(entitlements) {
         var that = this;
-        entitlements = (window.psdleEnts || entitlements);
+        entitlements = (window.psdleEnts || entitlements).filter(obj => obj !== null);
 
         if (!entitlements) {
             this.macrossBrain(function(e) { that.generateList(e) })

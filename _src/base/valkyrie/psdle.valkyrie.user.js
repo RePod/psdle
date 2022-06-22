@@ -1,11 +1,11 @@
-/*! psdle 4.1.0 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2022-06-17 */
+/*! psdle 4.1.1 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2022-06-21 */
 // ==UserScript==
 // @author		RePod
 // @name		PSDLE for Greasemonkey (valkyrie)
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		4.1.0
+// @version		4.1.1
 // @include		/https://store.playstation.com/*/
 // @include		/https://library.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
@@ -26,12 +26,12 @@ Alternatively, reconfigure the updating settings in your Userscript manager.
 */
 
 
-/*! psdle 4.1.0 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2022-06-17 */
+/*! psdle 4.1.1 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2022-06-21 */
 var psdleSkip = true;
 var repod = {};
 repod.psdle = {
-    version            : "4.1.0",
-    versiondate        : "2022-06-17",
+    version            : "4.1.1",
+    versiondate        : "2022-06-21",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -396,7 +396,7 @@ repod.psdle = {
     },
     generateList: function(entitlements) {
         var that = this;
-        entitlements = (window.psdleEnts || entitlements);
+        entitlements = (window.psdleEnts || entitlements).filter(obj => obj !== null);
 
         if (!entitlements) {
             this.macrossBrain(function(e) { that.generateList(e) })
