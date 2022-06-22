@@ -367,7 +367,7 @@ repod.psdle = {
     },
     generateList: function(entitlements) {
         var that = this;
-        entitlements = (window.psdleEnts || entitlements);
+        entitlements = (window.psdleEnts || entitlements).filter(obj => obj !== null);
 
         if (!entitlements) {
             this.macrossBrain(function(e) { that.generateList(e) })
