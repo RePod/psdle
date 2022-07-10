@@ -343,13 +343,12 @@ repod.psdle = {
         }
     },
     rawEntitlements: [],
-    totalEntitlements: 0,
     macrossBrain: function(callback) {
         var that = this // The classic
         
         query = window.GrandCentralCore.createQueryString({
-            // start > total = bad time with the API!
-            start: Math.min(this.rawEntitlements.length, this.totalEntitlements),
+            // start >= total = bad time with the API!
+            start: this.rawEntitlements.length,
             size: 450,
             fields: 'meta_rev,cloud_meta,reward_meta,game_meta,drm_def,drm_def.content_type,title_meta,product_meta',
             revisionId: 0, // 2022-06-16: 1654209825100. Not sure where it's obtaining that outside of the results. Pass it back in?
@@ -359,10 +358,10 @@ repod.psdle = {
         this.config.valkyrieInstance.lookup("service:entitlements")
         ._buildApiPromise('fetchInternalEntitlements', 'GET', 'internal_entitlements', query)
         .then(function (response) {
-            that.totalEntitlements = response.total_results || 450
             that.rawEntitlements = that.rawEntitlements.concat(response.entitlements)
             
-            if (response.entitlements.length < 450) {
+            // should never be greater than, but just in case
+            if (that.rawEntitlements.length >= response.total_results) {
                 callback(that.rawEntitlements)
             } else {
                 that.macrossBrain(callback)
@@ -491,6 +490,8 @@ repod.psdle = {
     },
     stats: { fine: 0, generic: 0, expired: 0, service: 0, video: 0 },
     isValidContent: function(obj) {
+        if (obj == undefined) return 0;
+        
         var exp = (obj.license) ? obj.license.expiration : obj.inactive_date,
             inf = (obj.license) ? obj.license.infinite_duration : false;
 
