@@ -358,10 +358,14 @@ repod.psdle = {
         this.config.valkyrieInstance.lookup("service:entitlements")
         ._buildApiPromise('fetchInternalEntitlements', 'GET', 'internal_entitlements', query)
         .then(function (response) {
+            console.log("PSDLE | Fetching Entitlements", that.rawEntitlements, response)
             that.rawEntitlements = that.rawEntitlements.concat(response.entitlements)
             
             // should never be greater than, but just in case
-            if (that.rawEntitlements.length >= response.total_results) {
+            if (response.entitlements == undefined ||
+                response.entitlements.length <= 450 &&
+                that.rawEntitlements.length >= response.total_results
+                ) { 
                 callback(that.rawEntitlements)
             } else {
                 that.macrossBrain(callback)
