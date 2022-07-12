@@ -346,6 +346,7 @@ repod.psdle = {
         var that = this // The classic
         
         query = window.GrandCentralCore.createQueryString({
+            // start >= total = bad time with the API!
             start: this.rawEntitlements.length,
             size: 450,
             fields: 'meta_rev,cloud_meta,reward_meta,game_meta,drm_def,drm_def.content_type,title_meta,product_meta',
@@ -356,9 +357,14 @@ repod.psdle = {
         this.config.valkyrieInstance.lookup("service:entitlements")
         ._buildApiPromise('fetchInternalEntitlements', 'GET', 'internal_entitlements', query)
         .then(function (response) {
+            console.log("PSDLE | Fetching Entitlements", that.rawEntitlements, response)
             that.rawEntitlements = that.rawEntitlements.concat(response.entitlements)
             
-            if (response.entitlements.length < 450) {
+            // should never be greater than, but just in case
+            if (response.entitlements == undefined ||
+                response.entitlements.length <= 450 &&
+                that.rawEntitlements.length >= response.total_results
+                ) { 
                 callback(that.rawEntitlements)
             } else {
                 that.macrossBrain(callback)
@@ -398,7 +404,7 @@ repod.psdle = {
 
                 if (typeof obj.drm_def !== "undefined") {
                     //PS3, PSP, or Vita
-                    temp.name        = obj.game_meta.name //(obj.drm_def.contentName) ? obj.drm_def.contentName : (obj.drm_def.drmContents[0].titleName) ? obj.drm_def.drmContents[0].titleName : "Unknown! - Submit a bug report!";
+                    temp.name        = (obj.drm_def.contentName) ? obj.drm_def.contentName : (obj.drm_def.drmContents[0].titleName) ? obj.drm_def.drmContents[0].titleName : "Unknown! - Submit a bug report!";
                     temp.api_icon    = obj.drm_def.image_url;
                     temp.size        = obj.drm_def.drmContents[0].contentSize;
                     temp.platform    = [];
@@ -487,6 +493,8 @@ repod.psdle = {
     },
     stats: { fine: 0, generic: 0, expired: 0, service: 0, video: 0 },
     isValidContent: function(obj) {
+        if (obj == undefined) return 0;
+        
         var exp = (obj.license) ? obj.license.expiration : obj.inactive_date,
             inf = (obj.license) ? obj.license.infinite_duration : false;
 
