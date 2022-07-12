@@ -1,4 +1,4 @@
-/*! psdle 4.1.2 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2022-07-10 */
+/*! psdle 4.1.2 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2022-07-12 */
 var psdleSkip = true;
 var repod = {};
 repod.psdle = {
@@ -405,7 +405,7 @@ repod.psdle = {
 
                 if (typeof obj.drm_def !== "undefined") {
                     //PS3, PSP, or Vita
-                    temp.name        = obj.game_meta.name //(obj.drm_def.contentName) ? obj.drm_def.contentName : (obj.drm_def.drmContents[0].titleName) ? obj.drm_def.drmContents[0].titleName : "Unknown! - Submit a bug report!";
+                    temp.name        = (obj.drm_def.contentName) ? obj.drm_def.contentName : (obj.drm_def.drmContents[0].titleName) ? obj.drm_def.drmContents[0].titleName : "Unknown! - Submit a bug report!";
                     temp.api_icon    = obj.drm_def.image_url;
                     temp.size        = obj.drm_def.drmContents[0].contentSize;
                     temp.platform    = [];
