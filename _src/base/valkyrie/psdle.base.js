@@ -418,7 +418,7 @@ repod.psdle = {
                     //PS4... and PS5!
 
                     temp.name     = obj.game_meta.name;
-                    temp.api_icon = obj.product_meta.image_url;
+                    temp.api_icon = (obj.product_meta) ? obj.product_meta.image_url : "";
                     temp.size        = 0 //obj.entitlement_attributes[0].package_file_size;
                     temp.platform    = typeof obj.game_meta.type !== "undefined" ? (obj.game_meta.type == "PSGD" ? ["PS5"] : ["PS4"]) : "PS_PLUS_REQUIRED"
                     //temp.pkg         = obj.entitlement_attributes[0].reference_package_url
