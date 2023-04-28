@@ -1,9 +1,9 @@
-/*! psdle 4.1.3 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2022-07-12 */
+/*! psdle 4.1.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2023-04-28 */
 var repod = {}
 repod.psdle = {
     config: {
-        version: "4.1.3",
-        versionDate: "2022-07-12"
+        version: "4.1.4",
+        versionDate: "2023-04-28"
     },
     init: function() {
         console.log(`PSDLE ${this.config.version} ${this.config.versionDate}`)

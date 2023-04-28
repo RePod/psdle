@@ -1,11 +1,11 @@
-/*! psdle 4.1.3 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2022-07-12 */
+/*! psdle 4.1.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2023-04-28 */
 // ==UserScript==
 // @author		RePod
 // @name		PSDLE for Greasemonkey (valkyrie)
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		4.1.3
+// @version		4.1.4
 // @include		/https://store.playstation.com/*/
 // @include		/https://library.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
@@ -26,12 +26,12 @@ Alternatively, reconfigure the updating settings in your Userscript manager.
 */
 
 
-/*! psdle 4.1.3 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2022-07-12 */
+/*! psdle 4.1.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2023-04-28 */
 var psdleSkip = true;
 var repod = {};
 repod.psdle = {
-    version            : "4.1.3",
-    versiondate        : "2022-07-12",
+    version            : "4.1.4",
+    versiondate        : "2023-04-28",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -447,7 +447,7 @@ repod.psdle = {
                     //PS4... and PS5!
 
                     temp.name     = obj.game_meta.name;
-                    temp.api_icon = obj.product_meta.image_url;
+                    temp.api_icon = (obj.product_meta) ? obj.product_meta.image_url : "";
                     temp.size        = 0 //obj.entitlement_attributes[0].package_file_size;
                     temp.platform    = typeof obj.game_meta.type !== "undefined" ? (obj.game_meta.type == "PSGD" ? ["PS5"] : ["PS4"]) : "PS_PLUS_REQUIRED"
                     //temp.pkg         = obj.entitlement_attributes[0].reference_package_url
