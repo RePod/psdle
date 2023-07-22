@@ -1,9 +1,9 @@
-/*! psdle 4.1.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2023-04-28 */
+/*! psdle 4.1.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2023-07-22 */
 var psdleSkip = true;
 var repod = {};
 repod.psdle = {
-    version            : "4.1.4",
-    versiondate        : "2023-04-28",
+    version            : "Testing",
+    versiondate        : "Infinity",
     autocomplete_cache : [],
     gamelist           : [],
     gamelist_cur       : [],
@@ -173,6 +173,22 @@ repod.psdle = {
                 repod.psdle.macrossBrain(function(raw) {
                     repod.psdle.exportList.download("_raw.json",JSON.stringify(raw))
                 });
+            }))
+            .append(" | ")
+            .append($("<span />", {id:'load_raw', text: "Load Raw"}).on("click", function() {
+                try {
+                    var fileInput = $("<input>", {type: "file", accept: ".txt,.json"})
+                            .change(function(ev) {
+                                var read = new FileReader();
+                                read.onload = function(){
+                                    console.log(read.result)
+                                    window.psdleEnts = JSON.parse(read.result)
+                                }
+                                read.readAsText(ev.currentTarget.files[0]);
+                            }).click()
+                } catch (e) {
+                    alert(e)
+                }
             }))
             .append(" | ")
             .append($("<span />", {id: "inject_lang", text: "Inject Language"}).on("click", function() {

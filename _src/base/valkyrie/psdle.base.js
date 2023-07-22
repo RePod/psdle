@@ -174,6 +174,22 @@ repod.psdle = {
                 });
             }))
             .append(" | ")
+            .append($("<span />", {id:'load_raw', text: "Load Raw"}).on("click", function() {
+                try {
+                    var fileInput = $("<input>", {type: "file", accept: ".txt,.json"})
+                            .change(function(ev) {
+                                var read = new FileReader();
+                                read.onload = function(){
+                                    console.log(read.result)
+                                    window.psdleEnts = JSON.parse(read.result)
+                                }
+                                read.readAsText(ev.currentTarget.files[0]);
+                            }).click()
+                } catch (e) {
+                    alert(e)
+                }
+            }))
+            .append(" | ")
             .append($("<span />", {id: "inject_lang", text: "Inject Language"}).on("click", function() {
                     repod.psdle.debug.inject_lang();
             }))
