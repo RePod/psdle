@@ -447,7 +447,7 @@ repod.psdle = {
                     that.config.game_api+temp.productID+"/image",
                 ];
 
-                temp.date           = obj.active_date;
+                temp.date           = obj.active_date || new Date(obj.revision_id).toISOString()
                 var tempMoment      = moment.moment(temp.date)
                 temp.prettyDate     = tempMoment.format("L")
                 temp.dateUnix       = tempMoment.unix()
