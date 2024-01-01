@@ -1,9 +1,9 @@
-/*! psdle 4.1.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2023-04-28 */
+/*! psdle 4.1.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2024-01-01 */
 var repod = {}
 repod.psdle = {
     config: {
-        version: "4.1.4",
-        versionDate: "2023-04-28"
+        version: "4.869",
+        versionDate: "202X-🔥-39"
     },
     init: function() {
         console.log(`PSDLE ${this.config.version} ${this.config.versionDate}`)
@@ -863,12 +863,17 @@ repod.psdle = {
             "recently-purchased": {
                 operationName: "getPurchasedGameList",
                 variables: {"isActive":true,"platform":["ps4","ps5"],"size":9999,"sortBy":"ACTIVE_DATE","sortDirection":"desc","subscriptionService":"NONE"},
-                hash: "00694ada3d374422aa34564e91a0589f23c5f52e0e9a703b19d065dedceb3496"
+                hash: "827a423f6a8ddca4107ac01395af2ec0eafd8396fc7fa204aaf9b7ed2eefa168"
             },
             "ps-plus": {
                 operationName: "getPurchasedGameList",
                 variables: {"platform":["ps4","ps5"],"size":9999,"sortBy":"ACTIVE_DATE","sortDirection":"desc","subscriptionService":"PS_PLUS"},
-                hash: "00694ada3d374422aa34564e91a0589f23c5f52e0e9a703b19d065dedceb3496"
+                hash: "827a423f6a8ddca4107ac01395af2ec0eafd8396fc7fa204aaf9b7ed2eefa168"
+            },
+            "recently-played": {
+                operationName: "getUserGameList",
+                variables: {"limit":100,"categories":"ps4_game,ps5_native_game"},
+                hash: "e0136f81d7d1fb6be58238c574e9a46e1c0cc2f7f6977a08a5a46f224523a004"
             },
             catalog: {
                 query: `query queryRetrieveTelemetryDataPDPProduct($productId: String!) {\n  productRetrieve(productId: $productId) {\n    ... productFragment\n  }\n}\nfragment productFragment on Product {\n  id\n  name\n  publisherName\n  topCategory\n  releaseDate\n  descriptions {\n    type\n    value\n  }\n  compatibilityNotices {\n    type\n    value\n  }\n  media {\n    type\n    url\n    role\n  }\n  edition {\n    name\n  }\n  defaultSku {\n    id\n    name\n    type\n  }\n  skus {\n    id\n  }\n  contentRating {\n    name\n  }\n  localizedStoreDisplayClassification\n  localizedGenres {\n    value\n  }\n  price {\n    basePrice\n    discountedPrice\n    serviceBranding\n  }\n}`,
