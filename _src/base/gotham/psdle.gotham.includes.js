@@ -1,4 +1,4 @@
-/*! psdle 4.1.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2024-01-01 */
+/*! psdle 4.1.5 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2024-01-03 */
 var repod = {}
 repod.psdle = {
     config: {
@@ -212,7 +212,7 @@ repod.psdle = {
 
                     // Regret part 1.
                     document.querySelectorAll(`${config.DOMElements.collectionFilter} .psw-radio`)
-                    .forEach( systemFilter => 
+                    .forEach( systemFilter =>
                         systemFilter.addEventListener("click", e => config.root.reactisms.stateChange.callback(config))
                     )
 
@@ -233,7 +233,7 @@ repod.psdle = {
             let excludeProps = ['__typename','webctas','conceptId']
 
             Object.assign(config, {
-                propCache: config.gameList.map(i => Object.keys(i)).reduce((i, itemKeys) => itemKeys).concat(customProps)
+                propCache: config.gameList.map(i => Object.keys(i)).reduce((i, itemKeys) => Object.assign(i,itemKeys)).concat(customProps)
             })
 
             if (Object.keys(config.catalogCache).length > 0) {
@@ -752,16 +752,31 @@ repod.psdle = {
         fetchIDs: function(config) {
             //Temporarily broken.
             return false;
-            
+
             config.catalogDatabase.transact.getNewIDs(
                 config, ((e) => this.catalog(config, e))
             )
         },
-        games: function(config, currentPage) {
-            //Currently only recents and plus, so hard assume purchasedTitlesRetrieve. Regret later.
-            return this.fetch(config, currentPage)
-            .then(r => r.json())
-            .then(data => data.data.purchasedTitlesRetrieve.games)
+        games: async function(config, currentPage) {
+            var recents = await this.fetch(config, "recently-played")
+                            .then(r => r.json())
+                            .then(data => data.data.gameLibraryTitlesRetrieve.games
+                                .reduce((c, i) => (
+                                    c[i.titleId] = {
+                                        name: i.name,
+                                        lastPlayed: i.lastPlayedDateTime,
+                                    }, c), {}
+                                )
+                            )
+
+            // Is currentPage needed at this point?
+            var games = await this.fetch(config, currentPage)
+                        .then(r => r.json())
+                        .then(data => data.data.purchasedTitlesRetrieve.games
+                            .map(i => Object.assign({}, i, recents[i.titleId]))
+                        )
+
+            return games
         },
         catalog: async function(config, newIDs) {
             var target = (newIDs || config.gameList.map(e => e.entitlementId))
