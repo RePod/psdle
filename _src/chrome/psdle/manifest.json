@@ -15,7 +15,6 @@
         "default_popup": "popup.html"
     },
     "permissions": [],
-    "background": {},
     "content_scripts": [
         {
           "matches": ["https://store.playstation.com/*"],
@@ -41,8 +40,9 @@
         "48": "icons/icon64.png",
         "128": "icons/icon128.png"
     },
-    "applications": {
+    "browser_specific_settings": {
       "gecko": {
+        "id": "{90d4b3e6-6c8a-46a4-87c7-3bf30d6fa325}",
         "strict_min_version": "109.0"
       }
     }
