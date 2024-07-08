@@ -1,5 +1,5 @@
 {
-    "manifest_version": 2,
+    "manifest_version": 3,
 
     "name": "PSDLE",
     "short_name": "__MSG_appName__",
@@ -7,26 +7,35 @@
     "default_locale": "en",
     "homepage_url": "https://repod.github.io/psdle",
 
-    "version": "4.1.4",
+    "version": "4.2.0",
 
-    "page_action": {
+    "action": {
         "default_icon": "icons/icon32.png",
-        "default_title": "__MSG_pageActionRun__"
+        "default_title": "__MSG_pageActionRun__",
+        "default_popup": "popup.html"
     },
-    "permissions": [
-        "tabs", "https://store.playstation.com/*", "https://library.playstation.com/*"
-    ],
-    "background": {
-        "scripts": ["js/background.js"]
-    },
+    "permissions": [],
+    "background": {},
     "content_scripts": [
+        {
+          "matches": ["https://store.playstation.com/*"],
+          "all_frames": true,
+          "js": ["js/chrome.js"],
+          "world": "MAIN"
+        },
         {
           "matches": ["https://transact.playstation.com/*"],
           "all_frames": true,
-          "js": ["js/chrome.js"]
+          "js": ["js/chrome.js","js/psdle.valkyrie.js"],
+          "world": "MAIN"
+        },
+        {
+          "matches": ["https://library.playstation.com/*"],
+          "all_frames": true,
+          "js": ["js/chrome.js","js/psdle.gotham.js"],
+          "world": "MAIN"
         }
     ],
-    "web_accessible_resources": [ "js/psdleChromium.js", "js/psdle.gotham.js", "js/psdle.valkyrie.js" ],
     "icons": {
         "16": "icons/icon32.png",
         "48": "icons/icon64.png",
@@ -34,7 +43,7 @@
     },
     "applications": {
       "gecko": {
-        "strict_min_version": "57.0"
+        "strict_min_version": "109.0"
       }
     }
 }

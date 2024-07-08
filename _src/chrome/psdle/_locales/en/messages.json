@@ -16,11 +16,7 @@
 		"description": "Repository link text in the popup."
 	},
 	"pageActionRun": {
-		"message": "Run PSDLE",
+		"message": "PSDLE",
 		"description": "Text for the page action's tooltip indicating to run (start/execute/launch) PSDLE."
-	},
-	"psdleRunning": {
-		"message": "PSDLE should already be running.\n\nFor the new store it now runs from the Library.\nThere may be some issues when changing Library pages.\n\nTry reloading the page and running it again.\nIf it is not functioning properly report a bug.",
-		"description": "Message to alert the user when they attempt to run PSDLE again. Provides the status, how to proceed, and other options."
 	}
 }
