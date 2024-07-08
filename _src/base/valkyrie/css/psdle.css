@@ -631,3 +631,11 @@ span[id^=system_],
 .psdledark tr:nth-child(2n) {
     background-color: rgb(57, 57, 57)
 }
+
+button.psdleClose {
+    cursor: pointer;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    z-index: 10001;
+}

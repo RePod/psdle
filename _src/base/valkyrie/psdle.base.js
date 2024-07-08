@@ -141,6 +141,11 @@ repod.psdle = {
             .slideUp(function() {
                 $(this).children().remove();
 
+                content.append(
+                    $("<button />", {class: "page-header__close-button psdleClose"})
+                    .on("click", function () { $("#muh_games_container").slideUp(function() { $(this).remove() }) })
+                )
+
                 $(this)
                 .append(content)
                 .toggleClass("psdledark", that.dark)
@@ -165,8 +170,8 @@ repod.psdle = {
             var that = this;
             var t = $("<div />", {class:'psdle tagline'});
             t.append($("<span />", {id:'psdle_night', text: "Night Mode"}).on("click", function() { that.darkCSS(); }))
-            .append(" | ")
-            .append($("<span />", {id:'dropCache', text: "Clear Catalog Cache"}).on("click", function() { repod.psdle.database.drop(); }))
+            //.append(" | ")
+            //.append($("<span />", {id:'dropCache', text: "Clear Catalog Cache"}).on("click", function() { repod.psdle.database.drop(); }))
             .append("<br><a href='//repod.github.io/psdle#support' target='_blank'>Support PSDLE</a> | <a href='//github.com/RePod/psdle/wiki/Submit-a-Bug-or-Translation' target='_blank'>Submit Bug/Translation</a> | ")
             .append($("<span />", {id:'dump_raw', text: "Dump Raw"}).on("click", function() {
                 repod.psdle.macrossBrain(function(raw) {
@@ -360,7 +365,7 @@ repod.psdle = {
     rawEntitlements: [],
     macrossBrain: function(callback) {
         var that = this // The classic
-        
+
         query = window.GrandCentralCore.createQueryString({
             // start >= total = bad time with the API!
             start: this.rawEntitlements.length,
@@ -375,12 +380,12 @@ repod.psdle = {
         .then(function (response) {
             console.log("PSDLE | Fetching Entitlements", that.rawEntitlements, response)
             that.rawEntitlements = that.rawEntitlements.concat(response.entitlements)
-            
+
             // should never be greater than, but just in case
             if (response.entitlements == undefined ||
                 response.entitlements.length <= 450 &&
                 that.rawEntitlements.length >= response.total_results
-                ) { 
+                ) {
                 callback(that.rawEntitlements)
             } else {
                 that.macrossBrain(callback)
@@ -395,7 +400,7 @@ repod.psdle = {
             this.macrossBrain(function(e) { that.generateList(e) })
             return;
         }
-        
+
         entitlements = entitlements.filter(obj => obj !== null);
 
         console.log("PSDLE | Generating download list.", entitlements);
@@ -510,7 +515,7 @@ repod.psdle = {
     stats: { fine: 0, generic: 0, expired: 0, service: 0, video: 0 },
     isValidContent: function(obj) {
         if (obj == undefined) return 0;
-        
+
         var exp = (obj.license) ? obj.license.expiration : obj.inactive_date,
             inf = (obj.license) ? obj.license.infinite_duration : false;
 
@@ -883,9 +888,9 @@ repod.psdle = {
                         that.setIcon(index);
                         return 0;
                     }
-                    
+
                     // Assume API icons from now on.
-                    
+
                     $.extend(repod.psdle.gamelist[index],{safe_icon: true, icon: u});
                     that.setIcon(index);
 

@@ -1,11 +1,11 @@
-/*! psdle 4.1.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2023-04-28 */
+/*! psdle 4.2.0 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - user+base - compiled 2024-07-08 */
 // ==UserScript==
 // @author		RePod
 // @name		PSDLE for Greasemonkey (gotham)
 // @description	Improving everyone's favorite online download list, one loop at a time.
 // @namespace	https://github.com/RePod/psdle
 // @homepage	https://repod.github.io/psdle/
-// @version		4.1.4
+// @version		4.2.0
 // @include		/https://store.playstation.com/*/
 // @include		/https://library.playstation.com/*/
 // @exclude		/https://store.playstation.com/(cam|liquid)/*/
@@ -26,12 +26,12 @@ Alternatively, reconfigure the updating settings in your Userscript manager.
 */
 
 
-/*! psdle 4.1.4 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2023-04-28 */
+/*! psdle 4.2.0 (c) RePod, MIT https://github.com/RePod/psdle/blob/master/LICENSE - base - compiled 2024-07-08 */
 var repod = {}
 repod.psdle = {
     config: {
-        version: "4.1.4",
-        versionDate: "2023-04-28"
+        version: "4.2.0",
+        versionDate: "2024-07-08"
     },
     init: function() {
         console.log(`PSDLE ${this.config.version} ${this.config.versionDate}`)
