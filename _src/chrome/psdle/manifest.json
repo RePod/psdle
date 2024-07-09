@@ -7,7 +7,7 @@
     "default_locale": "en",
     "homepage_url": "https://repod.github.io/psdle",
 
-    "version": "4.2.0",
+    "version": "4.2.1",
 
     "action": {
         "default_icon": "icons/icon32.png",
@@ -17,22 +17,26 @@
     "permissions": [],
     "content_scripts": [
         {
-          "matches": ["https://store.playstation.com/*"],
-          "all_frames": true,
-          "js": ["js/chrome.js"],
-          "world": "MAIN"
+            "js": ["js/chrome.js"],
+            "all_frames": true,
+            "matches": [
+                "https://store.playstation.com/*",
+                "https://transact.playstation.com/*",
+                "https://library.playstation.com/*"
+            ]
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": ["js/psdle.valkyrie.js"],
+            "matches": [
+                "https://store.playstation.com/*",
+                "https://transact.playstation.com/*"
+            ]
         },
         {
-          "matches": ["https://transact.playstation.com/*"],
-          "all_frames": true,
-          "js": ["js/chrome.js","js/psdle.valkyrie.js"],
-          "world": "MAIN"
-        },
-        {
-          "matches": ["https://library.playstation.com/*"],
-          "all_frames": true,
-          "js": ["js/chrome.js","js/psdle.gotham.js"],
-          "world": "MAIN"
+            "resources": ["js/psdle.gotham.js"],
+            "matches": ["https://library.playstation.com/*"]
         }
     ],
     "icons": {
